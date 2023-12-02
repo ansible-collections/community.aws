@@ -2,7 +2,7 @@
 # This space was a copy by aws_eks_cluster integration test
 - name: ensure IAM instance role exists
   iam_role:
-    name: ansible-test-eks_cluster_role
+    name: ansible-test-{{ tiny_prefix }}-eks_nodegroup-cluster
     assume_role_policy_document: '{{ lookup(''file'',''eks-trust-policy.json'') }}'
     state: present
     create_instance_profile: 'no'
@@ -44,7 +44,7 @@
   community.aws.ec2_vpc_route_table:
     vpc_id: '{{ setup_vpc.vpc.id }}'
     tags:
-      Name: EKS
+      Name: "EKS-ng-{{ tiny_prefix }}"
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
     routes:
       - dest: 0.0.0.0/0
@@ -52,7 +52,7 @@
   register: public_route_table
 
 - name: create security groups to use for EKS
-  ec2_group:
+  ec2_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
@@ -63,7 +63,7 @@
   register: setup_security_groups
 
 - name: create EKS cluster
-  aws_eks_cluster:
+  eks_cluster:
     name: '{{ eks_cluster_name }}'
     security_groups: '{{ eks_security_groups | map(attribute=''name'') }}'
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
@@ -77,9 +77,9 @@
       - eks_create.name == eks_cluster_name
 
 # Dependecies to eks nodegroup
-- name: create IAM instance role 
+- name: create IAM instance role
   iam_role:
-    name: 'ansible-test-eks_nodegroup'
+    name: 'ansible-test-{{ tiny_prefix }}-eks_nodegroup-ng'
     assume_role_policy_document: '{{ lookup(''file'',''eks-nodegroup-trust-policy.json'') }}'
     state: present
     create_instance_profile: no
@@ -106,3 +106,20 @@
     default_version: 1
     instance_type: t3.micro
   register: lt
+
+- name: Create securitygroup for node access
+  amazon.aws.ec2_security_group:
+    name: 'ansible-test-eks_nodegroup'
+    description: "SSH access"
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    rules:
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 0.0.0.0/0
+  register: securitygroup_eks_nodegroup
+
+- name: Create Keypair for Access to Nodegroup nodes
+  amazon.aws.ec2_key:
+    name: "ansible-test-eks_nodegroup"
+  register: ec2_key_eks_nodegroup

@@ -22,7 +22,7 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 
 
-class BaseWaiterFactory():
+class BaseWaiterFactory:
     """
     A helper class used for creating additional waiters.
     Unlike the waiters available directly from botocore these waiters will
@@ -39,6 +39,7 @@ class BaseWaiterFactory():
     waiter = waiters.get_waiter('my_waiter_name')
     waiter.wait(**params)
     """
+
     module = None
     client = None
 
@@ -113,9 +114,14 @@ class BaseWaiterFactory():
 
     def _inject_ratelimit_retries(self, model):
         extra_retries = [
-            'RequestLimitExceeded', 'Unavailable', 'ServiceUnavailable',
-            'InternalFailure', 'InternalError', 'TooManyRequestsException',
-            'Throttling']
+            "RequestLimitExceeded",
+            "Unavailable",
+            "ServiceUnavailable",
+            "InternalFailure",
+            "InternalError",
+            "TooManyRequestsException",
+            "Throttling",
+        ]
 
         acceptors = []
         for error in extra_retries:
@@ -130,15 +136,15 @@ class BaseWaiterFactory():
     def get_waiter(self, waiter_name):
         waiters = self._model.waiter_names
         if waiter_name not in waiters:
-            self.module.fail_json(
-                'Unable to find waiter {0}.  Available_waiters: {1}'
-                .format(waiter_name, waiters))
+            self.module.fail_json(f"Unable to find waiter {waiter_name}.  Available_waiters: {waiters}")
         return botocore.waiter.create_waiter_with_client(
-            waiter_name, self._model, self.client,
+            waiter_name,
+            self._model,
+            self.client,
         )
 
 
-class Boto3Mixin():
+class Boto3Mixin:
     @staticmethod
     def aws_error_handler(description):
         r"""
@@ -176,11 +182,13 @@ class Boto3Mixin():
                 extra_ouput = _self._extra_error_output()
                 try:
                     return func(_self, *args, **kwargs)
-                except (botocore.exceptions.WaiterError) as e:
-                    _self.module.fail_json_aws(e, msg='Failed waiting for {DESC}'.format(DESC=description), **extra_ouput)
+                except botocore.exceptions.WaiterError as e:
+                    _self.module.fail_json_aws(e, msg=f"Failed waiting for {description}", **extra_ouput)
                 except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                    _self.module.fail_json_aws(e, msg='Failed to {DESC}'.format(DESC=description), **extra_ouput)
+                    _self.module.fail_json_aws(e, msg=f"Failed to {description}", **extra_ouput)
+
             return handler
+
         return wrapper
 
     def _normalize_boto3_resource(self, resource, add_tags=False):
@@ -198,7 +206,7 @@ class Boto3Mixin():
         if resource is None:
             return None
 
-        tags = resource.get('Tags', None)
+        tags = resource.get("Tags", None)
         if tags:
             tags = boto3_tag_list_to_ansible_dict(tags)
         elif add_tags or tags is not None:
@@ -206,7 +214,7 @@ class Boto3Mixin():
 
         normalized_resource = camel_dict_to_snake_dict(resource)
         if tags is not None:
-            normalized_resource['tags'] = tags
+            normalized_resource["tags"] = tags
         return normalized_resource
 
     def _extra_error_output(self):
@@ -261,9 +269,9 @@ class BaseResourceManager(Boto3Mixin):
         params = dict()
         if self._wait_timeout:
             delay = min(5, self._wait_timeout)
-            max_attempts = (self._wait_timeout // delay)
+            max_attempts = self._wait_timeout // delay
             config = dict(Delay=delay, MaxAttempts=max_attempts)
-            params['WaiterConfig'] = config
+            params["WaiterConfig"] = config
         return params
 
     def _wait_for_deletion(self):
@@ -346,8 +354,7 @@ class BaseResourceManager(Boto3Mixin):
         if immutable and self.original_resource:
             if description is None:
                 description = key
-            self.module.fail_json(msg='{0} can not be updated after creation'
-                                  .format(description))
+            self.module.fail_json(msg=f"{description} can not be updated after creation")
         self._resource_updates[key] = value
         self.changed = True
         return True

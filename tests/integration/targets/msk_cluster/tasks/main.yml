@@ -2,9 +2,9 @@
 - name: aws_msk_cluster integration tests
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   collections:
     - amazon.aws
@@ -42,7 +42,7 @@
 
      # ============================================================
     - name: create msk configuration
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions:
@@ -61,14 +61,14 @@
   always:
 
     - name: delete msk cluster
-      aws_msk_cluster:
+      msk_cluster:
         name: "{{ msk_cluster_name }}"
         state: absent
         wait: true
       ignore_errors: yes
 
     - name: remove msk configuration
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: absent
       ignore_errors: yes

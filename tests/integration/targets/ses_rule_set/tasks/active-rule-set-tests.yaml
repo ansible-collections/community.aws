@@ -10,10 +10,10 @@
 - name: mark rule set active
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
     - name: mark rule set active
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
       register: result
@@ -23,7 +23,7 @@
           - result.changed == True
           - result.active == True
     - name: remark rule set active
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
       register: result
@@ -33,7 +33,7 @@
           - result.changed == False
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -42,7 +42,7 @@
 - name: create rule set active
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
       register: result
@@ -53,7 +53,7 @@
           - result.active == True
           - "default_rule_set in result.rule_sets|map(attribute='name')"
     - name: remark rule set active
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
       register: result
@@ -63,7 +63,7 @@
           - result.changed == False
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -72,11 +72,11 @@
 - name: mark rule set inactive
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: mark rule set inactive
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: False
       register: result
@@ -86,7 +86,7 @@
           - result.changed == True
           - result.active == False
     - name: remark rule set inactive
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: False
       register: result
@@ -96,7 +96,7 @@
           - result.changed == False
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -105,11 +105,11 @@
 - name: Absent active flag does not change active status
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: recreate rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
       register: result
     - name: assert not changed and still active
@@ -119,7 +119,7 @@
           - result.active == True
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -128,11 +128,11 @@
 - name: Cannot Remove Active Rule Set
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: remove rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
       register: result
@@ -143,7 +143,7 @@
           - "result.error.code == 'CannotDelete'"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -152,11 +152,11 @@
 - name: Remove Active Rule Set with Force
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: force remove rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -168,7 +168,7 @@
           - "default_rule_set not in result.rule_sets|map(attribute='name')"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -177,15 +177,15 @@
 - name: Force Remove of Inactive Rule Set does Not Affect Active Rule Set
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: create inactive rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ second_rule_set }}"
         active: False
     - name: force remove inactiave rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ second_rule_set }}"
         state: absent
         force: True
@@ -196,7 +196,7 @@
           - result.changed == True
           - "second_rule_set not in result.rule_sets|map(attribute='name')"
     - name: remark active rule set active
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
       register: result
@@ -206,7 +206,7 @@
           - result.changed == False
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ item }}"
         state: absent
         force: True
@@ -218,11 +218,11 @@
 - name: mark rule set inactive in check mode
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: mark rule set inactive in check mode
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: False
       register: result
@@ -233,7 +233,7 @@
           - result.changed == True
           - result.active == False
     - name: remark rule set inactive
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: False
       register: result
@@ -243,7 +243,7 @@
           - result.changed == True
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -252,11 +252,11 @@
 - name: Cannot Remove Active Rule Set in check mode
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: remove rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
       register: result
@@ -268,7 +268,7 @@
           - "result.error.code == 'CannotDelete'"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -277,11 +277,11 @@
 - name: Remove Active Rule Set with Force in check mode
   block:
     - name: create active rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
     - name: force remove rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -294,7 +294,7 @@
           - "default_rule_set not in result.rule_sets|map(attribute='name')"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True

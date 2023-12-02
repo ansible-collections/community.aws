@@ -10,12 +10,12 @@ pytest
 pytest-forked
 pytest-mock
 pytest-xdist
+pytest-ansible ; python_version >= '3.7'
+git+https://github.com/ansible-community/pytest-ansible-units.git ; python_version < '3.7'
 
 # Needed for ansible.utils.ipaddr in tests
 netaddr
 # Sometimes needed where we don't have features we need in modules
 awscli
-# Used for comparing SSH Public keys to the Amazon fingerprints
-pycrypto
-# Used by ec2_win_password
+# Used for comparing SSH Public keys to the Amazon fingerprints and ec2_win_password
 cryptography

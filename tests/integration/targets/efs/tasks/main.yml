@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
@@ -41,7 +41,7 @@
       register: testing_subnet_b
 
     - name: Get default security group id for vpc
-      ec2_group_info:
+      ec2_security_group_info:
         filters:
           vpc-id: "{{ testing_vpc.vpc.id }}"
       register: sg_facts
@@ -98,7 +98,7 @@
           - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by id
@@ -107,7 +107,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by tag
@@ -117,7 +117,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by target (subnet_id)
@@ -127,7 +127,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by target (security_group_id)
@@ -137,7 +137,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by tag and target
@@ -149,7 +149,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     #   Not checking efs_result.efs["throughput_mode"] here as
@@ -231,7 +231,7 @@
           - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Efs configure IA transition
@@ -332,9 +332,9 @@
       efs_tag:
         state: present
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           check_mode_tag: 'this tag should not be applied'
@@ -349,9 +349,9 @@
       efs_tag:
         state: present
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           "Title Case": 'Hello Cruel World'
@@ -366,7 +366,7 @@
           - efs_tag_result.tags.Env is defined
           - efs_tag_result.tags.Env is search("IntegrationTests")
           - efs_tag_result.tags.Name is defined
-          - efs_tag_result.tags.Name is search("{{ efs_name }}-test-tag")
+          - efs_tag_result.tags.Name is search(efs_name ~ '-test-tag')
           - efs_tag_result.tags["CamelCase"] == 'SimpleCamelCase'
           - efs_tag_result.tags["Title Case"] == 'Hello Cruel World'
           - efs_tag_result.tags["lowercase spaced"] == 'hello cruel world'
@@ -377,9 +377,9 @@
       efs_tag:
         state: present
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           Env: IntegrationTests
@@ -394,9 +394,9 @@
       efs_tag:
         state: absent
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           snake_case: 'simple_snake_case'
@@ -412,9 +412,9 @@
       efs_tag:
         state: present
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           Env: OtherIntegrationTests
@@ -430,9 +430,9 @@
       efs_tag:
         state: present
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           Env: OtherIntegrationTests
@@ -448,9 +448,9 @@
       efs_tag:
         state: absent
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           "Title Case": 'Hello Cruel World'
@@ -464,7 +464,7 @@
           - efs_tag_result.tags.Env is defined
           - efs_tag_result.tags.Env is search("IntegrationTests")
           - efs_tag_result.tags.Name is defined
-          - efs_tag_result.tags.Name is search("{{ efs_name }}-test-tag")
+          - efs_tag_result.tags.Name is search(efs_name ~ '-test-tag')
           - not efs_tag_result.tags["CamelCase"] is defined
           - not efs_tag_result.tags["Title Case"] is defined
           - not efs_tag_result.tags["lowercase spaced"] is defined
@@ -474,9 +474,9 @@
       efs_tag:
         state: absent
         resource: "{{ created_efs.efs.file_system_id }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         region: "{{ aws_region }}"
         tags:
           snake_case: 'simple_snake_case'
@@ -491,9 +491,9 @@
         state: absent
         resource: "{{ created_efs.efs.file_system_id }}"
         region: "{{ aws_region }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        access_key: '{{ aws_access_key }}'
+        secret_key: '{{ aws_secret_key }}'
+        session_token: '{{ security_token | default(omit) }}'
         tags: {}
         purge_tags: true
       register: efs_tag_result

@@ -3,10 +3,10 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from copy import deepcopy
 import datetime
 import functools
 import time
+from copy import deepcopy
 
 try:
     import botocore
@@ -30,8 +30,11 @@ def get_domain_status(client, module, domain_name):
         response = client.describe_domain(DomainName=domain_name)
     except is_boto3_error_code("ResourceNotFoundException"):
         return None
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get domain {0}".format(domain_name))
+    except (
+        botocore.exceptions.BotoCoreError,
+        botocore.exceptions.ClientError,
+    ) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg=f"Couldn't get domain {domain_name}")
     return response["DomainStatus"]
 
 
@@ -49,13 +52,17 @@ def get_domain_config(client, module, domain_name):
         response = client.describe_domain_config(DomainName=domain_name)
     except is_boto3_error_code("ResourceNotFoundException"):
         return (None, None)
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get domain {0}".format(domain_name))
+    except (
+        botocore.exceptions.BotoCoreError,
+        botocore.exceptions.ClientError,
+    ) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg=f"Couldn't get domain {domain_name}")
     domain_config = {}
     arn = None
     if response is not None:
         for k in response["DomainConfig"]:
-            domain_config[k] = response["DomainConfig"][k]["Options"]
+            if "Options" in response["DomainConfig"][k]:
+                domain_config[k] = response["DomainConfig"][k]["Options"]
         domain_config["DomainName"] = domain_name
         # If ES cluster is attached to the Internet, the "VPCOptions" property is not present.
         if "VPCOptions" in domain_config:
@@ -88,13 +95,9 @@ def normalize_opensearch(client, module, domain):
     convert the attributes from camel case to snake case, and return the object.
     """
     try:
-        domain["Tags"] = boto3_tag_list_to_ansible_dict(
-            client.list_tags(ARN=domain["ARN"], aws_retry=True)["TagList"]
-        )
+        domain["Tags"] = boto3_tag_list_to_ansible_dict(client.list_tags(ARN=domain["ARN"], aws_retry=True)["TagList"])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(
-            e, "Couldn't get tags for domain %s" % domain["domain_name"]
-        )
+        module.fail_json_aws(e, f"Couldn't get tags for domain {domain['domain_name']}")
     except KeyError:
         module.fail_json(msg=str(domain))
 
@@ -128,16 +131,14 @@ def wait_for_domain_status(client, module, domain_name, waiter_name):
                 return
         time.sleep(15)
     # Timeout occured.
-    module.fail_json(
-        msg=f"Timeout waiting for wait state '{waiter_name}'. {status_msg}"
-    )
+    module.fail_json(msg=f"Timeout waiting for wait state '{waiter_name}'. {status_msg}")
 
 
 def parse_version(engine_version):
-    '''
+    """
     Parse the engine version, which should be Elasticsearch_X.Y or OpenSearch_X.Y
     Return dict { 'engine_type': engine_type, 'major': major, 'minor': minor }
-    '''
+    """
     version = engine_version.split("_")
     if len(version) != 2:
         return None
@@ -145,19 +146,19 @@ def parse_version(engine_version):
     if len(semver) != 2:
         return None
     engine_type = version[0]
-    if engine_type not in ['Elasticsearch', 'OpenSearch']:
+    if engine_type not in ["Elasticsearch", "OpenSearch"]:
         return None
     if not (semver[0].isdigit() and semver[1].isdigit()):
         return None
     major = int(semver[0])
     minor = int(semver[1])
-    return {'engine_type': engine_type, 'major': major, 'minor': minor}
+    return {"engine_type": engine_type, "major": major, "minor": minor}
 
 
 def compare_domain_versions(version1, version2):
     supported_engines = {
-        'Elasticsearch': 1,
-        'OpenSearch': 2,
+        "Elasticsearch": 1,
+        "OpenSearch": 2,
     }
     if isinstance(version1, string_types):
         version1 = parse_version(version1)
@@ -169,21 +170,21 @@ def compare_domain_versions(version1, version2):
         return 1
     elif version1 is None and version2 is None:
         return 0
-    e1 = supported_engines.get(version1.get('engine_type'))
-    e2 = supported_engines.get(version2.get('engine_type'))
+    e1 = supported_engines.get(version1.get("engine_type"))
+    e2 = supported_engines.get(version2.get("engine_type"))
     if e1 < e2:
         return -1
     elif e1 > e2:
         return 1
     else:
-        if version1.get('major') < version2.get('major'):
+        if version1.get("major") < version2.get("major"):
             return -1
-        elif version1.get('major') > version2.get('major'):
+        elif version1.get("major") > version2.get("major"):
             return 1
         else:
-            if version1.get('minor') < version2.get('minor'):
+            if version1.get("minor") < version2.get("minor"):
                 return -1
-            elif version1.get('minor') > version2.get('minor'):
+            elif version1.get("minor") > version2.get("minor"):
                 return 1
             else:
                 return 0
@@ -203,22 +204,15 @@ def get_target_increment_version(client, module, domain_name, target_version):
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(
             e,
-            msg="Couldn't get compatible versions for domain {0}".format(
-                domain_name),
+            msg=f"Couldn't get compatible versions for domain {domain_name}",
         )
-    compat = api_compatible_versions.get('CompatibleVersions')
+    compat = api_compatible_versions.get("CompatibleVersions")
     if compat is None:
-        module.fail_json(
-            "Unable to determine list of compatible versions",
-            compatible_versions=api_compatible_versions)
+        module.fail_json("Unable to determine list of compatible versions", compatible_versions=api_compatible_versions)
     if len(compat) == 0:
-        module.fail_json(
-            "Unable to determine list of compatible versions",
-            compatible_versions=api_compatible_versions)
+        module.fail_json("Unable to determine list of compatible versions", compatible_versions=api_compatible_versions)
     if compat[0].get("TargetVersions") is None:
-        module.fail_json(
-            "No compatible versions found",
-            compatible_versions=api_compatible_versions)
+        module.fail_json("No compatible versions found", compatible_versions=api_compatible_versions)
     compatible_versions = []
     for v in compat[0].get("TargetVersions"):
         if target_version == v:
@@ -243,9 +237,7 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
     changed = bool(tags_to_add or tags_to_remove)
     if tags_to_add:
         if module.check_mode:
-            module.exit_json(
-                changed=True, msg="Would have added tags to domain if not in check mode"
-            )
+            module.exit_json(changed=True, msg="Would have added tags to domain if not in check mode")
         try:
             client.add_tags(
                 ARN=resource_arn,
@@ -255,21 +247,15 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
         ) as e:
-            module.fail_json_aws(
-                e, "Couldn't add tags to domain {0}".format(resource_arn)
-            )
+            module.fail_json_aws(e, f"Couldn't add tags to domain {resource_arn}")
     if tags_to_remove:
         if module.check_mode:
-            module.exit_json(
-                changed=True, msg="Would have removed tags if not in check mode"
-            )
+            module.exit_json(changed=True, msg="Would have removed tags if not in check mode")
         try:
             client.remove_tags(ARN=resource_arn, TagKeys=tags_to_remove)
         except (
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
         ) as e:
-            module.fail_json_aws(
-                e, "Couldn't remove tags from domain {0}".format(resource_arn)
-            )
+            module.fail_json_aws(e, f"Couldn't remove tags from domain {resource_arn}")
     return changed

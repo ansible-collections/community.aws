@@ -1,8 +1,8 @@
 - module_defaults:
     group/aws:
-      aws_secret_key: '{{ aws_secret_key }}'
-      aws_access_key: '{{ aws_access_key }}'
-      security_token: '{{ security_token|default(omit) }}'
+      secret_key: '{{ aws_secret_key }}'
+      access_key: '{{ aws_access_key }}'
+      session_token: '{{ security_token|default(omit) }}'
       region: '{{ aws_region }}'
 
   block:
@@ -62,7 +62,7 @@
       that:
       - sns_topic_info is successful
       - "'result' in sns_topic_info"
-      - sns_topic_info.result["sns_arn"] == "{{ sns_arn }}"
+      - sns_topic_info.result["sns_arn"] == sns_arn
       - "'sns_topic' in sns_topic_info.result"
       - "'display_name' in sns_topic_info.result['sns_topic']"
       - sns_topic_info.result["sns_topic"]["display_name"] == "My topic name"
@@ -79,7 +79,7 @@
       that:
       - sns_topic_info is successful
       - "'result' in sns_topic_info"
-      - sns_topic_info.result["sns_arn"] == "{{ sns_arn }}"
+      - sns_topic_info.result["sns_arn"] == sns_arn
       - "'sns_topic' in sns_topic_info.result"
       - "'display_name' in sns_topic_info.result['sns_topic']"
       - sns_topic_info.result["sns_topic"]["display_name"] == "My topic name"
@@ -110,7 +110,7 @@
       that:
       - sns_fifo_topic.changed
       - sns_fifo_topic.sns_topic.topic_type == 'fifo'
-      - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo'
+      - sns_fifo_topic.sns_topic.name == sns_topic_topic_name ~ '-fifo'
 
   - name: Run create a FIFO topic again for idempotence test (with .fifo)
     sns_topic:

@@ -1,2 +1,0 @@
-breaking_changes:
-- codebuild_project - ``tags`` parameter now accepts a dict representing the tags, rather than the boto3 format (https://github.com/ansible-collections/community.aws/pull/1643).

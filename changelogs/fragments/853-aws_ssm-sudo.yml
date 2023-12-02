@@ -1,9 +1,0 @@
-breaking_changes:
-- aws_ssm - the AWS SSM plugin was incorrectly prepending ``sudo`` to most commands.  This behaviour was incorrect and has been removed.
-  To execute commands as a specific user, including the ``root`` user, the ``become`` and ``become_user`` directives should be used.  See the
-  `Ansible documentation for more information <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html>`_
-  (https://github.com/ansible-collections/community.aws/issues/853).
-
-minor_changes:
-- aws_ssm - Updated the documentation to explicitly mention that the ``ansible_user`` and ``remote_user`` variables are not supported by the
-  plugin (https://github.com/ansible-collections/community.aws/pull/1682).

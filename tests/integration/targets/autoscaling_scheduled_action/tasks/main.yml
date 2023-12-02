@@ -5,9 +5,9 @@
     - community.aws
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
     ## Set up the testing dependencies: VPC, subnet, security group, and launch configuration
@@ -29,7 +29,7 @@
       register: testing_subnet
 
     - name: create a security group with the vpc created in the ec2_setup
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg"
         description: a security group for ansible tests
         vpc_id: "{{ testing_vpc.vpc.id }}"
@@ -45,7 +45,7 @@
       register: sg
 
     - name: ensure launch configs exist
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ resource_prefix }}-lc"
         assign_public_ip: true
         image_id: "{{ ec2_ami_id }}"
@@ -53,7 +53,7 @@
         instance_type: t3.micro
 
     - name: Create ASG ready
-      ec2_asg:
+      autoscaling_group:
         name: "{{ resource_prefix }}-asg"
         launch_config_name: "{{ resource_prefix }}-lc"
         desired_capacity: 1
@@ -70,7 +70,7 @@
 
     ## Create minimal basic scheduled action
     - name: Create basic scheduled_action - check_mode
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 08:00 UTC
@@ -87,7 +87,7 @@
           - scheduled_action is changed
 
     - name: Create basic scheduled_action
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 08:00 UTC
@@ -101,11 +101,11 @@
         that:
           - scheduled_action is successful
           - scheduled_action is changed
-          - scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test"
+          - scheduled_action.scheduled_action_name == resource_prefix ~ '-test'
           - scheduled_action.desired_capacity == 2
 
     - name: Create basic scheduled_action - idempotent
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 08:00 UTC
@@ -122,7 +122,7 @@
 
     ## Update minimal basic scheduled action
     - name: Update basic scheduled_action - check_mode
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 08:00 UTC
@@ -140,7 +140,7 @@
           - scheduled_action is changed
 
     - name: Update basic scheduled_action
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 08:00 UTC
@@ -155,12 +155,12 @@
         that:
           - scheduled_action is successful
           - scheduled_action is changed
-          - scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test"
+          - scheduled_action.scheduled_action_name == resource_prefix ~ '-test'
           - scheduled_action.desired_capacity == 3
           - scheduled_action.min_size == 3
 
     - name: Update basic scheduled_action - idempotent
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 08:00 UTC
@@ -178,7 +178,7 @@
 
     ## Create advanced scheduled action
     - name: Create advanced scheduled_action - check_mode
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
         start_time: 2027 November 9 09:00 UTC
@@ -199,7 +199,7 @@
           - advanced_scheduled_action is changed
 
     - name: Create advanced scheduled_action
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
         start_time: 2027 November 9 09:00 UTC
@@ -217,14 +217,14 @@
         that:
           - advanced_scheduled_action is successful
           - advanced_scheduled_action is changed
-          - advanced_scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test1"
+          - advanced_scheduled_action.scheduled_action_name == resource_prefix ~ '-test1'
           - advanced_scheduled_action.desired_capacity == 2
           - advanced_scheduled_action.min_size == 2
           - advanced_scheduled_action.max_size == 5
           - advanced_scheduled_action.time_zone == "Europe/London"
 
     - name: Create advanced scheduled_action - idempotent
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
         start_time: 2027 November 9 09:00 UTC
@@ -245,7 +245,7 @@
 
     ## Delete scheduled action
     - name: Delete scheduled_action - check_mode
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
         state: absent
@@ -259,7 +259,7 @@
           - scheduled_action_deletion is changed
 
     - name: Delete scheduled_action
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
         state: absent
@@ -272,7 +272,7 @@
           - scheduled_action_deletion is changed
 
     - name: Delete scheduled_action - idempotent
-      ec2_asg_scheduled_action:
+      autoscaling_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
         state: absent
@@ -285,7 +285,7 @@
           - scheduled_action_deletion is not changed
   always:
     - name: Remove ASG
-      ec2_asg:
+      autoscaling_group:
         name: "{{ resource_prefix }}-asg"
         state: absent
       register: removed
@@ -295,7 +295,7 @@
 
     # Remove the testing dependencies
     - name: Remove launch configs
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ resource_prefix }}-lc"
         state: absent
       register: removed
@@ -304,7 +304,7 @@
       retries: 10
 
     - name: Remove the security group
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg"
         description: a security group for ansible tests
         vpc_id: "{{ testing_vpc.vpc.id }}"

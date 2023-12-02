@@ -1,9 +1,9 @@
 ---
 - module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
 
   block:
@@ -103,10 +103,6 @@
     #########################
     - name: destroy ALB
       elb_application_lb:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
         name: '{{ alb_name }}'
         state: absent
         wait: true
@@ -115,10 +111,6 @@
 
     - name: destroy target group if it was created
       elb_target_group:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
         name: '{{ tg_name }}'
         protocol: http
         port: 80
@@ -134,11 +126,7 @@
       ignore_errors: true
 
     - name: destroy sec group
-      ec2_group:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
+      ec2_security_group:
         name: '{{ sec_group.group_name }}'
         description: security group for Ansible ALB integration tests
         state: absent
@@ -151,10 +139,6 @@
 
     - name: remove route table
       ec2_vpc_route_table:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
         vpc_id: '{{ vpc.vpc.id }}'
         route_table_id: '{{ route_table.route_table.route_table_id }}'
         lookup: id
@@ -167,10 +151,6 @@
 
     - name: destroy subnets
       ec2_vpc_subnet:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
         cidr: '{{ item.cidr }}'
         vpc_id: '{{ vpc.vpc.id }}'
         state: absent
@@ -187,10 +167,6 @@
 
     - name: destroy internet gateway
       ec2_vpc_igw:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
         vpc_id: '{{ vpc.vpc.id }}'
         tags:
           Name: '{{ resource_prefix }}'
@@ -203,10 +179,6 @@
 
     - name: destroy VPC
       ec2_vpc_net:
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token }}'
-        region: '{{ aws_region }}'
         cidr_block: 10.228.228.0/22
         name: '{{ resource_prefix }}_vpc'
         state: absent

@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
 
@@ -29,7 +29,7 @@
         seconds: 10
 
     - name: Create Glue crawler (check mode)
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         database_name: my_database
         description: "{{ glue_crawler_description }}"
@@ -56,7 +56,7 @@
           - glue_crawler_check.description is not defined
 
     - name: Create Glue crawler
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         database_name: my_database
         description: "{{ glue_crawler_description }}"
@@ -102,7 +102,7 @@
           - glue_crawler.targets.S3Targets == crawler_info["Crawler"]["Targets"]["S3Targets"]
 
     - name: Create Glue crawler (idempotent) (check mode)
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         database_name: my_database
         description: "{{ glue_crawler_description }}"
@@ -149,7 +149,7 @@
           - crawler_info["Crawler"]["Targets"]["S3Targets"] == crawler_info_idempotent_check["Crawler"]["Targets"]["S3Targets"]
 
     - name: Create Glue crawler (idempotent)
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         database_name: my_database
         description: "{{ glue_crawler_description }}"
@@ -195,7 +195,7 @@
           - crawler_info["Crawler"]["Targets"]["S3Targets"] == crawler_info_idempotent["Crawler"]["Targets"]["S3Targets"]
 
     - name: Update Glue crawler (check mode)
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         database_name: my_database_2
         description: "{{ glue_crawler_description }}"
@@ -242,7 +242,7 @@
           - glue_crawler_update_check.targets.S3Targets == crawler_info_update_check["Crawler"]["Targets"]["S3Targets"]
 
     - name: Update Glue crawler
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         database_name: my_database_2
         description: "{{ glue_crawler_description }}"
@@ -288,7 +288,7 @@
           - glue_crawler_update.targets.S3Targets == crawler_info_update["Crawler"]["Targets"]["S3Targets"]
 
     - name: Delete Glue crawler (check mode)
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         state: absent
       check_mode: true
@@ -315,7 +315,7 @@
           - crawler_info["Crawler"]["Name"] == crawler_info_delete_check["Crawler"]["Name"]
 
     - name: Delete Glue crawler
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         state: absent
       register: glue_crawler_delete
@@ -327,7 +327,7 @@
 
   always:
     - name: Delete Glue crawler
-      aws_glue_crawler:
+      glue_crawler:
         name: "{{ glue_crawler_name }}"
         state: absent
       ignore_errors: true

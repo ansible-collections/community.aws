@@ -31,11 +31,12 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 - name: get current broker settings by id
-  amazon.aws.mq_broker_info:
+  community.aws.mq_broker_info:
     broker_id: "aws-mq-broker-id"
   register: broker_info
+
 - name: get current broker settings by name setting all credential parameters explicitly
-  amazon.aws.mq_broker_info:
+  community.aws.mq_broker_info:
     broker_name: "aws-mq-broker-name"
   register: broker_info
 """
@@ -54,6 +55,7 @@ except ImportError:
     pass
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 
 
@@ -84,7 +86,10 @@ def get_broker_info(conn, module, broker_id):
 def main():
     argument_spec = dict(broker_id=dict(type="str"), broker_name=dict(type="str"))
     required_one_of = (
-        ("broker_name", "broker_id",),
+        (
+            "broker_name",
+            "broker_id",
+        ),
     )
 
     module = AnsibleAWSModule(

@@ -26,7 +26,7 @@
       register: glue_subnet_a
 
     - name: Create security group 1
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg-glue-1"
         description: A security group for Ansible tests
         vpc_id: "{{ glue_vpc.vpc.id }}"
@@ -37,7 +37,7 @@
             rule_desc: Connections from Glue
 
     - name: Create security group 2
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg-glue-2"
         description: A security group for Ansible tests
         vpc_id: "{{ glue_vpc.vpc.id }}"
@@ -48,7 +48,7 @@
             rule_desc: Connections from Glue
 
     - name: Create Glue connection (check mode)
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
@@ -69,7 +69,7 @@
           - glue_connection_check.description is not defined
 
     - name: Create Glue connection
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
@@ -109,7 +109,7 @@
           - glue_connection.raw_connection_properties == connection_info["Connection"]["ConnectionProperties"]
 
     - name: Create Glue connection (idempotent) (check mode)
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
@@ -149,7 +149,7 @@
           - connection_info_idempotent_check["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"] == connection_info["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"]
 
     - name: Create Glue connection (idempotent)
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
@@ -188,7 +188,7 @@
           - connection_info_idempotent["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"] == connection_info["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"]
 
     - name: Update Glue connection (check mode)
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
@@ -229,7 +229,7 @@
           - glue_connection_update_check.raw_connection_properties == connection_info_update_check["Connection"]["ConnectionProperties"]
 
     - name: Update Glue connection
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
@@ -269,7 +269,7 @@
           - glue_connection_update.raw_connection_properties == connection_info_update["Connection"]["ConnectionProperties"]
 
     - name: Delete Glue connection (check mode)
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         state: absent
       check_mode: true
@@ -295,7 +295,7 @@
           - connection_info["Connection"]["Name"] == connection_info_delete_check["Connection"]["Name"]
 
     - name: Delete Glue connection
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         state: absent
       register: glue_connection_delete
@@ -307,17 +307,17 @@
 
   always:
     - name: Delete Glue connection
-      aws_glue_connection:
+      glue_connection:
         name: "{{ resource_prefix }}"
         state: absent
       ignore_errors: true
     - name: Delete security group 1
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg-glue-1"
         state: absent
       ignore_errors: true
     - name: Delete security group 2
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg-glue-2"
         state: absent
       ignore_errors: true

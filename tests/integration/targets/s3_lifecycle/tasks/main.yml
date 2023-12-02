@@ -4,12 +4,12 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
     s3_lifecycle:
-      wait: yes
+      wait: true
   block:
 
     # ============================================================
@@ -33,7 +33,7 @@
         prefix: "{{ item }}"
         status: enabled
         state: present
-        wait: yes
+        wait: true
       register: output
       loop:
         - rule_1
@@ -51,7 +51,7 @@
         prefix: "{{ item }}"
         status: enabled
         state: absent
-        wait: yes
+        wait: true
       register: output
       loop:
         - rule_1
@@ -465,8 +465,6 @@
         noncurrent_version_keep_newer: 6
         prefix: /something
       register: output
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -479,8 +477,6 @@
         noncurrent_version_keep_newer: 6
         prefix: /something
       register: output
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -704,6 +700,6 @@
       s3_bucket:
         name: "{{item}}"
         state: absent
-      ignore_errors: yes
+      ignore_errors: true
       with_items:
         - '{{ bucket_name }}'

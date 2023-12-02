@@ -2,10 +2,10 @@
 
 - module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key | default(omit) }}'
-      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
-      security_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
 
   block:
 
@@ -32,7 +32,7 @@
           - "'instance' in result and result.instance.name == instance_name"
           - "result.instance.state.name == 'running'"
           - "result.instance.networking.ports[0].from_port == 50"
-          - "{{ result.instance.networking.ports|length }} == 1"
+          - result.instance.networking.ports|length == 1
 
     - name: Check if it does not delete public ports config when no value is provided
       lightsail:

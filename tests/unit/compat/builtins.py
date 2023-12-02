@@ -16,7 +16,10 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 # Make coding more python3-ish
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 __metaclass__ = type
 
 #
@@ -28,6 +31,6 @@ __metaclass__ = type
 try:
     import __builtin__  # pylint: disable=unused-import
 except ImportError:
-    BUILTINS = 'builtins'
+    BUILTINS = "builtins"
 else:
-    BUILTINS = '__builtin__'
+    BUILTINS = "__builtin__"

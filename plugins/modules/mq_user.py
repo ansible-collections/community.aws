@@ -62,22 +62,24 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 - name: create/update user - set provided password if user doesn't exist, yet
-  amazon.aws.mq_user:
+  community.aws.mq_user:
     state: present
     broker_id: "aws-mq-broker-id"
     username: "sample_user1"
     console_access: false
     groups: [ "g1", "g2" ]
     password: "plain-text-password"
+
 - name: allow console access and update group list - relying on default state
-  amazon.aws.mq_user:
+  community.aws.mq_user:
     broker_id: "aws-mq-broker-id"
     username: "sample_user1"
     region: "{{ aws_region }}"
     console_access: true
     groups: [ "g1", "g2", "g3" ]
+
 - name: remove user - setting all credentials explicitly
-  amazon.aws.mq_user:
+  community.aws.mq_user:
     state: absent
     broker_id: "aws-mq-broker-id"
     username: "other_user"
@@ -102,8 +104,8 @@ except ImportError as ex:
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 
 CREATE_DEFAULTS = {
     "console_access": False,

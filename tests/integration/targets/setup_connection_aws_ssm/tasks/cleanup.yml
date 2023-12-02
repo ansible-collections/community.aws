@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
@@ -73,7 +73,7 @@
       when: iam_role_vars_file.stat.exists == true
 
     - name: Delete the KMS key
-      aws_kms:
+      kms_key:
         state: absent
         alias: '{{ kms_key_name }}'
 

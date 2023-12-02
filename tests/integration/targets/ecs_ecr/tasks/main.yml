@@ -2,9 +2,9 @@
 - module_defaults:
     group/aws:
         region: "{{ aws_region }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token | default(omit) }}"
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
+        session_token: "{{ security_token | default(omit) }}"
 
   block:
     - set_fact:
@@ -15,7 +15,7 @@
       register: aws_caller_info
 
     - name: create KMS key for testing
-      aws_kms:
+      kms_key:
         alias: "{{ resource_prefix }}-ecr"
         description: a key used for testing ECR
         state: present
@@ -597,7 +597,7 @@
     - name: it should use the provided KMS key
       assert:
         that:
-          - result.repository.encryptionConfiguration.kmsKey == '{{ kms_test_key.key_arn }}'
+          - result.repository.encryptionConfiguration.kmsKey == kms_test_key.key_arn
 
   always:
 
@@ -607,6 +607,6 @@
         state: absent
 
     - name: Delete KMS key
-      aws_kms:
+      kms_key:
         key_id: '{{ kms_test_key.key_arn }}'
         state: absent

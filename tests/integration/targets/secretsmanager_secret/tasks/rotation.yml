@@ -1,9 +1,9 @@
 ---
 - module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   collections:
     - amazon.aws
@@ -70,7 +70,7 @@
   # Creation/Deletion testing
   # ============================================================
   - name: add secret to AWS Secrets Manager
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-rotate"
       state: present
       secret_type: 'string'
@@ -95,7 +95,7 @@
       principal: "secretsmanager.amazonaws.com"
 
   - name: add rotation lambda to secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-rotate"
       description: 'this is a change to this secret'
       state: present
@@ -113,7 +113,7 @@
         - result.changed
 
   - name: remove rotation lambda from secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-rotate"
       description: 'this is a change to this secret'
       state: present
@@ -127,7 +127,7 @@
         - result.changed
 
   - name: remove rotation lambda from secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-rotate"
       description: 'this is a change to this secret'
       state: present
@@ -141,7 +141,7 @@
         - not result.changed
 
   - name: remove secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-rotate"
       state: absent
       recovery_window: 0
@@ -149,7 +149,7 @@
 
   always:
   - name: remove secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-rotate"
       state: absent
       recovery_window: 0

@@ -72,7 +72,7 @@
   register: nat_route_table
 
 - name: create security groups to use for EKS
-  ec2_group:
+  ec2_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
@@ -83,7 +83,7 @@
   register: setup_security_groups
 
 - name: create EKS cluster
-  aws_eks_cluster:
+  eks_cluster:
     name: '{{ eks_cluster_name }}'
     security_groups: '{{ eks_security_groups | map(attribute=''name'') }}'
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'

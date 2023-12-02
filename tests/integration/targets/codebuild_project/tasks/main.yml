@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
@@ -27,7 +27,7 @@
     # ================== integration test ==========================================
 
     - name: create CodeBuild project
-      aws_codebuild:
+      codebuild_project:
         name: "{{ project_name }}"
         description: Build project for testing the Ansible aws_codebuild module
         service_role: "{{ codebuild_iam_role.iam_role.arn }}"
@@ -61,7 +61,7 @@
           - output.project.resource_tags.purpose == "ansible-test"
 
     - name: idempotence check rerunning same Codebuild task
-      aws_codebuild:
+      codebuild_project:
         name: "{{ project_name }}"
         description: Build project for testing the Ansible aws_codebuild module
         service_role: "{{ codebuild_iam_role.iam_role.arn }}"
@@ -96,7 +96,7 @@
     - include_tasks: 'description.yml'
 
     - name: delete CodeBuild project
-      aws_codebuild:
+      codebuild_project:
         name: "{{ output.project.name }}"
         source:
           type: CODEPIPELINE

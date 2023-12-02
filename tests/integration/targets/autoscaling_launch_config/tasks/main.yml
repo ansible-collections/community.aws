@@ -1,9 +1,9 @@
 - name: run ec2_lc tests
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   collections:
     - amazon.aws
@@ -14,7 +14,7 @@
       include_tasks: env_setup.yml
 
     - name: Create launch configuration 1
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc1'
         image_id: '{{ ec2_ami_id }}'
         assign_public_ip: yes
@@ -28,7 +28,7 @@
       register: lc_1_create
 
     - name: Gather information about launch configuration 1
-      community.aws.ec2_lc_info:
+      community.aws.autoscaling_launch_config_info:
         name: '{{ resource_prefix }}-lc1'
       register: lc_1_info_result
 
@@ -42,7 +42,7 @@
           - lc_1_info_result.launch_configurations[0].instance_type == 't2.micro'
 
     - name: Create launch configuration 1 - Idempotency
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc1'
         image_id: '{{ ec2_ami_id }}'
         assign_public_ip: yes
@@ -61,7 +61,7 @@
           - '"autoscaling:CreateLaunchConfiguration" not in lc_1_create_idem.resource_actions'
 
     - name: Create launch configuration 2
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc2'
         image_id: '{{ ec2_ami_id }}'
         assign_public_ip: yes
@@ -75,7 +75,7 @@
       register: lc_2_create
 
     - name: Gather information about launch configuration 2
-      community.aws.ec2_lc_info:
+      community.aws.autoscaling_launch_config_info:
         name: '{{ resource_prefix }}-lc2'
       register: lc_2_info_result
 
@@ -90,7 +90,7 @@
           - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
 
     - name: Create launch configuration 2 - Idempotency
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc2'
         image_id: '{{ ec2_ami_id }}'
         assign_public_ip: yes
@@ -109,7 +109,7 @@
           - '"autoscaling:CreateLaunchConfiguration" not in lc_2_create_idem.resource_actions'
 
     - name: Create launch configuration 3 - test throughput parameter
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc3'
         image_id: '{{ ec2_ami_id }}'
         instance_type: '{{ ec2_instance_type }}'
@@ -122,7 +122,7 @@
       register: lc_3_create
 
     - name: Gather information about launch configuration 3
-      community.aws.ec2_lc_info:
+      community.aws.autoscaling_launch_config_info:
         name: '{{ resource_prefix }}-lc3'
       register: lc_3_info_result
 
@@ -137,7 +137,7 @@
           - '"autoscaling:CreateLaunchConfiguration" in lc_3_create.resource_actions'
 
     - name: Create launch configuration 3 - Idempotency
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc3'
         image_id: '{{ ec2_ami_id }}'
         instance_type: '{{ ec2_instance_type }}'
@@ -155,7 +155,7 @@
           - '"autoscaling:CreateLaunchConfiguration" not in lc_3_create_idem.resource_actions'
 
     - name: Search for the Launch Configurations that start with test resource_prefix
-      community.aws.ec2_lc_find:
+      community.aws.autoscaling_launch_config_find:
         name_regex: '{{ resource_prefix }}*'
         sort_order: descending
       register: lc_find_result
@@ -166,7 +166,7 @@
           - '"autoscaling:DescribeLaunchConfigurations" in lc_find_result.resource_actions'
 
     - name: Delete launch configuration 1
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc1'
         state: absent
       register: lc_1_delete
@@ -177,7 +177,7 @@
           - '"autoscaling:DeleteLaunchConfiguration" in lc_1_delete.resource_actions'
 
     - name: Delete launch configuration 1 - Idempotency
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc1'
         state: absent
       register: lc_1_delete_idem
@@ -188,7 +188,7 @@
           - '"autoscaling:DeleteLaunchConfiguration" not in lc_1_delete_idem.resource_actions'
 
     - name: Gather information about launch configuration 1
-      community.aws.ec2_lc_info:
+      community.aws.autoscaling_launch_config_info:
         name: '{{ resource_prefix }}-lc1'
       register: lc_1_info_result
 
@@ -198,7 +198,7 @@
           - lc_1_info_result.launch_configurations | length == 0
 
     - name: Delete launch configuration 2
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc2'
         state: absent
       register: lc_2_delete
@@ -209,7 +209,7 @@
           - '"autoscaling:DeleteLaunchConfiguration" in lc_2_delete.resource_actions'
 
     - name: Delete launch configuration 2 - Idempotency
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc2'
         state: absent
       register: lc_2_delete_idem
@@ -220,7 +220,7 @@
           - '"autoscaling:DeleteLaunchConfiguration" not in lc_2_delete_idem.resource_actions'
 
     - name: Gather information about launch configuration 2
-      community.aws.ec2_lc_info:
+      community.aws.autoscaling_launch_config_info:
         name: '{{ resource_prefix }}-lc2'
       register: lc_2_info_result
 
@@ -230,7 +230,7 @@
           - lc_2_info_result.launch_configurations | length == 0
 
     - name: Delete launch configuration 3
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc3'
         state: absent
       register: lc_3_delete
@@ -241,7 +241,7 @@
           - '"autoscaling:DeleteLaunchConfiguration" in lc_3_delete.resource_actions'
 
     - name: Delete launch configuration 3 - Idempotency
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: '{{ resource_prefix }}-lc3'
         state: absent
       register: lc_3_delete_idem
@@ -252,7 +252,7 @@
           - '"autoscaling:DeleteLaunchConfiguration" not in lc_3_delete_idem.resource_actions'
 
     - name: Gather information about launch configuration 3
-      community.aws.ec2_lc_info:
+      community.aws.autoscaling_launch_config_info:
         name: '{{ resource_prefix }}-lc2'
       register: lc_3_info_result
 

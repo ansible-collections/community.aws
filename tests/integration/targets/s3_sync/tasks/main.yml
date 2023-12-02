@@ -5,9 +5,9 @@
     - community.general
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
     # ============================================================
@@ -15,12 +15,15 @@
       s3_bucket:
         name: "{{ test_bucket }}"
         state: present
+        public_access:
+          block_public_acls: false
+        object_ownership: BucketOwnerPreferred
       register: output
 
     - assert:
         that:
           - output.changed
-          - output.name == "{{ test_bucket }}"
+          - output.name == test_bucket
           - not output.requester_pays
     # ============================================================
     - name: Prepare fixtures folder
@@ -64,7 +67,7 @@
     - assert:
         that:
           - output.changed
-          - output.name == "{{ test_bucket_2 }}"
+          - output.name == test_bucket_2
           - not output.requester_pays
 
     - name: Sync files with remote bucket using glacier storage class
@@ -110,7 +113,7 @@
     - assert:
         that:
           - output.changed
-          - output.name == "{{ test_bucket_3 }}"
+          - output.name == test_bucket_3
           - not output.requester_pays
 
     - name: Sync individual file with remote bucket
@@ -155,14 +158,14 @@
     - name: Empty all buckets before deleting
       block:
         - name: list test_bucket objects
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket }}"
             mode: list
           register: objects
           ignore_errors: true
 
         - name: remove objects from test_bucket
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket }}"
             mode: delobj
             object: "{{ obj }}"
@@ -172,14 +175,14 @@
           ignore_errors: true
 
         - name: list test_bucket_2 objects
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_2 }}"
             mode: list
           register: objects
           ignore_errors: true
 
         - name: remove objects from test_bucket_2
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_2 }}"
             mode: delobj
             object: "{{ obj }}"
@@ -189,14 +192,14 @@
           ignore_errors: true
 
         - name: list test_bucket_3 objects
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_3 }}"
             mode: list
           register: objects
           ignore_errors: true
 
         - name: remove objects from test_bucket_3
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_3 }}"
             mode: delobj
             object: "{{ obj }}"

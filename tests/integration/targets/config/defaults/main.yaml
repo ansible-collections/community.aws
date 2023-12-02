@@ -1,4 +1,5 @@
 ---
 config_s3_bucket: '{{ resource_prefix }}-config-records'
+config_kms_key: '{{ resource_prefix }}-kms'
 config_sns_name: '{{ resource_prefix }}-delivery-channel-test-topic'
 config_role_name: 'ansible-test-{{ resource_prefix }}'

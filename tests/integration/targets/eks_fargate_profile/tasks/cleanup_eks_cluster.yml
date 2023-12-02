@@ -5,7 +5,7 @@
   ignore_errors: true
 
 - name: remove EKS cluster
-  aws_eks_cluster:
+  eks_cluster:
     name: '{{ eks_cluster_name }}'
     state: absent
     wait: 'yes'
@@ -17,7 +17,7 @@
       - name: '{{ eks_cluster_name }}-workers-sg'
 
 - name: set all security group rule lists to empty to remove circular dependency
-  ec2_group:
+  ec2_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
@@ -30,7 +30,7 @@
   ignore_errors: 'yes'
 
 - name: remove security groups
-  ec2_group:
+  ec2_security_group:
     name: '{{ item.name }}'
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id }}'

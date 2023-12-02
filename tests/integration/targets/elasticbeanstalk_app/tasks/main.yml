@@ -4,15 +4,15 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
   # ============================================================
   - name: test with no parameters
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
     register: result
     ignore_errors: true
 
@@ -23,7 +23,7 @@
 
   # ============================================================
   - name: test create app
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
       app_name: "{{ app_name }}"
       description: "{{ description }}"
       state: present
@@ -36,7 +36,7 @@
 
   # ============================================================
   - name: test create when app already exists
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
       app_name: "{{ app_name }}"
       description: "{{ description }}"
       state: present
@@ -49,7 +49,7 @@
 
   # ============================================================
   - name: make an update to an existing app 
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
       app_name: "{{ app_name }}"
       description: "{{ alternate_description }}"
       state: present
@@ -62,7 +62,7 @@
 
 #   # ============================================================
 #   - name: fail deleting an app that has environments that exist
-#     aws_elasticbeanstalk_app:
+#     elasticbeanstalk_app:
 #       app_name: "non_app"
 #       state: absent
 #     register: result
@@ -75,7 +75,7 @@
 
 #   # ============================================================
 #   - name: deleting an app that has environments that exist with terminate_by_force True
-#     aws_elasticbeanstalk_app:
+#     elasticbeanstalk_app:
 #       app_name: "non_app"
 #       state: absent
 #       terminate_by_force: True
@@ -98,7 +98,7 @@
 
 #   # ============================================================
 #   - name: deleting an app that has environments that exist with terminate_by_force True
-#     aws_elasticbeanstalk_app:
+#     elasticbeanstalk_app:
 #       app_name: "non_app"
 #       state: absent
 #       terminate_by_force: True
@@ -111,7 +111,7 @@
 #
   # ============================================================
   - name: delete non existent app
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
       app_name: "non_app"
       state: absent
     register: result
@@ -125,7 +125,7 @@
 
   # ============================================================
   - name: delete existing app
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
       app_name: "{{ app_name }}"
       state: absent
     register: result
@@ -140,6 +140,6 @@
   always:
 
   - name: delete existing app
-    aws_elasticbeanstalk_app:
+    elasticbeanstalk_app:
       app_name: "{{ app_name }}"
       state: absent

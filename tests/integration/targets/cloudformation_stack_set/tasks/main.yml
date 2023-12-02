@@ -5,18 +5,18 @@
 - name: set up aws connection info
   set_fact:
     aws_connection_info: &aws_connection_info
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
     aws_secondary_connection_info: &aws_secondary_connection_info
-      aws_access_key: "{{ secondary_aws_access_key }}"
-      aws_secret_key: "{{ secondary_aws_secret_key }}"
-      security_token: "{{ secondary_security_token }}"
+      access_key: "{{ secondary_aws_access_key }}"
+      secret_key: "{{ secondary_aws_secret_key }}"
+      session_token: "{{ secondary_security_token | default(omit) }}"
       region: "{{ aws_region }}"
-  no_log: yes
+  no_log: true
 
-- name: cloudformation_stack_set tests 
+- name: cloudformation_stack_set tests
   collections:
     - amazon.aws
 

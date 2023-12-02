@@ -2,9 +2,9 @@
   - name: set up elb_target_info test prerequisites
     module_defaults:
       group/aws:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token | default(omit) }}"
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
+        session_token: "{{ security_token | default(omit) }}"
         region: "{{ aws_region }}"
     collections:
       - amazon.aws
@@ -66,7 +66,7 @@
       register: route_table
 
     - name: create testing security group
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg"
         description: a security group for ansible tests
         vpc_id: "{{ vpc.vpc.id }}"
@@ -207,9 +207,9 @@
 
     - assert:
         that:
-          - "{{ alb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
-          - "{{ nlb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
-          - "{{ idle_target_group.target_group_arn not in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
+          - "alb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
+          - "nlb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
+          - "idle_target_group.target_group_arn not in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
           - (target_facts.instance_target_groups | length) == 2
         msg: "target facts showed the target in the right target groups"
 
@@ -228,9 +228,9 @@
 
     - assert:
         that:
-          - "{{ alb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
-          - "{{ nlb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
-          - "{{ idle_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
+          - "alb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
+          - "nlb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
+          - "idle_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
           - (target_facts.instance_target_groups | length) == 3
         msg: "target facts reflected the addition of the target to the idle group"
 
@@ -242,9 +242,9 @@
 
     - assert:
         that:
-          - "{{ alb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
-          - "{{ nlb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
-          - "{{ idle_target_group.target_group_arn not in (target_facts.instance_target_groups | map(attribute='target_group_arn')) }}"
+          - "alb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
+          - "nlb_target_group.target_group_arn in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
+          - "idle_target_group.target_group_arn not in (target_facts.instance_target_groups | map(attribute='target_group_arn'))"
           - (target_facts.instance_target_groups | length) == 2
         msg: "target_facts.instance_target_groups did not gather unused target groups when variable was set"
 
@@ -407,7 +407,7 @@
       ignore_errors: true
 
     - name: remove testing security group
-      ec2_group:
+      ec2_security_group:
         state: absent
         name: "{{ resource_prefix }}-sg"
         description: a security group for ansible tests

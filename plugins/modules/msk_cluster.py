@@ -122,7 +122,15 @@ options:
             sasl_scram:
                 description: SASL/SCRAM authentication is enabled or not.
                 type: bool
-                default: False
+            sasl_iam:
+                version_added: 5.5.0
+                description: IAM authentication is enabled or not.
+                type: bool
+            unauthenticated:
+                version_added: 5.5.0
+                description: Option to explicitly turn on or off authentication
+                type: bool
+                default: True
     enhanced_monitoring:
         description: Specifies the level of monitoring for the MSK cluster.
         choices:
@@ -293,7 +301,7 @@ def find_cluster_by_name(client, module, cluster_name):
         module.fail_json_aws(e, "Failed to find kafka cluster by name")
     if cluster_list:
         if len(cluster_list) != 1:
-            module.fail_json(msg="Found more than one cluster with name '{0}'".format(cluster_name))
+            module.fail_json(msg=f"Found more than one cluster with name '{cluster_name}'")
         return cluster_list[0]
     return {}
 
@@ -332,11 +340,7 @@ def wait_for_cluster_state(client, module, arn, state="ACTIVE"):
         if current_state == state:
             return
         if time.time() - start > timeout:
-            module.fail_json(
-                msg="Timeout waiting for cluster {0} (desired state is '{1}')".format(
-                    current_state, state
-                )
-            )
+            module.fail_json(msg=f"Timeout waiting for cluster {current_state} (desired state is '{state}')")
         time.sleep(check_interval)
 
 
@@ -356,7 +360,7 @@ def prepare_create_options(module):
         "BrokerNodeGroupInfo": {
             "ClientSubnets": module.params["subnets"],
             "InstanceType": module.params["instance_type"],
-        }
+        },
     }
 
     if module.params["security_groups"] and len(module.params["security_groups"]) != 0:
@@ -364,9 +368,7 @@ def prepare_create_options(module):
 
     if module.params["ebs_volume_size"]:
         c_params["BrokerNodeGroupInfo"]["StorageInfo"] = {
-            "EbsStorageInfo": {
-                "VolumeSize": module.params.get("ebs_volume_size")
-            }
+            "EbsStorageInfo": {"VolumeSize": module.params.get("ebs_volume_size")}
         }
 
     if module.params["encryption"]:
@@ -377,18 +379,26 @@ def prepare_create_options(module):
             }
         c_params["EncryptionInfo"]["EncryptionInTransit"] = {
             "ClientBroker": module.params["encryption"]["in_transit"].get("client_broker", "TLS"),
-            "InCluster": module.params["encryption"]["in_transit"].get("in_cluster", True)
+            "InCluster": module.params["encryption"]["in_transit"].get("in_cluster", True),
         }
 
     if module.params["authentication"]:
         c_params["ClientAuthentication"] = {}
-        if module.params["authentication"].get("sasl_scram"):
-            c_params["ClientAuthentication"]["Sasl"] = {
-                "Scram": module.params["authentication"]["sasl_scram"]
-            }
+        if module.params["authentication"].get("sasl_scram") or module.params["authentication"].get("sasl_iam"):
+            sasl = {}
+            if module.params["authentication"].get("sasl_scram"):
+                sasl["Scram"] = {"Enabled": True}
+            if module.params["authentication"].get("sasl_iam"):
+                sasl["Iam"] = {"Enabled": True}
+            c_params["ClientAuthentication"]["Sasl"] = sasl
         if module.params["authentication"].get("tls_ca_arn"):
             c_params["ClientAuthentication"]["Tls"] = {
-                "CertificateAuthorityArnList": module.params["authentication"]["tls_ca_arn"]
+                "CertificateAuthorityArnList": module.params["authentication"]["tls_ca_arn"],
+                "Enabled": True,
+            }
+        if module.params["authentication"].get("unauthenticated"):
+            c_params["ClientAuthentication"] = {
+                "Unauthenticated": {"Enabled": True},
             }
 
     c_params.update(prepare_enhanced_monitoring_options(module))
@@ -409,12 +419,8 @@ def prepare_open_monitoring_options(module):
     open_monitoring = module.params["open_monitoring"] or {}
     m_params["OpenMonitoring"] = {
         "Prometheus": {
-            "JmxExporter": {
-                "EnabledInBroker": open_monitoring.get("jmx_exporter", False)
-            },
-            "NodeExporter": {
-                "EnabledInBroker": open_monitoring.get("node_exporter", False)
-            }
+            "JmxExporter": {"EnabledInBroker": open_monitoring.get("jmx_exporter", False)},
+            "NodeExporter": {"EnabledInBroker": open_monitoring.get("node_exporter", False)},
         }
     }
     return m_params
@@ -426,36 +432,26 @@ def prepare_logging_options(module):
     if logging.get("cloudwatch"):
         l_params["CloudWatchLogs"] = {
             "Enabled": module.params["logging"]["cloudwatch"].get("enabled"),
-            "LogGroup": module.params["logging"]["cloudwatch"].get("log_group")
+            "LogGroup": module.params["logging"]["cloudwatch"].get("log_group"),
         }
     else:
-        l_params["CloudWatchLogs"] = {
-            "Enabled": False
-        }
+        l_params["CloudWatchLogs"] = {"Enabled": False}
     if logging.get("firehose"):
         l_params["Firehose"] = {
             "Enabled": module.params["logging"]["firehose"].get("enabled"),
-            "DeliveryStream": module.params["logging"]["firehose"].get("delivery_stream")
+            "DeliveryStream": module.params["logging"]["firehose"].get("delivery_stream"),
         }
     else:
-        l_params["Firehose"] = {
-            "Enabled": False
-        }
+        l_params["Firehose"] = {"Enabled": False}
     if logging.get("s3"):
         l_params["S3"] = {
             "Enabled": module.params["logging"]["s3"].get("enabled"),
             "Bucket": module.params["logging"]["s3"].get("bucket"),
-            "Prefix": module.params["logging"]["s3"].get("prefix")
+            "Prefix": module.params["logging"]["s3"].get("prefix"),
         }
     else:
-        l_params["S3"] = {
-            "Enabled": False
-        }
-    return {
-        "LoggingInfo": {
-            "BrokerLogs": l_params
-        }
-    }
+        l_params["S3"] = {"Enabled": False}
+    return {"LoggingInfo": {"BrokerLogs": l_params}}
 
 
 def create_or_update_cluster(client, module):
@@ -469,7 +465,6 @@ def create_or_update_cluster(client, module):
     cluster = find_cluster_by_name(client, module, module.params["name"])
 
     if not cluster:
-
         changed = True
 
         if module.check_mode:
@@ -489,7 +484,6 @@ def create_or_update_cluster(client, module):
             wait_for_cluster_state(client, module, arn=response["ClusterArn"], state="ACTIVE")
 
     else:
-
         response["ClusterArn"] = cluster["ClusterArn"]
         response["changes"] = {}
 
@@ -498,9 +492,7 @@ def create_or_update_cluster(client, module):
             "broker_count": {
                 "current_value": cluster["NumberOfBrokerNodes"],
                 "target_value": module.params.get("nodes"),
-                "update_params": {
-                    "TargetNumberOfBrokerNodes": module.params.get("nodes")
-                }
+                "update_params": {"TargetNumberOfBrokerNodes": module.params.get("nodes")},
             },
             "broker_storage": {
                 "current_value": cluster["BrokerNodeGroupInfo"]["StorageInfo"]["EbsStorageInfo"]["VolumeSize"],
@@ -509,14 +501,12 @@ def create_or_update_cluster(client, module):
                     "TargetBrokerEBSVolumeInfo": [
                         {"KafkaBrokerNodeId": "All", "VolumeSizeGB": module.params.get("ebs_volume_size")}
                     ]
-                }
+                },
             },
             "broker_type": {
                 "current_value": cluster["BrokerNodeGroupInfo"]["InstanceType"],
                 "target_value": module.params.get("instance_type"),
-                "update_params": {
-                    "TargetInstanceType": module.params.get("instance_type")
-                }
+                "update_params": {"TargetInstanceType": module.params.get("instance_type")},
             },
             "cluster_configuration": {
                 "current_value": {
@@ -530,51 +520,44 @@ def create_or_update_cluster(client, module):
                 "update_params": {
                     "ConfigurationInfo": {
                         "Arn": module.params.get("configuration_arn"),
-                        "Revision": module.params.get("configuration_revision")
+                        "Revision": module.params.get("configuration_revision"),
                     }
-                }
+                },
             },
             "cluster_kafka_version": {
                 "current_value": cluster["CurrentBrokerSoftwareInfo"]["KafkaVersion"],
                 "target_value": module.params.get("version"),
-                "update_params": {
-                    "TargetKafkaVersion": module.params.get("version")
-                }
+                "update_params": {"TargetKafkaVersion": module.params.get("version")},
             },
             "enhanced_monitoring": {
                 "current_value": cluster["EnhancedMonitoring"],
                 "target_value": module.params.get("enhanced_monitoring"),
                 "update_method": "update_monitoring",
-                "update_params": prepare_enhanced_monitoring_options(module)
+                "update_params": prepare_enhanced_monitoring_options(module),
             },
             "open_monitoring": {
-                "current_value": {
-                    "OpenMonitoring": cluster["OpenMonitoring"]
-                },
+                "current_value": {"OpenMonitoring": cluster["OpenMonitoring"]},
                 "target_value": prepare_open_monitoring_options(module),
                 "update_method": "update_monitoring",
-                "update_params": prepare_open_monitoring_options(module)
+                "update_params": prepare_open_monitoring_options(module),
             },
             "logging": {
-                "current_value": {
-                    "LoggingInfo": cluster["LoggingInfo"]
-                },
+                "current_value": {"LoggingInfo": cluster["LoggingInfo"]},
                 "target_value": prepare_logging_options(module),
                 "update_method": "update_monitoring",
-                "update_params": prepare_logging_options(module)
-            }
+                "update_params": prepare_logging_options(module),
+            },
         }
 
         for method, options in msk_cluster_changes.items():
-
-            if 'botocore_version' in options:
+            if "botocore_version" in options:
                 if not module.botocore_at_least(options["botocore_version"]):
                     continue
 
             try:
                 update_method = getattr(client, options.get("update_method", "update_" + method))
             except AttributeError as e:
-                module.fail_json_aws(e, "There is no update method 'update_{0}'".format(method))
+                module.fail_json_aws(e, f"There is no update method 'update_{method}'")
 
             if options["current_value"] != options["target_value"]:
                 changed = True
@@ -590,23 +573,17 @@ def create_or_update_cluster(client, module):
                         wait_for_cluster_state(client, module, arn=cluster["ClusterArn"], state="ACTIVE")
                     else:
                         module.fail_json(
-                            msg="Cluster can be updated only in active state, current state is '{0}'. check cluster state or use wait option".format(
-                                state
-                            )
+                            msg=f"Cluster can be updated only in active state, current state is '{state}'. check cluster state or use wait option"
                         )
                 try:
                     response["changes"][method] = update_method(
-                        ClusterArn=cluster["ClusterArn"],
-                        CurrentVersion=version,
-                        **options["update_params"]
+                        ClusterArn=cluster["ClusterArn"], CurrentVersion=version, **options["update_params"]
                     )
                 except (
                     botocore.exceptions.BotoCoreError,
                     botocore.exceptions.ClientError,
                 ) as e:
-                    module.fail_json_aws(
-                        e, "Failed to update cluster via 'update_{0}'".format(method)
-                    )
+                    module.fail_json_aws(e, f"Failed to update cluster via 'update_{method}'")
 
                 if module.params["wait"]:
                     wait_for_cluster_state(client, module, arn=cluster["ClusterArn"], state="ACTIVE")
@@ -617,15 +594,15 @@ def create_or_update_cluster(client, module):
 
 
 def update_cluster_tags(client, module, arn):
-    new_tags = module.params.get('tags')
+    new_tags = module.params.get("tags")
     if new_tags is None:
         return False
-    purge_tags = module.params.get('purge_tags')
+    purge_tags = module.params.get("purge_tags")
 
     try:
-        existing_tags = client.list_tags_for_resource(ResourceArn=arn, aws_retry=True)['Tags']
+        existing_tags = client.list_tags_for_resource(ResourceArn=arn, aws_retry=True)["Tags"]
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Unable to retrieve tags for cluster '{0}'".format(arn))
+        module.fail_json_aws(e, msg=f"Unable to retrieve tags for cluster '{arn}'")
 
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags, purge_tags=purge_tags)
 
@@ -636,14 +613,13 @@ def update_cluster_tags(client, module, arn):
             if tags_to_add:
                 client.tag_resource(ResourceArn=arn, Tags=tags_to_add, aws_retry=True)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Unable to set tags for cluster '{0}'".format(arn))
+            module.fail_json_aws(e, msg=f"Unable to set tags for cluster '{arn}'")
 
     changed = bool(tags_to_add) or bool(tags_to_remove)
     return changed
 
 
 def delete_cluster(client, module):
-
     cluster = find_cluster_by_name(client, module, module.params["name"])
 
     if module.check_mode:
@@ -672,7 +648,6 @@ def delete_cluster(client, module):
 
 
 def main():
-
     module_args = dict(
         name=dict(type="str", required=True),
         state=dict(type="str", choices=["present", "absent"], default="present"),
@@ -701,10 +676,7 @@ def main():
                     type="dict",
                     options=dict(
                         in_cluster=dict(type="bool", default=True),
-                        client_broker=dict(
-                            choices=["TLS", "TLS_PLAINTEXT", "PLAINTEXT"],
-                            default="TLS"
-                        ),
+                        client_broker=dict(choices=["TLS", "TLS_PLAINTEXT", "PLAINTEXT"], default="TLS"),
                     ),
                 ),
             ),
@@ -713,7 +685,9 @@ def main():
             type="dict",
             options=dict(
                 tls_ca_arn=dict(type="list", elements="str", required=False),
-                sasl_scram=dict(type="bool", default=False),
+                sasl_scram=dict(type="bool", required=False),
+                sasl_iam=dict(type="bool", required=False),
+                unauthenticated=dict(type="bool", default=True, required=False),
             ),
         ),
         enhanced_monitoring=dict(
@@ -762,30 +736,28 @@ def main():
         ),
         wait=dict(type="bool", default=False),
         wait_timeout=dict(type="int", default=3600),
-        tags=dict(type='dict', aliases=['resource_tags']),
-        purge_tags=dict(type='bool', default=True),
+        tags=dict(type="dict", aliases=["resource_tags"]),
+        purge_tags=dict(type="bool", default=True),
     )
 
     module = AnsibleAWSModule(
         argument_spec=module_args,
-        required_if=[['state', 'present', ['version', 'configuration_arn', 'configuration_revision', 'subnets']]],
-        supports_check_mode=True
+        required_if=[["state", "present", ["version", "configuration_arn", "configuration_revision", "subnets"]]],
+        supports_check_mode=True,
     )
 
     client = module.client("kafka", retry_decorator=AWSRetry.jittered_backoff())
 
     if module.params["state"] == "present":
         if len(module.params["subnets"]) < 2:
-            module.fail_json(
-                msg="At least two client subnets should be provided"
-            )
+            module.fail_json(msg="At least two client subnets should be provided")
         if int(module.params["nodes"]) % int(len(module.params["subnets"])) != 0:
             module.fail_json(
                 msg="The number of broker nodes must be a multiple of availability zones in the subnets parameter"
             )
         if len(module.params["name"]) > 64:
             module.fail_json(
-                module.fail_json(msg='Cluster name "{0}" exceeds 64 character limit'.format(module.params["name"]))
+                module.fail_json(msg=f"Cluster name \"{module.params['name']}\" exceeds 64 character limit")
             )
         changed, response = create_or_update_cluster(client, module)
     elif module.params["state"] == "absent":
@@ -795,9 +767,7 @@ def main():
     bootstrap_broker_string = {}
     if response.get("ClusterArn") and module.params["state"] == "present":
         try:
-            cluster_info = client.describe_cluster(ClusterArn=response["ClusterArn"], aws_retry=True)[
-                "ClusterInfo"
-            ]
+            cluster_info = client.describe_cluster(ClusterArn=response["ClusterArn"], aws_retry=True)["ClusterInfo"]
             if cluster_info.get("State") == "ACTIVE":
                 brokers = client.get_bootstrap_brokers(ClusterArn=response["ClusterArn"], aws_retry=True)
                 if brokers.get("BootstrapBrokerString"):
@@ -810,9 +780,7 @@ def main():
         ) as e:
             module.fail_json_aws(
                 e,
-                "Can not obtain information about cluster {0}".format(
-                    response["ClusterArn"]
-                ),
+                f"Can not obtain information about cluster {response['ClusterArn']}",
             )
 
     module.exit_json(

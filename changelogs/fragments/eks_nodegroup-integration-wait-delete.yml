@@ -1,0 +1,4 @@
+trivial:
+- eks_nodegroup - update integration test to wait for both nodegroups to be deleted.
+minor_changes:
+- eks_nodegroup - ensure wait also waits for deletion to complete when ``wait==True`` (https://github.com/ansible-collections/community.aws/pull/1994).

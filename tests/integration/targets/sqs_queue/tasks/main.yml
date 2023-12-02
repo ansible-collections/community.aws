@@ -3,9 +3,9 @@
 
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
 
   block:
@@ -19,7 +19,7 @@
       assert:
         that:
           - create_result.changed
-          - create_result.region == "{{ aws_region }}"
+          - create_result.region == aws_region
 
     always:
     - name: Test deleting SQS queue

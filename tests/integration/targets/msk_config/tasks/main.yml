@@ -2,15 +2,15 @@
 - name: tests for community.aws.aws_msk_config
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   collections:
     - amazon.aws
   block:
     - name: create msk configuration (check mode)
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions: "{{ msk_kafka_versions }}"
@@ -24,7 +24,7 @@
           - msk_config is changed
 
     - name: create msk configuration
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions: "{{ msk_kafka_versions }}"
@@ -37,7 +37,7 @@
           - msk_config is changed
 
     - name: create msk configuration (idempotency)
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions: "{{ msk_kafka_versions }}"
@@ -53,12 +53,12 @@
       assert:
         that:
           - msk_config.revision == 1
-          - "msk_config.arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
+          - "msk_config.arn.startswith('arn:aws:kafka:' ~ aws_region ~ ':')"
           - "'auto.create.topics.enable=True' in msk_config.server_properties"
           - "'zookeeper.session.timeout.ms=18000' in msk_config.server_properties"
 
     - name: update msk configuration (check mode)
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions: "{{ msk_kafka_versions }}"
@@ -72,7 +72,7 @@
           - msk_config is changed
 
     - name: update msk configuration
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions: "{{ msk_kafka_versions }}"
@@ -93,7 +93,7 @@
           - "'zookeeper.session.timeout.ms=36000' in msk_config.server_properties"
 
     - name: update msk configuration (idempotency)
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "present"
         kafka_versions: "{{ msk_kafka_versions }}"
@@ -106,7 +106,7 @@
           - msk_config is not changed
 
     - name: delete msk configuration (check mode)
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "absent"
       check_mode: yes
@@ -118,7 +118,7 @@
           - msk_config is changed
 
     - name: delete msk configuration
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "absent"
       register: msk_config
@@ -129,7 +129,7 @@
           - msk_config is changed
 
     - name: delete msk configuration (idempotency)
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: "absent"
       register: msk_config
@@ -142,7 +142,7 @@
   always:
 
     - name: remove msk configuration
-      aws_msk_config:
+      msk_config:
         name: "{{ msk_config_name }}"
         state: absent
       ignore_errors: yes

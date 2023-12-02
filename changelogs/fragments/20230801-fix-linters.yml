@@ -1,0 +1,3 @@
+---
+trivial:
+  - Replace use of ``type`` by ``isinstance`` to test variable type.

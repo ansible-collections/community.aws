@@ -1,9 +1,9 @@
 - module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key | default(omit) }}'
-      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
-      security_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
   collections:
     - amazon.aws
   block:
@@ -73,7 +73,7 @@
       assert:
         that:
           - taglist.changed == true
-          - taglist.added_tags.Name == "{{ resource_prefix }}"
+          - taglist.added_tags.Name == resource_prefix
           - taglist.added_tags.another == "foobar"
 
     - name: cluster tags - Add tags to cluster again
@@ -162,8 +162,8 @@
       assert:
         that:
           - taglist.changed == true
-          - taglist.added_tags.Name == "service-{{ resource_prefix }}"
-          - taglist.tags.Name == "service-{{ resource_prefix }}"
+          - "taglist.added_tags.Name == 'service-' ~ resource_prefix"
+          - "taglist.tags.Name == 'service-' ~ resource_prefix"
 
     - name: services tags - Add name tag again - see no change
       ecs_tag:
@@ -179,7 +179,7 @@
       assert:
         that:
           - taglist.changed == false
-          - taglist.tags.Name == "service-{{ resource_prefix }}"
+          - "taglist.tags.Name == 'service-' ~ resource_prefix"
 
     - name: service tags - remove service tags
       ecs_tag:
@@ -215,8 +215,8 @@
       assert:
         that:
           - taglist.changed == true
-          - taglist.added_tags.Name == "task_definition-{{ resource_prefix }}"
-          - taglist.tags.Name == "task_definition-{{ resource_prefix }}"
+          - "taglist.added_tags.Name == 'task_definition-' ~ resource_prefix"
+          - "taglist.tags.Name == 'task_definition-' ~ resource_prefix"
 
     - name: task_definition tags - Add name tag again - see no change
       ecs_tag:
@@ -232,7 +232,7 @@
       assert:
         that:
           - taglist.changed == false
-          - taglist.tags.Name == "task_definition-{{ resource_prefix }}"
+          - "taglist.tags.Name == 'task_definition-' ~ resource_prefix"
 
     - name: task_definition tags - remove task_definition tags
       ecs_tag:

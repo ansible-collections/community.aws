@@ -36,7 +36,6 @@ options:
       - When I(scope='account') returns a description of all rule groups in the account.
       - When I(scope='managed') returns a list of available managed rule group arns.
       - By default searches only at the account scope.
-      - I(scope='managed') requires botocore>=1.23.23.
     required: false
     choices: ['managed', 'account']
     type: str
@@ -393,35 +392,29 @@ from ansible_collections.community.aws.plugins.module_utils.networkfirewall impo
 
 
 def main():
-
     argument_spec = dict(
-        name=dict(type='str', required=False),
-        rule_type=dict(type='str', required=False, aliases=['type'], choices=['stateless', 'stateful']),
-        arn=dict(type='str', required=False),
-        scope=dict(type='str', required=False, choices=['managed', 'account']),
+        name=dict(type="str", required=False),
+        rule_type=dict(type="str", required=False, aliases=["type"], choices=["stateless", "stateful"]),
+        arn=dict(type="str", required=False),
+        scope=dict(type="str", required=False, choices=["managed", "account"]),
     )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
-            ('arn', 'name',),
-            ('arn', 'rule_type'),
+            ["arn", "name"],
+            ["arn", "rule_type"],
         ],
         required_together=[
-            ('name', 'rule_type'),
-        ]
+            ["name", "rule_type"],
+        ],
     )
 
-    module.require_botocore_at_least('1.19.20')
-
-    arn = module.params.get('arn')
-    name = module.params.get('name')
-    rule_type = module.params.get('rule_type')
-    scope = module.params.get('scope')
-
-    if module.params.get('scope') == 'managed':
-        module.require_botocore_at_least('1.23.23', reason='to list managed rules')
+    arn = module.params.get("arn")
+    name = module.params.get("name")
+    rule_type = module.params.get("rule_type")
+    scope = module.params.get("scope")
 
     manager = NetworkFirewallRuleManager(module, name=name, rule_type=rule_type)
 
@@ -430,18 +423,18 @@ def main():
     if name or arn:
         rule = manager.get_rule_group(name=name, rule_type=rule_type, arn=arn)
         if rule:
-            results['rule_groups'] = [rule]
+            results["rule_groups"] = [rule]
         else:
-            results['rule_groups'] = []
+            results["rule_groups"] = []
     else:
         rule_list = manager.list(scope=scope)
-        results['rule_list'] = rule_list
-        if scope != 'managed':
+        results["rule_list"] = rule_list
+        if scope != "managed":
             rules = [manager.get_rule_group(arn=r) for r in rule_list]
-            results['rule_groups'] = rules
+            results["rule_groups"] = rules
 
     module.exit_json(**results)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

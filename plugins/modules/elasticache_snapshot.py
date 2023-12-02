@@ -49,8 +49,7 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-# Note: None of these examples set aws_access_key, aws_secret_key, or region.
-# It is assumed that their matching environment variables are set.
+# Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: 'Create a snapshot'
   community.aws.elasticache_snapshot:
@@ -122,13 +121,13 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 
 def create(module, connection, replication_id, cluster_id, name):
-    """ Create an ElastiCache backup. """
+    """Create an ElastiCache backup."""
     try:
-        response = connection.create_snapshot(ReplicationGroupId=replication_id,
-                                              CacheClusterId=cluster_id,
-                                              SnapshotName=name)
+        response = connection.create_snapshot(
+            ReplicationGroupId=replication_id, CacheClusterId=cluster_id, SnapshotName=name
+        )
         changed = True
-    except is_boto3_error_code('SnapshotAlreadyExistsFault'):
+    except is_boto3_error_code("SnapshotAlreadyExistsFault"):
         response = {}
         changed = False
     except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
@@ -137,11 +136,9 @@ def create(module, connection, replication_id, cluster_id, name):
 
 
 def copy(module, connection, name, target, bucket):
-    """ Copy an ElastiCache backup. """
+    """Copy an ElastiCache backup."""
     try:
-        response = connection.copy_snapshot(SourceSnapshotName=name,
-                                            TargetSnapshotName=target,
-                                            TargetBucket=bucket)
+        response = connection.copy_snapshot(SourceSnapshotName=name, TargetSnapshotName=target, TargetBucket=bucket)
         changed = True
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to copy the snapshot.")
@@ -149,16 +146,20 @@ def copy(module, connection, name, target, bucket):
 
 
 def delete(module, connection, name):
-    """ Delete an ElastiCache backup. """
+    """Delete an ElastiCache backup."""
     try:
         response = connection.delete_snapshot(SnapshotName=name)
         changed = True
-    except is_boto3_error_code('SnapshotNotFoundFault'):
+    except is_boto3_error_code("SnapshotNotFoundFault"):
         response = {}
         changed = False
-    except is_boto3_error_code('InvalidSnapshotState'):  # pylint: disable=duplicate-except
-        module.fail_json(msg="Error: InvalidSnapshotState. The snapshot is not in an available state or failed state to allow deletion."
-                         "You may need to wait a few minutes.")
+    except is_boto3_error_code("InvalidSnapshotState"):  # pylint: disable=duplicate-except
+        module.fail_json(
+            msg=(
+                "Error: InvalidSnapshotState. The snapshot is not in an available state or failed state to allow"
+                " deletion.You may need to wait a few minutes."
+            )
+        )
     except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to delete the snapshot.")
     return response, changed
@@ -166,38 +167,38 @@ def delete(module, connection, name):
 
 def main():
     argument_spec = dict(
-        name=dict(required=True, type='str'),
-        state=dict(required=True, type='str', choices=['present', 'absent', 'copy']),
-        replication_id=dict(type='str'),
-        cluster_id=dict(type='str'),
-        target=dict(type='str'),
-        bucket=dict(type='str'),
+        name=dict(required=True, type="str"),
+        state=dict(required=True, type="str", choices=["present", "absent", "copy"]),
+        replication_id=dict(type="str"),
+        cluster_id=dict(type="str"),
+        target=dict(type="str"),
+        bucket=dict(type="str"),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    name = module.params.get('name')
-    state = module.params.get('state')
-    replication_id = module.params.get('replication_id')
-    cluster_id = module.params.get('cluster_id')
-    target = module.params.get('target')
-    bucket = module.params.get('bucket')
+    name = module.params.get("name")
+    state = module.params.get("state")
+    replication_id = module.params.get("replication_id")
+    cluster_id = module.params.get("cluster_id")
+    target = module.params.get("target")
+    bucket = module.params.get("bucket")
 
     try:
-        connection = module.client('elasticache')
+        connection = module.client("elasticache")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg='Failed to connect to AWS')
+        module.fail_json_aws(e, msg="Failed to connect to AWS")
 
     changed = False
     response = {}
 
-    if state == 'present':
+    if state == "present":
         if not all((replication_id, cluster_id)):
             module.fail_json(msg="The state 'present' requires options: 'replication_id' and 'cluster_id'")
         response, changed = create(module, connection, replication_id, cluster_id, name)
-    elif state == 'absent':
+    elif state == "absent":
         response, changed = delete(module, connection, name)
-    elif state == 'copy':
+    elif state == "copy":
         if not all((target, bucket)):
             module.fail_json(msg="The state 'copy' requires options: 'target' and 'bucket'.")
         response, changed = copy(module, connection, name, target, bucket)
@@ -207,5 +208,5 @@ def main():
     module.exit_json(**facts_result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

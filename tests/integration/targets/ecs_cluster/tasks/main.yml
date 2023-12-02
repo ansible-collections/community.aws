@@ -4,15 +4,15 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
 
   block:
-    - include: 01_create_requirements.yml
-    - include: 10_ecs_cluster.yml
-    - include: 20_ecs_service.yml
+    - include_tasks: 01_create_requirements.yml
+    - include_tasks: 10_ecs_cluster.yml
+    - include_tasks: 20_ecs_service.yml
 
   always:
-    - include: 99_terminate_everything.yml
+    - include_tasks: 99_terminate_everything.yml

@@ -3,9 +3,9 @@
 - name: Integration testing for the elasticache module
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   collections:
     - amazon.aws
@@ -60,11 +60,11 @@
         that:
           - elasticache_redis is changed
           - elasticache_redis.elasticache.data is defined
-          - elasticache_redis.elasticache.name == "{{ elasticache_redis_test_name }}"
-          - elasticache_redis.elasticache.data.CacheSubnetGroupName == "{{ elasticache_subnet_group_name }}"
+          - elasticache_redis.elasticache.name == elasticache_redis_test_name
+          - elasticache_redis.elasticache.data.CacheSubnetGroupName == elasticache_subnet_group_name
 
     - name: Add security group for Redis access in Elasticache
-      ec2_group:
+      ec2_security_group:
         name: "{{ elasticache_redis_sg_name }}"
         description: Allow access to Elasticache Redis for testing EC module
         vpc_id: "{{ elasticache_vpc.vpc.id }}"
@@ -186,7 +186,7 @@
         state: absent
 
     - name: Make sure Redis Security Group is deleted again
-      ec2_group:
+      ec2_security_group:
         name: "{{ elasticache_redis_sg_name }}"
         state: absent
 

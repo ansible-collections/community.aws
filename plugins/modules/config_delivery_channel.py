@@ -36,6 +36,10 @@ options:
     description:
       - The prefix for the specified Amazon S3 bucket.
     type: str
+  kms_key_arn:
+    description:
+      - The ARN of a KMS key used to encrypt objects delivered by Config. The key must belong to the same region as the destination S3 bucket.
+    type: str
   sns_topic_arn:
     description:
       - The Amazon Resource Name (ARN) of the Amazon SNS topic to which AWS Config sends notifications about configuration changes.
@@ -52,11 +56,20 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-- name: Create Delivery Channel for AWS Config
+- name: Create a delivery channel for AWS Config
   community.aws.config_delivery_channel:
     name: test_delivery_channel
     state: present
     s3_bucket: 'test_aws_config_bucket'
+    sns_topic_arn: 'arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no'
+    delivery_frequency: 'Twelve_Hours'
+
+- name: Create a delivery channel with encrypted objects
+  community.aws.config_delivery_channel:
+    name: test_delivery_channel
+    state: present
+    s3_bucket: 'test_aws_config_bucket'
+    kms_key_arn: 'arn:aws:kms:us-east-1:123456789012:key/160f41cb-e660-4fa0-8bf6-976f53bf7851'
     sns_topic_arn: 'arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no'
     delivery_frequency: 'Twelve_Hours'
 """
@@ -76,24 +89,26 @@ from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
 # this waits for an IAM role to become fully available, at the cost of
 # taking a long time to fail when the IAM role/policy really is invalid
 retry_unavailable_iam_on_put_delivery = AWSRetry.jittered_backoff(
-    catch_extra_error_codes=['InsufficientDeliveryPolicyException'],
+    catch_extra_error_codes=["InsufficientDeliveryPolicyException"],
 )
 
 
 def resource_exists(client, module, params):
     try:
         channel = client.describe_delivery_channels(
-            DeliveryChannelNames=[params['name']],
+            DeliveryChannelNames=[params["name"]],
             aws_retry=True,
         )
-        return channel['DeliveryChannels'][0]
-    except is_boto3_error_code('NoSuchDeliveryChannelException'):
+        return channel["DeliveryChannels"][0]
+    except is_boto3_error_code("NoSuchDeliveryChannelException"):
         return
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+    except (
+        botocore.exceptions.ClientError,
+        botocore.exceptions.BotoCoreError,
+    ) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
 
@@ -104,49 +119,63 @@ def create_resource(client, module, params, result):
         )(
             DeliveryChannel=params,
         )
-        result['changed'] = True
-        result['channel'] = camel_dict_to_snake_dict(resource_exists(client, module, params))
+        result["changed"] = True
+        result["channel"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
         return result
-    except is_boto3_error_code('InvalidS3KeyPrefixException') as e:
-        module.fail_json_aws(e, msg="The `s3_prefix` parameter was invalid. Try '/' for no prefix")
-    except is_boto3_error_code('InsufficientDeliveryPolicyException') as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="The `s3_prefix` or `s3_bucket` parameter is invalid. "
-                             "Make sure the bucket exists and is available")
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't create AWS Config delivery channel")
+    except is_boto3_error_code("InvalidS3KeyPrefixException") as e:
+        module.fail_json_aws(
+            e,
+            msg="The `s3_prefix` parameter was invalid. Try '/' for no prefix",
+        )
+    except is_boto3_error_code("InsufficientDeliveryPolicyException") as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(
+            e,
+            msg="The `s3_prefix` or `s3_bucket` parameter is invalid.  Make sure the bucket exists and is available",
+        )
+    except (
+        botocore.exceptions.ClientError,
+        botocore.exceptions.BotoCoreError,
+    ) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(
+            e,
+            msg="Couldn't create AWS Config delivery channel",
+        )
 
 
 def update_resource(client, module, params, result):
     current_params = client.describe_delivery_channels(
-        DeliveryChannelNames=[params['name']],
+        DeliveryChannelNames=[params["name"]],
         aws_retry=True,
     )
 
-    if params != current_params['DeliveryChannels'][0]:
+    if params != current_params["DeliveryChannels"][0]:
         try:
             retry_unavailable_iam_on_put_delivery(
                 client.put_delivery_channel,
             )(
                 DeliveryChannel=params,
             )
-            result['changed'] = True
-            result['channel'] = camel_dict_to_snake_dict(resource_exists(client, module, params))
+            result["changed"] = True
+            result["channel"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
             return result
-        except is_boto3_error_code('InvalidS3KeyPrefixException') as e:
+        except is_boto3_error_code("InvalidS3KeyPrefixException") as e:
             module.fail_json_aws(e, msg="The `s3_prefix` parameter was invalid. Try '/' for no prefix")
-        except is_boto3_error_code('InsufficientDeliveryPolicyException') as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="The `s3_prefix` or `s3_bucket` parameter is invalid. "
-                                 "Make sure the bucket exists and is available")
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        except is_boto3_error_code("InsufficientDeliveryPolicyException") as e:  # pylint: disable=duplicate-except
+            module.fail_json_aws(
+                e,
+                msg="The `s3_prefix` or `s3_bucket` parameter is invalid. Make sure the bucket exists and is available",
+            )
+        except (
+            botocore.exceptions.ClientError,
+            botocore.exceptions.BotoCoreError,
+        ) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Couldn't create AWS Config delivery channel")
 
 
 def delete_resource(client, module, params, result):
     try:
-        response = client.delete_delivery_channel(
-            DeliveryChannelName=params['name']
-        )
-        result['changed'] = True
+        response = client.delete_delivery_channel(DeliveryChannelName=params["name"])
+        result["changed"] = True
         return result
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't delete AWS Config delivery channel")
@@ -155,62 +184,61 @@ def delete_resource(client, module, params, result):
 def main():
     module = AnsibleAWSModule(
         argument_spec={
-            'name': dict(type='str', required=True),
-            'state': dict(type='str', choices=['present', 'absent'], default='present'),
-            's3_bucket': dict(type='str', required=True),
-            's3_prefix': dict(type='str'),
-            'sns_topic_arn': dict(type='str'),
-            'delivery_frequency': dict(
-                type='str',
+            "name": dict(type="str", required=True),
+            "state": dict(type="str", choices=["present", "absent"], default="present"),
+            "s3_bucket": dict(type="str", required=True),
+            "s3_prefix": dict(type="str"),
+            "kms_key_arn": dict(type="str", no_log=True),
+            "sns_topic_arn": dict(type="str"),
+            "delivery_frequency": dict(
+                type="str",
                 choices=[
-                    'One_Hour',
-                    'Three_Hours',
-                    'Six_Hours',
-                    'Twelve_Hours',
-                    'TwentyFour_Hours'
-                ]
+                    "One_Hour",
+                    "Three_Hours",
+                    "Six_Hours",
+                    "Twelve_Hours",
+                    "TwentyFour_Hours",
+                ],
             ),
         },
         supports_check_mode=False,
     )
 
-    result = {
-        'changed': False
-    }
+    result = {"changed": False}
 
-    name = module.params.get('name')
-    state = module.params.get('state')
+    name = module.params.get("name")
+    state = module.params.get("state")
 
     params = {}
     if name:
-        params['name'] = name
-    if module.params.get('s3_bucket'):
-        params['s3BucketName'] = module.params.get('s3_bucket')
-    if module.params.get('s3_prefix'):
-        params['s3KeyPrefix'] = module.params.get('s3_prefix')
-    if module.params.get('sns_topic_arn'):
-        params['snsTopicARN'] = module.params.get('sns_topic_arn')
-    if module.params.get('delivery_frequency'):
-        params['configSnapshotDeliveryProperties'] = {
-            'deliveryFrequency': module.params.get('delivery_frequency')
-        }
+        params["name"] = name
+    if module.params.get("s3_bucket"):
+        params["s3BucketName"] = module.params.get("s3_bucket")
+    if module.params.get("s3_prefix"):
+        params["s3KeyPrefix"] = module.params.get("s3_prefix")
+    if module.params.get("kms_key_arn"):
+        params["s3KmsKeyArn"] = module.params.get("kms_key_arn")
+    if module.params.get("sns_topic_arn"):
+        params["snsTopicARN"] = module.params.get("sns_topic_arn")
+    if module.params.get("delivery_frequency"):
+        params["configSnapshotDeliveryProperties"] = {"deliveryFrequency": module.params.get("delivery_frequency")}
 
-    client = module.client('config', retry_decorator=AWSRetry.jittered_backoff())
+    client = module.client("config", retry_decorator=AWSRetry.jittered_backoff())
 
     resource_status = resource_exists(client, module, params)
 
-    if state == 'present':
+    if state == "present":
         if not resource_status:
             create_resource(client, module, params, result)
         if resource_status:
             update_resource(client, module, params, result)
 
-    if state == 'absent':
+    if state == "absent":
         if resource_status:
             delete_resource(client, module, params, result)
 
     module.exit_json(**result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

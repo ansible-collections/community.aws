@@ -3,9 +3,9 @@
 - name: 'Setup AWS Module Defaults'
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
     kinesis_stream:
       # Number of shards is mandatory when state=present
@@ -23,13 +23,13 @@
     # Note: Because we're not a producer / consumer we don't actually need
     # access to the keys
     - name: 'Create KMS key 1'
-      aws_kms:
+      kms_key:
         alias: '{{ kms_cmk_alias_1 }}'
         state: present
         enabled: yes
       register: create_kms_1
     - name: 'Create KMS key 2'
-      aws_kms:
+      kms_key:
         alias: '{{ kms_cmk_alias_2 }}'
         state: present
         enabled: yes
@@ -680,7 +680,7 @@
     block:
     - name: 'Delete the KMS keys'
       ignore_errors: yes
-      aws_kms:
+      kms_key:
         state: absent
         alias: '{{ item }}'
       loop:

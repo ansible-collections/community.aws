@@ -23,9 +23,6 @@
         rule_order: strict
       register: strict_groups
       loop: '{{ range(1,4,1) | list }}'
-      # Setting rule order requires botocore>=1.23.23
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - debug:
         var: default_groups

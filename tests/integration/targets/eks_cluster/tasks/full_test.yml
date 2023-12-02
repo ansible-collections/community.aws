@@ -4,12 +4,12 @@
     # If us-west-1 does become supported, change this test to use an unsupported region
     # or if all regions are supported, delete this test
     - name: attempt to use eks in unsupported region
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         state: absent
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token }}"
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
+        session_token: "{{ security_token | default(omit) }}"
         region: us-west-1
       register: aws_eks_unsupported_region
       ignore_errors: yes
@@ -21,7 +21,7 @@
           - '"msg" in aws_eks_unsupported_region'
 
     - name: delete an as yet non-existent EKS cluster
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         state: absent
       register: aws_eks_delete_non_existent
@@ -64,7 +64,7 @@
         - "{{ eks_subnets }}"
 
     - name: create security groups to use for EKS
-      ec2_group:
+      ec2_security_group:
         name: "{{ item.name }}"
         description: "{{ item.description }}"
         state: present
@@ -75,7 +75,7 @@
       register: setup_security_groups
 
     - name: create EKS cluster
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
@@ -93,7 +93,7 @@
           - eks_create.tags.another == "foobar"
 
     - name: create EKS cluster with same details but wait for it to become active
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
@@ -113,7 +113,7 @@
           - eks_create.endpoint != ""
 
     - name: create EKS cluster with same details but using SG ids
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ setup_security_groups.results | map(attribute='group_id') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
@@ -127,7 +127,7 @@
           - eks_create.name == eks_cluster_name
 
     - name: remove EKS cluster, waiting until complete
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         state: absent
         wait: yes
@@ -139,7 +139,7 @@
           - eks_delete is changed
 
     - name: create EKS cluster with same details but wait for it to become active
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
@@ -154,7 +154,7 @@
           - eks_create.name == eks_cluster_name
 
     - name: remove EKS cluster, without waiting this time
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         state: absent
       register: eks_delete
@@ -165,7 +165,7 @@
           - eks_delete is changed
 
     - name: create EKS cluster with short name
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_short_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
@@ -180,7 +180,7 @@
           - eks_create is not failed
 
     - name: remove EKS cluster with short name
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_short_name }}"
         state: absent
         wait: yes
@@ -192,7 +192,7 @@
         msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
 
     - name: remove EKS cluster
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_name }}"
         state: absent
         wait: yes
@@ -200,7 +200,7 @@
       ignore_errors: yes
 
     - name: remove EKS cluster
-      aws_eks_cluster:
+      eks_cluster:
         name: "{{ eks_cluster_short_name }}"
         state: absent
         wait: yes
@@ -216,7 +216,7 @@
           - name: "{{ eks_cluster_name }}-workers-sg"
 
     - name: set all security group rule lists to empty to remove circular dependency
-      ec2_group:
+      ec2_security_group:
         name: "{{ item.name }}"
         description: "{{ item.description }}"
         state: present
@@ -229,7 +229,7 @@
       ignore_errors: yes
 
     - name: remove security groups
-      ec2_group:
+      ec2_security_group:
         name: '{{ item.name }}'
         state: absent
         vpc_id: '{{ setup_vpc.vpc.id }}'

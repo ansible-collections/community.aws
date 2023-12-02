@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
@@ -14,13 +14,13 @@
   - name: test add identity policy
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy: "{{ lookup('template', 'policy.json.j2') }}"
@@ -40,27 +40,27 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test add duplicate identity policy
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy: "{{ lookup('template', 'policy.json.j2') }}"
           state: present
 
       - name: register duplicate identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy: "{{ lookup('template', 'policy.json.j2') }}"
@@ -80,20 +80,20 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test add identity policy by identity arn
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ identity_info.identity_arn }}"
           policy_name: "{{ policy_name }}"
           policy: "{{ lookup('template', 'policy.json.j2') }}"
@@ -113,20 +113,20 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test add multiple identity policies
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}-{{ item }}"
           policy: "{{ lookup('template', 'policy.json.j2') }}"
@@ -145,20 +145,20 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test add inline identity policy
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy:
@@ -185,7 +185,7 @@
             - result.policies|select('equalto', policy_name)|list|length == 1
 
       - name: register duplicate identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy:
@@ -207,27 +207,27 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test remove identity policy
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy: "{{ lookup('template', 'policy.json.j2') }}"
           state: present
 
       - name: delete identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           state: absent
@@ -245,20 +245,20 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test remove missing identity policy
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: delete identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           state: absent
@@ -276,20 +276,20 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test add identity policy with invalid policy
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: identity_info
 
       - name: register identity policy
-        aws_ses_identity_policy:
+        ses_identity_policy:
           identity: "{{ domain_identity }}"
           policy_name: "{{ policy_name }}"
           policy: '{"noSuchAttribute": 2}'
@@ -304,6 +304,6 @@
 
     always:
       - name: clean-up identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent

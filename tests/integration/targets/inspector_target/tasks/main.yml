@@ -4,14 +4,14 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
     - name: Create AWS Inspector Target Group
-      aws_inspector_target:
+      inspector_target:
         name: "{{ aws_inspector_scan_name }}"
         state: present
         tags:
@@ -20,7 +20,7 @@
       register: target_group_create
 
     - name: Create AWS Inspector Target Group (Verify)
-      aws_inspector_target:
+      inspector_target:
         name: "{{ aws_inspector_scan_name }}"
         state: present
         tags:
@@ -41,7 +41,7 @@
           - target_group_create_verify.tags.changed == "no"
 
     - name: Change AWS Inspector Target Group Tags
-      aws_inspector_target:
+      inspector_target:
         name: "{{ aws_inspector_scan_name }}"
         state: present
         tags:
@@ -50,7 +50,7 @@
       register: target_group_tag_change
 
     - name: Change AWS Inspector Target Group Tags (Verify)
-      aws_inspector_target:
+      inspector_target:
         name: "{{ aws_inspector_scan_name }}"
         state: present
         tags:
@@ -72,13 +72,13 @@
 
   always:
     - name: Delete AWS Inspector Target Group
-      aws_inspector_target:
+      inspector_target:
         name: "{{ aws_inspector_scan_name }}"
         state: absent
       register: target_group_delete
 
     - name: Delete AWS Inspector Target Group (Verify)
-      aws_inspector_target:
+      inspector_target:
         name: "{{ aws_inspector_scan_name }}"
         state: absent
       register: target_group_delete_verify

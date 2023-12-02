@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
     # AWS CLI is needed until there's a module to get info about Glue jobs
@@ -30,7 +30,7 @@
           - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 
     - name: Create Glue job (check mode)
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
@@ -53,7 +53,7 @@
           - glue_job_check.description is not defined
 
     - name: Create Glue job
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
@@ -93,7 +93,7 @@
           - glue_job.role == job_info["Job"]["Role"]
 
     - name: Create Glue job (idempotent) (check mode)
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
@@ -135,7 +135,7 @@
           - job_info["Job"]["Role"] == job_info_idempotent_check["Job"]["Role"]
 
     - name: Create Glue job (idempotent)
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
@@ -176,7 +176,7 @@
           - job_info["Job"]["Role"] == job_info_idempotent["Job"]["Role"]
 
     - name: Update Glue job (check mode)
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         command_python_version: 2
         command_script_location: "{{ glue_job_command_script_location }}"
@@ -216,7 +216,7 @@
           - glue_job_update_check.role == job_info_update_check["Job"]["Role"]
 
     - name: Update Glue job
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         command_python_version: 2
         command_script_location: "{{ glue_job_command_script_location }}"
@@ -255,7 +255,7 @@
           - glue_job_update.role == job_info_update["Job"]["Role"]
 
     - name: Delete Glue job (check mode)
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         state: absent
       check_mode: true
@@ -281,7 +281,7 @@
           - job_info["Job"]["Name"] == job_info_delete_check["Job"]["Name"]
 
     - name: Delete Glue job
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         state: absent
       register: glue_job_delete
@@ -293,7 +293,7 @@
 
   always:
     - name: Delete Glue job
-      aws_glue_job:
+      glue_job:
         name: "{{ glue_job_name }}"
         state: absent
       ignore_errors: true

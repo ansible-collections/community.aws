@@ -5,7 +5,7 @@
   ignore_errors: yes
 
 - name: remove EKS cluster
-  aws_eks_cluster:
+  eks_cluster:
     name: '{{ eks_cluster_name }}'
     state: absent
     wait: 'yes'
@@ -17,7 +17,7 @@
       - name: '{{ eks_cluster_name }}-workers-sg'
 
 - name: set all security group rule lists to empty to remove circular dependency
-  ec2_group:
+  ec2_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
@@ -30,12 +30,25 @@
   ignore_errors: 'yes'
 
 - name: remove security groups
-  ec2_group:
+  ec2_security_group:
     name: '{{ item.name }}'
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id }}'
   with_items: '{{ eks_security_groups|reverse|list + additional_eks_sg }}'
   ignore_errors: 'yes'
+
+- name: Delete securitygroup for node access
+  amazon.aws.ec2_security_group:
+    name: 'ansible-test-eks_nodegroup'
+    description: "SSH access"
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    rules: []
+    state: absent
+
+- name: Delete Keypair for Access to Nodegroup nodes
+  amazon.aws.ec2_key:
+    name: "ansible-test-eks_nodegroup"
+    state: absent
 
 - name: remove Route Tables
   ec2_vpc_route_table:
@@ -61,7 +74,7 @@
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id}}'
   ignore_errors: 'yes'
-    
+
 - name: remove setup VPC
   ec2_vpc_net:
     cidr_block: 10.0.0.0/16

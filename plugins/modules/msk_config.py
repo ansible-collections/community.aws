@@ -98,6 +98,7 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.iam import get_aws_account_info
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
@@ -107,7 +108,7 @@ def dict_to_prop(d):
     """convert dictionary to multi-line properties"""
     if len(d) == 0:
         return ""
-    return "\n".join("{0}={1}".format(k, v) for k, v in d.items())
+    return "\n".join(f"{k}={v}" for k, v in d.items())
 
 
 def prop_to_dict(p):
@@ -143,19 +144,13 @@ def find_active_config(client, module):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="failed to obtain kafka configurations")
 
-    active_configs = list(
-        item
-        for item in all_configs
-        if item["Name"] == name and item["State"] == "ACTIVE"
-    )
+    active_configs = list(item for item in all_configs if item["Name"] == name and item["State"] == "ACTIVE")
 
     if active_configs:
         if len(active_configs) == 1:
             return active_configs[0]
         else:
-            module.fail_json_aws(
-                msg="found more than one active config with name '{0}'".format(name)
-            )
+            module.fail_json_aws(msg=f"found more than one active config with name '{name}'")
 
     return None
 
@@ -192,7 +187,6 @@ def create_config(client, module):
 
     # create new configuration
     if not config:
-
         if module.check_mode:
             return True, {}
 
@@ -202,7 +196,7 @@ def create_config(client, module):
                 Description=module.params.get("description"),
                 KafkaVersions=module.params.get("kafka_versions"),
                 ServerProperties=dict_to_prop(module.params.get("config")).encode(),
-                aws_retry=True
+                aws_retry=True,
             )
         except (
             botocore.exceptions.BotoCoreError,
@@ -213,7 +207,9 @@ def create_config(client, module):
     # update existing configuration (creates new revision)
     else:
         # it's required because 'config' doesn't contain 'ServerProperties'
-        response = get_configuration_revision(client, module, arn=config["Arn"], revision=config["LatestRevision"]["Revision"])
+        response = get_configuration_revision(
+            client, module, arn=config["Arn"], revision=config["LatestRevision"]["Revision"]
+        )
 
         if not is_configuration_changed(module, response):
             return False, response
@@ -226,7 +222,7 @@ def create_config(client, module):
                 Arn=config["Arn"],
                 Description=module.params.get("description"),
                 ServerProperties=dict_to_prop(module.params.get("config")).encode(),
-                aws_retry=True
+                aws_retry=True,
             )
         except (
             botocore.exceptions.BotoCoreError,
@@ -267,7 +263,6 @@ def delete_config(client, module):
 
 
 def main():
-
     module_args = dict(
         name=dict(type="str", required=True),
         description=dict(type="str", default=""),
@@ -289,7 +284,8 @@ def main():
     # return some useless staff in check mode if configuration doesn't exists
     # can be useful when these options are referenced by other modules during check mode run
     if module.check_mode and not response.get("Arn"):
-        arn = "arn:aws:kafka:region:account:configuration/name/id"
+        account_id, partition = get_aws_account_info(module)
+        arn = f"arn:{partition}:kafka:{module.region}:{account_id}:configuration/{module.params['name']}/id"
         revision = 1
         server_properties = ""
     else:

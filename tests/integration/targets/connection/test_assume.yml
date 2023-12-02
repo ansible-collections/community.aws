@@ -13,4 +13,4 @@
 
 - assert:
     that:
-      - id_cmd.stdout == '{{ user_name }}'
+      - id_cmd.stdout == user_name

@@ -4,7 +4,7 @@
   # Creation/Deletion testing
   # ============================================================
   - name: add secret to AWS Secrets Manager
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: present
       secret_type: 'string'
@@ -28,7 +28,7 @@
         - result.version_ids_to_stages is not none
 
   - name: no changes to secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: present
       secret: "{{ super_secret_string }}"
@@ -45,7 +45,7 @@
         - result.arn is not none
 
   - name: remove region replica
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to remove replication'
       secret: "{{ super_secret_string }}"
@@ -60,7 +60,7 @@
         - '"replication_status" not in result.secret'
 
   - name: add region replica to an existing secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change add replication'
       secret: "{{ super_secret_string }}"
@@ -80,7 +80,7 @@
         - result.secret.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
 
   - name: change replica regions
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: present
       secret: "{{ super_secret_string }}"
@@ -100,7 +100,7 @@
 
   always:
   - name: remove region replica
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to remove replication'
       state: present
@@ -109,7 +109,7 @@
     ignore_errors: yes
 
   - name: remove secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
       recovery_window: 0

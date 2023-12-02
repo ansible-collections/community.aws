@@ -48,19 +48,19 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 - name: obtain all ACM certificates
-  community.aws.aws_acm_info:
+  community.aws.acm_certificate_info:
 
 - name: obtain all information for a single ACM certificate
-  community.aws.aws_acm_info:
+  community.aws.acm_certificate_info:
     domain_name: "*.example_com"
 
 - name: obtain all certificates pending validation
-  community.aws.aws_acm_info:
+  community.aws.acm_certificate_info:
     statuses:
     - PENDING_VALIDATION
 
 - name: obtain all certificates with tag Name=foo and myTag=bar
-  community.aws.aws_acm_info:
+  community.aws.acm_certificate_info:
     tags:
       Name: foo
       myTag: bar
@@ -68,7 +68,7 @@ EXAMPLES = r"""
 
 # The output is still a list of certificates, just one item long.
 - name: obtain information about a certificate with a particular ARN
-  community.aws.aws_acm_info:
+  community.aws.acm_certificate_info:
     certificate_arn:  "arn:aws:acm:ap-southeast-2:123456789012:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12"
 
 """
@@ -264,31 +264,42 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 def main():
     argument_spec = dict(
-        certificate_arn=dict(aliases=['arn']),
-        domain_name=dict(aliases=['name']),
+        certificate_arn=dict(aliases=["arn"]),
+        domain_name=dict(aliases=["name"]),
         statuses=dict(
-            type='list',
-            elements='str',
-            choices=['PENDING_VALIDATION', 'ISSUED', 'INACTIVE', 'EXPIRED', 'VALIDATION_TIMED_OUT', 'REVOKED', 'FAILED']
+            type="list",
+            elements="str",
+            choices=[
+                "PENDING_VALIDATION",
+                "ISSUED",
+                "INACTIVE",
+                "EXPIRED",
+                "VALIDATION_TIMED_OUT",
+                "REVOKED",
+                "FAILED",
+            ],
         ),
-        tags=dict(type='dict'),
+        tags=dict(type="dict"),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     acm_info = ACMServiceManager(module)
 
-    client = module.client('acm')
+    client = module.client("acm")
 
-    certificates = acm_info.get_certificates(client, module,
-                                             domain_name=module.params['domain_name'],
-                                             statuses=module.params['statuses'],
-                                             arn=module.params['certificate_arn'],
-                                             only_tags=module.params['tags'])
+    certificates = acm_info.get_certificates(
+        client,
+        module,
+        domain_name=module.params["domain_name"],
+        statuses=module.params["statuses"],
+        arn=module.params["certificate_arn"],
+        only_tags=module.params["tags"],
+    )
 
-    if module.params['certificate_arn'] and len(certificates) != 1:
-        module.fail_json(msg="No certificate exists in this region with ARN %s" % module.params['certificate_arn'])
+    if module.params["certificate_arn"] and len(certificates) != 1:
+        module.fail_json(msg=f"No certificate exists in this region with ARN {module.params['certificate_arn']}")
 
     module.exit_json(certificates=certificates)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

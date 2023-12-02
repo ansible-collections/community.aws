@@ -15,18 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 __metaclass__ = type
 
 from pprint import pprint
 
+from ansible.module_utils._text import to_text
+
 from ansible_collections.community.aws.plugins.modules.acm_certificate import chain_compare
 from ansible_collections.community.aws.plugins.modules.acm_certificate import pem_chain_split
-from ansible.module_utils._text import to_text
 
 
 def test_chain_compare():
-
     # The functions we're testing take module as an argument
     # Just so they can call module.fail_json
     # Let's just use None for the unit tests,
@@ -34,14 +37,14 @@ def test_chain_compare():
     # And if they do, fail_json is not applicable
     module = None
 
-    fixture_suffix = 'tests/unit/plugins/modules/fixtures/certs'
+    fixture_suffix = "tests/unit/plugins/modules/fixtures/certs"
 
     # Test chain split function on super simple (invalid) certs
-    expected = ['aaa', 'bbb', 'ccc']
+    expected = ["aaa", "bbb", "ccc"]
 
-    for fname in ['simple-chain-a.cert', 'simple-chain-b.cert']:
-        path = fixture_suffix + '/' + fname
-        with open(path, 'r') as f:
+    for fname in ["simple-chain-a.cert", "simple-chain-b.cert"]:
+        path = fixture_suffix + "/" + fname
+        with open(path, "r") as f:
             pem = to_text(f.read())
         actual = pem_chain_split(module, pem)
         actual = [a.strip() for a in actual]
@@ -50,76 +53,60 @@ def test_chain_compare():
             pprint(expected)
             print("Actual:")
             pprint(actual)
-            raise AssertionError("Failed to properly split %s" % fname)
+            raise AssertionError(f"Failed to properly split {fname}")
 
     # Now test real chains
     # chains with same same_as should be considered equal
     test_chains = [
-        {  # Original Cert chain
-            'path': fixture_suffix + '/chain-1.0.cert',
-            'same_as': 1,
-            'length': 3
-        },
-        {  # Same as 1.0, but longer PEM lines
-            'path': fixture_suffix + '/chain-1.1.cert',
-            'same_as': 1,
-            'length': 3
-        },
+        {"path": fixture_suffix + "/chain-1.0.cert", "same_as": 1, "length": 3},  # Original Cert chain
+        {"path": fixture_suffix + "/chain-1.1.cert", "same_as": 1, "length": 3},  # Same as 1.0, but longer PEM lines
         {  # Same as 1.0, but without the stuff before each --------
-            'path': fixture_suffix + '/chain-1.2.cert',
-            'same_as': 1,
-            'length': 3
+            "path": fixture_suffix + "/chain-1.2.cert",
+            "same_as": 1,
+            "length": 3,
         },
         {  # Same as 1.0, but in a different order, so should be considered different
-            'path': fixture_suffix + '/chain-1.3.cert',
-            'same_as': 2,
-            'length': 3
+            "path": fixture_suffix + "/chain-1.3.cert",
+            "same_as": 2,
+            "length": 3,
         },
         {  # Same as 1.0, but with last link missing
-            'path': fixture_suffix + '/chain-1.4.cert',
-            'same_as': 3,
-            'length': 2
+            "path": fixture_suffix + "/chain-1.4.cert",
+            "same_as": 3,
+            "length": 2,
         },
         {  # Completely different cert chain to all the others
-            'path': fixture_suffix + '/chain-4.cert',
-            'same_as': 4,
-            'length': 3
+            "path": fixture_suffix + "/chain-4.cert",
+            "same_as": 4,
+            "length": 3,
         },
-        {  # Single cert
-            'path': fixture_suffix + '/a.pem',
-            'same_as': 5,
-            'length': 1
-        },
-        {  # a different, single cert
-            'path': fixture_suffix + '/b.pem',
-            'same_as': 6,
-            'length': 1
-        }
+        {"path": fixture_suffix + "/a.pem", "same_as": 5, "length": 1},  # Single cert
+        {"path": fixture_suffix + "/b.pem", "same_as": 6, "length": 1},  # a different, single cert
     ]
 
     for chain in test_chains:
-        with open(chain['path'], 'r') as f:
-            chain['pem_text'] = to_text(f.read())
+        with open(chain["path"], "r") as f:
+            chain["pem_text"] = to_text(f.read())
 
         # Test to make sure our regex isn't too greedy
-        chain['split'] = pem_chain_split(module, chain['pem_text'])
-        if len(chain['split']) != chain['length']:
+        chain["split"] = pem_chain_split(module, chain["pem_text"])
+        if len(chain["split"]) != chain["length"]:
             print("Cert before split")
-            print(chain['pem_text'])
+            print(chain["pem_text"])
             print("Cert after split")
-            pprint(chain['split'])
-            print("path: %s" % chain['path'])
-            print("Expected chain length: %d" % chain['length'])
-            print("Actual chain length: %d" % len(chain['split']))
-            raise AssertionError("Chain %s was not split properly" % chain['path'])
+            pprint(chain["split"])
+            print(f"path: {chain['path']}")
+            print(f"Expected chain length: {int(chain['length'])}")
+            print(f"Actual chain length: {len(chain['split'])}")
+            raise AssertionError(f"Chain {chain['path']} was not split properly")
 
     for chain_a in test_chains:
         for chain_b in test_chains:
-            expected = (chain_a['same_as'] == chain_b['same_as'])
+            expected = chain_a["same_as"] == chain_b["same_as"]
 
             # Now test the comparison function
-            actual = chain_compare(module, chain_a['pem_text'], chain_b['pem_text'])
+            actual = chain_compare(module, chain_a["pem_text"], chain_b["pem_text"])
             if expected != actual:
-                print("Error, unexpected comparison result between \n%s\nand\n%s" % (chain_a['path'], chain_b['path']))
-                print("Expected %s got %s" % (str(expected), str(actual)))
+                print(f"Error, unexpected comparison result between \n{chain_a['path']}\nand\n{chain_b['path']}")
+                print(f"Expected {str(expected)} got {str(actual)}")
             assert expected == actual

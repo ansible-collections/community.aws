@@ -12,22 +12,22 @@
 - module_defaults:
     group/aws:
         region: "{{ aws_region }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token | default(omit) }}"
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
+        session_token: "{{ security_token | default(omit) }}"
   collections:
     - amazon.aws
   block:
 
     - name: create trivial launch_configuration
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ scaling_policy_lc_name }}"
         state: present
         instance_type: t3.nano
         image_id: "{{ ec2_ami_id }}"
 
     - name: create trivial ASG
-      ec2_asg:
+      autoscaling_group:
         name: "{{ scaling_policy_asg_name }}"
         state: present
         launch_config_name: "{{ scaling_policy_lc_name }}"
@@ -36,7 +36,7 @@
         desired_capacity: 0
 
     - name: Create Simple Scaling policy using implicit defaults
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_simplescaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: present
@@ -46,11 +46,11 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - result.changed
 
     - name: Update Simple Scaling policy using explicit defaults
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_simplescaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: present
@@ -61,11 +61,11 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - not result.changed
 
     - name: min_adjustment_step is ignored with ChangeInCapacity
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_simplescaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: present
@@ -77,12 +77,12 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - not result.changed
           - result.adjustment_type == "ChangeInCapacity"
 
     - name: Change Simple Scaling policy adjustment_type to PercentChangeInCapacity
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_simplescaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: present
@@ -94,12 +94,12 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - result.changed
           - result.adjustment_type == "PercentChangeInCapacity"
 
     - name: Remove Simple Scaling policy
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_simplescaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: absent
@@ -110,7 +110,7 @@
           - result.changed
 
     - name: Create Step Scaling policy
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_stepscaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: present
@@ -126,11 +126,11 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_stepscaling_policy"
+          - result.policy_name == resource_prefix ~ '_stepscaling_policy'
           - result.changed
 
     - name: Add another step
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_stepscaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: present
@@ -149,12 +149,12 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_stepscaling_policy"
+          - result.policy_name == resource_prefix ~ '_stepscaling_policy'
           - result.changed
           - result.adjustment_type == "PercentChangeInCapacity"
 
     - name: Remove Step Scaling policy
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_stepscaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: absent
@@ -165,7 +165,7 @@
           - result.changed
 
     - name: Remove Step Scaling policy (idemopotency)
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_stepscaling_policy"
         asg_name: "{{ scaling_policy_asg_name }}"
         state: absent
@@ -177,7 +177,7 @@
           - result is successful
 
     - name: create TargetTracking predefined policy
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_targettracking_predefined_policy"
         policy_type: TargetTrackingScaling
         target_tracking_config:
@@ -189,12 +189,12 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_predefined_policy'
           - result.changed
           - result is successful
 
     - name: create TargetTrackingScaling predefined policy (idempotency)
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_targettracking_predefined_policy"
         policy_type: TargetTrackingScaling
         target_tracking_config:
@@ -206,12 +206,12 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_predefined_policy'
           - result is not changed
 
 #    # It would be good to also test this but we would need an Target group and an ALB
 #    - name: create TargetTracking predefined policy with resource_label
-#      ec2_scaling_policy:
+#      autoscaling_policy:
 #        name: "{{ resource_prefix }}_targettracking_predefined_rl_policy"
 #        policy_type: TargetTrackingScaling
 #        target_tracking_config:
@@ -229,7 +229,7 @@
 #          - result is successful
 #
 #    - name: create TargetTracking predefined policy with resource_label (idempotency)
-#      ec2_scaling_policy:
+#      autoscaling_policy:
 #        name: "{{ resource_prefix }}_targettracking_predefined_rl_policy"
 #        policy_type: TargetTrackingScaling
 #        target_tracking_config:
@@ -246,7 +246,7 @@
 #          - result is not changed
 
     - name: create TargetTrackingScaling custom policy
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_targettracking_custom_policy"
         policy_type: TargetTrackingScaling
         target_tracking_config:
@@ -263,12 +263,12 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_custom_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_custom_policy'
           - result.changed
           - result is successful
 
     - name: create TargetTrackingScaling custom policy (idempotency)
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ resource_prefix }}_targettracking_custom_policy"
         policy_type: TargetTrackingScaling
         target_tracking_config:
@@ -285,14 +285,14 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_custom_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_custom_policy'
           - result is not changed
 
   always:
 
     # ============================================================
     - name: Remove the scaling policies
-      ec2_scaling_policy:
+      autoscaling_policy:
         name: "{{ item }}"
         state: absent
       register: result
@@ -305,13 +305,13 @@
       ignore_errors: yes
 
     - name: remove the ASG
-      ec2_asg:
+      autoscaling_group:
         name: "{{ scaling_policy_asg_name }}"
         state: absent
       ignore_errors: yes
 
     - name: remove the Launch Configuration
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ scaling_policy_lc_name }}"
         state: absent
       ignore_errors: yes

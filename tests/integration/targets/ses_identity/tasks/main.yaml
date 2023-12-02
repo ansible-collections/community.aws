@@ -4,9 +4,9 @@
     - amazon.aws
   module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
 
@@ -14,7 +14,7 @@
   - name: test register email identity
     block:
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
         register: result
@@ -27,14 +27,14 @@
           identity: "{{ email_identity }}"
     always:
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
   - name: test register domain identity
     block:
       - name: register domain identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: result
@@ -51,18 +51,18 @@
             - result.verification_attributes.verification_token
     always:
       - name: cleanup domain identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
   - name: test email_identity unchanged when already existing
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
       - name: duplicate register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
         register: result
@@ -75,18 +75,18 @@
           identity: "{{ email_identity }}"
     always:
       - name: cleanup identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
   - name: test domain_identity unchanged when already existing
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
       - name: duplicate register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: result
@@ -99,7 +99,7 @@
           identity: "{{ domain_identity }}"
     always:
       - name: cleanup identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
@@ -110,7 +110,7 @@
   - name: test register identity without explicit region
     block:
       - name: register email identity without explicit region
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           region: "{{ omit }}"
@@ -126,14 +126,14 @@
           identity: "{{ email_identity }}"
     always:
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
   - name: test register email identity check mode
     block:
       - name: register email identity check mode
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
         register: result
@@ -150,7 +150,7 @@
 
     always:
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
         register: result
@@ -163,7 +163,7 @@
   - name: test register domain identity check mode
     block:
       - name: register domain identity check mode
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: result
@@ -180,7 +180,7 @@
 
     always:
       - name: cleanup domain identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
         register: result
@@ -191,7 +191,7 @@
             - result.changed == False
   # ============================================================
   - name: remove non-existent email identity
-    aws_ses_identity:
+    ses_identity:
       identity: "{{ email_identity }}"
       state: absent
     register: result
@@ -201,7 +201,7 @@
         - result.changed == False
   # ============================================================
   - name: remove non-existent domain identity
-    aws_ses_identity:
+    ses_identity:
       identity: "{{ domain_identity }}"
       state: absent
     register: result
@@ -213,13 +213,13 @@
   - name: test remove email identity check mode
     block:
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
         register: result
 
       - name: remove email identity check mode
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
         register: result
@@ -231,7 +231,7 @@
             - result.changed == True
     always:
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
         register: result
@@ -244,13 +244,13 @@
   - name: test remove domain identity check mode
     block:
       - name: register domain identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
         register: result
 
       - name: remove domain identity check mode
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
         register: result
@@ -262,7 +262,7 @@
             - result.changed == True
     always:
       - name: cleanup domain identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
         register: result
@@ -284,7 +284,7 @@
           - complaint
           - delivery
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -316,7 +316,7 @@
           - complaint
           - delivery
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
@@ -332,11 +332,11 @@
           - complaint
           - delivery
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
       - name: set notification topics
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -366,7 +366,7 @@
           - complaint
           - delivery
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
@@ -382,7 +382,7 @@
           - complaint
           - delivery
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -392,7 +392,7 @@
           delivery_notifications:
             topic: "{{ topic_info.results[2].sns_arn }}"
       - name: Make no change to identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
         register: result
@@ -402,7 +402,7 @@
             - result.changed == False
 
       - name: clear notification settings
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications: {}
@@ -426,7 +426,7 @@
           - complaint
           - delivery
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
@@ -443,12 +443,12 @@
           - delivery
 
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
 
       - name: set notification settings check mode
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -481,7 +481,7 @@
             - result.notification_attributes.forwarding_enabled == False
 
       - name: re-register base email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
         register: result
@@ -508,14 +508,14 @@
           - delivery
 
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
   - name: test include headers on notification queues
     block:
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -533,7 +533,7 @@
             - result.notification_attributes.headers_in_delivery_notifications_enabled == True
     always:
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
@@ -548,7 +548,7 @@
           - bounce
           - complaint
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -570,14 +570,14 @@
           - bounce
           - complaint
       - name: cleanup email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
   - name: test disable feedback forwarding fails if no topics
     block:
       - name: register identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: present
           feedback_forwarding: No
@@ -589,7 +589,7 @@
             - '"Invalid Parameter Value" in result.msg'
     always:
       - name: cleanup identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ domain_identity }}"
           state: absent
   # ============================================================
@@ -601,7 +601,7 @@
           state: present
         register: topic_info
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           bounce_notifications:
@@ -619,7 +619,7 @@
           name: "{{ notification_queue_name }}-bounce"
           state: absent
       - name: cleanup identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
@@ -631,7 +631,7 @@
           state: present
         register: topic_info
       - name: register email identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: present
           complaint_notifications:
@@ -649,6 +649,6 @@
           name: "{{ notification_queue_name }}-complaint"
           state: absent
       - name: cleanup identity
-        aws_ses_identity:
+        ses_identity:
           identity: "{{ email_identity }}"
           state: absent

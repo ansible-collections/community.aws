@@ -63,7 +63,7 @@
       gateway_id: '{{ igw.gateway_id }}'
   register: route_table
 
-- ec2_group:
+- ec2_security_group:
     name: '{{ resource_prefix }}'
     description: security group for Ansible ALB integration tests
     state: present

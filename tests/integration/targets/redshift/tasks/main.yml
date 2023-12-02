@@ -8,9 +8,9 @@
 
 - module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
 
@@ -120,7 +120,7 @@
       assert:
         that:
           - 'result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}"'
+          - result.cluster.identifier == redshift_cluster_name
           - 'result.cluster.tags.foo == "bar"'
           - 'result.cluster.tags.Tizio == "Caio"'
 
@@ -143,7 +143,7 @@
       assert:
         that:
           - 'not result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}"'
+          - result.cluster.identifier == redshift_cluster_name
           - 'result.cluster.tags.foo == "bar"'
           - 'result.cluster.tags.Tizio == "Caio"'
           - 'result.cluster.tags | count() == 2'
@@ -166,7 +166,7 @@
       assert:
         that:
           - 'result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}-modified"'
+          - result.cluster.identifier == redshift_cluster_name ~ '-modified'
           - 'result.cluster.enhanced_vpc_routing == True'
           - 'result.cluster.tags | count() == 1'
           - 'result.cluster.tags.foo == "bar"'
@@ -234,7 +234,7 @@
       assert:
         that:
           - 'result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}"'
+          - result.cluster.identifier == redshift_cluster_name
           - 'result.cluster.db_name == "integration_test"'
 
   #  ============================================================
@@ -260,7 +260,7 @@
       assert:
         that:
           - 'result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}"'
+          - result.cluster.identifier == redshift_cluster_name
           - 'result.cluster.db_name == "integration_test"'
           - 'result.cluster.tags.foo == "bar"'
 
@@ -289,7 +289,7 @@
       assert:
         that:
           - 'result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}"'
+          - result.cluster.identifier == redshift_cluster_name
           - 'result.cluster.db_name == "integration_test"'
           - 'result.cluster.tags.test1 == "value1"'
           - 'result.cluster.tags.foo == "bar"'
@@ -318,7 +318,7 @@
       assert:
         that:
           - 'not result.changed'
-          - 'result.cluster.identifier == "{{ redshift_cluster_name }}"'
+          - result.cluster.identifier == redshift_cluster_name
           - 'result.cluster.db_name == "integration_test"'
           - 'result.cluster.tags | count() == 2'
 

@@ -23,9 +23,9 @@
     # As a lookup plugin we won't have access to module_defaults
     connection_args:
       region: "{{ aws_region }}"
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      aws_security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
   no_log: True
 
 - vars:
@@ -73,7 +73,7 @@
   # Creation testing
   # ============================================================
   - name: add secret to AWS Secrets Manager
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: present
       secret_type: 'string'
@@ -100,7 +100,7 @@
       secret_arn: '{{ result.secret.arn }}'
 
   - name: no changes to secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: present
       secret_type: 'string'
@@ -122,7 +122,7 @@
         - result.secret.version_ids_to_stages | length == 1
 
   - name: Set secret description
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -151,7 +151,7 @@
   ###############################################################
 
   - name: Set tags (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -167,7 +167,7 @@
         - result is changed
 
   - name: Set tags
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -197,7 +197,7 @@
         - result.secret.version_ids_to_stages | length == 2
 
   - name: Set tags - idempotency (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -213,7 +213,7 @@
         - result is not changed
 
   - name: Set tags - idempotency
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -245,7 +245,7 @@
   ###
 
   - name: Update tags with purge (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -261,7 +261,7 @@
         - result is changed
 
   - name: Update tags with purge
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -291,7 +291,7 @@
         - result.secret.version_ids_to_stages | length == 2
 
   - name: Update tags with purge - idempotency (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -307,7 +307,7 @@
         - result is not changed
 
   - name: Update tags with purge - idempotency
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -339,7 +339,7 @@
   ###
 
   - name: Update tags without purge (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -356,7 +356,7 @@
         - result is changed
 
   - name: Update tags without purge
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -387,7 +387,7 @@
         - result.secret.version_ids_to_stages | length == 2
 
   - name: Update tags without purge - idempotency (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -404,7 +404,7 @@
         - result is not changed
 
   - name: Update tags without purge - idempotency
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -437,7 +437,7 @@
   ###
 
   - name: Tags not set - idempotency (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -452,7 +452,7 @@
         - result is not changed
 
   - name: Tags not set - idempotency
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -483,7 +483,7 @@
   ###
 
   - name: remove all tags from secret (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -499,7 +499,7 @@
         - result is changed
 
   - name: remove all tags from secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -529,7 +529,7 @@
         - result.secret.version_ids_to_stages | length == 2
 
   - name: remove all tags from secret - idempotency (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -545,7 +545,7 @@
         - result is not changed
 
   - name: remove all tags from secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -579,7 +579,7 @@
   ###############################################################
 
   - name: add resource policy to secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -594,7 +594,7 @@
         - result.changed
 
   - name: remove existing resource policy from secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -608,7 +608,7 @@
         - result.changed
 
   - name: remove resource policy from secret (idempotency)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -626,7 +626,7 @@
   # ============================================================
 
   - name: Update secret with JSON (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -642,7 +642,7 @@
         - result.changed
 
   - name: Update secret with JSON
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: present
       description: 'this is a change to this secret'
@@ -657,7 +657,7 @@
         - result.changed
 
   - name: Update secret with JSON - idempotency (CHECK_MODE)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -673,7 +673,7 @@
         - result is not changed
 
   - name: Update secret with JSON - idempotency
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
       state: present
@@ -693,7 +693,7 @@
   # ============================================================
 
   - name: Create secret with overwrite = False (Check mode)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-2"
       state: present
       secret_type: 'string'
@@ -708,7 +708,7 @@
         - result is changed
 
   - name: Create secret with overwrite = False
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-2"
       state: present
       secret_type: 'string'
@@ -722,7 +722,7 @@
         - result is changed
 
   - name: Update secret with overwrite = False (Check mode)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-2"
       state: present
       secret_type: 'string'
@@ -737,7 +737,7 @@
         - result is not changed
 
   - name: Create secret with overwrite = False
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-2"
       state: present
       secret_type: 'string'
@@ -755,7 +755,7 @@
   # ============================================================
 
   - name: remove secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
       recovery_window: 7
@@ -767,7 +767,7 @@
         - result.changed
 
   - name: remove secret (idempotency)
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
       recovery_window: 7
@@ -779,7 +779,7 @@
         - not result.changed
 
   - name: immediate secret removal
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
       recovery_window: 0
@@ -793,7 +793,7 @@
   # AWS Doesn't expose when the secret will be removed, all we can do is
   # check that we didn't throw an error
   - name: immediate secret removal
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
       recovery_window: 0
@@ -806,14 +806,14 @@
 
   always:
   - name: remove secret
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
       recovery_window: 0
     ignore_errors: yes
 
   - name: remove secret 2
-    aws_secret:
+    secretsmanager_secret:
       name: "{{ secret_name }}-2"
       state: absent
       recovery_window: 0
