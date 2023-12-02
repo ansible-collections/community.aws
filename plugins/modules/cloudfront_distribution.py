@@ -1940,7 +1940,7 @@ class CloudFrontValidationManager(object):
         cache_behavior = self.validate_cache_behavior_first_level_keys(
             config, cache_behavior, valid_origins, is_default_cache
         )
-        if cache_behavior.get('forwarded_values') is not None:
+        if cache_behavior.get('cache_policy_id') is None:
             cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
         cache_behavior = self.validate_allowed_methods(config, cache_behavior.get("allowed_methods"), cache_behavior)
         cache_behavior = self.validate_lambda_function_associations(
