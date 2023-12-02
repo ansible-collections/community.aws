@@ -1974,10 +1974,6 @@ class CloudFrontValidationManager(object):
                     "default_t_t_l",
                     config.get("default_t_t_l", self.__default_cache_behavior_default_ttl),
                 )
-            if cache_behavior.get('cache_policy_id') is not None:
-                cache_policy_id = cache_behavior.get("cache_policy_id", config.get("cache_policy_id"))
-            if cache_behavior.get('origin_request_policy_id') is not None:
-                origin_request_policy_id = cache_behavior.get("origin_request_policy_id", config.get("origin_request_policy_id"))
             cache_behavior = self.add_missing_key(
                 cache_behavior, "compress", config.get("compress", self.__default_cache_behavior_compress)
             )
