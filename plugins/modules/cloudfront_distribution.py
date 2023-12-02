@@ -1961,7 +1961,7 @@ class CloudFrontValidationManager(object):
             self.module.fail_json(msg="%s cannot have both a cache_policy_id and a forwarded_values option." %
                                   cache_behavior_name)
         try:
-            if cache_behavior.get('forwarded_values') is not None:
+            if cache_behavior.get('cache_policy_id') is None:
                 cache_behavior = self.add_key_else_change_dict_key(
                     cache_behavior, "min_ttl", "min_t_t_l", config.get("min_t_t_l", self.__default_cache_behavior_min_ttl)
                 )
