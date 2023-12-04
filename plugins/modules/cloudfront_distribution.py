@@ -1961,7 +1961,7 @@ class CloudFrontValidationManager(object):
             if is_default_cache:
                 cache_behavior_name = 'Default cache behavior'
             else:
-                cache_behavior_name = 'Cache behavior for path %s' % cache_behavior['path_pattern']
+                cache_behavior_name = f"Cache behavior for path {cache_behavior['path_pattern']}"
             self.module.fail_json(msg="%s cannot have both a cache_policy_id and a forwarded_values option." %
                                   cache_behavior_name)
         try:
