@@ -206,6 +206,7 @@ options:
             - The ID of the header policy that CloudFront adds to responses that it sends to viewers.
           type: str
         cache_policy_id:
+          version_added: 7.1.0
           description:
             - The ID of the cache policy for CloudFront to use for the default cache behavior.
             - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
@@ -213,6 +214,7 @@ options:
               at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html)
           type: str
         origin_request_policy_id:
+          version_added: 7.1.0
           description:
             - The ID of the origin request policy for CloudFront to use for the default cache behavior.
             - For more information see the CloudFront documentation
@@ -341,6 +343,7 @@ options:
             - The ID of the header policy that CloudFront adds to responses that it sends to viewers.
           type: str
         cache_policy_id:
+          version_added: 7.1.0
           description:
             - The ID of the cache policy for CloudFront to use for the cache behavior.
             - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
@@ -348,6 +351,7 @@ options:
               at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html)
           type: str
         origin_request_policy_id:
+          version_added: 7.1.0
           description:
             - The ID of the origin request policy for CloudFront to use for the cache behavior.
             - For more information see the CloudFront documentation
