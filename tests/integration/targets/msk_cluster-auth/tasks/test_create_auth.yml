@@ -62,7 +62,7 @@
       # Not always returned by API
       # - "msk_cluster.cluster_info.client_authentication.unauthenticated.enabled == false"
       - "msk_cluster.cluster_info.open_monitoring.prometheus.jmx_exporter.enabled_in_broker == false"
-      - "msk_cluster.cluster_info.cluster_arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
+      - "msk_cluster.cluster_info.cluster_arn.startswith('arn:aws:kafka:' ~ aws_region ~ ':')"
 
 - name: create a msk cluster with authentication flipped from default (idempotency)
   msk_cluster:

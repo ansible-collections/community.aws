@@ -98,7 +98,7 @@
           - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by id
@@ -107,7 +107,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by tag
@@ -117,7 +117,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by target (subnet_id)
@@ -127,7 +127,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by target (security_group_id)
@@ -137,7 +137,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Get EFS by tag and target
@@ -149,7 +149,7 @@
       register: efs_result
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     #   Not checking efs_result.efs["throughput_mode"] here as
@@ -231,7 +231,7 @@
           - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
 
     - assert:
-        that: "{{efs_result_assertions}}"
+        that: efs_result_assertions
 
     # ============================================================
     - name: Efs configure IA transition
@@ -366,7 +366,7 @@
           - efs_tag_result.tags.Env is defined
           - efs_tag_result.tags.Env is search("IntegrationTests")
           - efs_tag_result.tags.Name is defined
-          - efs_tag_result.tags.Name is search("{{ efs_name }}-test-tag")
+          - efs_tag_result.tags.Name is search(efs_name ~ '-test-tag')
           - efs_tag_result.tags["CamelCase"] == 'SimpleCamelCase'
           - efs_tag_result.tags["Title Case"] == 'Hello Cruel World'
           - efs_tag_result.tags["lowercase spaced"] == 'hello cruel world'
@@ -464,7 +464,7 @@
           - efs_tag_result.tags.Env is defined
           - efs_tag_result.tags.Env is search("IntegrationTests")
           - efs_tag_result.tags.Name is defined
-          - efs_tag_result.tags.Name is search("{{ efs_name }}-test-tag")
+          - efs_tag_result.tags.Name is search(efs_name ~ '-test-tag')
           - not efs_tag_result.tags["CamelCase"] is defined
           - not efs_tag_result.tags["Title Case"] is defined
           - not efs_tag_result.tags["lowercase spaced"] is defined
