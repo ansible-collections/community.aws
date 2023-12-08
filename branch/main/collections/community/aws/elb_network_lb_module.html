@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.elb_network_lb module – Manage a Network Load Balancer &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5707b69d" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=35b70fdb" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=c5b67dd2" />
       <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
 
@@ -36,11 +36,9 @@
 
 <div class="DocSite-globalNav ansibleNav">
   <ul>
-    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
-    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
-    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
-    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
     <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
   </ul>
 </div>
 
@@ -288,27 +286,43 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-listeners/AlpnPolicy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-alpnpolicy"><strong>AlpnPolicy</strong></p>
+<a class="ansibleOptionLink" href="#parameter-listeners/AlpnPolicy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the Application-Layer Protocol Negotiation (ALPN) policy.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP1Only&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP2Only&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP2Optional&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP2Preferred&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;None&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/Certificates"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-certificates"><strong>Certificates</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/Certificates" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SSL server certificate.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/Certificates/CertificateArn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-certificates-certificatearn"><strong>CertificateArn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/Certificates/CertificateArn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the certificate.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/DefaultActions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-defaultactions"><strong>DefaultActions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/DefaultActions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The default actions for the listener.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/DefaultActions/TargetGroupArn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-defaultactions-targetgrouparn"><strong>TargetGroupArn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/DefaultActions/TargetGroupArn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -316,7 +330,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Mutually exclusive with <em>TargetGroupName</em>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/DefaultActions/TargetGroupName"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-defaultactions-targetgroupname"><strong>TargetGroupName</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/DefaultActions/TargetGroupName" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -324,42 +338,42 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Mutually exclusive with <em>TargetGroupArn</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/DefaultActions/Type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-defaultactions-type"><strong>Type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/DefaultActions/Type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of action.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/Port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-port"><strong>Port</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/Port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The port on which the load balancer is listening.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/Protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-protocol"><strong>Protocol</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/Protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol for connections from clients to the load balancer.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-listeners/SslPolicy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-listeners-sslpolicy"><strong>SslPolicy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-listeners/SslPolicy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The security policy that defines which ciphers and protocols are supported.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the load balancer. This name must be unique within your AWS account, can have a maximum of 32 characters, must contain only alphanumeric characters or hyphens, and must not begin or end with a hyphen.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-profile"><span id="ansible-collections-community-aws-elb-network-lb-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -371,7 +385,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_listeners"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-purge-listeners"><strong>purge_listeners</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_listeners" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -384,7 +398,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-purge-tags"><strong>purge_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -398,7 +412,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-region"><span id="ansible-collections-community-aws-elb-network-lb-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-elb-network-lb-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -413,7 +427,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-scheme"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-scheme"><strong>scheme</strong></p>
 <a class="ansibleOptionLink" href="#parameter-scheme" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -425,7 +439,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -442,7 +456,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -460,7 +474,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -473,7 +487,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subnet_mappings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-subnet-mappings"><strong>subnet_mappings</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subnet_mappings" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -481,7 +495,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>This parameter is mutually exclusive with <em>subnets</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subnets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-subnets"><strong>subnets</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subnets" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -490,7 +504,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>This parameter is mutually exclusive with <em>subnet_mappings</em>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div>
 <div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-tags"><span id="ansible-collections-community-aws-elb-network-lb-module-parameter-resource-tags"></span><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
@@ -500,7 +514,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -513,7 +527,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -525,7 +539,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -692,6 +706,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-load_balancer/listeners/alpn_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-alpn-policy"><strong>alpn_policy</strong></p>
+<a class="ansibleOptionLink" href="#return-load_balancer/listeners/alpn_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the Application-Layer Protocol Negotiation (ALPN) policy.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when state is present</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HTTP1Only&quot;,</span> <span class="pre">&quot;HTTP2Only&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/certificates"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-certificates"><strong>certificates</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/certificates" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -699,7 +723,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when state is present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/certificates/certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-certificates-certificate-arn"><strong>certificate_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/certificates/certificate_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -708,7 +732,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/default_actions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-default-actions"><strong>default_actions</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/default_actions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -716,7 +740,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when state is present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/default_actions/target_group_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-default-actions-target-group-arn"><strong>target_group_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/default_actions/target_group_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -725,7 +749,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/default_actions/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-default-actions-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/default_actions/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -734,7 +758,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/listener_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-listener-arn"><strong>listener_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/listener_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -743,7 +767,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/load_balancer_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-load-balancer-arn"><strong>load_balancer_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/load_balancer_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -752,7 +776,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-port"><strong>port</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -761,7 +785,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">80</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-protocol"><strong>protocol</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/protocol" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -770,7 +794,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;HTTPS&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/listeners/ssl_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-listeners-ssl-policy"><strong>ssl_policy</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/listeners/ssl_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -779,7 +803,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/load_balancer_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-load-balancer-arn"><strong>load_balancer_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/load_balancer_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -788,7 +812,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:elasticloadbalancing:ap-southeast-2:123456789012:loadbalancer/app/my-elb/001122334455&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/load_balancer_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-load-balancer-name"><strong>load_balancer_name</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/load_balancer_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -797,7 +821,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;my-elb&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/load_balancing_cross_zone_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-load-balancing-cross-zone-enabled"><strong>load_balancing_cross_zone_enabled</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/load_balancing_cross_zone_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -806,7 +830,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;True&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/scheme"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-scheme"><strong>scheme</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/scheme" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -815,7 +839,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;internal&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -824,7 +848,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;code&quot;:</span> <span class="pre">&quot;active&quot;}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -833,7 +857,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Tag&quot;:</span> <span class="pre">&quot;Example&quot;}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -842,7 +866,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;network&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancer/vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-network-lb-module-return-load-balancer-vpc-id"><strong>vpc_id</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancer/vpc_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
