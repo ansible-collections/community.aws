@@ -1948,7 +1948,6 @@ class CloudFrontValidationManager(object):
             cache_behavior = self.validate_forwarded_values(
                 config, cache_behavior.get("forwarded_values"), cache_behavior
             )
-            cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
         cache_behavior = self.validate_allowed_methods(config, cache_behavior.get("allowed_methods"), cache_behavior)
         cache_behavior = self.validate_lambda_function_associations(
             config, cache_behavior.get("lambda_function_associations"), cache_behavior
