@@ -1944,7 +1944,10 @@ class CloudFrontValidationManager(object):
         cache_behavior = self.validate_cache_behavior_first_level_keys(
             config, cache_behavior, valid_origins, is_default_cache
         )
-        if cache_behavior.get('cache_policy_id') is None:
+        if cache_behavior.get("cache_policy_id") is None:
+            cache_behavior = self.validate_forwarded_values(
+                config, cache_behavior.get("forwarded_values"), cache_behavior
+            )
             cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
         cache_behavior = self.validate_allowed_methods(config, cache_behavior.get("allowed_methods"), cache_behavior)
         cache_behavior = self.validate_lambda_function_associations(
@@ -1957,21 +1960,28 @@ class CloudFrontValidationManager(object):
         return cache_behavior
 
     def validate_cache_behavior_first_level_keys(self, config, cache_behavior, valid_origins, is_default_cache):
-        if cache_behavior.get('cache_policy_id') is not None and cache_behavior.get('forwarded_values') is not None:
+        if cache_behavior.get("cache_policy_id") is not None and cache_behavior.get("forwarded_values") is not None:
             if is_default_cache:
-                cache_behavior_name = 'Default cache behavior'
+                cache_behavior_name = "Default cache behavior"
             else:
                 cache_behavior_name = f"Cache behavior for path {cache_behavior['path_pattern']}"
-            self.module.fail_json(msg="%s cannot have both a cache_policy_id and a forwarded_values option." %
-                                  cache_behavior_name)
+            self.module.fail_json(
+                msg="%s cannot have both a cache_policy_id and a forwarded_values option." % cache_behavior_name
+            )
         try:
-            if cache_behavior.get('cache_policy_id') is None:
+            if cache_behavior.get("cache_policy_id") is None:
                 cache_behavior = self.add_key_else_change_dict_key(
-                    cache_behavior, "min_ttl", "min_t_t_l", config.get("min_t_t_l", self.__default_cache_behavior_min_ttl)
-                )
+                    cache_behavior,
+                    "min_ttl",
+                    "min_t_t_l",
+                    config.get("min_t_t_l", self.__default_cache_behavior_min_ttl),
+                 )
                 cache_behavior = self.add_key_else_change_dict_key(
-                    cache_behavior, "max_ttl", "max_t_t_l", config.get("max_t_t_l", self.__default_cache_behavior_max_ttl)
-                )
+                    cache_behavior,
+                    "max_ttl",
+                    "max_t_t_l",
+                    config.get("max_t_t_l", self.__default_cache_behavior_max_ttl),
+                 )
                 cache_behavior = self.add_key_else_change_dict_key(
                     cache_behavior,
                     "default_ttl",
