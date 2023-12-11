@@ -1974,13 +1974,13 @@ class CloudFrontValidationManager(object):
                     "min_ttl",
                     "min_t_t_l",
                     config.get("min_t_t_l", self.__default_cache_behavior_min_ttl),
-                 )
+                )
                 cache_behavior = self.add_key_else_change_dict_key(
                     cache_behavior,
                     "max_ttl",
                     "max_t_t_l",
                     config.get("max_t_t_l", self.__default_cache_behavior_max_ttl),
-                 )
+                )
                 cache_behavior = self.add_key_else_change_dict_key(
                     cache_behavior,
                     "default_ttl",
