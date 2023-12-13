@@ -15,6 +15,16 @@
       - create_table is successful
       - create_table is changed
 
+- name: Ensure the table was not created
+  dynamodb_table_info:
+    name: "{{ table_name_on_demand }}"
+  register: _table
+
+- name: Assert the table does not exist
+  assert:
+    that:
+      - not _table.table
+
 - name: Create table - pay-per-request
   dynamodb_table:
     state: present
@@ -31,6 +41,17 @@
       - create_table is successful
       - create_table is changed
       - create_table.billing_mode == "PAY_PER_REQUEST"
+
+- name: Ensure the table was created
+  dynamodb_table_info:
+    name: "{{ table_name_on_demand }}"
+  register: _table
+
+- name: Assert the table has been created with the expected billing modw
+  assert:
+    that:
+      - _table.table
+      - _table.table.billing_mode == 'PAY_PER_REQUEST'
 
 - name: Create table - pay-per-request - check failure
   dynamodb_table:
@@ -70,6 +91,16 @@
     that:
       - create_complex_table is successful
       - create_complex_table is changed
+
+- name: Ensure the table was not created
+  dynamodb_table_info:
+    name: "{{ table_name_on_demand_complex }}"
+  register: _complex_table
+
+- name: Assert the table does not exist
+  assert:
+    that:
+      - not _complex_table.table
 
 - name: Create complex table - check failure on index
   dynamodb_table:
@@ -120,6 +151,17 @@
       - create_complex_table.table_name == table_name_on_demand_complex
       - create_complex_table.tags == tags_default
 
+- name: Ensure the table was not created
+  dynamodb_table_info:
+    name: "{{ table_name_on_demand_complex }}"
+  register: _complex_table
+
+- name: Assert the table has been created
+  assert:
+    that:
+      - _complex_table.table
+      - _complex_table.table.billing_mode == 'PAY_PER_REQUEST'
+
 - name: Update complex table billing_mode
   dynamodb_table:
     state: present
@@ -140,3 +182,13 @@
       - convert_complex_table is changed
       - '"billing_mode" in convert_complex_table'
       - convert_complex_table.billing_mode == "PROVISIONED"
+
+- name: Read table info
+  dynamodb_table_info:
+    name: "{{ table_name_on_demand_complex }}"
+  register: _complex_table
+
+- name: Assert the table has been updated
+  assert:
+    that:
+      - _complex_table.table.billing_mode == 'PROVISIONED'
