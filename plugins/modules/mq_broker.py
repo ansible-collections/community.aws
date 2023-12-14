@@ -130,13 +130,13 @@ options:
       - The time to wait can be controlled by setting I(wait_timeout).
     type: bool
     default: false
-    version_added: 6.2.0
+    version_added: 7.1.0
   wait_timeout:
     description:
       - How long to wait (in seconds) for the broker to reach the desired state if I(wait=true).
     default: 900
     type: int
-    version_added: 6.2.0
+    version_added: 7.1.0
 
 extends_documentation_fragment:
   - amazon.aws.boto3
