@@ -7,10 +7,10 @@
 DOCUMENTATION = r"""
 ---
 module: dynamodb_table_info
-version_added: 7.1.0
+version_added: 7.2.0
 short_description: Returns information about a Dynamo DB table
 description:
-  - Returns information about the Dynamo DB table, including the current status of the table
+  - Returns information about the Dynamo DB table, including the current status of the table,
     when it was created, the primary key schema, and any indexes on the table.
 author:
   - Aubin Bikouo (@abikouo)
