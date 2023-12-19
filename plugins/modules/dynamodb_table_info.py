@@ -155,6 +155,29 @@ table:
             description: Indicates if a restore is in progress or not.
             type: bool
             returned: if any, on table
+        sse_description:
+            description: The description of the server-side encryption status on the specified table.
+            type: dict
+            returned: if any, on table
+            sample: {}
+        archival_summary:
+            description: Contains information about the table archive.
+            type: complex
+            returned: if any, on table
+            contains:
+                archival_date_time:
+                    description:  The date and time when table archival was initiated by DynamoDB, in UNIX epoch time format.
+                    type: str
+                    returned: always
+                archival_reason:
+                    description: The reason DynamoDB archived the table.
+                    type: str
+                    returned: always
+                    sample: INACCESSIBLE_ENCRYPTION_CREDENTIALS
+                archival_backup_arn:
+                    description: The Amazon Resource Name (ARN) of the backup the table was archived to, when applicable in the archival reason.
+                    type: str
+                    returned: always
         table_class:
             description: The table class of the specified table.
             type: str
