@@ -151,7 +151,7 @@
       - create_complex_table.table_name == table_name_on_demand_complex
       - create_complex_table.tags == tags_default
 
-- name: Ensure the table was not created
+- name: Ensure the table was created
   dynamodb_table_info:
     name: "{{ table_name_on_demand_complex }}"
   register: _complex_table
