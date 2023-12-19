@@ -47,7 +47,7 @@
     name: "{{ table_name_on_demand }}"
   register: _table
 
-- name: Assert the table has been created with the expected billing modw
+- name: Assert the table has been created with the expected billing mode
   assert:
     that:
       - _table.table
