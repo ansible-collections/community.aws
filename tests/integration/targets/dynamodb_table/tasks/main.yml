@@ -75,7 +75,7 @@
         - create_table.table_name == table_name
         - create_table.write_capacity == 1
 
-  - name: Ensure the table was not created
+  - name: Ensure the table was created
     dynamodb_table_info:
       name: "{{ table_name }}"
     register: table_info
