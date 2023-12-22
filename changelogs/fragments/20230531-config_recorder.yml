@@ -1,0 +1,2 @@
+minor_changes:
+- config_recorder - remove account_sources parameter as mandatory (https://github.com/ansible-collections/community.aws/pull/1830)
