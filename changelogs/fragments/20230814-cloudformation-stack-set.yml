@@ -1,0 +1,2 @@
+minor_changes:
+  - cloudformation_stack_set - add new 'purge_stack_instances' module parameter to remove stack instances when accounts are not present in the list of accounts
