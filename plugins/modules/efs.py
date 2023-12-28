@@ -72,7 +72,7 @@ options:
     throughput_mode:
         description:
             - The throughput_mode for the file system to be created.
-        choices: ['bursting', 'provisioned']
+        choices: ['bursting', 'provisioned', 'elastic']
         type: str
     provisioned_throughput_in_mibps:
         description:
@@ -733,7 +733,7 @@ def main():
             required=False, type="str", choices=["general_purpose", "max_io"], default="general_purpose"
         ),
         transition_to_ia=dict(required=False, type="str", choices=["None", "7", "14", "30", "60", "90"], default=None),
-        throughput_mode=dict(required=False, type="str", choices=["bursting", "provisioned"], default=None),
+        throughput_mode=dict(required=False, type="str", choices=["bursting", "provisioned", "elastic"], default=None),
         provisioned_throughput_in_mibps=dict(required=False, type="float"),
         wait=dict(required=False, type="bool", default=False),
         wait_timeout=dict(required=False, type="int", default=0),
