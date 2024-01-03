@@ -167,6 +167,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <li><p>The remote EC2 instance must be running the AWS Systems Manager Agent (SSM Agent). <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started.html</a></p></li>
 <li><p>The control machine must have the AWS session manager plugin installed. <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html</a></p></li>
 <li><p>The remote EC2 Linux instance must have curl installed.</p></li>
+<li><p>The remote EC2 Linux instance and the controller both need network connectivity to S3.</p></li>
+<li><p>The remote instance does not require IAM credentials for S3. This module will generate a presigned URL for S3 from the controller, and then will pass that URL to the target over SSM, telling the target to download/upload from S3 with <code class="docutils literal notranslate"><span class="pre">curl</span></code>.</p></li>
+<li><p>The controller requires IAM permissions to upload, download and delete files from the specified S3 bucket. This includes `s3:GetObject`, `s3:PutObject`, `s3:ListBucket`, `s3:DeleteObject` and `s3:GetBucketLocation`.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -384,6 +387,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <p class="admonition-title">Note</p>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">community.aws.aws_ssm</span></code> connection plugin does not support using the ``remote_user`` and ``ansible_user`` variables to configure the remote user.  The ``become_user`` parameter should be used to configure which user to run commands as.  Remote commands will often default to running as the ``ssm-agent`` user, however this will also depend on how SSM has been configured.</p></li>
+<li><p>This plugin requires an S3 bucket to send files to/from the remote instance. This is required even for modules which do not explicitly send files (such as the <code class="docutils literal notranslate"><span class="pre">shell</span></code> or <code class="docutils literal notranslate"><span class="pre">command</span></code> modules), because Ansible sends over the <code class="docutils literal notranslate"><span class="pre">.py</span></code> files of the module itself, via S3.</p></li>
+<li><p>Files sent via S3 will be named in S3 with the EC2 host ID (e.g. <code class="docutils literal notranslate"><span class="pre">i-123abc/</span></code>) as the prefix.</p></li>
+<li><p>The files in S3 will be deleted by the end of the playbook run. If the play is terminated ungracefully, the files may remain in the bucket. If the bucket has versioning enabled, the files will remain in version history. If your tasks involve sending secrets to/from the remote instance (e.g. within a <code class="docutils literal notranslate"><span class="pre">shell</span></code> command, or a SQL password in the <code class="docutils literal notranslate"><span class="pre">community.postgresql.postgresql_query</span></code> module) then those passwords will be included in plaintext in those files in S3 indefinitely, visible to anyone with access to that bucket. Therefore it is recommended to use a bucket with versioning disabled/suspended.</p></li>
+<li><p>The files in S3 will be deleted even if the <code class="docutils literal notranslate"><span class="pre">keep_remote_files</span></code> setting is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></li>
 </ul>
 </div>
 </section>
