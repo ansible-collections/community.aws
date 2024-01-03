@@ -1,0 +1,3 @@
+minor_changes:
+- aws_ssm - Updated the documentation to explicitly state that an S3 bucket is required,
+  the behavior of the files in that bucket, and requirements around that. (https://github.com/ansible-collections/community.aws/issues/1775).
