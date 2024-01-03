@@ -1,2 +1,2 @@
 trivial:
-- ssm - bump test image from Fedora 34 to Fedora 37
+- ssm - bump test image from Fedora 34 to CentOS 9
