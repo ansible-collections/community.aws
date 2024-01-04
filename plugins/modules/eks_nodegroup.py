@@ -184,19 +184,19 @@ EXAMPLES = r"""
       - subnet-qwerty123
       - subnet-asdfg456
     scaling_config:
-      - min_size: 1
-      - max_size: 2
-      - desired_size: 1
+      min_size: 1
+      max_size: 2
+      desired_size: 1
     disk_size: 20
     instance_types: 't3.micro'
     ami_type: 'AL2_x86_64'
     labels:
-      - 'teste': 'test'
+      'teste': 'test'
     taints:
       - key: 'test'
         value: 'test'
         effect: 'NO_SCHEDULE'
-    capacity_type: 'on_demand'
+    capacity_type: 'ON_DEMAND'
 
 - name: Remove an EKS Nodegrop
   community.aws.eks_nodegroup:
