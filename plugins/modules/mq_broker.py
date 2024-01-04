@@ -196,6 +196,13 @@ EXAMPLES = r"""
   community.aws.mq_broker:
     broker_name: "my_broker_2"
     state: absent
+
+- name: Update Amazon MQ Broker Configuration to enable audit logs and geenral logs 
+  community.aws.mq_broker:
+    broker_name: my-broker
+    enable_audit_log: true
+    enable_general_log: true
+    state: present  
 """
 
 RETURN = r"""
