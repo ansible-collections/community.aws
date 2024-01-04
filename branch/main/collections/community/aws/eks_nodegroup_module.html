@@ -605,19 +605,19 @@ To check whether it is installed, run <code class="code docutils literal notrans
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-qwerty123</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-asdfg456</span>
 <span class="w">    </span><span class="nt">scaling_config</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">max_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">desired_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">max_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">desired_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">    </span><span class="nt">disk_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
 <span class="w">    </span><span class="nt">instance_types</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;t3.micro&#39;</span>
 <span class="w">    </span><span class="nt">ami_type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;AL2_x86_64&#39;</span>
 <span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;teste&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;test&#39;</span>
+<span class="w">      </span><span class="s">&#39;teste&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;test&#39;</span>
 <span class="w">    </span><span class="nt">taints</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;test&#39;</span>
 <span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;test&#39;</span>
 <span class="w">        </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;NO_SCHEDULE&#39;</span>
-<span class="w">    </span><span class="nt">capacity_type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;on_demand&#39;</span>
+<span class="w">    </span><span class="nt">capacity_type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ON_DEMAND&#39;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Remove an EKS Nodegrop</span>
 <span class="w">  </span><span class="nt">community.aws.eks_nodegroup</span><span class="p">:</span>
