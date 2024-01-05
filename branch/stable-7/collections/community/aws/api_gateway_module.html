@@ -547,7 +547,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <span class="w">    </span><span class="nt">swagger_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_api.yml</span>
 <span class="w">    </span><span class="nt">cache_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">cache_size</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;6.1&#39;</span>
-<span class="w">    </span><span class="nt">canary_settings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> percentTraffic</span><span class="p">:</span><span class="w"> </span><span class="nv">50.0</span><span class="p p-Indicator">,</span><span class="nt"> deploymentId</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123&#39;</span><span class="p p-Indicator">,</span><span class="nt"> useStageCache</span><span class="p">:</span><span class="w"> </span><span class="nv">True</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">canary_settings</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">percentTraffic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50.0</span>
+<span class="w">      </span><span class="nt">deploymentId</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123&#39;</span>
+<span class="w">      </span><span class="nt">useStageCache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete API gateway</span>
