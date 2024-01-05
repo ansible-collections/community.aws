@@ -152,7 +152,10 @@ EXAMPLES = r"""
     swagger_file: my_api.yml
     cache_enabled: true
     cache_size: '6.1'
-    canary_settings: { percentTraffic: 50.0, deploymentId: '123', useStageCache: True }
+    canary_settings:
+      percentTraffic: 50.0
+      deploymentId: '123'
+      useStageCache: true
     state: present
 
 - name: Delete API gateway

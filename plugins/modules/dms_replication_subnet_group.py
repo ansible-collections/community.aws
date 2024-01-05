@@ -51,7 +51,7 @@ EXAMPLES = r"""
     state: present
     identifier: "dev-sngroup"
     description: "Development Subnet Group asdasdas"
-    subnet_ids: ['subnet-id1','subnet-id2']
+    subnet_ids: ['subnet-id1', 'subnet-id2']
 """
 
 RETURN = r""" # """

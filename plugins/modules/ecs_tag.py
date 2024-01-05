@@ -86,7 +86,7 @@ EXAMPLES = r"""
     cluster_name: mycluster
     resource_type: cluster
     tags:
-        Name: foo
+      Name: foo
     state: absent
     purge_tags: true
 """

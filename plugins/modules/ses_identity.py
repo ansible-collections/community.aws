@@ -84,7 +84,7 @@ options:
             - Whether or not to enable feedback forwarding.
             - This can only be false if both I(bounce_notifications) and I(complaint_notifications) specify SNS topics.
         type: 'bool'
-        default: True
+        default: true
 extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
@@ -115,7 +115,7 @@ EXAMPLES = r"""
   community.aws.sns_topic:
     name: "complaints-topic"
     state: present
-    purge_subscriptions: False
+    purge_subscriptions: false
   register: topic_info
 
 - name: Deliver feedback to topic instead of owner email
@@ -124,11 +124,11 @@ EXAMPLES = r"""
     state: present
     complaint_notifications:
       topic: "{{ topic_info.sns_arn }}"
-      include_headers: True
+      include_headers: true
     bounce_notifications:
       topic: "{{ topic_info.sns_arn }}"
-      include_headers: False
-    feedback_forwarding: False
+      include_headers: false
+    feedback_forwarding: false
 
 # Create an SNS topic for delivery notifications and leave complaints
 # Being forwarded to the identity owner email
@@ -136,7 +136,7 @@ EXAMPLES = r"""
   community.aws.sns_topic:
     name: "delivery-notifications-topic"
     state: present
-    purge_subscriptions: False
+    purge_subscriptions: false
   register: topic_info
 
 - name: Delivery notifications to topic

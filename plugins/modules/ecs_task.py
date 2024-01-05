@@ -117,63 +117,63 @@ EXAMPLES = r"""
 
 - name: Start a task
   community.aws.ecs_task:
-      operation: start
-      cluster: console-sample-app-static-cluster
-      task_definition: console-sample-app-static-taskdef
-      task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
-      tags:
-        resourceName: a_task_for_ansible_to_run
-        type: long_running_task
-        network: internal
-        version: 1.4
-      container_instances:
+    operation: start
+    cluster: console-sample-app-static-cluster
+    task_definition: console-sample-app-static-taskdef
+    task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
+    tags:
+      resourceName: a_task_for_ansible_to_run
+      type: long_running_task
+      network: internal
+      version: 1.4
+    container_instances:
       - arn:aws:ecs:us-west-2:123456789012:container-instance/79c23f22-876c-438a-bddf-55c98a3538a8
-      started_by: ansible_user
-      network_configuration:
-        subnets:
+    started_by: ansible_user
+    network_configuration:
+      subnets:
         - subnet-abcd1234
-        security_groups:
+      security_groups:
         - sg-aaaa1111
         - my_security_group
   register: task_output
 
 - name: RUN a task on Fargate
   community.aws.ecs_task:
-      operation: run
-      cluster: console-sample-app-static-cluster
-      task_definition: console-sample-app-static-taskdef
-      task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
-      started_by: ansible_user
-      launch_type: FARGATE
-      network_configuration:
-        subnets:
+    operation: run
+    cluster: console-sample-app-static-cluster
+    task_definition: console-sample-app-static-taskdef
+    task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
+    started_by: ansible_user
+    launch_type: FARGATE
+    network_configuration:
+      subnets:
         - subnet-abcd1234
-        security_groups:
+      security_groups:
         - sg-aaaa1111
         - my_security_group
   register: task_output
 
 - name: RUN a task on Fargate with public ip assigned
   community.aws.ecs_task:
-      operation: run
-      count: 2
-      cluster: console-sample-app-static-cluster
-      task_definition: console-sample-app-static-taskdef
-      task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
-      started_by: ansible_user
-      launch_type: FARGATE
-      network_configuration:
-        assign_public_ip: true
-        subnets:
+    operation: run
+    count: 2
+    cluster: console-sample-app-static-cluster
+    task_definition: console-sample-app-static-taskdef
+    task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
+    started_by: ansible_user
+    launch_type: FARGATE
+    network_configuration:
+      assign_public_ip: true
+      subnets:
         - subnet-abcd1234
   register: task_output
 
 - name: Stop a task
   community.aws.ecs_task:
-      operation: stop
-      cluster: console-sample-app-static-cluster
-      task_definition: console-sample-app-static-taskdef
-      task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
+    operation: stop
+    cluster: console-sample-app-static-cluster
+    task_definition: console-sample-app-static-taskdef
+    task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
 """
 
 RETURN = r"""
