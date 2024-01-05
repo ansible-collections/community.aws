@@ -375,10 +375,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Searching all EFS instances with tag Name = &#39;myTestNameTag&#39;, in subnet &#39;subnet-1a2b3c4d&#39; and with security group &#39;sg-4d3c2b1a&#39;</span>
 <span class="w">  </span><span class="nt">community.aws.efs_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myTestNameTag</span>
+<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myTestNameTag</span>
 <span class="w">    </span><span class="nt">targets</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-1a2b3c4d</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-4d3c2b1a</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-1a2b3c4d</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-4d3c2b1a</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>

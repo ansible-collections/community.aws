@@ -559,7 +559,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 <span class="w">  </span><span class="nt">until</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;result.broker[&#39;BrokerState&#39;]</span><span class="nv"> </span><span class="s">==</span><span class="nv"> </span><span class="s">&#39;RUNNING&#39;&quot;</span>
 <span class="w">  </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
-<span class="w">  </span><span class="nt">delay</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">  </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create or update broker with almost all parameter set including credentials</span>
 <span class="w">  </span><span class="nt">community.aws.mq_broker</span><span class="p">:</span>
@@ -581,11 +581,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet_xxx</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet_yyy</span>
 <span class="w">    </span><span class="nt">users</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Username</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;initial-user&#39;</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">Password&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;plain-text-password&#39;</span>
-<span class="w">      </span><span class="nt">ConsoleAccess</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Username</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;initial-user&#39;</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">Password&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;plain-text-password&#39;</span>
+<span class="w">        </span><span class="nt">ConsoleAccess</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test</span>
 <span class="w">      </span><span class="nt">creator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible</span>
 <span class="w">    </span><span class="nt">authentication_strategy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;SIMPLE&#39;</span>
 <span class="w">    </span><span class="nt">auto_minor_version_upgrade</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>

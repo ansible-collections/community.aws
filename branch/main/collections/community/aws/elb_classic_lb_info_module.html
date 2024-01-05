@@ -360,8 +360,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-c
 <span class="c1"># Gather information about a set of ELBs</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">names</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-prod-elb</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-prod-elb</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-prod-elb</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-prod-elb</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>

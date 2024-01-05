@@ -387,7 +387,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-acm-c
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">obtain all certificates pending validation</span>
 <span class="w">  </span><span class="nt">community.aws.acm_certificate_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">statuses</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PENDING_VALIDATION</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PENDING_VALIDATION</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">obtain all certificates with tag Name=foo and myTag=bar</span>
 <span class="w">  </span><span class="nt">community.aws.acm_certificate_info</span><span class="p">:</span>
@@ -399,7 +399,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-acm-c
 <span class="c1"># The output is still a list of certificates, just one item long.</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">obtain information about a certificate with a particular ARN</span>
 <span class="w">  </span><span class="nt">community.aws.acm_certificate_info</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">certificate_arn</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;arn:aws:acm:ap-southeast-2:123456789012:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12&quot;</span>
+<span class="w">    </span><span class="nt">certificate_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:acm:ap-southeast-2:123456789012:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12&quot;</span>
 </pre></div>
 </div>
 </section>

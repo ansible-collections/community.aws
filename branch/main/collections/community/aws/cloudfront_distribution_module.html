@@ -1350,7 +1350,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">distribution_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">E1RP5A2MJ8073O</span>
 <span class="w">    </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modified by cloudfront.py again</span>
-<span class="w">    </span><span class="nt">aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&#39;www.my-distribution-source.com&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;zzz.aaa.io&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">aliases</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;www.my-distribution-source.com&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;zzz.aaa.io&#39;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update a distribution&#39;s aliases and comment using an alias as a reference</span>
 <span class="w">  </span><span class="nt">community.aws.cloudfront_distribution</span><span class="p">:</span>
@@ -1377,12 +1379,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">caller_reference</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unique test distribution ID</span>
 <span class="w">    </span><span class="nt">origins</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my</span><span class="nv"> </span><span class="s">test</span><span class="nv"> </span><span class="s">origin-000111&#39;</span>
-<span class="w">          </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.example.com</span>
-<span class="w">          </span><span class="nt">origin_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/production</span>
-<span class="w">          </span><span class="nt">custom_headers</span><span class="p">:</span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">header_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyCustomHeaderName</span>
-<span class="w">              </span><span class="nt">header_value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyCustomHeaderValue</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my</span><span class="nv"> </span><span class="s">test</span><span class="nv"> </span><span class="s">origin-000111&#39;</span>
+<span class="w">        </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.example.com</span>
+<span class="w">        </span><span class="nt">origin_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/production</span>
+<span class="w">        </span><span class="nt">custom_headers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">header_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyCustomHeaderName</span>
+<span class="w">            </span><span class="nt">header_value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyCustomHeaderValue</span>
 <span class="w">    </span><span class="nt">default_cache_behavior</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">target_origin_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my</span><span class="nv"> </span><span class="s">test</span><span class="nv"> </span><span class="s">origin-000111&#39;</span>
 <span class="w">      </span><span class="nt">forwarded_values</span><span class="p">:</span>
@@ -1390,7 +1392,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <span class="w">        </span><span class="nt">cookies</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">forward</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
 <span class="w">        </span><span class="nt">headers</span><span class="p">:</span>
-<span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
 <span class="w">      </span><span class="nt">viewer_protocol_policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow-all</span>
 <span class="w">      </span><span class="nt">smooth_streaming</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">      </span><span class="nt">compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>

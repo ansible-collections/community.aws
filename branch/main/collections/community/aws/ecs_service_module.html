@@ -799,10 +799,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <span class="w">    </span><span class="nt">desired_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="w">    </span><span class="nt">network_configuration</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">subnets</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span>
 <span class="w">      </span><span class="nt">security_groups</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_security_group</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_security_group</span>
 
 <span class="c1"># Simple example to delete</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ecs_service</span><span class="p">:</span>
@@ -836,8 +836,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <span class="w">    </span><span class="nt">desired_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 <span class="w">    </span><span class="nt">deployment_configuration</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">deployment_circuit_breaker</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
-<span class="w">        </span><span class="nt">rollback</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">        </span><span class="nt">enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">rollback</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
 <span class="c1"># With capacity_provider_strategy (added in version 4.0)</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ecs_service</span><span class="p">:</span>
