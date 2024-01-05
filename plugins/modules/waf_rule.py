@@ -73,24 +73,24 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-  - name: create WAF rule
-    community.aws.waf_rule:
-      name: my_waf_rule
-      conditions:
-        - name: my_regex_condition
-          type: regex
-          negated: false
-        - name: my_geo_condition
-          type: geo
-          negated: false
-        - name: my_byte_condition
-          type: byte
-          negated: true
+- name: create WAF rule
+  community.aws.waf_rule:
+    name: my_waf_rule
+    conditions:
+      - name: my_regex_condition
+        type: regex
+        negated: false
+      - name: my_geo_condition
+        type: geo
+        negated: false
+      - name: my_byte_condition
+        type: byte
+        negated: true
 
-  - name: remove WAF rule
-    community.aws.waf_rule:
-      name: "my_waf_rule"
-      state: absent
+- name: remove WAF rule
+  community.aws.waf_rule:
+    name: "my_waf_rule"
+    state: absent
 """
 
 RETURN = r"""

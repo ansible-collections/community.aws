@@ -81,7 +81,7 @@ EXAMPLES = r"""
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
     tags:
-        Name: Snapshot-Name
+      Name: Snapshot-Name
 
 - name: Encrypted Snapshot copy
   community.aws.ec2_snapshot_copy:

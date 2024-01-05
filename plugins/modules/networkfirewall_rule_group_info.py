@@ -66,7 +66,6 @@ EXAMPLES = r"""
 - community.aws.networkfirewall_rule_group_info:
     name: ExampleRuleGroup
     type: stateful
-
 """
 
 RETURN = r"""

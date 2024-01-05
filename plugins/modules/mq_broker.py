@@ -152,7 +152,7 @@ EXAMPLES = r"""
   register: result
   until: "result.broker['BrokerState'] == 'RUNNING'"
   retries: 15
-  delay:   60
+  delay: 60
 
 - name: create or update broker with almost all parameter set including credentials
   community.aws.mq_broker:
@@ -174,11 +174,11 @@ EXAMPLES = r"""
       - subnet_xxx
       - subnet_yyy
     users:
-    - Username: 'initial-user'
-      Password': 'plain-text-password'
-      ConsoleAccess: true
+      - Username: 'initial-user'
+        Password': 'plain-text-password'
+        ConsoleAccess: true
     tags:
-    - env: Test
+      env: Test
       creator: ansible
     authentication_strategy: 'SIMPLE'
     auto_minor_version_upgrade: true

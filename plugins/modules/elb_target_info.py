@@ -35,96 +35,95 @@ extends_documentation_fragment:
 EXAMPLES = r"""
 # practical use case - dynamically de-registering and re-registering nodes
 
-  - name: Get EC2 Metadata
-    amazon.aws.ec2_metadata_facts:
+- name: Get EC2 Metadata
+  amazon.aws.ec2_metadata_facts:
 
-  - name: Get initial list of target groups
-    delegate_to: localhost
-    community.aws.elb_target_info:
-      instance_id: "{{ ansible_ec2_instance_id }}"
-      region: "{{ ansible_ec2_placement_region }}"
-    register: target_info
+- name: Get initial list of target groups
+  delegate_to: localhost
+  community.aws.elb_target_info:
+    instance_id: "{{ ansible_ec2_instance_id }}"
+    region: "{{ ansible_ec2_placement_region }}"
+  register: target_info
 
-  - name: save fact for later
-    ansible.builtin.set_fact:
-      original_tgs: "{{ target_info.instance_target_groups }}"
+- name: save fact for later
+  ansible.builtin.set_fact:
+    original_tgs: "{{ target_info.instance_target_groups }}"
 
-  - name: Deregister instance from all target groups
-    delegate_to: localhost
-    community.aws.elb_target:
-        target_group_arn: "{{ item.0.target_group_arn }}"
-        target_port: "{{ item.1.target_port }}"
-        target_az: "{{ item.1.target_az }}"
-        target_id: "{{ item.1.target_id }}"
-        state: absent
-        target_status: "draining"
-        region: "{{ ansible_ec2_placement_region }}"
-    with_subelements:
-      - "{{ original_tgs }}"
-      - "targets"
+- name: Deregister instance from all target groups
+  delegate_to: localhost
+  community.aws.elb_target:
+    target_group_arn: "{{ item.0.target_group_arn }}"
+    target_port: "{{ item.1.target_port }}"
+    target_az: "{{ item.1.target_az }}"
+    target_id: "{{ item.1.target_id }}"
+    state: absent
+    target_status: "draining"
+    region: "{{ ansible_ec2_placement_region }}"
+  with_subelements:
+    - "{{ original_tgs }}"
+    - "targets"
 
-    # This avoids having to wait for 'elb_target' to serially deregister each
-    # target group.  An alternative would be to run all of the 'elb_target'
-    # tasks async and wait for them to finish.
+  # This avoids having to wait for 'elb_target' to serially deregister each
+  # target group.  An alternative would be to run all of the 'elb_target'
+  # tasks async and wait for them to finish.
 
-  - name: wait for all targets to deregister simultaneously
-    delegate_to: localhost
-    community.aws.elb_target_info:
-      get_unused_target_groups: false
-      instance_id: "{{ ansible_ec2_instance_id }}"
-      region: "{{ ansible_ec2_placement_region }}"
-    register: target_info
-    until: (target_info.instance_target_groups | length) == 0
-    retries: 60
-    delay: 10
+- name: wait for all targets to deregister simultaneously
+  delegate_to: localhost
+  community.aws.elb_target_info:
+    get_unused_target_groups: false
+    instance_id: "{{ ansible_ec2_instance_id }}"
+    region: "{{ ansible_ec2_placement_region }}"
+  register: target_info
+  until: (target_info.instance_target_groups | length) == 0
+  retries: 60
+  delay: 10
 
-  - name: reregister in elbv2s
-    community.aws.elb_target:
-      region: "{{ ansible_ec2_placement_region }}"
-      target_group_arn: "{{ item.0.target_group_arn }}"
-      target_port: "{{ item.1.target_port }}"
-      target_az: "{{ item.1.target_az }}"
-      target_id: "{{ item.1.target_id }}"
-      state: present
-      target_status: "initial"
-    with_subelements:
-      - "{{ original_tgs }}"
-      - "targets"
+- name: reregister in elbv2s
+  community.aws.elb_target:
+    region: "{{ ansible_ec2_placement_region }}"
+    target_group_arn: "{{ item.0.target_group_arn }}"
+    target_port: "{{ item.1.target_port }}"
+    target_az: "{{ item.1.target_az }}"
+    target_id: "{{ item.1.target_id }}"
+    state: present
+    target_status: "initial"
+  with_subelements:
+    - "{{ original_tgs }}"
+    - "targets"
 
-  # wait until all groups associated with this instance are 'healthy' or
-  # 'unused'
-  - name: wait for registration
-    community.aws.elb_target_info:
-      get_unused_target_groups: false
-      instance_id: "{{ ansible_ec2_instance_id }}"
-      region: "{{ ansible_ec2_placement_region }}"
-    register: target_info
-    until: (target_info.instance_target_groups |
-            map(attribute='targets') |
-            flatten |
-            map(attribute='target_health') |
-            rejectattr('state', 'equalto', 'healthy') |
-            rejectattr('state', 'equalto', 'unused') |
-            list |
-            length) == 0
-    retries: 61
-    delay: 10
+# wait until all groups associated with this instance are 'healthy' or
+# 'unused'
+- name: wait for registration
+  community.aws.elb_target_info:
+    get_unused_target_groups: false
+    instance_id: "{{ ansible_ec2_instance_id }}"
+    region: "{{ ansible_ec2_placement_region }}"
+  register: target_info
+  until: (target_info.instance_target_groups |
+          map(attribute='targets') |
+          flatten |
+          map(attribute='target_health') |
+          rejectattr('state', 'equalto', 'healthy') |
+          rejectattr('state', 'equalto', 'unused') |
+          list |
+          length) == 0
+  retries: 61
+  delay: 10
 
 # using the target groups to generate AWS CLI commands to reregister the
 # instance - useful in case the playbook fails mid-run and manual
 #            rollback is required
-  - name: "reregistration commands: ELBv2s"
-    ansible.builtin.debug:
-      msg: >
-             aws --region {{ansible_ec2_placement_region}} elbv2
-             register-targets --target-group-arn {{item.target_group_arn}}
-             --targets{%for target in item.targets%}
-             Id={{target.target_id}},
-             Port={{target.target_port}}{%if target.target_az%},AvailabilityZone={{target.target_az}}
-             {%endif%}
-             {%endfor%}
-    loop: "{{target_info.instance_target_groups}}"
-
+- name: "reregistration commands: ELBv2s"
+  ansible.builtin.debug:
+    msg: >
+           aws --region {{ansible_ec2_placement_region}} elbv2
+           register-targets --target-group-arn {{item.target_group_arn}}
+           --targets{%for target in item.targets%}
+           Id={{target.target_id}},
+           Port={{target.target_port}}{%if target.target_az%},AvailabilityZone={{target.target_az}}
+           {%endif%}
+           {%endfor%}
+  loop: "{{target_info.instance_target_groups}}"
 """
 
 RETURN = r"""

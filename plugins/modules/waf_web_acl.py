@@ -87,21 +87,21 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-  - name: create web ACL
-    community.aws.waf_web_acl:
-      name: my_web_acl
-      rules:
-        - name: my_rule
-          priority: 1
-          action: block
-      default_action: block
-      purge_rules: true
-      state: present
+- name: create web ACL
+  community.aws.waf_web_acl:
+    name: my_web_acl
+    rules:
+      - name: my_rule
+        priority: 1
+        action: block
+    default_action: block
+    purge_rules: true
+    state: present
 
-  - name: delete the web acl
-    community.aws.waf_web_acl:
-      name: my_web_acl
-      state: absent
+- name: delete the web acl
+  community.aws.waf_web_acl:
+    name: my_web_acl
+    state: absent
 """
 
 RETURN = r"""

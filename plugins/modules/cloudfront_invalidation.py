@@ -52,7 +52,6 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-
 - name: create a batch of invalidations using a distribution_id for a reference
   community.aws.cloudfront_invalidation:
     distribution_id: E15BU8SDCGSG57
@@ -70,7 +69,6 @@ EXAMPLES = r"""
       - /testpathone/test4.css
       - /testpathtwo/test5.js
       - /testpaththree/*
-
 """
 
 RETURN = r"""

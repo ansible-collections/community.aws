@@ -183,7 +183,6 @@ EXAMPLES = r"""
   community.aws.elb_network_lb:
     name: myelb
     state: absent
-
 """
 
 RETURN = r"""
