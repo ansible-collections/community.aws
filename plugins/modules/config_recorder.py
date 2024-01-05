@@ -71,8 +71,8 @@ EXAMPLES = r"""
     state: present
     role_arn: 'arn:aws:iam::123456789012:role/AwsConfigRecorder'
     recording_group:
-        all_supported: true
-        include_global_types: true
+      all_supported: true
+      include_global_types: true
 """
 
 RETURN = r"""#"""

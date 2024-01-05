@@ -179,7 +179,7 @@ EXAMPLES = r"""
           numMinDelayRetries: 2
           numNoDelayRetries: 2
           backoffFunction: "linear"
-        disableSubscriptionOverrides: True
+        disableSubscriptionOverrides: true
         defaultThrottlePolicy:
           maxReceivesPerSecond: 10
     subscriptions:

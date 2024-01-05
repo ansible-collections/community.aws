@@ -105,11 +105,9 @@ EXAMPLES = r"""
     target_id: i-1234567
     target_port: 8080
     state: present
-
 """
 
 RETURN = r"""
-
 """
 
 from time import sleep

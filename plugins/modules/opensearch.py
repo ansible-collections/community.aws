@@ -450,16 +450,16 @@ EXAMPLES = r"""
     auto_tune_options:
       enabled: true
       maintenance_schedules:
-      - start_at: "2025-01-12"
-        duration:
-          value: 1
-          unit: "HOURS"
-        cron_expression_for_recurrence: "cron(0 12 * * ? *)"
-      - start_at: "2032-01-12"
-        duration:
-          value: 2
-          unit: "HOURS"
-        cron_expression_for_recurrence: "cron(0 12 * * ? *)"
+        - start_at: "2025-01-12"
+          duration:
+            value: 1
+            unit: "HOURS"
+          cron_expression_for_recurrence: "cron(0 12 * * ? *)"
+        - start_at: "2032-01-12"
+          duration:
+            value: 2
+            unit: "HOURS"
+          cron_expression_for_recurrence: "cron(0 12 * * ? *)"
     tags:
       Environment: Development
       Application: Search
@@ -478,7 +478,6 @@ EXAMPLES = r"""
     cluster_config:
       instance_count: 40
     wait: true
-
 """
 
 import datetime
