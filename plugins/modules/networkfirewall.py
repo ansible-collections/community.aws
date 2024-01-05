@@ -115,21 +115,21 @@ EXAMPLES = r"""
     state: present
     policy: 'ExamplePolicy'
     subnets:
-    - 'subnet-123456789abcdef01'
+      - 'subnet-123456789abcdef01'
 
 # Create an AWS Network Firewall with various options, don't wait for creation
 # to finish.
 - community.aws.networkfirewall:
     name: 'ExampleFirewall'
     state: present
-    delete_protection: True
+    delete_protection: true
     description: "An example Description"
     policy: 'ExamplePolicy'
-    policy_change_protection: True
+    policy_change_protection: true
     subnets:
-    - 'subnet-123456789abcdef01'
-    - 'subnet-abcdef0123456789a'
-    subnet_change_protection: True
+      - 'subnet-123456789abcdef01'
+      - 'subnet-abcdef0123456789a'
+    subnet_change_protection: true
     tags:
       ExampleTag: Example Value
       another_tag: another_example

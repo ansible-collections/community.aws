@@ -246,7 +246,6 @@ EXAMPLES = r"""
         content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
     region: us-east-1
     state: present
-
 """
 
 RETURN = r"""

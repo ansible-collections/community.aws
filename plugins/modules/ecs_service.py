@@ -320,10 +320,10 @@ EXAMPLES = r"""
     desired_count: 0
     network_configuration:
       subnets:
-      - subnet-abcd1234
+        - subnet-abcd1234
       security_groups:
-      - sg-aaaa1111
-      - my_security_group
+        - sg-aaaa1111
+        - my_security_group
 
 # Simple example to delete
 - community.aws.ecs_service:
@@ -357,8 +357,8 @@ EXAMPLES = r"""
     desired_count: 3
     deployment_configuration:
       deployment_circuit_breaker:
-        enable: True
-        rollback: True
+        enable: true
+        rollback: true
 
 # With capacity_provider_strategy (added in version 4.0)
 - community.aws.ecs_service:

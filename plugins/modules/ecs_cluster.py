@@ -103,7 +103,7 @@ EXAMPLES = r"""
         weight: 1
       - capacity_provider: FARGATE_SPOT
         weight: 100
-    purge_capacity_providers: True
+    purge_capacity_providers: true
 
 - name: Cluster deletion
   community.aws.ecs_cluster:
@@ -117,8 +117,8 @@ EXAMPLES = r"""
     delay: 10
     repeat: 10
   register: task_output
-
 """
+
 RETURN = r"""
 activeServicesCount:
     description: how many services are active in this cluster

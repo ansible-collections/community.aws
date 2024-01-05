@@ -658,40 +658,41 @@ EXAMPLES = r"""
 - name: Create task definition
   community.aws.ecs_taskdefinition:
     containers:
-    - name: simple-app
-      cpu: 10
-      essential: true
-      image: "httpd:2.4"
-      memory: 300
-      mountPoints:
-      - containerPath: /usr/local/apache2/htdocs
-        sourceVolume: my-vol
-      portMappings:
-      - containerPort: 80
-        hostPort: 80
-      logConfiguration:
-        logDriver: awslogs
-        options:
-          awslogs-group: /ecs/test-cluster-taskdef
-          awslogs-region: us-west-2
-          awslogs-stream-prefix: ecs
-    - name: busybox
-      command:
-        - >
-          /bin/sh -c "while true; do echo '<html><head><title>Amazon ECS Sample App</title></head><body><div><h1>Amazon ECS Sample App</h1><h2>Congratulations!
-          </h2><p>Your application is now running on a container in Amazon ECS.</p>' > top; /bin/date > date ; echo '</div></body></html>' > bottom;
-          cat top date bottom > /usr/local/apache2/htdocs/index.html ; sleep 1; done"
-      cpu: 10
-      entryPoint:
-      - sh
-      - "-c"
-      essential: false
-      image: busybox
-      memory: 200
-      volumesFrom:
-      - sourceContainer: simple-app
+      - name: simple-app
+        cpu: 10
+        essential: true
+        image: "httpd:2.4"
+        memory: 300
+        mountPoints:
+          - containerPath: /usr/local/apache2/htdocs
+            sourceVolume: my-vol
+        portMappings:
+          - containerPort: 80
+            hostPort: 80
+        logConfiguration:
+          logDriver: awslogs
+          options:
+            awslogs-group: /ecs/test-cluster-taskdef
+            awslogs-region: us-west-2
+            awslogs-stream-prefix: ecs
+      - name: busybox
+        command:
+          - >
+            /bin/sh -c "while true; do echo '<html><head><title>Amazon ECS Sample App</title></head><body><div><h1>Amazon ECS Sample App</h1>
+            <h2>Congratulations!</h2>
+            <p>Your application is now running on a container in Amazon ECS.</p>' > top; /bin/date > date ; echo '</div></body></html>' > bottom;
+            cat top date bottom > /usr/local/apache2/htdocs/index.html ; sleep 1; done"
+        cpu: 10
+        entryPoint:
+          - sh
+          - "-c"
+        essential: false
+        image: busybox
+        memory: 200
+        volumesFrom:
+          - sourceContainer: simple-app
     volumes:
-    - name: my-vol
+      - name: my-vol
     family: test-cluster-taskdef
     state: present
   register: task_output
@@ -700,26 +701,26 @@ EXAMPLES = r"""
   community.aws.ecs_taskdefinition:
     family: nginx
     containers:
-    - name: nginx
-      essential: true
-      image: "nginx"
-      portMappings:
-      - containerPort: 8080
-        hostPort: 8080
-      cpu: 512
-      memory: 1024
+      - name: nginx
+        essential: true
+        image: "nginx"
+        portMappings:
+          - containerPort: 8080
+            hostPort: 8080
+        cpu: 512
+        memory: 1024
     state: present
 
 - name: Create task definition
   community.aws.ecs_taskdefinition:
     family: nginx
     containers:
-    - name: nginx
-      essential: true
-      image: "nginx"
-      portMappings:
-      - containerPort: 8080
-        hostPort: 8080
+      - name: nginx
+        essential: true
+        image: "nginx"
+        portMappings:
+          - containerPort: 8080
+            hostPort: 8080
     launch_type: FARGATE
     cpu: 512
     memory: 1024
@@ -730,36 +731,36 @@ EXAMPLES = r"""
   community.aws.ecs_taskdefinition:
     family: nginx
     containers:
-    - name: nginx
-      essential: true
-      image: "nginx"
-      portMappings:
-      - containerPort: 8080
-        hostPort: 8080
-      cpu: 512
-      memory: 1024
-      dependsOn:
-      - containerName: "simple-app"
-        condition: "start"
+      - name: nginx
+        essential: true
+        image: "nginx"
+        portMappings:
+          - containerPort: 8080
+            hostPort: 8080
+        cpu: 512
+        memory: 1024
+        dependsOn:
+          - containerName: "simple-app"
+            condition: "start"
 
 # Create Task Definition with Environment Variables and Secrets
 - name: Create task definition
   community.aws.ecs_taskdefinition:
     family: nginx
     containers:
-    - name: nginx
-      essential: true
-      image: "nginx"
-      environment:
-        - name: "PORT"
-          value: "8080"
-      secrets:
-        # For variables stored in Secrets Manager
-        - name: "NGINX_HOST"
-          valueFrom: "arn:aws:secretsmanager:us-west-2:123456789012:secret:nginx/NGINX_HOST"
-        # For variables stored in Parameter Store
-        - name: "API_KEY"
-          valueFrom: "arn:aws:ssm:us-west-2:123456789012:parameter/nginx/API_KEY"
+      - name: nginx
+        essential: true
+        image: "nginx"
+        environment:
+          - name: "PORT"
+            value: "8080"
+        secrets:
+          # For variables stored in Secrets Manager
+          - name: "NGINX_HOST"
+            valueFrom: "arn:aws:secretsmanager:us-west-2:123456789012:secret:nginx/NGINX_HOST"
+          # For variables stored in Parameter Store
+          - name: "API_KEY"
+            valueFrom: "arn:aws:ssm:us-west-2:123456789012:parameter/nginx/API_KEY"
     launch_type: FARGATE
     cpu: 512
     memory: 1GB
@@ -771,22 +772,22 @@ EXAMPLES = r"""
   community.aws.ecs_taskdefinition:
     family: nginx
     containers:
-    - name: nginx
-      essential: true
-      image: "nginx"
-      portMappings:
-      - containerPort: 8080
-        hostPort: 8080
-      cpu: 512
-      memory: 1024
-      healthCheck:
-        command:
+      - name: nginx
+        essential: true
+        image: "nginx"
+        portMappings:
+          - containerPort: 8080
+            hostPort: 8080
+        cpu: 512
+        memory: 1024
+        healthCheck:
+          command:
             - CMD-SHELL
             - /app/healthcheck.py
-        interval: 60
-        retries: 3
-        startPeriod: 15
-        timeout: 15
+          interval: 60
+          retries: 3
+          startPeriod: 15
+          timeout: 15
     state: present
 """
 

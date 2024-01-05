@@ -202,7 +202,7 @@ EXAMPLES = r"""
   community.aws.eks_nodegroup:
     name: test_nodegroup
     cluster_name: test_cluster
-    wait: yes
+    wait: true
     state: absent
 """
 

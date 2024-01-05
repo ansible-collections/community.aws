@@ -45,7 +45,7 @@ EXAMPLES = r"""
   community.aws.ec2_carrier_gateway_info:
     region: ap-southeast-2
     filters:
-        "tag:Name": "cagw-123"
+      "tag:Name": "cagw-123"
   register: cagw_info
 
 - name: Gather information about a specific carrier gateway by CarrierGatewayId

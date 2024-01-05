@@ -95,12 +95,11 @@ EXAMPLES = r"""
     state: present
     description: 'This AWS Config rule checks for public write access on S3 buckets'
     scope:
-        compliance_types:
-            - 'AWS::S3::Bucket'
+      compliance_types:
+        - 'AWS::S3::Bucket'
     source:
-        owner: AWS
-        identifier: 'S3_BUCKET_PUBLIC_WRITE_PROHIBITED'
-
+      owner: AWS
+      identifier: 'S3_BUCKET_PUBLIC_WRITE_PROHIBITED'
 """
 
 RETURN = r"""#"""
