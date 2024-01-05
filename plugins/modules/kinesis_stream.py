@@ -146,6 +146,15 @@ EXAMPLES = r"""
     wait: true
     wait_timeout: 600
   register: test_stream
+
+# Create a Kinesis Stream with a Different AWS Profile: 
+- name: Create a Kinesis Stream with a Different AWS Profile
+  community.aws.kinesis_stream:
+    name: test-stream
+    shards: 3
+    state: present
+    profile: my_new_aws_profile
+  register: test_stream
 """
 
 RETURN = r"""
