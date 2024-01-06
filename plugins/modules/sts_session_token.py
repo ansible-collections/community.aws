@@ -73,8 +73,7 @@ EXAMPLES = r"""
     resource: i-xyzxyz01
     state: present
     tags:
-        MyNewTag: value
-
+      MyNewTag: value
 """
 
 try:

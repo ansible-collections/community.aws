@@ -59,7 +59,6 @@ EXAMPLES = r"""
     names:
       - tg1
       - tg2
-
 """
 
 RETURN = r"""

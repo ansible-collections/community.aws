@@ -93,7 +93,6 @@ EXAMPLES = r"""
     bucket_name: my-bucket
     id: EntireBucket
     state: absent
-
 """
 
 try:

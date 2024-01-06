@@ -68,7 +68,6 @@ EXAMPLES = r"""
     suffix: home.htm
     error_key: errors/404.htm
     state: present
-
 """
 
 RETURN = r"""

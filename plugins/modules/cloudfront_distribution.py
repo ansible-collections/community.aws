@@ -657,7 +657,9 @@ EXAMPLES = r"""
     state: present
     distribution_id: E1RP5A2MJ8073O
     comment: modified by cloudfront.py again
-    aliases: [ 'www.my-distribution-source.com', 'zzz.aaa.io' ]
+    aliases:
+      - 'www.my-distribution-source.com'
+      - 'zzz.aaa.io'
 
 - name: update a distribution's aliases and comment using an alias as a reference
   community.aws.cloudfront_distribution:
@@ -684,12 +686,12 @@ EXAMPLES = r"""
     state: present
     caller_reference: unique test distribution ID
     origins:
-        - id: 'my test origin-000111'
-          domain_name: www.example.com
-          origin_path: /production
-          custom_headers:
-            - header_name: MyCustomHeaderName
-              header_value: MyCustomHeaderValue
+      - id: 'my test origin-000111'
+        domain_name: www.example.com
+        origin_path: /production
+        custom_headers:
+          - header_name: MyCustomHeaderName
+            header_value: MyCustomHeaderValue
     default_cache_behavior:
       target_origin_id: 'my test origin-000111'
       forwarded_values:
@@ -697,7 +699,7 @@ EXAMPLES = r"""
         cookies:
           forward: all
         headers:
-         - '*'
+          - '*'
       viewer_protocol_policy: allow-all
       smooth_streaming: true
       compress: true

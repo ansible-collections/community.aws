@@ -35,8 +35,8 @@ EXAMPLES = r"""
 - name: List all for a specific function
   community.aws.api_gateway_info:
     ids:
-    - 012345678a
-    - abcdefghij
+      - 012345678a
+      - abcdefghij
 """
 
 RETURN = r"""

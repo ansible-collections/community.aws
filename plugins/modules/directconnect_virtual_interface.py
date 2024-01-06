@@ -242,7 +242,6 @@ EXAMPLES = r"""
     state: absent
     connection_id: dxcon-XXXXXXXX
     virtual_interface_id: dxv-XXXXXXXX
-
 """
 
 import traceback
