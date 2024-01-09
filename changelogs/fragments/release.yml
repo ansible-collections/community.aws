@@ -1,0 +1,1 @@
+release_summary: This release includes new features for the ``cloudfront_distribution`` and ``mq_broker`` modules, as well as a bugfix for the ``aws_ssm`` connection plugin needed when connecting to hosts with Bash 5.1.0 and later.
