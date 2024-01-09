@@ -5,6 +5,26 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v7.1.0
+======
+
+Release Summary
+---------------
+
+This release includes new features for the ``cloudfront_distribution`` and ``mq_broker`` modules, as well as a bugfix for the ``aws_ssm`` connection plugin needed when connecting to hosts with Bash 5.1.0 and later.
+
+Minor Changes
+-------------
+
+- aws_ssm - Updated the documentation to explicitly state that an S3 bucket is required, the behavior of the files in that bucket, and requirements around that. (https://github.com/ansible-collections/community.aws/issues/1775).
+- cloudfront_distribution - added support for ``cache_policy_id`` and ``origin_request_policy_id`` for behaviors (https://github.com/ansible-collections/community.aws/pull/1589)
+- mq_broker - add support to wait for broker state via ``wait`` and ``wait_timeout`` parameter values (https://github.com/ansible-collections/community.aws/pull/1879).
+
+Bugfixes
+--------
+
+- aws_ssm - disable `enable-bracketed-paste` to fix issue with amazon linux 2023 and other OSes (https://github.com/ansible-collections/community.aws/issues/1756)
+
 v7.0.0
 ======
 
