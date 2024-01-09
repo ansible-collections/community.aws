@@ -205,9 +205,25 @@ options:
           description:
             - The ID of the header policy that CloudFront adds to responses that it sends to viewers.
           type: str
+        cache_policy_id:
+          version_added: 7.1.0
+          description:
+            - The ID of the cache policy for CloudFront to use for the default cache behavior.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html)
+          type: str
+        origin_request_policy_id:
+          version_added: 7.1.0
+          description:
+            - The ID of the origin request policy for CloudFront to use for the default cache behavior.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)
+          type: str
         forwarded_values:
           description:
             - A dict that specifies how CloudFront handles query strings and cookies.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
           type: dict
           suboptions:
             query_string:
@@ -326,9 +342,25 @@ options:
           description:
             - The ID of the header policy that CloudFront adds to responses that it sends to viewers.
           type: str
+        cache_policy_id:
+          version_added: 7.1.0
+          description:
+            - The ID of the cache policy for CloudFront to use for the cache behavior.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html)
+          type: str
+        origin_request_policy_id:
+          version_added: 7.1.0
+          description:
+            - The ID of the origin request policy for CloudFront to use for the cache behavior.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)
+          type: str
         forwarded_values:
           description:
             - A dict that specifies how CloudFront handles query strings and cookies.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
           type: dict
           suboptions:
             query_string:
@@ -1914,7 +1946,10 @@ class CloudFrontValidationManager(object):
         cache_behavior = self.validate_cache_behavior_first_level_keys(
             config, cache_behavior, valid_origins, is_default_cache
         )
-        cache_behavior = self.validate_forwarded_values(config, cache_behavior.get("forwarded_values"), cache_behavior)
+        if cache_behavior.get("cache_policy_id") is None:
+            cache_behavior = self.validate_forwarded_values(
+                config, cache_behavior.get("forwarded_values"), cache_behavior
+            )
         cache_behavior = self.validate_allowed_methods(config, cache_behavior.get("allowed_methods"), cache_behavior)
         cache_behavior = self.validate_lambda_function_associations(
             config, cache_behavior.get("lambda_function_associations"), cache_behavior
@@ -1926,19 +1961,34 @@ class CloudFrontValidationManager(object):
         return cache_behavior
 
     def validate_cache_behavior_first_level_keys(self, config, cache_behavior, valid_origins, is_default_cache):
+        if cache_behavior.get("cache_policy_id") is not None and cache_behavior.get("forwarded_values") is not None:
+            if is_default_cache:
+                cache_behavior_name = "Default cache behavior"
+            else:
+                cache_behavior_name = f"Cache behavior for path {cache_behavior['path_pattern']}"
+            self.module.fail_json(
+                msg=f"{cache_behavior_name} cannot have both a cache_policy_id and a forwarded_values option."
+            )
         try:
-            cache_behavior = self.add_key_else_change_dict_key(
-                cache_behavior, "min_ttl", "min_t_t_l", config.get("min_t_t_l", self.__default_cache_behavior_min_ttl)
-            )
-            cache_behavior = self.add_key_else_change_dict_key(
-                cache_behavior, "max_ttl", "max_t_t_l", config.get("max_t_t_l", self.__default_cache_behavior_max_ttl)
-            )
-            cache_behavior = self.add_key_else_change_dict_key(
-                cache_behavior,
-                "default_ttl",
-                "default_t_t_l",
-                config.get("default_t_t_l", self.__default_cache_behavior_default_ttl),
-            )
+            if cache_behavior.get("cache_policy_id") is None:
+                cache_behavior = self.add_key_else_change_dict_key(
+                    cache_behavior,
+                    "min_ttl",
+                    "min_t_t_l",
+                    config.get("min_t_t_l", self.__default_cache_behavior_min_ttl),
+                )
+                cache_behavior = self.add_key_else_change_dict_key(
+                    cache_behavior,
+                    "max_ttl",
+                    "max_t_t_l",
+                    config.get("max_t_t_l", self.__default_cache_behavior_max_ttl),
+                )
+                cache_behavior = self.add_key_else_change_dict_key(
+                    cache_behavior,
+                    "default_ttl",
+                    "default_t_t_l",
+                    config.get("default_t_t_l", self.__default_cache_behavior_default_ttl),
+                )
             cache_behavior = self.add_missing_key(
                 cache_behavior, "compress", config.get("compress", self.__default_cache_behavior_compress)
             )
