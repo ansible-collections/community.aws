@@ -124,6 +124,19 @@ options:
       - At least one must be provided during creation.
     type: list
     elements: str
+  wait:
+    description:
+      - Specifies whether the module waits for the desired C(state).
+      - The time to wait can be controlled by setting I(wait_timeout).
+    type: bool
+    default: false
+    version_added: 7.1.0
+  wait_timeout:
+    description:
+      - How long to wait (in seconds) for the broker to reach the desired state if I(wait=true).
+    default: 900
+    type: int
+    version_added: 7.1.0
 
 extends_documentation_fragment:
   - amazon.aws.boto3
@@ -214,6 +227,9 @@ try:
 except ImportError:
     # handled by AnsibleAWSModule
     pass
+
+from time import sleep
+from time import time
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
@@ -384,22 +400,77 @@ def get_broker_info(conn, module, broker_id):
         module.fail_json_aws(e, msg="Couldn't get broker details.")
 
 
+def wait_for_status(conn, module):
+    interval_secs = 5
+    timeout = module.params.get("wait_timeout", 900)
+    broker_name = module.params.get("broker_name")
+    desired_state = module.params.get("state")
+    done = False
+
+    paginator = conn.get_paginator("list_brokers")
+    page_iterator = paginator.paginate(PaginationConfig={"MaxItems": 100, "PageSize": 100, "StartingToken": ""})
+    wait_timeout = time() + timeout
+
+    while wait_timeout > time():
+        try:
+            filtered_iterator = page_iterator.search(f"BrokerSummaries[?BrokerName == `{broker_name}`][]")
+            broker_list = list(filtered_iterator)
+
+            if module.check_mode:
+                return
+
+            if len(broker_list) < 1 and desired_state == "absent":
+                done = True
+                break
+
+            if desired_state in ["present", "rebooted"] and broker_list[0]["BrokerState"] == "RUNNING":
+                done = True
+                break
+
+            if broker_list[0]["BrokerState"] == "CREATION_FAILED":
+                break
+
+            sleep(interval_secs)
+
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't paginate brokers.")
+
+    if not done:
+        module.fail_json(msg="desired state not reached")
+
+
 def reboot_broker(conn, module, broker_id):
+    wait = module.params.get("wait")
+
     try:
-        return conn.reboot_broker(BrokerId=broker_id)
+        response = conn.reboot_broker(BrokerId=broker_id)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't reboot broker.")
 
+    if wait:
+        wait_for_status(conn, module)
+
+    return response
+
 
 def delete_broker(conn, module, broker_id):
+    wait = module.params.get("wait")
+
     try:
-        return conn.delete_broker(BrokerId=broker_id)
+        response = conn.delete_broker(BrokerId=broker_id)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't delete broker.")
+
+    if wait:
+        wait_for_status(conn, module)
+
+    return response
 
 
 def create_broker(conn, module):
     kwargs = _fill_kwargs(module)
+    wait = module.params.get("wait")
+
     if "EngineVersion" in kwargs and kwargs["EngineVersion"] == "latest":
         kwargs["EngineVersion"] = get_latest_engine_version(conn, module, kwargs["EngineType"])
     if kwargs["AuthenticationStrategy"] == "LDAP":
@@ -416,11 +487,15 @@ def create_broker(conn, module):
     changed = True
     result = conn.create_broker(**kwargs)
     #
+    if wait:
+        wait_for_status(conn, module)
+
     return {"broker": camel_dict_to_snake_dict(result, ignore_list=["Tags"]), "changed": changed}
 
 
 def update_broker(conn, module, broker_id):
     kwargs = _fill_kwargs(module, apply_defaults=False, ignore_create_params=True)
+    wait = module.params.get("wait")
     # replace name with id
     broker_name = kwargs["BrokerName"]
     del kwargs["BrokerName"]
@@ -443,6 +518,9 @@ def update_broker(conn, module, broker_id):
             api_result = conn.update_broker(**kwargs)
         #
     #
+    if wait:
+        wait_for_status(conn, module)
+
     return {"broker": result, "changed": changed}
 
 
@@ -484,6 +562,8 @@ def main():
     argument_spec = dict(
         broker_name=dict(required=True, type="str"),
         state=dict(default="present", choices=["present", "absent", "restarted"]),
+        wait=dict(default=False, type="bool"),
+        wait_timeout=dict(default=900, type="int"),
         # parameters only allowed on create
         deployment_mode=dict(choices=["SINGLE_INSTANCE", "ACTIVE_STANDBY_MULTI_AZ", "CLUSTER_MULTI_AZ"]),
         use_aws_owned_key=dict(type="bool"),
