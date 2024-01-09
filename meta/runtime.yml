@@ -66,6 +66,7 @@ action_groups:
     - batch_job_queue
     - cloudformation_exports_info
     - cloudformation_stack_set
+    - cloudfront_cache_policy
     - cloudfront_distribution
     - cloudfront_distribution_info
     - cloudfront_info
