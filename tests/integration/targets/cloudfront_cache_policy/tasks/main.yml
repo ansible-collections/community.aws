@@ -93,8 +93,8 @@
       assert:
         that:
           - update_result is changed
-          - update_result.cache_policy.cache_policy_config.cors_config.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_gzip == true
-          - update_result.cache_policy.cache_policy_config.cors_config.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_brotli == true
+          - update_result.cache_policy.cache_policy_config.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_gzip == true
+          - update_result.cache_policy.cache_policy_config.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_brotli == true
 
     - name: Ensure policy is deleted
       cloudfront_cache_policy:
