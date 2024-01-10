@@ -32,7 +32,7 @@
         that:
           - create_result is changed
           - create_result is not failed
-          - create_result.cache_policy.cache_policy_config.name == "{{ resource_prefix }}-my-header-policy"
+          - create_result.cache_policy.cache_policy_config.name == "{{ resource_prefix }}-my-cache-policy"
 
     - name: Rerun same task to ensure idempotence
       cloudfront_cache_policy:
