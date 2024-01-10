@@ -9,10 +9,10 @@ DOCUMENTATION = r"""
 version_added: 7.2.0
 module: cloudfront_cache_policy
 
-short_description: Create, update and delete cache policies to be used in a Cloudfront distribution
+short_description: Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior
 
 description:
-  - Create, update and delete cache policies to be used in a Cloudfront distribution for configurating the cache key as well as the default, minimum, and maximum time to live (TTL) values that you want objects to stay in the CloudFront cache
+  - Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior for configurating the cache key as well as the default, minimum, and maximum time to live (TTL) values that you want objects to stay in the CloudFront cache.
   - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront/client/create_cache_policy.html)
 
 author:
