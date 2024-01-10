@@ -72,6 +72,7 @@ action_groups:
     - cloudfront_info
     - cloudfront_invalidation
     - cloudfront_origin_access_identity
+    - cloudfront_origin_request_policy
     - cloudfront_response_headers_policy
     - codebuild_project
     - codecommit_repository
