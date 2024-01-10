@@ -11,7 +11,7 @@
 
     - name: Create a simple cache policy
       cloudfront_cache_policy:
-        name: "{{ resource_prefix }}-my-header-policy"
+        name: "{{ resource_prefix }}-my-cache-policy"
         comment: Created by Ansible test
         min_ttl: 1
         max_ttl: 31536000
@@ -36,7 +36,7 @@
 
     - name: Rerun same task to ensure idempotence
       cloudfront_cache_policy:
-        name: "{{ resource_prefix }}-my-header-policy"
+        name: "{{ resource_prefix }}-my-cache-policy"
         comment: Created by Ansible test
         min_ttl: 1
         max_ttl: 31536000
@@ -60,7 +60,7 @@
 
     - name: Update existing policy with more complicated configuration
       cloudfront_cache_policy:
-        name: "{{ resource_prefix }}-my-header-policy"
+        name: "{{ resource_prefix }}-my-cache-policy"
         comment: Created by Ansible test
         default_ttl: 86400
         min_ttl: 1
@@ -98,7 +98,7 @@
 
     - name: Ensure policy is deleted
       cloudfront_cache_policy:
-        name: "{{ resource_prefix }}-my-header-policy"
+        name: "{{ resource_prefix }}-my-cache-policy"
         comment: Created by Ansible test
         state: absent
       register: delete_result
@@ -114,6 +114,6 @@
 
     - name: Ensure policy is deleted
       cloudfront_cache_policy:
-        name: "{{ resource_prefix }}-my-header-policy"
+        name: "{{ resource_prefix }}-my-cache-policy"
         state: absent
         ignore_errors: true
