@@ -525,6 +525,29 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 </ul>
 </div></td>
 </tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-module-parameter-wait"><strong>wait</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Specifies whether the module waits for the desired <code class="docutils literal notranslate"><span class="pre">state</span></code>.</p>
+<p>The time to wait can be controlled by setting <em>wait_timeout</em>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>How long to wait (in seconds) for the broker to reach the desired state if <em>wait=true</em>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">900</span></code></p>
+</div></td>
+</tr>
 </tbody>
 </table>
 </section>
