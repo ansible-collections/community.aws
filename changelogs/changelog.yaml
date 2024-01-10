@@ -3733,4 +3733,4 @@ releases:
     - 1879-mq_broker-add-wait.yml
     - release.yml
     - ssm-fedora34.yml
-    release_date: '2024-01-09'
+    release_date: '2024-01-10'
