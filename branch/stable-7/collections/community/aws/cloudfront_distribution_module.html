@@ -137,7 +137,7 @@
 <h1>community.aws.cloudfront_distribution module – Create, update and delete AWS CloudFront distributions<a class="headerlink" href="#community-aws-cloudfront-distribution-module-create-update-and-delete-aws-cloudfront-distributions" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 7.0.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 7.1.0).</p>
 <p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
 To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
@@ -238,20 +238,31 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-cache_behaviors/cache_policy_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-cache-policy-id"><strong>cache_policy_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-cache_behaviors/cache_policy_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the cache policy for CloudFront to use for the cache behavior.</p>
+<p>A behavior should use either a <code class="docutils literal notranslate"><span class="pre">cache_policy_id</span></code> or a <code class="docutils literal notranslate"><span class="pre">forwarded_values</span></code> option.</p>
+<p>For more information see the CloudFront documentation at <a class="reference external" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html">https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html</a></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values"><strong>forwarded_values</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that specifies how CloudFront handles query strings and cookies.</p>
+<p>A behavior should use either a <code class="docutils literal notranslate"><span class="pre">cache_policy_id</span></code> or a <code class="docutils literal notranslate"><span class="pre">forwarded_values</span></code> option.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/allowed_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-allowed-methods"><strong>allowed_methods</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/allowed_methods" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that controls which HTTP methods CloudFront processes and forwards.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/allowed_methods/cached_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-allowed-methods-cached-methods"><strong>cached_methods</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/allowed_methods/cached_methods" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -259,14 +270,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>This can either be <code class="docutils literal notranslate"><span class="pre">[GET,HEAD]</span></code>, or <code class="docutils literal notranslate"><span class="pre">[GET,HEAD,OPTIONS]</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/allowed_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-allowed-methods-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/allowed_methods/items" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of HTTP methods that you want CloudFront to process and forward.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/compress"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-compress"><strong>compress</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/compress" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -278,14 +289,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/cookies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-cookies"><strong>cookies</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/cookies" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that specifies whether you want CloudFront to forward cookies to the origin and, if so, which ones.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/cookies/forward"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-cookies-forward"><strong>forward</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/cookies/forward" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -293,28 +304,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">none</span></code>, or <code class="docutils literal notranslate"><span class="pre">whitelist</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/cookies/whitelisted_names"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-cookies-whitelisted-names"><strong>whitelisted_names</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/cookies/whitelisted_names" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of cookies to forward to the origin for this cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/default_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-default-ttl"><strong>default_ttl</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/default_ttl" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The default amount of time that you want objects to stay in CloudFront caches.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/field_level_encryption_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-field-level-encryption-id"><strong>field_level_encryption_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/field_level_encryption_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-headers"><strong>headers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/headers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -322,14 +333,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>To forward all headers use a list containing a single element ‘*’ (<code class="docutils literal notranslate"><span class="pre">['*']</span></code>)</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/lambda_function_associations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-lambda-function-associations"><strong>lambda_function_associations</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/lambda_function_associations" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of Lambda function associations to use for this cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/lambda_function_associations/event_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-lambda-function-associations-event-type"><strong>event_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/lambda_function_associations/event_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -337,28 +348,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>This can be <code class="docutils literal notranslate"><span class="pre">viewer-request</span></code>, <code class="docutils literal notranslate"><span class="pre">origin-request</span></code>, <code class="docutils literal notranslate"><span class="pre">origin-response</span></code> or <code class="docutils literal notranslate"><span class="pre">viewer-response</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/lambda_function_associations/lambda_function_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-lambda-function-associations-lambda-function-arn"><strong>lambda_function_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/lambda_function_associations/lambda_function_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN of the Lambda function.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/max_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-max-ttl"><strong>max_ttl</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/max_ttl" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum amount of time that you want objects to stay in CloudFront caches.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/min_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-min-ttl"><strong>min_ttl</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/min_ttl" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The minimum amount of time that you want objects to stay in CloudFront caches.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/query_string"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-query-string"><strong>query_string</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/query_string" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -370,14 +381,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/query_string_cache_keys"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-query-string-cache-keys"><strong>query_string_cache_keys</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/query_string_cache_keys" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list that contains the query string parameters you want CloudFront to use as a basis for caching for a cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/smooth_streaming"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-smooth-streaming"><strong>smooth_streaming</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/smooth_streaming" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -389,14 +400,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/trusted_signers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-trusted-signers"><strong>trusted_signers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/trusted_signers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that specifies the AWS accounts that you want to allow to create signed URLs for private content.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/trusted_signers/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-trusted-signers-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/trusted_signers/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -408,19 +419,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/trusted_signers/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-trusted-signers-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/trusted_signers/items" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of trusted signers for this cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cache_behaviors/forwarded_values/viewer_protocol_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-forwarded-values-viewer-protocol-policy"><strong>viewer_protocol_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cache_behaviors/forwarded_values/viewer_protocol_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol that viewers can use to access the files in the origin specified by <em>target_origin_id</em> when a request matches <em>path_pattern</em>.</p>
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">allow-all</span></code>, <code class="docutils literal notranslate"><span class="pre">redirect-to-https</span></code> and <code class="docutils literal notranslate"><span class="pre">https-only</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-cache_behaviors/origin_request_policy_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-cache-behaviors-origin-request-policy-id"><strong>origin_request_policy_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-cache_behaviors/origin_request_policy_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the origin request policy for CloudFront to use for the cache behavior.</p>
+<p>For more information see the CloudFront documentation at <a class="reference external" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html">https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html</a></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -518,20 +538,31 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/cache_policy_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-cache-policy-id"><strong>cache_policy_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-default_cache_behavior/cache_policy_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the cache policy for CloudFront to use for the default cache behavior.</p>
+<p>A behavior should use either a <code class="docutils literal notranslate"><span class="pre">cache_policy_id</span></code> or a <code class="docutils literal notranslate"><span class="pre">forwarded_values</span></code> option.</p>
+<p>For more information see the CloudFront documentation at <a class="reference external" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html">https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html</a></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values"><strong>forwarded_values</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that specifies how CloudFront handles query strings and cookies.</p>
+<p>A behavior should use either a <code class="docutils literal notranslate"><span class="pre">cache_policy_id</span></code> or a <code class="docutils literal notranslate"><span class="pre">forwarded_values</span></code> option.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/allowed_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-allowed-methods"><strong>allowed_methods</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/allowed_methods" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that controls which HTTP methods CloudFront processes and forwards.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/allowed_methods/cached_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-allowed-methods-cached-methods"><strong>cached_methods</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/allowed_methods/cached_methods" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -539,14 +570,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>This can either be <code class="docutils literal notranslate"><span class="pre">[GET,HEAD]</span></code>, or <code class="docutils literal notranslate"><span class="pre">[GET,HEAD,OPTIONS]</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/allowed_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-allowed-methods-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/allowed_methods/items" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of HTTP methods that you want CloudFront to process and forward.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/compress"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-compress"><strong>compress</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/compress" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -558,14 +589,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/cookies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-cookies"><strong>cookies</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/cookies" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that specifies whether you want CloudFront to forward cookies to the origin and, if so, which ones.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/cookies/forward"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-cookies-forward"><strong>forward</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/cookies/forward" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -573,28 +604,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">none</span></code>, or <code class="docutils literal notranslate"><span class="pre">whitelist</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/cookies/whitelisted_names"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-cookies-whitelisted-names"><strong>whitelisted_names</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/cookies/whitelisted_names" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of cookies to forward to the origin for this cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/default_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-default-ttl"><strong>default_ttl</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/default_ttl" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The default amount of time that you want objects to stay in CloudFront caches.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/field_level_encryption_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-field-level-encryption-id"><strong>field_level_encryption_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/field_level_encryption_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-headers"><strong>headers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/headers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -602,14 +633,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>To forward all headers use a list containing a single element ‘*’ (<code class="docutils literal notranslate"><span class="pre">['*']</span></code>)</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/lambda_function_associations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-lambda-function-associations"><strong>lambda_function_associations</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/lambda_function_associations" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of Lambda function associations to use for this cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/lambda_function_associations/event_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-lambda-function-associations-event-type"><strong>event_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/lambda_function_associations/event_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -617,28 +648,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>This can be <code class="docutils literal notranslate"><span class="pre">viewer-request</span></code>, <code class="docutils literal notranslate"><span class="pre">origin-request</span></code>, <code class="docutils literal notranslate"><span class="pre">origin-response</span></code> or <code class="docutils literal notranslate"><span class="pre">viewer-response</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/lambda_function_associations/lambda_function_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-lambda-function-associations-lambda-function-arn"><strong>lambda_function_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/lambda_function_associations/lambda_function_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN of the Lambda function.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/max_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-max-ttl"><strong>max_ttl</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/max_ttl" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum amount of time that you want objects to stay in CloudFront caches.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/min_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-min-ttl"><strong>min_ttl</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/min_ttl" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The minimum amount of time that you want objects to stay in CloudFront caches.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/query_string"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-query-string"><strong>query_string</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/query_string" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -650,14 +681,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/query_string_cache_keys"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-query-string-cache-keys"><strong>query_string_cache_keys</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/query_string_cache_keys" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list that contains the query string parameters you want CloudFront to use as a basis for caching for a cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/smooth_streaming"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-smooth-streaming"><strong>smooth_streaming</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/smooth_streaming" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -669,14 +700,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/trusted_signers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-trusted-signers"><strong>trusted_signers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/trusted_signers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict that specifies the AWS accounts that you want to allow to create signed URLs for private content.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/trusted_signers/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-trusted-signers-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/trusted_signers/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -688,19 +719,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/trusted_signers/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-trusted-signers-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/trusted_signers/items" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of trusted signers for this cache behavior.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/forwarded_values/viewer_protocol_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-forwarded-values-viewer-protocol-policy"><strong>viewer_protocol_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-default_cache_behavior/forwarded_values/viewer_protocol_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol that viewers can use to access the files in the origin specified by <em>target_origin_id</em>.</p>
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">allow-all</span></code>, <code class="docutils literal notranslate"><span class="pre">redirect-to-https</span></code> and <code class="docutils literal notranslate"><span class="pre">https-only</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-default_cache_behavior/origin_request_policy_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-default-cache-behavior-origin-request-policy-id"><strong>origin_request_policy_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-default_cache_behavior/origin_request_policy_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 7.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the origin request policy for CloudFront to use for the default cache behavior.</p>
+<p>For more information see the CloudFront documentation at <a class="reference external" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html">https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html</a></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1420,7 +1460,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Link to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible Core vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="longtable ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
