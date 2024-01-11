@@ -58,6 +58,13 @@ options:
             - kafka.m5.12xlarge
             - kafka.m5.16xlarge
             - kafka.m5.24xlarge
+            - kafka.m7g.large
+            - kafka.m7g.xlarge
+            - kafka.m7g.2xlarge
+            - kafka.m7g.4xlarge
+            - kafka.m7g.8xlarge
+            - kafka.m7g.12xlarge
+            - kafka.m7g.16xlarge
         default: kafka.t3.small
         type: str
     ebs_volume_size:
@@ -670,6 +677,13 @@ def main():
                 "kafka.m5.12xlarge",
                 "kafka.m5.16xlarge",
                 "kafka.m5.24xlarge",
+                "kafka.m7g.large",
+                "kafka.m7g.xlarge",
+                "kafka.m7g.2xlarge",
+                "kafka.m7g.4xlarge",
+                "kafka.m7g.8xlarge",
+                "kafka.m7g.12xlarge",
+                "kafka.m7g.16xlarge",
             ],
             default="kafka.t3.small",
         ),
