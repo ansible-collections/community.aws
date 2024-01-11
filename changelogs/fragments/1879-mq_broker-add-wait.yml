@@ -1,2 +1,0 @@
-minor_changes:
-  - mq_broker - add support to wait for broker state via ``wait`` and ``wait_timeout`` parameter values (https://github.com/ansible-collections/community.aws/pull/1879).
