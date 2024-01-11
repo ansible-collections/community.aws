@@ -1,2 +1,2 @@
 minor_changes:
-  - ssm(connection) - fix find out bucket region logic when region is us-east-1, us-east-1 region bucket_location["LocationConstraint"] is null
+  - ssm(connection) - fix bucket region logic when region is ``us-east-1`` (https://github.com/ansible-collections/community.aws/pull/1908)
