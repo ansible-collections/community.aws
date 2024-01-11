@@ -3713,7 +3713,7 @@ releases:
   7.1.0:
     changes:
       bugfixes:
-      - aws_ssm - disable `enable-bracketed-paste` to fix issue with amazon linux
+      - aws_ssm - disable ``enable-bracketed-paste`` to fix issue with amazon linux
         2023 and other OSes (https://github.com/ansible-collections/community.aws/issues/1756)
       minor_changes:
       - aws_ssm - Updated the documentation to explicitly state that an S3 bucket

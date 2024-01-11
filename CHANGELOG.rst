@@ -23,7 +23,7 @@ Minor Changes
 Bugfixes
 --------
 
-- aws_ssm - disable `enable-bracketed-paste` to fix issue with amazon linux 2023 and other OSes (https://github.com/ansible-collections/community.aws/issues/1756)
+- aws_ssm - disable ``enable-bracketed-paste`` to fix issue with amazon linux 2023 and other OSes (https://github.com/ansible-collections/community.aws/issues/1756)
 
 v7.0.0
 ======
