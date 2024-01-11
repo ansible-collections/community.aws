@@ -1,0 +1,4 @@
+minor_changes:
+- msk_cluster - Support for additional types of MSK clusters `m5` and `m7g`.
+  C(kafka.m5.8xlarge), C(kafka.m5.12xlarge), C(kafka.m5.16xlarge), C(kafka.m5.24xlarge),
+  C(kafka.m7g.large), C(kafka.m7g.xlarge), C(kafka.m7g.2xlarge), C(kafka.m7g.4xlarge), C(kafka.m7g.8xlarge), C(kafka.m7g.12xlarge), and C(kafka.m7g.16xlarge)
