@@ -72,6 +72,7 @@ options:
     throughput_mode:
         description:
             - The throughput_mode for the file system to be created.
+            - Support for I(throughput_mode=elastic) was added in release 7.2.0.
         choices: ['bursting', 'provisioned', 'elastic']
         type: str
     provisioned_throughput_in_mibps:
