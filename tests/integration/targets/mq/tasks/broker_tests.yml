@@ -4,6 +4,7 @@
     security_groups: "{{ broker_sg_ids.split(',') }}"
     subnet_ids: "{{ broker_subnet_ids.split(',') }}"
     tags: "{{ tags }}"
+    wait: true
   register: result
 - set_fact:
     broker_id: "{{ result.broker['broker_id'] }}"
@@ -19,19 +20,9 @@
       - ( result.changed | bool )
       - result_c1.broker['broker_id'] == broker_id
       - result_c1.broker['broker_name'] == broker_name
-      - result_c1.broker['broker_state'] == 'CREATION_IN_PROGRESS'
+      - result_c1.broker['broker_state'] == 'RUNNING'
       - ( result_c1.broker['storage_type'] | upper ) == 'EFS'
       - result_c1.broker['tags'] == tags
-  when: not ansible_check_mode
-- debug:
-    msg: "Wait until broker {{ broker_name }} ({{ broker_id }}) enters running state. This may take several minutes"
-- name: wait for startup
-  mq_broker_info:
-    broker_id:      "{{ broker_id }}"
-  register: result
-  until: result.broker['broker_state'] == 'RUNNING'
-  retries: 15
-  delay:   60
   when: not ansible_check_mode
 - name: repeat creation
   mq_broker:

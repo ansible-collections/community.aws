@@ -112,21 +112,21 @@ EXAMPLES = r"""
     state: present
     name: myTestEFS
     tags:
-        Name: myTestNameTag
-        purpose: file-storage
+      Name: myTestNameTag
+      purpose: file-storage
     targets:
-        - subnet_id: subnet-748c5d03
-          security_groups: [ "sg-1a2b3c4d" ]
+      - subnet_id: subnet-748c5d03
+        security_groups: ["sg-1a2b3c4d"]
 
 - name: Modifying EFS data
   community.aws.efs:
     state: present
     name: myTestEFS
     tags:
-        name: myAnotherTestTag
+      name: myAnotherTestTag
     targets:
-        - subnet_id: subnet-7654fdca
-          security_groups: [ "sg-4c5d6f7a" ]
+      - subnet_id: subnet-7654fdca
+        security_groups: ["sg-4c5d6f7a"]
 
 - name: Set a lifecycle policy
   community.aws.efs:
@@ -134,8 +134,8 @@ EXAMPLES = r"""
     name: myTestEFS
     transition_to_ia: 7
     targets:
-        - subnet_id: subnet-7654fdca
-          security_groups: [ "sg-4c5d6f7a" ]
+      - subnet_id: subnet-7654fdca
+        security_groups: ["sg-4c5d6f7a"]
 
 - name: Remove a lifecycle policy
   community.aws.efs:
@@ -143,8 +143,8 @@ EXAMPLES = r"""
     name: myTestEFS
     transition_to_ia: None
     targets:
-        - subnet_id: subnet-7654fdca
-          security_groups: [ "sg-4c5d6f7a" ]
+      - subnet_id: subnet-7654fdca
+        security_groups: ["sg-4c5d6f7a"]
 
 - name: Deleting EFS
   community.aws.efs:
@@ -241,7 +241,6 @@ tags:
             "name": "my-efs",
             "key": "Value"
         }
-
 """
 
 from time import sleep

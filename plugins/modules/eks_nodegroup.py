@@ -184,25 +184,25 @@ EXAMPLES = r"""
       - subnet-qwerty123
       - subnet-asdfg456
     scaling_config:
-      - min_size: 1
-      - max_size: 2
-      - desired_size: 1
+      min_size: 1
+      max_size: 2
+      desired_size: 1
     disk_size: 20
     instance_types: 't3.micro'
     ami_type: 'AL2_x86_64'
     labels:
-      - 'teste': 'test'
+      'teste': 'test'
     taints:
       - key: 'test'
         value: 'test'
         effect: 'NO_SCHEDULE'
-    capacity_type: 'on_demand'
+    capacity_type: 'ON_DEMAND'
 
 - name: Remove an EKS Nodegrop
   community.aws.eks_nodegroup:
     name: test_nodegroup
     cluster_name: test_cluster
-    wait: yes
+    wait: true
     state: absent
 """
 
@@ -607,18 +607,29 @@ def delete_nodegroups(client, module):
     clusterName = module.params["cluster_name"]
     existing = get_nodegroup(client, module, name, clusterName)
     wait = module.params.get("wait")
-    if not existing or existing["status"] == "DELETING":
-        module.exit_json(changed=False, msg="Nodegroup not exists or in DELETING status.")
-    if not module.check_mode:
-        try:
-            client.delete_nodegroup(clusterName=clusterName, nodegroupName=name)
-        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-            module.fail_json_aws(e, msg=f"Couldn't delete Nodegroup {name}.")
 
+    if not existing:
+        module.exit_json(changed=False, msg="Nodegroup '{name}' does not exist")
+
+    if existing["status"] == "DELETING":
         if wait:
             wait_until(client, module, "nodegroup_deleted", name, clusterName)
+            module.exit_json(changed=False, msg="Nodegroup '{name}' deletion complete")
+        module.exit_json(changed=False, msg="Nodegroup '{name}' already in DELETING state")
 
-    module.exit_json(changed=True)
+    if module.check_mode:
+        module.exit_json(changed=True, msg="Nodegroup '{name}' deletion would be started (check mode)")
+
+    try:
+        client.delete_nodegroup(clusterName=clusterName, nodegroupName=name)
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+        module.fail_json_aws(e, msg=f"Couldn't delete Nodegroup '{name}'.")
+
+    if wait:
+        wait_until(client, module, "nodegroup_deleted", name, clusterName)
+        module.exit_json(changed=True, msg="Nodegroup '{name}' deletion complete")
+
+    module.exit_json(changed=True, msg="Nodegroup '{name}' deletion started")
 
 
 def get_nodegroup(client, module, nodegroup_name, cluster_name):

@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - elb_network_lb - add the possibly to update ``SslPolicy`` and ``Certificates`` for TLS listeners ().
+  - elb_network_lb - add support for Application-Layer Protocol Negotiation (ALPN) policy ``AlpnPolicy`` for TLS listeners (https://github.com/ansible-collections/community.aws/issues/1566).

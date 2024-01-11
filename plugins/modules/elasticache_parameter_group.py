@@ -51,8 +51,8 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-
-- hosts: localhost
+- name: Create, modify and delete a parameter group
+  hosts: localhost
   connection: local
   tasks:
     - name: 'Create a test parameter group'
@@ -65,7 +65,7 @@ EXAMPLES = r"""
       community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         values:
-          activerehashing: yes
+          activerehashing: true
           client-output-buffer-limit-normal-hard-limit: 4
         state: 'present'
     - name: 'Reset all modifiable parameters for the test parameter group'

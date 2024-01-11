@@ -63,16 +63,15 @@ EXAMPLES = r"""
 
 - name: update an existing origin access identity using caller_reference as an identifier
   community.aws.cloudfront_origin_access_identity:
-     origin_access_identity_id: E17DRN9XUOAHZX
-     caller_reference: this is an example reference
-     comment: this is a new comment
+    origin_access_identity_id: E17DRN9XUOAHZX
+    caller_reference: this is an example reference
+    comment: this is a new comment
 
 - name: delete an existing origin access identity using caller_reference as an identifier
   community.aws.cloudfront_origin_access_identity:
-     state: absent
-     caller_reference: this is an example reference
-     comment: this is a new comment
-
+    state: absent
+    caller_reference: this is an example reference
+    comment: this is a new comment
 """
 
 RETURN = r"""
@@ -110,7 +109,6 @@ location:
   description: The fully qualified URI of the new origin access identity just created.
   returned: when initially created
   type: str
-
 """
 
 import datetime

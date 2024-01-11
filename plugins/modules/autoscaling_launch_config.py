@@ -192,65 +192,71 @@ EXAMPLES = r"""
     name: special
     image_id: ami-XXX
     key_name: default
-    security_groups: ['group', 'group2' ]
+    security_groups:
+      - 'group'
+      - 'group2'
     instance_type: t1.micro
     volumes:
-    - device_name: /dev/sda1
-      volume_size: 100
-      volume_type: io1
-      iops: 3000
-      delete_on_termination: true
-      encrypted: true
-    - device_name: /dev/sdb
-      ephemeral: ephemeral0
+      - device_name: /dev/sda1
+        volume_size: 100
+        volume_type: io1
+        iops: 3000
+        delete_on_termination: true
+        encrypted: true
+      - device_name: /dev/sdb
+        ephemeral: ephemeral0
 
 - name: create a launch configuration using a running instance id as a basis
   community.aws.autoscaling_launch_config:
     name: special
     instance_id: i-00a48b207ec59e948
     key_name: default
-    security_groups: ['launch-wizard-2' ]
+    security_groups:
+      - 'launch-wizard-2'
     volumes:
-    - device_name: /dev/sda1
-      volume_size: 120
-      volume_type: io1
-      iops: 3000
-      delete_on_termination: true
+      - device_name: /dev/sda1
+        volume_size: 120
+        volume_type: io1
+        iops: 3000
+        delete_on_termination: true
 
 - name: create a launch configuration to omit the /dev/sdf EBS device that is included in the AMI image
   community.aws.autoscaling_launch_config:
     name: special
     image_id: ami-XXX
     key_name: default
-    security_groups: ['group', 'group2' ]
+    security_groups:
+      - 'group'
+      - 'group2'
     instance_type: t1.micro
     volumes:
-    - device_name: /dev/sdf
-      no_device: true
+      - device_name: /dev/sdf
+        no_device: true
 
 - name: Use EBS snapshot ID for volume
   block:
-  - name: Set Volume Facts
-    ansible.builtin.set_fact:
-      volumes:
-      - device_name: /dev/sda1
-        volume_size: 20
-        ebs:
-          snapshot: snap-XXXX
-          volume_type: gp2
-          delete_on_termination: true
-          encrypted: false
+    - name: Set Volume Facts
+      ansible.builtin.set_fact:
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 20
+            ebs:
+              snapshot: snap-XXXX
+              volume_type: gp2
+              delete_on_termination: true
+              encrypted: false
 
-  - name: Create launch configuration
-    community.aws.autoscaling_launch_config:
-      name: lc1
-      image_id: ami-xxxx
-      assign_public_ip: true
-      instance_type: t2.medium
-      key_name: my-key
-      security_groups: "['sg-xxxx']"
-      volumes: "{{ volumes }}"
-    register: lc_info
+    - name: Create launch configuration
+      community.aws.autoscaling_launch_config:
+        name: lc1
+        image_id: ami-xxxx
+        assign_public_ip: true
+        instance_type: t2.medium
+        key_name: my-key
+        security_groups:
+          - 'sg-xxxx'
+        volumes: "{{ volumes }}"
+      register: lc_info
 """
 
 RETURN = r"""

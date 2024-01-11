@@ -73,7 +73,8 @@ EXAMPLES = r"""
     security_policy: TLS_1_2
     endpoint_type: EDGE
     domain_mappings:
-        - { rest_api_id: abc123, stage: production }
+      - rest_api_id: abc123
+        stage: production
     state: present
   register: api_gw_domain_result
 

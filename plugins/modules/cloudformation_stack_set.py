@@ -201,7 +201,7 @@ EXAMPLES = r"""
       - 123456789012
       - 234567890123
     regions:
-     - us-east-1
+      - us-east-1
 
 - name: The same type of update, but wait for the update to complete in all stacks
   community.aws.cloudformation_stack_set:
@@ -217,7 +217,7 @@ EXAMPLES = r"""
       - 123456789012
       - 234567890123
     regions:
-    - us-east-1
+      - us-east-1
 
 - name: Register new accounts (create new stack instances) with an existing stack set.
   community.aws.cloudformation_stack_set:
@@ -234,7 +234,7 @@ EXAMPLES = r"""
       - 234567890123
       - 345678901234
     regions:
-    - us-east-1
+      - us-east-1
 """
 
 RETURN = r"""
@@ -315,7 +315,6 @@ stack_set:
         other:
           Type: "AWS::SNS::Topic"
           Properties: {}
-
 """
 
 import datetime
