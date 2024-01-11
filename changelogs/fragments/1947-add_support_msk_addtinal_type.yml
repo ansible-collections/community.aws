@@ -1,0 +1,2 @@
+minor_changes:
+- msk_cluster - Support for additional ``m5`` and ``m7g`` types of MSK clusters (https://github.com/ansible-collections/community.aws/pull/1947).
