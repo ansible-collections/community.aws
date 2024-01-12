@@ -58,6 +58,10 @@ options:
       - Availability zone in which to launch cluster.
     aliases: ['zone', 'aws_zone']
     type: str
+  associated_iam_roles:
+    description:
+      - A list of Identity and Access Management (IAM) roles.
+    type: list
   number_of_nodes:
     description:
       - Number of nodes.
@@ -220,6 +224,11 @@ cluster:
             returned: success
             type: str
             sample: "us-east-1b"
+        associated_iam_roles:
+            description: Amazon IAM roles associated with the cluster.
+            returned: success
+            type: list
+            sample: "arn:aws:iam::123456789012:role/AWSIAMRoleForRedShift"
         maintenance_window:
             description: Time frame when maintenance/upgrade are done.
             returned: success
@@ -325,6 +334,7 @@ def _collect_facts(resource):
     facts["url"] = None
     facts["port"] = None
     facts["availability_zone"] = None
+    facts["associated_iam_roles"] = None
     facts["tags"] = {}
 
     if resource["ClusterStatus"] != "creating":
@@ -332,6 +342,7 @@ def _collect_facts(resource):
         facts["url"] = resource["Endpoint"]["Address"]
         facts["port"] = resource["Endpoint"]["Port"]
         facts["availability_zone"] = resource["AvailabilityZone"]
+        facts["associated_iam_roles"] = resource["IamRoles"]
         facts["tags"] = boto3_tag_list_to_ansible_dict(resource["Tags"])
 
     return facts
@@ -404,6 +415,7 @@ def create_cluster(module, redshift):
         "vpc_security_group_ids",
         "cluster_subnet_group_name",
         "availability_zone",
+        "associated_iam_roles",
         "preferred_maintenance_window",
         "cluster_parameter_group_name",
         "automated_snapshot_retention_period",
@@ -545,6 +557,7 @@ def modify_cluster(module, redshift):
         "vpc_security_group_ids",
         "cluster_subnet_group_name",
         "availability_zone",
+        "associated_iam_roles",
         "preferred_maintenance_window",
         "cluster_parameter_group_name",
         "automated_snapshot_retention_period",
@@ -633,6 +646,7 @@ def main():
         final_cluster_snapshot_identifier=dict(aliases=["final_snapshot_id"], required=False),
         cluster_subnet_group_name=dict(aliases=["subnet"]),
         availability_zone=dict(aliases=["aws_zone", "zone"]),
+        associated_iam_roles=dict(type="list", elements="str"),
         preferred_maintenance_window=dict(aliases=["maintance_window", "maint_window"]),
         cluster_parameter_group_name=dict(aliases=["param_group_name"]),
         automated_snapshot_retention_period=dict(aliases=["retention_period"], type="int"),
