@@ -46,7 +46,7 @@ options:
       description: The maximum amount of time, in seconds, that objects stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
       required: false
       type: int
-    parameters_in_cache_key_and_forwarded_to_origin
+    parameters_in_cache_key_and_forwarded_to_origin:
       description:
         - The HTTP headers, cookies, and URL query strings to include in the cache key. The values included in the cache key are also included in requests that CloudFront sends to the origin.
         - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
@@ -225,7 +225,7 @@ cache_policy:
             type: int
             returned: always
             sample: 31536000
-          parameters_in_cache_key_and_forwarded_to_origin
+          parameters_in_cache_key_and_forwarded_to_origin:
             description:
               - The HTTP headers, cookies, and URL query strings to include in the cache key. The values included in the cache key are also included in requests that CloudFront sends to the origin.
               - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
