@@ -12,8 +12,8 @@ module: cloudfront_cache_policy
 short_description: Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior
 
 description:
-  - Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior
-    for configurating the cache key as well as the default, minimum, and maximum time to live (TTL) values that you want objects to stay in the CloudFront cache.
+  - Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior for
+    configurating the cache key as well as the default, minimum, and maximum time to live (TTL) values that you want objects to stay in the CloudFront cache.
   - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront/client/create_cache_policy.html)
 
 author:
@@ -239,17 +239,23 @@ cache_policy:
             returned: always
             sample: My cache policy for my CloudFront distribution
           default_ttl:
-            description: The default amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+            description:
+              - The default amount of time, in seconds, that you want objects to stay in the CloudFront cache
+                before CloudFront sends another request to the origin to see if the object has been updated.
             type: int
             returned: always
             sample: 86400
           min_ttl:
-            description: The minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+            description:
+              - The minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache
+                before CloudFront sends another request to the origin to see if the object has been updated.
             type: int
             returned: always
             sample: 1
           max_ttl:
-            description: The maximum amount of time, in seconds, that objects stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+            description:
+              - The maximum amount of time, in seconds, that objects stay in the CloudFront cache
+                before CloudFront sends another request to the origin to see if the object has been updated.
             type: int
             returned: always
             sample: 31536000
@@ -322,7 +328,9 @@ cache_policy:
                 type: dict
                 contains:
                   query_string_behavior:
-                    description: Determines whether any URL query strings in viewer requests are included in the cache key and in requests that CloudFront sends to the origin.
+                    description:
+                      - Determines whether any URL query strings in viewer requests
+                        are included in the cache key and in requests that CloudFront sends to the origin.
                     choices: ['none', 'whitelist', 'allExcept', 'all']
                     type: str
                   query_strings:
@@ -464,7 +472,7 @@ def main():
         default_ttl=dict(type="int"),
         min_ttl=dict(required=True, type="int"),
         max_ttl=dict(type="int"),
-        parameters_in_cache_key_and_forwarded_to_origin=dict(type="dict"),
+        parameters_in_cache_key_and_forwarded_to_origin=dict(type="dict", no_log=False),
         state=dict(choices=["present", "absent"], type="str", default="present"),
     )
 
