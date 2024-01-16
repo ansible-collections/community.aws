@@ -38,7 +38,8 @@ options:
     headers_config:
       description:
         - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
-        - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
+        - For more information see the CloudFront documentation at
+          U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
       type: dict
       required: true
       suboptions:
@@ -57,7 +58,8 @@ options:
     cookies_config:
       description:
         - The cookies from viewer requests to include in origin requests.
-        - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
+        - For more information see the CloudFront documentation at
+          U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
       type: dict
       required: true
       suboptions:
@@ -76,7 +78,8 @@ options:
     query_strings_config:
       description:
         - The URL query strings from viewer requests to include in origin requests.
-        - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
+        - For more information see the CloudFront documentation at
+          U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
       required: true
       type: dict
       suboptions:
@@ -172,7 +175,8 @@ origin_request_policy:
           headers_config:
             description:
               - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
-              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
+              - For more information see the CloudFront documentation at
+                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
             type: dict
             contains:
               header_behavior:
@@ -188,7 +192,8 @@ origin_request_policy:
           cookies_config:
             description:
               - The cookies from viewer requests to include in origin requests.
-              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
+              - For more information see the CloudFront documentation at
+                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
             type: dict
             contains:
               cookie_behavior:
@@ -204,7 +209,8 @@ origin_request_policy:
           query_strings_config:
             description:
               - The URL query strings from viewer requests to include in origin requests.
-              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
+              - For more information see the CloudFront documentation at
+                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
             type: dict
             contains:
               query_string_behavior:
@@ -214,7 +220,8 @@ origin_request_policy:
               query_strings:
                 description:
                   - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
-                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
+                  - For more information see the CloudFront documentation at
+                    U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
                 type: list
                 elements: str
 """
