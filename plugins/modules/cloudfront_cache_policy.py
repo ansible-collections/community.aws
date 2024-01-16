@@ -325,8 +325,12 @@ class CloudfrontCachePolicyService(object):
         except (ClientError, BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error fetching policy information")
 
-    def create_cache_policy(self, name, comment, default_ttl, min_ttl, max_ttl, parameters_in_cache_key_and_forwarded_to_origin):
-        parameters_in_cache_key_and_forwarded_to_origin = snake_dict_to_camel_dict(parameters_in_cache_key_and_forwarded_to_origin, capitalize_first=True)
+    def create_cache_policy(
+        self, name, comment, default_ttl, min_ttl, max_ttl, parameters_in_cache_key_and_forwarded_to_origin
+    ):
+        parameters_in_cache_key_and_forwarded_to_origin = snake_dict_to_camel_dict(
+            parameters_in_cache_key_and_forwarded_to_origin, capitalize_first=True
+        )
 
         config = {
             "Name": name,
@@ -334,7 +338,9 @@ class CloudfrontCachePolicyService(object):
             "DefaultTTL": default_ttl,
             "MinTTL": min_ttl,
             "MaxTTL": max_ttl,
-            "ParametersInCacheKeyAndForwardedToOrigin": self.insert_quantities(parameters_in_cache_key_and_forwarded_to_origin),
+            "ParametersInCacheKeyAndForwardedToOrigin": self.insert_quantities(
+                parameters_in_cache_key_and_forwarded_to_origin
+            ),
         }
 
         config = {k: v for k, v in config.items() if v}
@@ -356,9 +362,7 @@ class CloudfrontCachePolicyService(object):
             policy_id = matching_policy["CachePolicy"]["Id"]
             etag = matching_policy["ETag"]
             try:
-                result = self.client.update_cache_policy(
-                    Id=policy_id, IfMatch=etag, CachePolicyConfig=config
-                )
+                result = self.client.update_cache_policy(Id=policy_id, IfMatch=etag, CachePolicyConfig=config)
 
                 changed_time = result["CachePolicy"]["LastModifiedTime"]
                 seconds = 3  # threshhold for returned timestamp age
@@ -424,7 +428,9 @@ def main():
     default_ttl = module.params.get("default_ttl")
     min_ttl = module.params.get("min_ttl")
     max_ttl = module.params.get("max_ttl")
-    parameters_in_cache_key_and_forwarded_to_origin = module.params.get("parameters_in_cache_key_and_forwarded_to_origin")
+    parameters_in_cache_key_and_forwarded_to_origin = module.params.get(
+        "parameters_in_cache_key_and_forwarded_to_origin"
+    )
     state = module.params.get("state")
 
     service = CloudfrontCachePolicyService(module)
