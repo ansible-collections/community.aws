@@ -125,9 +125,9 @@ EXAMPLES = r"""
           - user-agent
     cookies_config:
       cookie_behavior: whitelist
-        cookies:
-          items:
-            - my-cookie
+      cookies:
+        items:
+          - my-cookie
     query_strings_config:
       query_string_behavior: whitelist
       query_strings:
