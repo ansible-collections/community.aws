@@ -362,9 +362,7 @@ def main():
     if state == "absent":
         service.delete_origin_request_policy(name)
     else:
-        service.create_origin_request_policy(
-            name, comment, headers_config, cookies_config, query_strings_config
-        )
+        service.create_origin_request_policy(name, comment, headers_config, cookies_config, query_strings_config)
 
 
 if __name__ == "__main__":
