@@ -48,10 +48,10 @@ options:
       type: int
     parameters_in_cache_key_and_forwarded_to_origin:
       description:
-        - The HTTP headers, cookies, and URL query strings to include in the cache key. The values included in the cache key are also included in requests that CloudFront sends to the origin.
+        - The HTTP headers, cookies, and URL query strings to include in the cache key.
+          The values included in the cache key are also included in requests that CloudFront sends to the origin.
         - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
       required: false
-      default: {}
       type: dict
       suboptions:
         enable_accept_encoding_gzip:
@@ -416,7 +416,7 @@ def main():
         default_ttl=dict(type="int"),
         min_ttl=dict(required=True, type="int"),
         max_ttl=dict(type="int"),
-        parameters_in_cache_key_and_forwarded_to_origin=dict(type="dict", default=dict()),
+        parameters_in_cache_key_and_forwarded_to_origin=dict(),
         state=dict(choices=["present", "absent"], type="str", default="present"),
     )
 
