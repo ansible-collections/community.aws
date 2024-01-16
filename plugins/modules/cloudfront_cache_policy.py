@@ -307,7 +307,7 @@ class CloudfrontCachePolicyService(object):
         self.module = module
         self.client = module.client("cloudfront")
         self.check_mode = module.check_mode
-    
+
     def find_cache_policy(self, name):
         try:
             policies = self.client.list_cache_policies()["CachePolicyList"]["Items"]
@@ -404,7 +404,8 @@ class CloudfrontCachePolicyService(object):
                 v["Quantity"] = len(v["Items"])
 
         return dict_with_items
-        
+
+
 def main():
     argument_spec = dict(
         name=dict(required=True, type="str"),
