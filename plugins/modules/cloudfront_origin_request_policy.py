@@ -164,69 +164,59 @@ origin_request_policy:
         contains:
           name:
             description: A unique name to identify the origin request policy.
-            required: true
             type: str
           comment:
             description: A comment to describe the origin request policy. The comment cannot be longer than 128 characters.
-            required: false
             type: str
           headers_config:
             description:
-                - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
-                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
+              - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
+              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
             type: dict
-            required: true
             suboptions:
-                header_behavior:
+              header_behavior:
                 description: Determines whether any HTTP headers are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'allViewer', 'allViewerAndWhitelistCloudFront', 'allExcept']
                 type: str
-                required: true
-                headers:
+              headers:
                 description:
-                    - Contains a list of HTTP header names.
-                    - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
+                  - Contains a list of HTTP header names.
+                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
                 type: list
                 elements: str
-                required: false
           cookies_config:
             description:
-                - The cookies from viewer requests to include in origin requests.
-                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
+              - The cookies from viewer requests to include in origin requests.
+              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
             type: dict
-            required: true
             suboptions:
-                cookie_behavior:
+              cookie_behavior:
                 description: Determines whether cookies in viewer requests are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'all', 'allExcept']
                 type: str
-                required: true
-                cookies:
+              cookies:
                 description:
-                    - Contains a list of cookie names.
-                    - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
+                  - Contains a list of cookie names.
+                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
                 type: list
                 elements: str
-                required: false
           query_strings_config:
             description:
-                - The URL query strings from viewer requests to include in origin requests.
-                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
-            required: true
+              - The URL query strings from viewer requests to include in origin requests.
+              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
             type: dict
             suboptions:
-                query_string_behavior:
+              query_string_behavior:
                 description: Determines whether any URL query strings in viewer requests are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'all', 'allExcept']
                 type: str
                 required: true
-                query_strings:
+              query_strings:
                 description:
-                    - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
-                    - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
+                  - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
+                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
                 type: list
                 elements: str
-                required: false
 """
 
 import datetime
