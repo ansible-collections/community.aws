@@ -166,11 +166,11 @@ origin_request_policy:
             description: A unique name to identify the origin request policy.
             required: true
             type: str
-            comment:
+          comment:
             description: A comment to describe the origin request policy. The comment cannot be longer than 128 characters.
             required: false
             type: str
-            headers_config:
+          headers_config:
             description:
                 - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
                 - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
@@ -189,7 +189,7 @@ origin_request_policy:
                 type: list
                 elements: str
                 required: false
-            cookies_config:
+          cookies_config:
             description:
                 - The cookies from viewer requests to include in origin requests.
                 - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
@@ -208,7 +208,7 @@ origin_request_policy:
                 type: list
                 elements: str
                 required: false
-            query_strings_config:
+          query_strings_config:
             description:
                 - The URL query strings from viewer requests to include in origin requests.
                 - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
