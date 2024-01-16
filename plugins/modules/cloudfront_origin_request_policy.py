@@ -12,7 +12,8 @@ module: cloudfront_origin_request_policy
 short_description: Create, update and delete origin request policies to be used in a Cloudfront distribution's cache behavior
 
 description:
-  - Create, update and delete origin request policies to be used in a Cloudfront distribution's cache behavior for determining the values that CloudFront includes in requests that it sends to the origin.
+  - Create, update and delete origin request policies to be used in a Cloudfront distribution's cache behavior
+    for determining the values that CloudFront includes in requests that it sends to the origin.
   - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront/client/create_origin_request_policy.html)
 
 author:
@@ -210,7 +211,6 @@ origin_request_policy:
                 description: Determines whether any URL query strings in viewer requests are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'all', 'allExcept']
                 type: str
-                required: true
               query_strings:
                 description:
                   - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
