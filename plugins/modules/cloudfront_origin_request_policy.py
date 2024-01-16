@@ -232,12 +232,13 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
+
 class CloudfrontOriginRequestPolicyService(object):
     def __init__(self, module):
         self.module = module
         self.client = module.client("cloudfront")
         self.check_mode = module.check_mode
-    
+
     def find_origin_request_policy(self, name):
         try:
             policies = self.client.list_origin_request_policies()["OriginRequestPolicyList"]["Items"]
@@ -335,7 +336,8 @@ class CloudfrontOriginRequestPolicyService(object):
                 v["Quantity"] = len(v["Items"])
 
         return dict_with_items
-        
+
+
 def main():
     argument_spec = dict(
         name=dict(required=True, type="str"),
@@ -343,6 +345,7 @@ def main():
         headers_config=dict(required=True, type="dict"),
         cookies_config=dict(required=True, type="dict"),
         query_strings_config=dict(required=True, type="dict"),
+        state=dict(choices=["present", "absent"], type="str", default="present"),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
@@ -352,6 +355,7 @@ def main():
     headers_config = module.params.get("headers_config")
     cookies_config = module.params.get("cookies_config")
     query_strings_config = module.params.get("query_strings_config")
+    state = module.params.get("state")
 
     service = CloudfrontOriginRequestPolicyService(module)
 
