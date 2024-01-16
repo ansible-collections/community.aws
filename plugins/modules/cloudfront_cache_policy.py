@@ -12,7 +12,8 @@ module: cloudfront_cache_policy
 short_description: Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior
 
 description:
-  - Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior for configurating the cache key as well as the default, minimum, and maximum time to live (TTL) values that you want objects to stay in the CloudFront cache.
+  - Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior
+    for configurating the cache key as well as the default, minimum, and maximum time to live (TTL) values that you want objects to stay in the CloudFront cache.
   - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront/client/create_cache_policy.html)
 
 author:
@@ -35,87 +36,114 @@ options:
       required: false
       type: str
     default_ttl:
-      description: The default amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+      description:
+        - The default amount of time, in seconds, that you want objects to stay in the CloudFront cache
+          before CloudFront sends another request to the origin to see if the object has been updated.
       required: false
       type: int
     min_ttl:
-      description: The minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+      description:
+        - The minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before
+          CloudFront sends another request to the origin to see if the object has been updated.
       required: true
       type: int
     max_ttl:
-      description: The maximum amount of time, in seconds, that objects stay in the CloudFront cache before CloudFront sends another request to the origin to see if the object has been updated.
+      description:
+        - The maximum amount of time, in seconds, that objects stay in the CloudFront cache before
+          CloudFront sends another request to the origin to see if the object has been updated.
       required: false
       type: int
     parameters_in_cache_key_and_forwarded_to_origin:
       description:
         - The HTTP headers, cookies, and URL query strings to include in the cache key.
           The values included in the cache key are also included in requests that CloudFront sends to the origin.
-        - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
+        - For more information see the CloudFront documentation at
+          U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
       required: false
       type: dict
       suboptions:
         enable_accept_encoding_gzip:
-          description: A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+          description:
+            - A flag that can affect whether the Accept-Encoding HTTP header is included
+              in the cache key and included in requests that CloudFront sends to the origin.
           type: bool
           required: true
         enable_accept_encoding_brotli:
-          description: A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+          description:
+            - A flag that can affect whether the Accept-Encoding HTTP header is included
+              in the cache key and included in requests that CloudFront sends to the origin.
           type: bool
           required: true
         headers_config:
           description:
-            - An object that determines whether any HTTP headers (and if so, which headers) are included in the cache key and in requests that CloudFront sends to the origin.
-            - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyHeadersConfig.html)
+            - An object that determines whether any HTTP headers (and if so, which headers)
+              are included in the cache key and in requests that CloudFront sends to the origin.
+            - For more information see the CloudFront documentation at
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyHeadersConfig.html)
           type: dict
           required: true
           suboptions:
             header_behavior:
-              description: Determines whether any HTTP headers are included in the cache key and in requests that CloudFront sends to the origin.
+              description:
+                - Determines whether any HTTP headers are included in the cache key
+                  and in requests that CloudFront sends to the origin.
               choices: ['none', 'whitelist']
               type: str
               required: true
             headers:
               description:
                 - Contains a list of HTTP header names.
-                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
+                - For more information see the CloudFront documentation at
+                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
               type: list
               elements: str
               required: false
         cookies_config:
           description:
-            - An object that determines whether any cookies in viewer requests (and if so, which cookies) are included in the cache key and in requests that CloudFront sends to the origin.
-            - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyCookiesConfig.html)
+            - An object that determines whether any cookies in viewer requests (and if so, which cookies)
+              are included in the cache key and in requests that CloudFront sends to the origin.
+            - For more information see the CloudFront documentation at
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyCookiesConfig.html)
           required: true
           type: dict
           suboptions:
             cookie_behavior:
-              description: Determines whether any cookies in viewer requests are included in the cache key and in requests that CloudFront sends to the origin.
+              description:
+                - Determines whether any cookies in viewer requests are included
+                  in the cache key and in requests that CloudFront sends to the origin.
               choices: ['none', 'whitelist', 'allExcept', 'all']
               required: true
               type: str
             cookies:
               description:
                 - Contains a list of cookie names.
-                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
+                - For more information see the CloudFront documentation at
+                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
               type: list
               elements: str
               required: false
         query_strings_config:
           description:
-            - An object that determines whether any URL query strings in viewer requests (and if so, which query strings) are included in the cache key and in requests that CloudFront sends to the origin.
-            - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyQueryStringsConfig.html)
+            - An object that determines whether any URL query strings in viewer requests (and if so, which query strings)
+              are included in the cache key and in requests that CloudFront sends to the origin.
+            - For more information see the CloudFront documentation at
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyQueryStringsConfig.html)
           required: true
           type: dict
           suboptions:
             query_string_behavior:
-              description: Determines whether any URL query strings in viewer requests are included in the cache key and in requests that CloudFront sends to the origin.
+              description:
+                - Determines whether any URL query strings in viewer requests are included
+                  in the cache key and in requests that CloudFront sends to the origin.
               choices: ['none', 'whitelist', 'allExcept', 'all']
               required: true
               type: str
             query_strings:
               description:
-                - Contains the specific query strings in viewer requests that either are or are not included in the cache key and in requests that CloudFront sends to the origin.
-                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
+                - Contains the specific query strings in viewer requests that either are or are not included
+                  in the cache key and in requests that CloudFront sends to the origin.
+                - For more information see the CloudFront documentation at
+                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
               type: list
               elements: str
               required: false
@@ -227,52 +255,70 @@ cache_policy:
             sample: 31536000
           parameters_in_cache_key_and_forwarded_to_origin:
             description:
-              - The HTTP headers, cookies, and URL query strings to include in the cache key. The values included in the cache key are also included in requests that CloudFront sends to the origin.
-              - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
+              - The HTTP headers, cookies, and URL query strings to include in the cache key.
+                The values included in the cache key are also included in requests that CloudFront sends to the origin.
+              - For more information see the CloudFront documentation at
+                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
             type: dict
             contains:
               enable_accept_encoding_gzip:
-                description: A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+                description:
+                  - A flag that can affect whether the Accept-Encoding HTTP header is included
+                    in the cache key and included in requests that CloudFront sends to the origin.
                 type: bool
               enable_accept_encoding_brotli:
-                description: A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+                description:
+                  - A flag that can affect whether the Accept-Encoding HTTP header is included
+                    in the cache key and included in requests that CloudFront sends to the origin.
                 type: bool
               headers_config:
                 description:
-                  - An object that determines whether any HTTP headers (and if so, which headers) are included in the cache key and in requests that CloudFront sends to the origin.
-                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyHeadersConfig.html)
+                  - An object that determines whether any HTTP headers (and if so, which headers) are included
+                    in the cache key and in requests that CloudFront sends to the origin.
+                  - For more information see the CloudFront documentation at
+                    U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyHeadersConfig.html)
                 type: dict
                 contains:
                   header_behavior:
-                    description: Determines whether any HTTP headers are included in the cache key and in requests that CloudFront sends to the origin.
+                    description:
+                      - Determines whether any HTTP headers are included in the cache key
+                        and in requests that CloudFront sends to the origin.
                     choices: ['none', 'whitelist']
                     type: str
                   headers:
                     description:
                       - Contains a list of HTTP header names.
-                      - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
+                      - For more information see the CloudFront documentation at
+                        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
                     type: list
                     elements: str
               cookies_config:
                 description:
-                  - An object that determines whether any cookies in viewer requests (and if so, which cookies) are included in the cache key and in requests that CloudFront sends to the origin.
-                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyCookiesConfig.html)
+                  - An object that determines whether any cookies in viewer requests (and if so, which cookies)
+                    are included in the cache key and in requests that CloudFront sends to the origin.
+                  - For more information see the CloudFront documentation at
+                    U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyCookiesConfig.html)
                 type: dict
                 contains:
                   cookie_behavior:
-                    description: Determines whether any cookies in viewer requests are included in the cache key and in requests that CloudFront sends to the origin.
+                    description:
+                      - Determines whether any cookies in viewer requests are included
+                        in the cache key and in requests that CloudFront sends to the origin.
                     choices: ['none', 'whitelist', 'allExcept', 'all']
                     type: str
                   cookies:
                     description:
                       - Contains a list of cookie names.
-                      - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
+                      - For more information see the CloudFront documentation at
+                        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
                     type: list
                     elements: str
               query_strings_config:
                 description:
-                    - An object that determines whether any URL query strings in viewer requests (and if so, which query strings) are included in the cache key and in requests that CloudFront sends to the origin.
-                    - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyQueryStringsConfig.html)
+                    - An object that determines whether any URL query strings in viewer requests (and if so, which query strings)
+                      are included in the cache key and in requests that CloudFront sends to the origin.
+                    - For more information see the CloudFront documentation at
+                      U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyQueryStringsConfig.html)
                 type: dict
                 contains:
                   query_string_behavior:
@@ -281,8 +327,10 @@ cache_policy:
                     type: str
                   query_strings:
                     description:
-                      - Contains the specific query strings in viewer requests that either are or are not included in the cache key and in requests that CloudFront sends to the origin.
-                      - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
+                      - Contains the specific query strings in viewer requests that either are or are not included
+                        in the cache key and in requests that CloudFront sends to the origin.
+                      - For more information see the CloudFront documentation at
+                        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
                     type: list
                     elements: str
 """
@@ -416,7 +464,7 @@ def main():
         default_ttl=dict(type="int"),
         min_ttl=dict(required=True, type="int"),
         max_ttl=dict(type="int"),
-        parameters_in_cache_key_and_forwarded_to_origin=dict(),
+        parameters_in_cache_key_and_forwarded_to_origin=dict(type="dict"),
         state=dict(choices=["present", "absent"], type="str", default="present"),
     )
 
