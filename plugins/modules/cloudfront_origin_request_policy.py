@@ -173,7 +173,7 @@ origin_request_policy:
               - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
               - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
             type: dict
-            suboptions:
+            contains:
               header_behavior:
                 description: Determines whether any HTTP headers are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'allViewer', 'allViewerAndWhitelistCloudFront', 'allExcept']
@@ -189,7 +189,7 @@ origin_request_policy:
               - The cookies from viewer requests to include in origin requests.
               - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
             type: dict
-            suboptions:
+            contains:
               cookie_behavior:
                 description: Determines whether cookies in viewer requests are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'all', 'allExcept']
@@ -205,7 +205,7 @@ origin_request_policy:
               - The URL query strings from viewer requests to include in origin requests.
               - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
             type: dict
-            suboptions:
+            contains:
               query_string_behavior:
                 description: Determines whether any URL query strings in viewer requests are included in requests that CloudFront sends to the origin.
                 choices: ['none', 'whitelist', 'all', 'allExcept']
