@@ -116,4 +116,4 @@
       cloudfront_cache_policy:
         name: "{{ resource_prefix }}-my-cache-policy"
         state: absent
-        ignore_errors: true
+      ignore_errors: true
