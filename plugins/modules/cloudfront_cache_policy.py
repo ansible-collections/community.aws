@@ -45,7 +45,7 @@ options:
     description:
       - The minimum amount of time, in seconds, that you want objects to stay in the CloudFront cache before
         CloudFront sends another request to the origin to see if the object has been updated.
-    required: true
+    required: false
     type: int
   max_ttl:
     description:
@@ -470,7 +470,7 @@ def main():
         name=dict(required=True, type="str"),
         comment=dict(type="str"),
         default_ttl=dict(type="int"),
-        min_ttl=dict(required=True, type="int"),
+        min_ttl=dict(type="int"),
         max_ttl=dict(type="int"),
         parameters_in_cache_key_and_forwarded_to_origin=dict(type="dict", no_log=False),
         state=dict(choices=["present", "absent"], type="str", default="present"),
