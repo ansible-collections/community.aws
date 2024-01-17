@@ -147,83 +147,83 @@ EXAMPLES = r"""
 
 RETURN = r"""
 origin_request_policy:
-    description: The policy's information
-    returned: success
-    type: complex
-    contains:
-      id:
-        description: The unique identifier for the origin request policy.
-        returned: always
-        type: str
-        sample: '216adef6-5c7f-47e4-b989-5492eafa07d3'
-      last_modified_time:
-        description: The timestamp when the origin request policy was last modified.
-        returned: always
-        type: str
-        sample: '2022-02-04T13:23:27.304000+00:00'
-      origin_request_policy_config:
-        description: The origin request policy configuration.
-        returned: always
-        type: complex
-        contains:
-          name:
-            description: A unique name to identify the origin request policy.
-            type: str
-          comment:
-            description: A comment to describe the origin request policy. The comment cannot be longer than 128 characters.
-            type: str
-          headers_config:
-            description:
-              - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
-              - For more information see the CloudFront documentation at
-                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
-            type: dict
-            contains:
-              header_behavior:
-                description: Determines whether any HTTP headers are included in requests that CloudFront sends to the origin.
-                choices: ['none', 'whitelist', 'allViewer', 'allViewerAndWhitelistCloudFront', 'allExcept']
-                type: str
-              headers:
-                description:
-                  - Contains a list of HTTP header names.
-                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
-                type: list
-                elements: str
-          cookies_config:
-            description:
-              - The cookies from viewer requests to include in origin requests.
-              - For more information see the CloudFront documentation at
-                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
-            type: dict
-            contains:
-              cookie_behavior:
-                description: Determines whether cookies in viewer requests are included in requests that CloudFront sends to the origin.
-                choices: ['none', 'whitelist', 'all', 'allExcept']
-                type: str
-              cookies:
-                description:
-                  - Contains a list of cookie names.
-                  - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
-                type: list
-                elements: str
-          query_strings_config:
-            description:
-              - The URL query strings from viewer requests to include in origin requests.
-              - For more information see the CloudFront documentation at
-                U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
-            type: dict
-            contains:
-              query_string_behavior:
-                description: Determines whether any URL query strings in viewer requests are included in requests that CloudFront sends to the origin.
-                choices: ['none', 'whitelist', 'all', 'allExcept']
-                type: str
-              query_strings:
-                description:
-                  - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
-                  - For more information see the CloudFront documentation at
-                    U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
-                type: list
-                elements: str
+  description: The policy's information
+  returned: success
+  type: complex
+  contains:
+    id:
+      description: The unique identifier for the origin request policy.
+      returned: always
+      type: str
+      sample: '216adef6-5c7f-47e4-b989-5492eafa07d3'
+    last_modified_time:
+      description: The timestamp when the origin request policy was last modified.
+      returned: always
+      type: str
+      sample: '2022-02-04T13:23:27.304000+00:00'
+    origin_request_policy_config:
+      description: The origin request policy configuration.
+      returned: always
+      type: complex
+      contains:
+        name:
+          description: A unique name to identify the origin request policy.
+          type: str
+        comment:
+          description: A comment to describe the origin request policy. The comment cannot be longer than 128 characters.
+          type: str
+        headers_config:
+          description:
+            - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
+            - For more information see the CloudFront documentation at
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
+          type: dict
+          contains:
+            header_behavior:
+              description: Determines whether any HTTP headers are included in requests that CloudFront sends to the origin.
+              choices: ['none', 'whitelist', 'allViewer', 'allViewerAndWhitelistCloudFront', 'allExcept']
+              type: str
+            headers:
+              description:
+                - Contains a list of HTTP header names.
+                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_Headers.html)
+              type: list
+              elements: str
+        cookies_config:
+          description:
+            - The cookies from viewer requests to include in origin requests.
+            - For more information see the CloudFront documentation at
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
+          type: dict
+          contains:
+            cookie_behavior:
+              description: Determines whether cookies in viewer requests are included in requests that CloudFront sends to the origin.
+              choices: ['none', 'whitelist', 'all', 'allExcept']
+              type: str
+            cookies:
+              description:
+                - Contains a list of cookie names.
+                - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
+              type: list
+              elements: str
+        query_strings_config:
+          description:
+            - The URL query strings from viewer requests to include in origin requests.
+            - For more information see the CloudFront documentation at
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
+          type: dict
+          contains:
+            query_string_behavior:
+              description: Determines whether any URL query strings in viewer requests are included in requests that CloudFront sends to the origin.
+              choices: ['none', 'whitelist', 'all', 'allExcept']
+              type: str
+            query_strings:
+              description:
+                - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
+                - For more information see the CloudFront documentation at
+                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
+              type: list
+              elements: str
 """
 
 import datetime
