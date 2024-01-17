@@ -41,7 +41,7 @@ options:
       - For more information see the CloudFront documentation at
         U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
     type: dict
-    required: true
+    required: false
     suboptions:
       header_behavior:
         description: Determines whether any HTTP headers are included in requests that CloudFront sends to the origin.
@@ -61,7 +61,7 @@ options:
       - For more information see the CloudFront documentation at
         U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
     type: dict
-    required: true
+    required: false
     suboptions:
       cookie_behavior:
         description: Determines whether cookies in viewer requests are included in requests that CloudFront sends to the origin.
@@ -80,7 +80,7 @@ options:
       - The URL query strings from viewer requests to include in origin requests.
       - For more information see the CloudFront documentation at
         U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
-    required: true
+    required: false
     type: dict
     suboptions:
       query_string_behavior:
@@ -349,9 +349,9 @@ def main():
     argument_spec = dict(
         name=dict(required=True, type="str"),
         comment=dict(type="str"),
-        headers_config=dict(required=True, type="dict"),
-        cookies_config=dict(required=True, type="dict"),
-        query_strings_config=dict(required=True, type="dict"),
+        headers_config=dict(type="dict"),
+        cookies_config=dict(type="dict"),
+        query_strings_config=dict(type="dict"),
         state=dict(choices=["present", "absent"], type="str", default="present"),
     )
 
