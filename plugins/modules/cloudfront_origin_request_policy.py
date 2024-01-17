@@ -248,7 +248,8 @@ class CloudfrontOriginRequestPolicyService(object):
 
     def find_origin_request_policy(self, name):
         try:
-            policies = self.client.list_origin_request_policies()["OriginRequestPolicyList"]["Items"]
+            # We only get the custom policies to make the query more efficient
+            policies = self.client.list_origin_request_policies(Type="custom")["OriginRequestPolicyList"]["Items"]
 
             for policy in policies:
                 if policy["OriginRequestPolicy"]["OriginRequestPolicyConfig"]["Name"] == name:
