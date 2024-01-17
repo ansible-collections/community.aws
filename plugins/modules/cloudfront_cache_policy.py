@@ -365,7 +365,8 @@ class CloudfrontCachePolicyService(object):
 
     def find_cache_policy(self, name):
         try:
-            policies = self.client.list_cache_policies()["CachePolicyList"]["Items"]
+            # We only get the custom policies to make the query more efficient
+            policies = self.client.list_cache_policies(Type="custom")["CachePolicyList"]["Items"]
 
             for policy in policies:
                 if policy["CachePolicy"]["CachePolicyConfig"]["Name"] == name:
