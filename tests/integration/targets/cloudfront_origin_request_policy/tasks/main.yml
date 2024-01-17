@@ -100,4 +100,4 @@
       cloudfront_origin_request_policy:
         name: "{{ resource_prefix }}-my-origin-request-policy"
         state: absent
-        ignore_errors: true
+      ignore_errors: true
