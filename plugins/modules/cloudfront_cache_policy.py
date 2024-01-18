@@ -366,7 +366,7 @@ class CloudfrontCachePolicyService(object):
     def find_cache_policy(self, name):
         try:
             # Only list the custom policies as those are the only ones we can change
-            policies = self.client.list_cache_policies(Type="custom").get('CachePolicyList', {}).get('Items', [])
+            policies = self.client.list_cache_policies(Type="custom").get("CachePolicyList", {}).get("Items", [])
 
             for policy in policies:
                 if policy["CachePolicy"]["CachePolicyConfig"]["Name"] == name:
