@@ -124,7 +124,7 @@ def run_module():
 
     result = dict(
         changed=False,
-        routes=[dict()],
+        routes=[],
     )
 
     module = AnsibleAWSModule(
