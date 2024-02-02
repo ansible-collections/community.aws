@@ -122,25 +122,22 @@ def run_module():
         state=dict(type='str', default='present', choices=['present','absent']),
     )
 
-    result = dict(
-        changed=False,
-        routes=[],
-    )
-
     module = AnsibleAWSModule(
         argument_spec=module_args,
         supports_check_mode=True
     )
 
+    changed = False
+
     if module.check_mode:
-        module.exit_json(**result)
+        module.exit_json(changed=changed, routes=[])
 
     connection = module.client("ec2",
                     retry_decorator=AWSRetry.jittered_backoff(),
                     region=module.params['region'])
 
     # check to see if it exists
-    result['routes'], err = get_tgw_rt(
+    response, err = get_tgw_rt(
         connection,
         module.params['transit_gateway_route_table_id'],
         module.params['transit_gateway_attachment_id'])
@@ -149,8 +146,8 @@ def run_module():
 
     # if it is to be deleted
     if module.params['state'] == "absent":
-        if not result['routes']:
-            module.exit_json(**result)
+        if not response:
+            module.exit_json(changed=changed, routes=[])
         try:
             _ = connection.delete_transit_gateway_route(
                 DestinationCidrBlock=module.params['destination_cidr_block'],
@@ -159,11 +156,11 @@ def run_module():
             )
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg="Failed to delete transit gateway route")
-        result['changed'] = True
-        module.exit_json(**result)
+        changed = True
+        module.exit_json(changed=changed, routes=[])
 
-    if result['routes']:
-        module.exit_json(**result)
+    if response:
+        module.exit_json(changed=changed, routes=process_response(response))
 
     # create it
     try:
@@ -177,11 +174,11 @@ def run_module():
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Unknown error")
 
-    result['routes'] = [process_response(response)]
-    result['changed'] = True
+    routes = [process_response(response)]
+    changed = True
     # in the event of a successful module execution, you will want to
     # simple AnsibleModule.exit_json(), passing the key/value results
-    module.exit_json(**result)
+    module.exit_json(changed=changed, routes=routes)
 
 
 def main():
