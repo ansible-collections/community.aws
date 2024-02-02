@@ -70,10 +70,30 @@ EXAMPLES = r'''
 RETURN = r'''
 # These are examples of possible return values, and in general should use other names for return values.
 routes:
-    - destination_cidr_block: 0.0.0.0/0
-      region: us-east-1
-      transit_gateway_route_table_id: tgw-rtb-1234567890
-      transit_gateway_attachment_id: tgw-attach-1234567890
+    description: transit gateway routes
+    type: list
+    returned: always
+    contains:
+        destination_cidr_block:
+            description: The CIDR range used for destination matches. Routing decisions are based on the most specific match.
+            type: str
+            example: '10.0.0.0/8'
+        region:
+            description: The AWS region
+            type: str
+            example: 'us-east-1'
+        transit_gateway_route_table_id:
+            description: The ID of the transit gateway route table.
+            type: str
+            example: 'tgw-rtb-1234567890'
+        transit_gateway_attachment_id:
+            description: The ID of the transit gateway attachment.
+            type: str
+            example: 'tgw-attach-1234567890'
+        blackhole:
+            description: Indicates whether to drop traffic that matches this route (blackhole).
+            type: bool
+            example: false
 '''
 
 try:
