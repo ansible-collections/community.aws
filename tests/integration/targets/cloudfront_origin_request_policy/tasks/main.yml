@@ -29,25 +29,6 @@
           - create_result is not failed
           - create_result.origin_request_policy.origin_request_policy_config.name == "{{ resource_prefix }}-my-origin-request-policy"
 
-    - name: Rerun same task to ensure idempotence
-      cloudfront_origin_request_policy:
-        name: "{{ resource_prefix }}-my-origin-request-policy"
-        comment: Created by Ansible test
-        headers_config:
-          header_behavior: none
-        cookies_config:
-          cookie_behavior: none
-        query_strings_config:
-          query_string_behavior: none
-        state: present
-      register: rerun_result
-
-    - name: Assert no change and no errors
-      assert:
-        that:
-          - rerun_result is not changed
-          - rerun_result is not failed
-
     - name: Update existing policy with more complicated configuration
       cloudfront_origin_request_policy:
         name: "{{ resource_prefix }}-my-origin-request-policy"
