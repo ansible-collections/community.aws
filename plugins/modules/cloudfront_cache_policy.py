@@ -460,7 +460,7 @@ class CloudfrontCachePolicyService(object):
         # Recursively check sub-dict
         for k, v in dict_with_items.items():
             if isinstance(v, dict):
-                v = self.insert_quantities(v)
+                v = CloudfrontCachePolicyService.insert_quantities(v)
 
         return dict_with_items
 
