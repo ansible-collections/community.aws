@@ -85,7 +85,7 @@
         that:
           - delete_result is changed
           - delete_result is not failed
-          - update_result.cache_policy is undefined
+          - delete_result.cache_policy is undefined
 
   always:
 
