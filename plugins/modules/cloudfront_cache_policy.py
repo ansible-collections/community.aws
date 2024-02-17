@@ -457,10 +457,10 @@ class CloudfrontCachePolicyService(object):
         if "Items" in dict_with_items and isinstance(dict_with_items["Items"], list):
             dict_with_items["Quantity"] = len(dict_with_items["Items"])
 
-        # Items on second level case
+        # Recursively check sub-dict
         for k, v in dict_with_items.items():
-            if isinstance(v, dict) and "Items" in v:
-                v["Quantity"] = len(v["Items"])
+            if isinstance(v, dict):
+                v = self.insert_quantities(v)
 
         return dict_with_items
 
