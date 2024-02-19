@@ -547,20 +547,21 @@ class SnsTopicManager(object):
                         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                             self.module.fail_json_aws(e, "Couldn't set RawMessageDelivery subscription attribute")
 
-            filter_policy = self.desired_subscription_attributes[sub_key].get('FilterPolicy')
-#            self.module.fail_json_aws("Couldn't get subscription attributes for subscription %s" % sub_current_attributes)
-
-            if filter_policy is not None :
-
-                #if sub_current_attributes['FilterPolicy'].lower() != filter_policy.lower():
+            filter_policy = self.desired_subscription_attributes[sub_key].get('FilterPolicy')                  
+            changed = False
+            if filter_policy is not None:
+              if 'FilterPolicy' not in sub_current_attributes:
+                  changed = True
+              if 'FilterPolicy' in sub_current_attributes:
+                  if sub_current_attributes['FilterPolicy'].lower() != filter_policy.lower():
                     changed = True
-                    if not self.check_mode:
-                        try:
-                            self.connection.set_subscription_attributes(SubscriptionArn=sub_arn,
-                                                                        AttributeName='FilterPolicy',
-                                                                        AttributeValue=filter_policy)
-                        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                            self.module.fail_json_aws(e, "Couldn't set FilterPolicy subscription attribute")                              
+              if not self.check_mode and changed:
+                  try:
+                      self.connection.set_subscription_attributes(SubscriptionArn=sub_arn,
+                                                                  AttributeName='FilterPolicy',
+                                                                  AttributeValue=filter_policy)
+                  except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                      self.module.fail_json_aws(e, "Couldn't set FilterPolicy subscription attribute")                              
 
         return changed
 
