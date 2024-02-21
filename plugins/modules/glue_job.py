@@ -95,7 +95,7 @@ options:
   worker_type:
     description:
       - The type of predefined worker that is allocated when a job runs.
-      - new instance types G.4X and G.8X [https://aws.amazon.com/about-aws/whats-new/2023/05/aws-glue-large-instance-types-generally-available/]
+      - Support for instance types C(G.4X( and C(G.8X) was added in community.aws release 7.2.0.
     choices: [ 'Standard', 'G.1X', 'G.2X', 'G.4X', 'G.8X' ]
     type: str
     version_added: 1.5.0
