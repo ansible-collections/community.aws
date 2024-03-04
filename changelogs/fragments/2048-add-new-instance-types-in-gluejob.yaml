@@ -1,2 +1,2 @@
 minor_changes:
-  - glue_job - add support for 2 new instance types which are G.4X and G.8X
+  - glue_job - add support for 2 new instance types which are G.4X and G.8X (https://github.com/ansible-collections/community.aws/pull/2048).
