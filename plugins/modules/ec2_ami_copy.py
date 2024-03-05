@@ -104,8 +104,8 @@ EXAMPLES = r"""
     region: eu-west-1
     source_image_id: ami-xxxxxxx
     tags:
-        Name: My-Super-AMI
-        Patch: 1.2.3
+      Name: My-Super-AMI
+      Patch: 1.2.3
     tag_equality: true
 
 - name: Encrypted AMI copy

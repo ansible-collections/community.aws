@@ -144,23 +144,30 @@ EXAMPLES = r"""
 - community.aws.data_pipeline:
   name: test-dp
   objects:
-    - "id": "DefaultSchedule"
-      "name": "Every 1 day"
-      "fields":
+    - id: "DefaultSchedule"
+      name: "Every 1 day"
+      fields:
         - "key": "period"
           "stringValue": "1 days"
         - "key": "type"
           "stringValue": "Schedule"
         - "key": "startAt"
           "stringValue": "FIRST_ACTIVATION_DATE_TIME"
-    - "id": "Default"
-      "name": "Default"
-      "fields": [ { "key": "resourceRole", "stringValue": "my_resource_role" },
-                  { "key": "role", "stringValue": "DataPipelineDefaultRole" },
-                  { "key": "pipelineLogUri", "stringValue": "s3://my_s3_log.txt" },
-                  { "key": "scheduleType", "stringValue": "cron" },
-                  { "key": "schedule", "refValue": "DefaultSchedule" },
-                  { "key": "failureAndRerunMode", "stringValue": "CASCADE" } ]
+    - id: "Default"
+      name: "Default"
+      fields:
+        - "key": "resourceRole"
+          "stringValue": "my_resource_role"
+        - "key": "role"
+          "stringValue": "DataPipelineDefaultRole"
+        - "key": "pipelineLogUri"
+          "stringValue": "s3://my_s3_log.txt"
+        - "key": "scheduleType"
+          "stringValue": "cron"
+        - "key": "schedule"
+          "refValue": "DefaultSchedule"
+        - "key": "failureAndRerunMode"
+          "stringValue": "CASCADE"
   state: active
 
 # Activate pipeline
@@ -174,7 +181,6 @@ EXAMPLES = r"""
     name: test-dp
     region: us-west-2
     state: absent
-
 """
 
 RETURN = r"""

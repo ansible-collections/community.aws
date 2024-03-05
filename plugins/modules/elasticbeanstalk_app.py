@@ -57,7 +57,6 @@ EXAMPLES = r"""
 - community.aws.elasticbeanstalk_app:
     app_name: Sample_App
     state: absent
-
 """
 
 RETURN = r"""

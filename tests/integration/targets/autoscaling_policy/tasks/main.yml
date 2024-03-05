@@ -46,7 +46,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - result.changed
 
     - name: Update Simple Scaling policy using explicit defaults
@@ -61,7 +61,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - not result.changed
 
     - name: min_adjustment_step is ignored with ChangeInCapacity
@@ -77,7 +77,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - not result.changed
           - result.adjustment_type == "ChangeInCapacity"
 
@@ -94,7 +94,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.policy_name == resource_prefix ~ '_simplescaling_policy'
           - result.changed
           - result.adjustment_type == "PercentChangeInCapacity"
 
@@ -126,7 +126,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_stepscaling_policy"
+          - result.policy_name == resource_prefix ~ '_stepscaling_policy'
           - result.changed
 
     - name: Add another step
@@ -149,7 +149,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_stepscaling_policy"
+          - result.policy_name == resource_prefix ~ '_stepscaling_policy'
           - result.changed
           - result.adjustment_type == "PercentChangeInCapacity"
 
@@ -189,7 +189,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_predefined_policy'
           - result.changed
           - result is successful
 
@@ -206,7 +206,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_predefined_policy'
           - result is not changed
 
 #    # It would be good to also test this but we would need an Target group and an ALB
@@ -263,7 +263,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_custom_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_custom_policy'
           - result.changed
           - result is successful
 
@@ -285,7 +285,7 @@
 
     - assert:
         that:
-          - result.policy_name == "{{ resource_prefix }}_targettracking_custom_policy"
+          - result.policy_name == resource_prefix ~ '_targettracking_custom_policy'
           - result is not changed
 
   always:

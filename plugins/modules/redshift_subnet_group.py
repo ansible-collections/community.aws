@@ -51,8 +51,8 @@ EXAMPLES = r"""
     group_name: redshift-subnet
     group_description: Redshift subnet
     group_subnets:
-        - 'subnet-aaaaa'
-        - 'subnet-bbbbb'
+      - 'subnet-aaaaa'
+      - 'subnet-bbbbb'
 
 - name: Remove subnet group
   community.aws.redshift_subnet_group:

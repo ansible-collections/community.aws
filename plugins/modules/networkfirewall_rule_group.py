@@ -365,8 +365,8 @@ EXAMPLES = r"""
       domain_names:
         - 'example.com'
         - '.example.net'
-      filter_https: True
-      filter_http: True
+      filter_https: true
+      filter_http: true
       action: allow
       source_ips: '192.0.2.0/24'
 
@@ -392,7 +392,6 @@ EXAMPLES = r"""
     name: 'MinimalGroup'
     type: 'stateful'
     state: absent
-
 """
 
 RETURN = r"""

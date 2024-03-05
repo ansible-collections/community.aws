@@ -69,6 +69,17 @@ options:
                     description:
                       - The name of the target group.
                       - Mutually exclusive with I(TargetGroupArn).
+        AlpnPolicy:
+            description:
+              - The name of the Application-Layer Protocol Negotiation (ALPN) policy.
+            type: str
+            choices:
+              - HTTP1Only
+              - HTTP2Only
+              - HTTP2Optional
+              - HTTP2Preferred
+              - None
+            version_added: 7.1.0
   name:
     description:
       - The name of the load balancer. This name must be unique within your AWS account, can have a maximum of 32 characters, must contain only alphanumeric
@@ -183,7 +194,6 @@ EXAMPLES = r"""
   community.aws.elb_network_lb:
     name: myelb
     state: absent
-
 """
 
 RETURN = r"""
@@ -283,6 +293,13 @@ load_balancer:
                             returned: when state is present
                             type: str
                             sample: ""
+                alpn_policy:
+                    description: The name of the Application-Layer Protocol Negotiation (ALPN) policy.
+                    returned: when state is present
+                    type: list
+                    elements: str
+                    version_added: 7.1.0
+                    sample: ["HTTP1Only", "HTTP2Only"]
         load_balancer_arn:
             description: The Amazon Resource Name (ARN) of the load balancer.
             returned: when state is present
@@ -449,6 +466,10 @@ def main():
                 SslPolicy=dict(type="str"),
                 Certificates=dict(type="list", elements="dict"),
                 DefaultActions=dict(type="list", required=True, elements="dict"),
+                AlpnPolicy=dict(
+                    type="str",
+                    choices=["HTTP1Only", "HTTP2Only", "HTTP2Optional", "HTTP2Preferred", "None"],
+                ),
             ),
         ),
         name=dict(required=True, type="str"),

@@ -67,7 +67,7 @@ EXAMPLES = r"""
     broker_id: "aws-mq-broker-id"
     username: "sample_user1"
     console_access: false
-    groups: [ "g1", "g2" ]
+    groups: ["g1", "g2"]
     password: "plain-text-password"
 
 - name: allow console access and update group list - relying on default state
@@ -76,7 +76,7 @@ EXAMPLES = r"""
     username: "sample_user1"
     region: "{{ aws_region }}"
     console_access: true
-    groups: [ "g1", "g2", "g3" ]
+    groups: ["g1", "g2", "g3"]
 
 - name: remove user - setting all credentials explicitly
   community.aws.mq_user:
