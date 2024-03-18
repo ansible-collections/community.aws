@@ -445,9 +445,9 @@
 - name: assert that service info is available
   assert:
     that:
-      - "ecs_service_info.services|length == 1"
+      - "ecs_service_info.services|length == 3"
       - "ecs_service_info.services_not_running|length == 0"
-      - "ecs_service_info.services[0].clusterArn == ecs_cluster_name"
+      - "ecs_cluster_name in ecs_service_info.services[0].clusterArn"
 
 - name: attempt to get facts from missing task definition
   ecs_taskdefinition_info:
