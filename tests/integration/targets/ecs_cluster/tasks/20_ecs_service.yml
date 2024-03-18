@@ -422,7 +422,7 @@
 - name: assert that non-existent service is missing
   assert:
     that:
-      - "ecs_service_info.services_not_running[0].reason == 'MISSING'"
+      - "ecs_service_info.services|length == 0"
 
 - name: obtain specific ECS service facts
   ecs_service_info:
