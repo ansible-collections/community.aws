@@ -400,7 +400,7 @@
 
 - name: obtain facts for existing service in the cluster
   ecs_service_info:
-    service: "{{ ecs_service_name }}"
+    service: "{{ ecs_service_name }}2"
     details: true
     events: false
   register: ecs_service_info
