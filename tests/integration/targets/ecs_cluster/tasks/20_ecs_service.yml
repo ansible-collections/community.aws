@@ -400,7 +400,6 @@
 
 - name: obtain facts for existing service in the cluster
   ecs_service_info:
-    cluster: "{{ ecs_cluster_name }}"
     service: "{{ ecs_service_name }}"
     details: true
     events: false
@@ -436,6 +435,19 @@
   assert:
     that:
       - "'networkConfiguration' in ecs_service_info.services[0]"
+
+- name: obtain facts for all clusters
+  ecs_service_info:
+    details: true
+    events: false
+  register: ecs_service_info
+
+- name: assert that service info is available
+  assert:
+    that:
+      - "ecs_service_info.services|length == 1"
+      - "ecs_service_info.services_not_running|length == 0"
+      - "ecs_service_info.services[0].clusterArn == ecs_cluster_name"
 
 - name: attempt to get facts from missing task definition
   ecs_taskdefinition_info:
@@ -547,7 +559,7 @@
 
       >> "rolloutStateReason": "ECS deployment ecs-svc/5156684577543126023 in progress.",
       constraints and placement strategies are only changeable if the rollout state is "COMPLETED"
-      
+
       a) ecs_service has currently no waiter function. so this is a DIY waiter
       b) the state reached never "COMPLETED" because something if wrong with the ECS EC2 Instances
          or the network setup. The EC2 instance never arrived as an active instance in the cluster.
@@ -555,9 +567,9 @@
          >> no container instance met all of its requirements. Reason: No Container Instances were found in your cluster.
          >> For more information, see the Troubleshooting section of the Amazon ECS Developer Guide.
          >> ec2_instance networking does not work correctly, no instance available for the cluster
-      
+
       Because all of this, all following tasks, that test the change of a constraint or placement stragegy are
-      using `force_new_deployment: true`. That ignores a) and b).  
+      using `force_new_deployment: true`. That ignores a) and b).
   ignore_errors: true
   ecs_service_info:
     name: "{{ ecs_service_name }}-constraint"
