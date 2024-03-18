@@ -230,12 +230,16 @@ class EcsServiceManager:
 
         cluster_services = {}
         for cluster in clusters:
-            services = self.list_services(cluster)["services"]
+            service_arns = self.list_services(cluster)["services"]
             if self.module.params["service"]:
-                services_found = [service for service in self.module.params["service"] if service in services]
+                service_names = [service.split("/")[-1] for service in service_arns]
+                services_found = []
+                for service in self.module.params["service"]:
+                    if service in service_names or service in service_arns:
+                        services_found.append(service)
                 cluster_services[cluster] = services_found
             else:
-                cluster_services[cluster] = services
+                cluster_services[cluster] = service_arns
         return cluster_services
 
 
