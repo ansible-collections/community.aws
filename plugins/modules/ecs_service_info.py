@@ -60,7 +60,6 @@ EXAMPLES = r"""
 - community.aws.ecs_service_info:
     details: true
   register: output
-  
 # Basic listing example for the list of services in two specific clusters
 - community.aws.ecs_service_info:
     cluster:
