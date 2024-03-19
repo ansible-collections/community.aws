@@ -66,7 +66,7 @@ EXAMPLES = r"""
     cluster:
       - test-cluster
       - prod-cluster
-  register: output  
+  register: output
 """
 
 RETURN = r"""
