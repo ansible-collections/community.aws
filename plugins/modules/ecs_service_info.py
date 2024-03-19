@@ -29,7 +29,7 @@ options:
         type: bool
     cluster:
         description:
-            - The cluster ARNS in which to list the services. If not provided, all clusters are listed. 
+            - The cluster ARNS in which to list the services. If not provided, all clusters are listed.
         required: false
         type: list
         elements: str
