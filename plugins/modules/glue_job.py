@@ -95,7 +95,8 @@ options:
   worker_type:
     description:
       - The type of predefined worker that is allocated when a job runs.
-    choices: [ 'Standard', 'G.1X', 'G.2X' ]
+      - Support for instance types C(G.4X( and C(G.8X) was added in community.aws release 7.2.0.
+    choices: [ 'Standard', 'G.1X', 'G.2X', 'G.4X', 'G.8X' ]
     type: str
     version_added: 1.5.0
 notes:
@@ -465,7 +466,7 @@ def main():
         state=dict(required=True, choices=["present", "absent"], type="str"),
         tags=dict(type="dict", aliases=["resource_tags"]),
         timeout=dict(type="int"),
-        worker_type=dict(choices=["Standard", "G.1X", "G.2X"], type="str"),
+        worker_type=dict(choices=["Standard", "G.1X", "G.2X", "G.4X", "G.8X"], type="str"),
     )
 
     module = AnsibleAWSModule(
