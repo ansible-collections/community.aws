@@ -375,14 +375,14 @@ def validate_tags(client, module, nodegroup):
         if not module.check_mode:
             changed = True
             try:
-                client.untag_resource(aws_retry=True, ResourceArn=nodegroup["nodegroupArn"], tagKeys=tags_to_remove)
+                client.untag_resource(resourceArn=nodegroup["nodegroupArn"], tagKeys=tags_to_remove)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg=f"Unable to set tags for Nodegroup {module.params.get('name')}.")
     if tags_to_add:
         if not module.check_mode:
             changed = True
             try:
-                client.tag_resource(aws_retry=True, ResourceArn=nodegroup["nodegroupArn"], tags=tags_to_add)
+                client.tag_resource(resourceArn=nodegroup["nodegroupArn"], tags=tags_to_add)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg=f"Unable to set tags for Nodegroup {module.params.get('name')}.")
 
