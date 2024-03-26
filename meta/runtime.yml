@@ -89,6 +89,7 @@ action_groups:
     - dms_endpoint
     - dms_replication_subnet_group
     - dynamodb_table
+    - dynamodb_table_info
     - dynamodb_ttl
     - ec2_ami_copy
     - ec2_asg

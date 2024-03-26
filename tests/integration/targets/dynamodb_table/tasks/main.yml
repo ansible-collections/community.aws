@@ -30,6 +30,16 @@
       that:
         - create_table is successful
         - create_table is changed
+  
+  - name: Ensure the table was not created
+    dynamodb_table_info:
+      name: "{{ table_name }}"
+    register: table_info
+
+  - name: Assert the table was not created
+    assert:
+      that:
+        - not table_info.table
 
   - name: Create table
     dynamodb_table:
@@ -64,6 +74,17 @@
         - create_table.read_capacity == 1
         - create_table.table_name == table_name
         - create_table.write_capacity == 1
+
+  - name: Ensure the table was created
+    dynamodb_table_info:
+      name: "{{ table_name }}"
+    register: table_info
+
+  - name: Assert the table was created
+    assert:
+      that:
+        - table_info.table
+        - 'table_info.table.attribute_definitions == [{"attribute_name": table_index, "attribute_type": table_index_type[0]}]'
 
   - name: Create table - idempotent - check_mode
     dynamodb_table:
