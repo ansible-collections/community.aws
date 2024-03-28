@@ -119,6 +119,12 @@ transit_gateways:
                     returned: always
                     type: str
                     sample: "enable"
+                multicast_support:
+                    description:
+                      - Indicates whether Multicast support is enabled.
+                    returned: always
+                    type: str
+                    sample: "enable"
                  propagation_default_route_table_id:
                     description:
                       - The ID of the default propagation route table.
