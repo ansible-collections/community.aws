@@ -193,7 +193,7 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
         return self._set_option("DnsSupport", value)
     
     def set_multicast_support(self, value):
-    return self._set_option("MulticastSupport", value)
+        return self._set_option("MulticastSupport", value)
 
     def set_ipv6_support(self, value):
         return self._set_option("Ipv6Support", value)
