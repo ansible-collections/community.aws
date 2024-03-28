@@ -4,6 +4,18 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v7.2.0
+======
+
+Release Summary
+---------------
+
+This release includes new feature for the ``transit_gateway``  module.
+
+Minor Changes
+-------------
+
+- transit_gateway - added support for ``multicast_support`` to be able to create a transit gateway with multicast enable.
 
 v7.1.0
 ======
