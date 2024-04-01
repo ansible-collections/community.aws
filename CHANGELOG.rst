@@ -4,6 +4,29 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v7.2.0
+======
+
+Release Summary
+---------------
+
+This release includes a new module ``dynamodb_table_info``, new features for the ``glue_job`` and ``msk_cluster`` modules, and a bugfix for the ``aws_ssm`` connection plugin.
+
+Minor Changes
+-------------
+
+- glue_job - add support for 2 new instance types which are G.4X and G.8X (https://github.com/ansible-collections/community.aws/pull/2048).
+- msk_cluster - Support for additional ``m5`` and ``m7g`` types of MSK clusters (https://github.com/ansible-collections/community.aws/pull/1947).
+
+Bugfixes
+--------
+
+- ssm(connection) - fix bucket region logic when region is ``us-east-1`` (https://github.com/ansible-collections/community.aws/pull/1908).
+
+New Modules
+-----------
+
+- dynamodb_table_info - Returns information about a Dynamo DB table
 
 v7.1.0
 ======
@@ -134,7 +157,6 @@ This release brings some new plugins and features. Several bugfixes, breaking ch
 The community.aws collection has dropped support for ``botocore<1.25.0`` and ``boto3<1.22.0``.
 Support for Python 3.6 has also been dropped.
 
-
 Minor Changes
 -------------
 
@@ -206,7 +228,6 @@ Release Summary
 ---------------
 
 This release contains a number of bugfixes for various modules, as well as new features for the ``ec2_launch_template`` and ``msk_cluster`` modules.  This is the last planned minor release prior to the release of version 6.0.0.
-
 
 Minor Changes
 -------------
@@ -303,7 +324,6 @@ modules.
 As well as improvements to the ``ecs_cluster``, ``ec2_ecr``,
 ``ecs_service``, ``iam_role`` and ``ssm_parameter`` plugins.
 
-
 Minor Changes
 -------------
 
@@ -368,7 +388,6 @@ The community.aws collection has dropped support for ``botocore<1.21.0`` and ``b
 Support for ``ansible-core<2.11`` has also been dropped.
 
 This release also brings some new features, bugfixes, breaking changes and deprecated features.
-
 
 Minor Changes
 -------------
@@ -530,7 +549,6 @@ Release Summary
 ---------------
 
 This release contains a minor bugfix for the ``sns_topic`` module as well as corrections to the documentation for various modules.  This is the last planned release of the 4.x series.
-
 
 Bugfixes
 --------
@@ -888,7 +906,6 @@ Release Summary
 ---------------
 
 Following the release of community.aws 5.0.0, 3.6.0 is a bugfix release and the final planned release for the 3.x series.
-
 
 Minor Changes
 -------------
