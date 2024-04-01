@@ -29,7 +29,7 @@ options:
         type: bool
     cluster:
         description:
-            - The cluster ARNS in which to list the services. If not provided, all clusters are listed. 
+            - The cluster ARNS in which to list the services. If not provided, all clusters are listed.
         required: false
         type: list
         elements: str
@@ -60,13 +60,12 @@ EXAMPLES = r"""
 - community.aws.ecs_service_info:
     details: true
   register: output
-  
 # Basic listing example for the list of services in two specific clusters
 - community.aws.ecs_service_info:
     cluster:
       - test-cluster
       - prod-cluster
-  register: output  
+  register: output
 """
 
 RETURN = r"""
