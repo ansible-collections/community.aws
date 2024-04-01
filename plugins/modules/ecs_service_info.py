@@ -175,9 +175,8 @@ class EcsServiceManager:
             response = paginator.paginate().build_full_result()
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Couldn't list ECS clusters")
+        # Note that the clusters list can be emptu if there are no clusters (and thus no services)
         clusters = list(response["clusterArns"])
-        if not clusters:
-            self.module.fail_json_aws(e, msg="Account does not have any ECS clusters")
         return clusters
 
     def list_services(self, cluster):
