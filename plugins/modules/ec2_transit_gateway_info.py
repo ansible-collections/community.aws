@@ -119,7 +119,7 @@ transit_gateways:
                     returned: always
                     type: str
                     sample: "enable"
-                multicast_support:
+                 multicast_support:
                     description:
                       - Indicates whether Multicast support is enabled.
                     returned: always
