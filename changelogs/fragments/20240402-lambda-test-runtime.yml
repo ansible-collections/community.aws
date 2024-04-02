@@ -1,2 +1,2 @@
-bugfixes:
+trivial:
   - integration tests - update lambda ``runtime`` parameter to python3.12 (https://github.com/ansible-collections/community.aws/pull/2065).
