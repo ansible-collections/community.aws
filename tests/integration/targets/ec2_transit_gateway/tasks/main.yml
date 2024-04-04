@@ -123,6 +123,7 @@
         filters:
           options.dns-support: enable
           options.vpn-ecmp-support: enable
+          options.multicast-support: enable
       register: result
     - name: assert success with transit_gateway_id filter
       assert:
