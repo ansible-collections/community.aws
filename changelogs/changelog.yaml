@@ -3748,9 +3748,10 @@ releases:
     fragments:
     - 1908-fix_find_out_bucket_region_logic.yml
     - 1947-add_support_msk_addtinal_type.yml
+    - 20240402-lambda-test-runtime.yml
     - 2048-add-new-instance-types-in-gluejob.yaml
     modules:
     - description: Returns information about a Dynamo DB table
       name: dynamodb_table_info
       namespace: ''
-    release_date: '2024-04-02'
+    release_date: '2024-04-04'
