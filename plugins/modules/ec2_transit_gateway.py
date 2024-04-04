@@ -47,6 +47,7 @@ options:
       - Whether to enable AWS Multicast support.
     default: true
     type: bool
+    version_added: 7.3.0
   state:
     description:
       - C(present) to ensure resource is created.
@@ -192,6 +193,7 @@ transit_gateway:
           returned: always
           type: str
           sample: enable
+          version_added: 7.3.0
     owner_id:
       description: The account that owns the transit gateway.
       returned: always
