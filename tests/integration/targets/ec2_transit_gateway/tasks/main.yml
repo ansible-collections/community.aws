@@ -150,7 +150,7 @@
       assert:
         that:
           - 'result.changed == true'
-          - 'result.transit_gateways != []
+          - 'result.transit_gateways != [] 
           
   always:
     ###### TEARDOWN STARTS HERE ######
