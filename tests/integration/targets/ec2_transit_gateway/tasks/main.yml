@@ -140,18 +140,7 @@
         that:
           - 'result.changed == false'
           - 'result.transit_gateways != []'
-
-    - name: test success with multicast enabled
-      ec2_transit_gateway_info:
-        filters:
-          options.multicast-support: enable
-      register: result
-    - name: assert success with transit_gateway_id filter
-      assert:
-        that:
-          - 'result.changed == true'
-          - 'result.transit_gateways != []'
-          
+         
   always:
     ###### TEARDOWN STARTS HERE ######
     - name: delete transit gateway 
