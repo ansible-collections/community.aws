@@ -22,6 +22,17 @@
       assert:
         that:
           - create_result.changed == True
+          
+    - name: test create transit gateway with multicast enabled
+      ec2_transit_gateway:
+        description: "{{ tgw_description }}"
+        multicast_support: true
+      register: create_result
+      
+    - name: assert changed is True
+      assert:
+        that:
+          - create_result.changed == True
 
     - name: test update transit gateway with tags by description
       ec2_transit_gateway:
@@ -130,6 +141,18 @@
         that:
           - 'result.changed == false'
           - 'result.transit_gateways != []'
+
+    - name: test success with multicast enabled
+      ec2_transit_gateway_info:
+        filters:
+          options.multicast-support: enable
+      register: result
+    - name: assert success with transit_gateway_id filter
+      assert:
+        that:
+          - 'result.changed == true'
+          - 'result.transit_gateways != []
+          
   always:
     ###### TEARDOWN STARTS HERE ######
     - name: delete transit gateway 
