@@ -496,7 +496,7 @@ def setup_module_object():
         auto_attach=dict(type="bool", default=False),
         auto_propagate=dict(type="bool", default=True),
         description=dict(type="str"),
-        multicast_support=dict(type="bool", default=False),
+        multicast_support=dict(type="bool"),
         dns_support=dict(type="bool", default=True),
         purge_tags=dict(type="bool", default=True),
         state=dict(default="present", choices=["present", "absent"]),
