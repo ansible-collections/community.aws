@@ -125,6 +125,7 @@ transit_gateways:
                     returned: always
                     type: str
                     sample: "enable"
+                    version_added: 7.3.0
                  propagation_default_route_table_id:
                     description:
                       - The ID of the default propagation route table.
