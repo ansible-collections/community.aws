@@ -44,8 +44,8 @@ options:
     type: bool
   multicast_support:
     description:
-      - Whether to enable AWS Multicast support.
-    default: true
+      - Whether to enable AWS Multicast support. Valid only at the time of creation of the Transit Gateway.
+    default: false
     type: bool
     version_added: 7.3.0
   state:
