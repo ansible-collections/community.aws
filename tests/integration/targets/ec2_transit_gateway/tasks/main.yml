@@ -23,9 +23,13 @@
         that:
           - create_result.changed == True
           
+    - name: generate unique value for testing
+      set_fact:
+       tgw_description_multicast: "{{ resource_prefix }}-tgw-multicast"
+       
     - name: test create transit gateway with multicast enabled
       ec2_transit_gateway:
-        description: "{{ tgw_description }}"
+        description: "{{ tgw_description_multicast }}"
         multicast_support: true
       register: create_result
       
@@ -33,6 +37,17 @@
       assert:
         that:
           - create_result.changed == True
+    
+    - name: test success with filter
+      ec2_transit_gateway_info:
+        filters:
+          options.multicast-support: enable
+      register: result
+   
+    - name: assert success with multicast-support filter
+      assert:
+        that:
+          - 'result.transit_gateways != []'
 
     - name: test update transit gateway with tags by description
       ec2_transit_gateway:
