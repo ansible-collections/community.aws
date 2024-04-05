@@ -3754,4 +3754,4 @@ releases:
     - description: Returns information about a Dynamo DB table
       name: dynamodb_table_info
       namespace: ''
-    release_date: '2024-04-04'
+    release_date: '2024-04-05'
