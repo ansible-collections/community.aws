@@ -3734,3 +3734,24 @@ releases:
     - release.yml
     - ssm-fedora34.yml
     release_date: '2024-01-10'
+  7.2.0:
+    changes:
+      bugfixes:
+      - ssm(connection) - fix bucket region logic when region is ``us-east-1`` (https://github.com/ansible-collections/community.aws/pull/1908).
+      minor_changes:
+      - glue_job - add support for 2 new instance types which are G.4X and G.8X (https://github.com/ansible-collections/community.aws/pull/2048).
+      - msk_cluster - Support for additional ``m5`` and ``m7g`` types of MSK clusters
+        (https://github.com/ansible-collections/community.aws/pull/1947).
+      release_summary: This release includes a new module ``dynamodb_table_info``,
+        new features for the ``glue_job`` and ``msk_cluster`` modules, and a bugfix
+        for the ``aws_ssm`` connection plugin.
+    fragments:
+    - 1908-fix_find_out_bucket_region_logic.yml
+    - 1947-add_support_msk_addtinal_type.yml
+    - 20240402-lambda-test-runtime.yml
+    - 2048-add-new-instance-types-in-gluejob.yaml
+    modules:
+    - description: Returns information about a Dynamo DB table
+      name: dynamodb_table_info
+      namespace: ''
+    release_date: '2024-04-05'
