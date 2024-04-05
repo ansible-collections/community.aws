@@ -160,6 +160,9 @@
     ###### TEARDOWN STARTS HERE ######
     - name: delete transit gateway 
       ec2_transit_gateway:
-        description: "{{ tgw_description }}"
+        description: "{{ item }}"
         state: absent
       ignore_errors: yes
+      loop:
+       - "{{ tgw_description }}"
+       - "{{ tgw_description_multicast }}"
