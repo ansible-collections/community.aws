@@ -1,0 +1,2 @@
+trivial:
+  - efs - Use ``yield from`` in ordr to fix sanity errors.
