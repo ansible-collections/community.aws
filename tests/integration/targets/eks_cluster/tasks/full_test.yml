@@ -79,7 +79,7 @@
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
-        role_arn: "{{ iam_role.arn }}"
+        role_arn: "{{ iam_role.iam_role.arn }}"
         tags:
           Name: "{{ resource_prefix }}"
           another: foobar
@@ -97,7 +97,7 @@
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
-        role_arn: "{{ iam_role.arn }}"
+        role_arn: "{{ iam_role.iam_role.arn }}"
         wait: yes
       register: eks_create
 
@@ -117,7 +117,7 @@
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ setup_security_groups.results | map(attribute='group_id') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
-        role_arn: "{{ iam_role.arn }}"
+        role_arn: "{{ iam_role.iam_role.arn }}"
       register: eks_create
 
     - name: check that EKS cluster did not change
@@ -143,7 +143,7 @@
         name: "{{ eks_cluster_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
-        role_arn: "{{ iam_role.arn }}"
+        role_arn: "{{ iam_role.iam_role.arn }}"
         wait: yes
       register: eks_create
 
@@ -169,7 +169,7 @@
         name: "{{ eks_cluster_short_name }}"
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
-        role_arn: "{{ iam_role.arn }}"
+        role_arn: "{{ iam_role.iam_role.arn }}"
       register: eks_create
 
     - name: check that EKS cluster was created with short name

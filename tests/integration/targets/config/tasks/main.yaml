@@ -173,7 +173,7 @@
       config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: present
-        role_arn: "{{ config_iam_role.arn }}"
+        role_arn: "{{ config_iam_role.iam_role.arn }}"
         recording_group:
             all_supported: true
             include_global_types: true
@@ -236,7 +236,7 @@
         account_sources: []
         organization_source:
           all_aws_regions: true
-          role_arn: "{{ config_iam_role.arn }}"
+          role_arn: "{{ config_iam_role.iam_role.arn }}"
       register: output
 
     - name: assert success
@@ -251,7 +251,7 @@
         account_sources: []
         organization_source:
           all_aws_regions: true
-          role_arn: "{{ config_iam_role.arn }}"
+          role_arn: "{{ config_iam_role.iam_role.arn }}"
       register: output
 
     - name: assert not changed
@@ -266,7 +266,7 @@
       config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: present
-        role_arn: "{{ config_iam_role.arn }}"
+        role_arn: "{{ config_iam_role.iam_role.arn }}"
         recording_group:
             all_supported: false
             include_global_types: false
@@ -348,7 +348,7 @@
           all_aws_regions: false
           aws_regions:
             - '{{ aws_region }}'
-          role_arn: "{{ config_iam_role.arn }}"
+          role_arn: "{{ config_iam_role.iam_role.arn }}"
       register: output
 
     - name: assert success
@@ -365,7 +365,7 @@
           all_aws_regions: false
           aws_regions:
             - '{{ aws_region }}'
-          role_arn: "{{ config_iam_role.arn }}"
+          role_arn: "{{ config_iam_role.iam_role.arn }}"
       register: output
 
     - name: assert success
@@ -380,7 +380,7 @@
       config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: present
-        role_arn: "{{ config_iam_role.arn }}"
+        role_arn: "{{ config_iam_role.iam_role.arn }}"
         recording_group:
             all_supported: false
             include_global_types: false
