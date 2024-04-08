@@ -653,8 +653,7 @@ def iterate_all(attr, map_method, **kwargs):
     while True:
         try:
             data = map_method(**args)
-            for elm in data[attr]:
-                yield elm
+            yield from data[attr]
             if "NextMarker" in data:
                 args["Marker"] = data["Nextmarker"]
                 continue
