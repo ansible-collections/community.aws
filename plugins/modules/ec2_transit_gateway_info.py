@@ -6,7 +6,7 @@
 
 DOCUMENTATION = r"""
 module: ec2_transit_gateway_info
-short_description: Gather information about ec2 transit gateways in AWS 
+short_description: Gather information about ec2 transit gateways in AWS
 version_added: 1.0.0
 description:
   - Gather information about ec2 transit gateways in AWS
