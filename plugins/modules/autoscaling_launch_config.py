@@ -533,7 +533,7 @@ def create_launch_config(connection, module):
         module.fail_json_aws(e, msg="Failed to connect to AWS")
     try:
         security_groups = get_ec2_security_group_ids_from_names(
-            module.params.get("security_groups"), ec2_connection, vpc_id=vpc_id, boto3=True
+            module.params.get("security_groups"), ec2_connection, vpc_id=vpc_id
         )
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to get Security Group IDs")
