@@ -4,6 +4,29 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v7.2.0
+======
+
+Release Summary
+---------------
+
+This release includes a new module ``dynamodb_table_info``, new features for the ``glue_job`` and ``msk_cluster`` modules, and a bugfix for the ``aws_ssm`` connection plugin.
+
+Minor Changes
+-------------
+
+- glue_job - add support for 2 new instance types which are G.4X and G.8X (https://github.com/ansible-collections/community.aws/pull/2048).
+- msk_cluster - Support for additional ``m5`` and ``m7g`` types of MSK clusters (https://github.com/ansible-collections/community.aws/pull/1947).
+
+Bugfixes
+--------
+
+- ssm(connection) - fix bucket region logic when region is ``us-east-1`` (https://github.com/ansible-collections/community.aws/pull/1908).
+
+New Modules
+-----------
+
+- dynamodb_table_info - Returns information about a Dynamo DB table
 
 v7.1.0
 ======
