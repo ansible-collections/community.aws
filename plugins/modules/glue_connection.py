@@ -298,9 +298,7 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
         params["ConnectionInput"]["PhysicalConnectionRequirements"] = dict()
     if module.params.get("security_groups") is not None:
         # Get security group IDs from names
-        security_group_ids = get_ec2_security_group_ids_from_names(
-            module.params.get("security_groups"), connection_ec2, boto3=True
-        )
+        security_group_ids = get_ec2_security_group_ids_from_names(module.params.get("security_groups"), connection_ec2)
         params["ConnectionInput"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"] = security_group_ids
     if module.params.get("subnet_id") is not None:
         params["ConnectionInput"]["PhysicalConnectionRequirements"]["SubnetId"] = module.params.get("subnet_id")
