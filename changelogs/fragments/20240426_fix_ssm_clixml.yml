@@ -1,0 +1,2 @@
+bugfixes:
+  - ssm - strip Powershell CLIXML from stdout (https://github.com/ansible-collections/community.aws/issues/1952).
