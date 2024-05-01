@@ -109,6 +109,7 @@ options:
     type: list
     elements: str
   security_groups:
+    version_added: 7.3.0
     description:
       - A list of the names or IDs of the security groups to assign to the load balancer.
       - Required if I(state=present).
