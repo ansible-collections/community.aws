@@ -1,2 +1,2 @@
 minor_changes:
-  - elb_network_lb - add security groups parameter to network load balancer
+  - elb_network_lb - add security groups parameter to network load balancer (https://github.com/ansible-collections/community.aws/pull/2079)
