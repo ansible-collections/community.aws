@@ -474,7 +474,7 @@ class NetworkLoadBalancerWithSecurityGroups(NetworkLoadBalancer):
       :param connection: boto3 connection
       :param module: Ansible module
       """
-      super().__init__(connection, module)
+      super().__init__(connection, connection_ec2, module)
 
       self.connection_ec2 = connection_ec2
 
