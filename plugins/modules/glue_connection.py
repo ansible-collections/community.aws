@@ -110,7 +110,7 @@ RETURN = r"""
 connection_properties:
     description:
         - (deprecated) A dict of key-value pairs (converted to lowercase) used as parameters for this connection.
-        - This return key has been deprecated, and will be removed in a release after 2024-06-01.
+        - This return key has been deprecated, and will be removed in release 9.0.0.
     returned: when state is present
     type: dict
     sample: {'jdbc_connection_url':'jdbc:mysql://mydb:3306/databasename','username':'x','password':'y'}
@@ -337,7 +337,7 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
                 "The 'connection_properties' return key is deprecated and will be replaced"
                 " by 'raw_connection_properties'. Both values are returned for now."
             ),
-            date="2024-06-01",
+            version="9.0.0",
             collection_name="community.aws",
         )
         glue_connection["RawConnectionProperties"] = glue_connection["ConnectionProperties"]
