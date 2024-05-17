@@ -140,6 +140,16 @@ EXAMPLES = r"""
 - community.aws.networkfirewall:
     state: absent
     name: 'ExampleFirewall'
+
+# Create an AWS Network Firewall with Wait Timeout
+- community.aws.networkfirewall:
+    name: 'ExampleFirewall'
+    state: present
+    policy: 'ExamplePolicy'
+    subnets:
+      - 'subnet-123456789abcdef01'
+    wait: true
+    wait_timeout: 900   
 """
 
 RETURN = r"""
