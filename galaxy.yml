@@ -9,7 +9,7 @@ description: A variety of Ansible content to help automate the management of AWS
 license_file: COPYING
 tags: [community, aws, cloud, amazon]
 dependencies:
-  amazon.aws: '>=8.0.0'
+  amazon.aws: '>=8.0.0,<9.0.0'
 repository: https://github.com/ansible-collections/community.aws
 documentation: https://ansible-collections.github.io/community.aws/branch/main/collections/community/aws/index.html
 homepage: https://github.com/ansible-collections/community.aws
