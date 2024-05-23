@@ -16,9 +16,9 @@
     - name: assert the hostvars are defined with prefix and/or suffix
       assert:
         that:
-          - "hostvars[broker_name].{{ vars_prefix }}host_instance_type{{ vars_suffix }} == 'mq.t3.micro'"
-          - "hostvars[broker_name].{{ vars_prefix }}engine_type{{ vars_suffix }} == '{{ engine }}'"
-          - "hostvars[broker_name].{{ vars_prefix }}broker_state{{ vars_suffix }} in ('CREATION_IN_PROGRESS', 'RUNNING')"
+          - "hostvars[broker_name][vars_prefix ~ 'host_instance_type' ~ vars_suffix] == 'mq.t3.micro'"
+          - "hostvars[broker_name][vars_prefix ~ 'engine_type' ~ vars_suffix] == engine"
+          - "hostvars[broker_name][vars_prefix ~ 'broker_state' ~ vars_suffix] in ('CREATION_IN_PROGRESS', 'RUNNING')"
           - "'host_instance_type' not in hostvars[broker_name]"
           - "'engine_type' not in hostvars[broker_name]"
           - "'broker_state' not in hostvars[broker_name]"

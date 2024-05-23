@@ -75,10 +75,10 @@ EXAMPLES = r"""
     job_queue_state: ENABLED
     priority: 1
     compute_environment_order:
-    - order: 1
-      compute_environment: my_compute_env1
-    - order: 2
-      compute_environment: my_compute_env2
+      - order: 1
+        compute_environment: my_compute_env1
+      - order: 2
+        compute_environment: my_compute_env2
   register: batch_job_queue_action
 
 - name: show results

@@ -52,20 +52,25 @@ author:
 """
 
 EXAMPLES = r"""
+---
 # Minimal example using AWS credentials from environment vars or instance role credentials
 # Get all brokers in us-east-1 region
 plugin: community.aws.aws_mq
 regions:
   - ca-central-1
 
+---
+
 # Example multiple regions, ignoring permission errors, and only brokers with state RUNNING
 plugin: community.aws.aws_mq
 regions:
   - us-east-1
   - us-east-2
-strict_permissions: False
+strict_permissions: false
 statuses:
   - RUNNING
+
+---
 
 # Example group by engine, hostvars custom prefix-suffix, and compose variable from tags
 plugin: community.aws.aws_mq

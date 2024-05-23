@@ -60,8 +60,8 @@
         that:
           - elasticache_redis is changed
           - elasticache_redis.elasticache.data is defined
-          - elasticache_redis.elasticache.name == "{{ elasticache_redis_test_name }}"
-          - elasticache_redis.elasticache.data.CacheSubnetGroupName == "{{ elasticache_subnet_group_name }}"
+          - elasticache_redis.elasticache.name == elasticache_redis_test_name
+          - elasticache_redis.elasticache.data.CacheSubnetGroupName == elasticache_subnet_group_name
 
     - name: Add security group for Redis access in Elasticache
       ec2_security_group:

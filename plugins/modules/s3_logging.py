@@ -56,7 +56,6 @@ EXAMPLES = r"""
   community.aws.s3_logging:
     name: mywebsite.com
     state: absent
-
 """
 
 try:

@@ -73,3 +73,83 @@
       that:
         - nlb.changed
         - not nlb.listeners
+
+# TLS listeners
+- name: Add a TLS listener
+  elb_network_lb:
+    name: "{{ nlb_name }}"
+    subnets: "{{ nlb_subnets }}"
+    state: present
+    listeners:
+      - Protocol: TLS
+        Port: 443
+        Certificates:
+          - CertificateArn: "{{ cert.arn }}"
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: "{{ tg_name }}"
+        SslPolicy: ELBSecurityPolicy-TLS-1-0-2015-04
+        AlpnPolicy: HTTP2Optional
+  register: _add
+
+- assert:
+    that:
+      - _add.listeners[0].alpn_policy == ["HTTP2Optional"]
+      - _add.listeners[0].ssl_policy == "ELBSecurityPolicy-TLS-1-0-2015-04"
+
+- name: Add a TLS listener (idempotency)
+  elb_network_lb:
+    name: "{{ nlb_name }}"
+    subnets: "{{ nlb_subnets }}"
+    listeners:
+      - Protocol: TLS
+        Port: 443
+        Certificates:
+          - CertificateArn: "{{ cert.arn }}"
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: "{{ tg_name }}"
+        SslPolicy: ELBSecurityPolicy-TLS-1-0-2015-04
+        AlpnPolicy: HTTP2Optional
+  register: _idempotency
+
+- assert:
+    that:
+      - _idempotency is not changed
+      - _idempotency.listeners[0].alpn_policy == ["HTTP2Optional"]
+      - _idempotency.listeners[0].ssl_policy == "ELBSecurityPolicy-TLS-1-0-2015-04"
+
+- name: Update TLS listener of NLB
+  elb_network_lb:
+    name: "{{ nlb_name }}"
+    subnets: "{{ nlb_subnets }}"
+    listeners:
+      - Protocol: TLS
+        Port: 443
+        Certificates:
+          - CertificateArn: "{{ cert.arn }}"
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: "{{ tg_name }}"
+        SslPolicy: ELBSecurityPolicy-TLS13-1-2-FIPS-2023-04
+        AlpnPolicy: HTTP1Only
+  register: _update
+
+- assert:
+    that:
+      - _update is changed
+      - _update.listeners[0].alpn_policy == ["HTTP1Only"]
+      - _update.listeners[0].ssl_policy == "ELBSecurityPolicy-TLS13-1-2-FIPS-2023-04"
+
+- name: remove listener from NLB
+  elb_network_lb:
+    name: "{{ nlb_name }}"
+    subnets: "{{ nlb_subnets }}"
+    state: present
+    listeners: []
+  register: nlb
+
+- assert:
+    that:
+      - nlb.changed
+      - not nlb.listeners

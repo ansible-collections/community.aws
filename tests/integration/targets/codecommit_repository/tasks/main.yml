@@ -27,7 +27,7 @@
   - assert:
       that:
         - output is changed
-        - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
+        - output.repository_metadata.repository_name == resource_prefix ~ '_repo'
         - output.repository_metadata.repository_description == 'original comment'
 
   - name: No-op update to repository
@@ -39,7 +39,7 @@
   - assert:
       that:
         - output is not changed
-        - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
+        - output.repository_metadata.repository_name == resource_prefix ~ '_repo'
         - output.repository_metadata.repository_description == 'original comment'
 
   - name: Update repository description (CHECK MODE)
@@ -52,7 +52,7 @@
   - assert:
       that:
         - output is changed
-        - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
+        - output.repository_metadata.repository_name == resource_prefix ~ '_repo'
         - output.repository_metadata.repository_description == 'original comment'
 
   - name: Update repository description
@@ -64,7 +64,7 @@
   - assert:
       that:
         - output is changed
-        - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
+        - output.repository_metadata.repository_name == resource_prefix ~ '_repo'
         - output.repository_metadata.repository_description == 'new comment'
 
   # ============================================================
@@ -104,7 +104,7 @@
   - assert:
       that:
         - output is changed
-        - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
+        - output.repository_metadata.repository_name == resource_prefix ~ '_repo'
 
   - name: No-op update to repository without description
     codecommit_repository:
@@ -114,7 +114,7 @@
   - assert:
       that:
         - output is not changed
-        - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
+        - output.repository_metadata.repository_name == resource_prefix ~ '_repo'
 
   - name: Delete  a repository without description
     codecommit_repository:

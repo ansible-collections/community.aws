@@ -66,7 +66,7 @@ EXAMPLES = r"""
     resource: fsap-78945ff
     state: absent
     tags:
-        Name: foo
+      Name: foo
     purge_tags: true
 
 - name: Remove all tags
