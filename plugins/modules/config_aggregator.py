@@ -80,9 +80,9 @@ EXAMPLES = r"""
     state: present
     account_sources:
       account_ids:
-      - 1234567890
-      - 0123456789
-      - 9012345678
+        - 1234567890
+        - 0123456789
+        - 9012345678
       all_aws_regions: true
 """
 

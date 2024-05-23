@@ -53,8 +53,8 @@ EXAMPLES = r"""
     vpc_id: vpc-abcdefgh
     state: present
     tags:
-        Tag1: tag1
-        Tag2: tag2
+      Tag1: tag1
+      Tag2: tag2
   register: cagw
 
 - name: Delete Carrier gateway

@@ -1,2 +1,0 @@
-minor_changes:
-  - ecs_taskdefinition - Add parameter ``runtime_platform`` (https://github.com/ansible-collections/community.aws/issues/1891).

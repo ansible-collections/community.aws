@@ -348,7 +348,7 @@
   assert:
     that:
       - ecs_service_creation_hcgp.changed
-      - "{{ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds}} == 30"
+      - ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds == 30
 
 - name: update ecs_service using health_check_grace_period_seconds
   ecs_service:
@@ -368,7 +368,7 @@
   assert:
     that:
       - ecs_service_creation_hcgp2.changed
-      - "{{ecs_service_creation_hcgp2.service.healthCheckGracePeriodSeconds}} == 10"
+      - ecs_service_creation_hcgp2.service.healthCheckGracePeriodSeconds == 10
 
 - name: update ecs_service using REPLICA scheduling_strategy
   ecs_service:
@@ -453,8 +453,8 @@
   assert:
     that:
       - ecs_task_definition_constraints is changed
-      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].type == "{{ ecs_taskdefinition_placement_constraints[0].type }}"
-      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].expression == "{{ ecs_taskdefinition_placement_constraints[0].expression }}"
+      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].type == ecs_taskdefinition_placement_constraints[0].type
+      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].expression == ecs_taskdefinition_placement_constraints[0].expression
 
 - name: Remove ecs task definition with placement constraints
   ecs_taskdefinition:
@@ -547,7 +547,7 @@
 
       >> "rolloutStateReason": "ECS deployment ecs-svc/5156684577543126023 in progress.",
       constraints and placement strategies are only changeable if the rollout state is "COMPLETED"
-      
+
       a) ecs_service has currently no waiter function. so this is a DIY waiter
       b) the state reached never "COMPLETED" because something if wrong with the ECS EC2 Instances
          or the network setup. The EC2 instance never arrived as an active instance in the cluster.
@@ -555,9 +555,9 @@
          >> no container instance met all of its requirements. Reason: No Container Instances were found in your cluster.
          >> For more information, see the Troubleshooting section of the Amazon ECS Developer Guide.
          >> ec2_instance networking does not work correctly, no instance available for the cluster
-      
+
       Because all of this, all following tasks, that test the change of a constraint or placement stragegy are
-      using `force_new_deployment: true`. That ignores a) and b).  
+      using `force_new_deployment: true`. That ignores a) and b).
   ignore_errors: true
   ecs_service_info:
     name: "{{ ecs_service_name }}-constraint"
@@ -736,7 +736,7 @@
     launch_type: FARGATE
     cpu: 512
     memory: 1024
-    execution_role_arn: "{{ iam_execution_role.arn }}"
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
     state: present
   vars:
     ecs_task_host_port: 8080
@@ -750,7 +750,7 @@
     launch_type: EC2
     cpu: 512
     memory: 1024
-    execution_role_arn: "{{ iam_execution_role.arn }}"
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
     state: present
   vars:
     ecs_task_host_port: 8080
@@ -916,7 +916,7 @@
     launch_type: FARGATE
     cpu: 512
     memory: 1024
-    execution_role_arn: "{{ iam_execution_role.arn }}"
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
     state: present
     runtime_platform:
       cpuArchitecture: "ARM64"
@@ -938,7 +938,7 @@
     launch_type: FARGATE
     cpu: 512
     memory: 1024
-    execution_role_arn: "{{ iam_execution_role.arn }}"
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
     state: present
     runtime_platform:
       cpuArchitecture: "ARM64"
@@ -960,7 +960,7 @@
     launch_type: FARGATE
     cpu: 512
     memory: 1024
-    execution_role_arn: "{{ iam_execution_role.arn }}"
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
     state: present
     runtime_platform:
       cpuArchitecture: "ARM64"

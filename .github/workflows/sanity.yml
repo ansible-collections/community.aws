@@ -8,3 +8,4 @@ jobs:
     uses: ansible-network/github_actions/.github/workflows/sanity.yml@main
     with:
       matrix_include: "[]"
+      collection_pre_install: '-r source/tests/sanity/requirements.yml'

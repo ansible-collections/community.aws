@@ -1,2 +1,0 @@
-bugfixes:
-  - mq_broker - ensure broker is created with ``tags`` when passed (https://github.com/ansible-collections/community.aws/issues/1832).

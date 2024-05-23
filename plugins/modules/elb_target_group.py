@@ -270,7 +270,7 @@ EXAMPLES = r"""
         Port: 80
     state: present
     wait_timeout: 200
-    wait: True
+    wait: true
 
 - name: Create a target group with IP address targets
   community.aws.elb_target_group:
@@ -290,7 +290,7 @@ EXAMPLES = r"""
         Port: 80
     state: present
     wait_timeout: 200
-    wait: True
+    wait: true
 
 # Using lambda as targets require that the target group
 # itself is allow to invoke the lambda function.
@@ -303,7 +303,7 @@ EXAMPLES = r"""
     name: my-lambda-targetgroup
     target_type: lambda
     state: present
-    modify_targets: False
+    modify_targets: false
   register: out
 
 - name: second, allow invoke of the lambda
@@ -321,8 +321,7 @@ EXAMPLES = r"""
     target_type: lambda
     state: present
     targets:
-        - Id: arn:aws:lambda:eu-central-1:123456789012:function:my-lambda-function
-
+      - Id: arn:aws:lambda:eu-central-1:123456789012:function:my-lambda-function
 """
 
 RETURN = r"""

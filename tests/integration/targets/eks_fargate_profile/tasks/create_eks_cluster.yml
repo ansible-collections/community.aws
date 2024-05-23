@@ -87,7 +87,7 @@
     name: '{{ eks_cluster_name }}'
     security_groups: '{{ eks_security_groups | map(attribute=''name'') }}'
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
-    role_arn: '{{ iam_role.arn }}'
+    role_arn: '{{ iam_role.iam_role.arn }}'
     wait: true
   register: eks_create
 

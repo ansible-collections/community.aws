@@ -112,7 +112,7 @@
     - assert:
         that:
           - update_check.changed == True
-          - "update_check.output == 'State machine would be updated: {{ creation_output.state_machine_arn }}'"
+          - "update_check.output == 'State machine would be updated: ' ~ creation_output.state_machine_arn"
 
     - name: Update an existing state machine
       stepfunctions_state_machine:
@@ -265,7 +265,7 @@
     - assert:
         that:
           - deletion_check.changed == True
-          - "deletion_check.output == 'State machine would be deleted: {{ creation_output.state_machine_arn }}'"
+          - "deletion_check.output == 'State machine would be deleted: ' ~ creation_output.state_machine_arn"
 
     - name: Remove state machine
       stepfunctions_state_machine:

@@ -158,7 +158,7 @@ options:
         version_added: 5.3.0
         description:
             - Toggle overwriting of existing placement constraints. This is needed for backwards compatibility.
-            - By default I(purge_placement_constraints=false). In a release after 2024-06-01 this will be changed to I(purge_placement_constraints=true).
+            - By default I(purge_placement_constraints=false). In release 9.0.0 this will be changed to I(purge_placement_constraints=true).
         required: false
         type: bool
         default: false
@@ -180,7 +180,7 @@ options:
         version_added: 5.3.0
         description:
             - Toggle overwriting of existing placement strategy. This is needed for backwards compatibility.
-            - By default I(purge_placement_strategy=false). In a release after 2024-06-01 this will be changed to I(purge_placement_strategy=true).
+            - By default I(purge_placement_strategy=false). In release 9.0.0 this will be changed to I(purge_placement_strategy=true).
         required: false
         type: bool
         default: false
@@ -320,10 +320,10 @@ EXAMPLES = r"""
     desired_count: 0
     network_configuration:
       subnets:
-      - subnet-abcd1234
+        - subnet-abcd1234
       security_groups:
-      - sg-aaaa1111
-      - my_security_group
+        - sg-aaaa1111
+        - my_security_group
 
 # Simple example to delete
 - community.aws.ecs_service:
@@ -357,8 +357,8 @@ EXAMPLES = r"""
     desired_count: 3
     deployment_configuration:
       deployment_circuit_breaker:
-        enable: True
-        rollback: True
+        enable: true
+        rollback: true
 
 # With capacity_provider_strategy (added in version 4.0)
 - community.aws.ecs_service:
