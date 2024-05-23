@@ -1,0 +1,2 @@
+trivial:
+  - msk_cluster -  Disable integration tests because they are too slow.
