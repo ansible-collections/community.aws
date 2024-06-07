@@ -432,7 +432,7 @@ class Connection(ConnectionBase):
         )
         bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
         if bucket_region is None:
-          bucket_region = "us-east-1"
+            bucket_region = "us-east-1"
 
         if self.get_option("bucket_endpoint_url"):
             return self.get_option("bucket_endpoint_url"), bucket_region
