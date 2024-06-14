@@ -6,11 +6,11 @@
 DOCUMENTATION = r"""
 name: secretsmanager_random_password
 author:
-  - Andrew Roth <andrew@andrewjroth.com>
+  - Andrew Roth (@andrewjroth) <andrew@andrewjroth.com>
 
 short_description: Generate a random password using AWS Secrets Manager
 description:
-  - Look up (really generate) a random password using AWS Secrets Manager's 
+  - Look up (really generate) a random password using AWS Secrets Manager's
     `secretsmanager:GetRandomPassword` API.
   - Optional parameters can be passed into this lookup; I(password_length) and I(exclude_characters)
 
@@ -20,11 +20,11 @@ options:
     required: False
     type: integer
   password_length:
-    description: The length of the password. If you don’t include this parameter, the default length is 32 characters.
+    description: The length of the password. If you do not include this parameter, the default length is 32 characters.
     required: False
     type: integer
   exclude_characters:
-    description: A string of the characters that you don’t want in the password.
+    description: A string of the characters that you do not want in the password.
     required: False
     type: string
   exclude_numbers:
@@ -33,7 +33,7 @@ options:
     type: boolean
   exclude_punctuation:
     description: |-
-      Specifies whether to exclude punctuation characters from the password: 
+      Specifies whether to exclude punctuation characters from the password:
       `! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~` (included by default).
     required: False
     type: boolean
@@ -74,7 +74,7 @@ EXAMPLES = r"""
 
  - name: generate random 12-character password without punctuation
    debug: msg="{{ lookup('secretsmanager_random_password', 12, exclude_punctuation=True) }}"
-   
+
  - name: create a secret using a random password
    community.aws.secretsmanager_secret:
      name: 'test_secret_string'
@@ -117,7 +117,7 @@ class LookupModule(AWSLookupBase):
         # validate argument terms
         if len(terms) > 1:
             raise AnsibleLookupError(
-                f'secretsmanager_random_password must have zero or one argument'
+                "secretsmanager_random_password must have zero or one argument"
             )
 
         on_denied = self.get_option("on_denied")
@@ -137,13 +137,13 @@ class LookupModule(AWSLookupBase):
         if len(terms) == 1:
             if password_length is not None:
                 raise AnsibleLookupError(
-                    f'"password_length" should be provided as argument or keyword, not both'
+                    '"password_length" should be provided as argument or keyword, not both'
                 )
             password_length = terms[0]
         if password_length is not None:
             if not isinstance(password_length, integer_types) or password_length < 1:
                 raise AnsibleLookupError(
-                    f'"password_length" must be an integer greater than zero, if provided'
+                    '"password_length" must be an integer greater than zero, if provided'
                 )
             params["PasswordLength"] = password_length
 
@@ -152,7 +152,7 @@ class LookupModule(AWSLookupBase):
         if exclude_characters is not None:
             if not isinstance(exclude_characters, string_types):
                 raise AnsibleLookupError(
-                    f'"exclude_characters" must be a string, if provided'
+                    '"exclude_characters" must be a string, if provided'
                 )
             params["ExcludeCharacters"] = exclude_characters
 
@@ -181,9 +181,9 @@ class LookupModule(AWSLookupBase):
             return [response['RandomPassword']]
         except is_boto3_error_code("AccessDeniedException"):  # pylint: disable=duplicate-except
             if on_denied == "error":
-                raise AnsibleLookupError(f"Failed to generate random password (AccessDenied)")
+                raise AnsibleLookupError("Failed to generate random password (AccessDenied)")
             elif on_denied == "warn":
-                self._display.warning(f"Skipping, access denied to generate random password")
+                self._display.warning("Skipping, access denied to generate random password")
         except (
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
