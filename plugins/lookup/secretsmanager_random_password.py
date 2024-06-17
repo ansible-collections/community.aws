@@ -96,7 +96,8 @@ except ImportError:
 
 from ansible.errors import AnsibleLookupError
 from ansible.module_utils._text import to_native
-from ansible.module_utils.six import string_types, integer_types
+from ansible.module_utils.six import string_types
+from ansible.module_utils.six import integer_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
@@ -116,9 +117,7 @@ class LookupModule(AWSLookupBase):
 
         # validate argument terms
         if len(terms) > 1:
-            raise AnsibleLookupError(
-                "secretsmanager_random_password must have zero or one argument"
-            )
+            raise AnsibleLookupError("secretsmanager_random_password must have zero or one argument")
 
         on_denied = self.get_option("on_denied")
 
@@ -136,24 +135,18 @@ class LookupModule(AWSLookupBase):
         password_length = self.get_option("password_length")
         if len(terms) == 1:
             if password_length is not None:
-                raise AnsibleLookupError(
-                    '"password_length" should be provided as argument or keyword, not both'
-                )
+                raise AnsibleLookupError('"password_length" should be provided as argument or keyword, not both')
             password_length = terms[0]
         if password_length is not None:
             if not isinstance(password_length, integer_types) or password_length < 1:
-                raise AnsibleLookupError(
-                    '"password_length" must be an integer greater than zero, if provided'
-                )
+                raise AnsibleLookupError('"password_length" must be an integer greater than zero, if provided')
             params["PasswordLength"] = password_length
 
         # validate exclude characters
         exclude_characters = self.get_option("exclude_characters")
         if exclude_characters is not None:
             if not isinstance(exclude_characters, string_types):
-                raise AnsibleLookupError(
-                    '"exclude_characters" must be a string, if provided'
-                )
+                raise AnsibleLookupError('"exclude_characters" must be a string, if provided')
             params["ExcludeCharacters"] = exclude_characters
 
         # validate options for parameters
@@ -169,16 +162,14 @@ class LookupModule(AWSLookupBase):
             opt_value = self.get_option(opt_name)
             if opt_value is not None:
                 if not isinstance(opt_value, bool):
-                    raise AnsibleLookupError(
-                        f'"{opt_name}" must be a boolean value, if provided'
-                    )
+                    raise AnsibleLookupError(f'"{opt_name}" must be a boolean value, if provided')
                 params[bool_options_to_params[opt_name]] = opt_value
 
         client = self.client("secretsmanager", AWSRetry.jittered_backoff())
 
         try:
             response = client.get_random_password(**params)
-            return [response['RandomPassword']]
+            return [response["RandomPassword"]]
         except is_boto3_error_code("AccessDeniedException"):  # pylint: disable=duplicate-except
             if on_denied == "error":
                 raise AnsibleLookupError("Failed to generate random password (AccessDenied)")
