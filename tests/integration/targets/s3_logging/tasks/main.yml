@@ -46,7 +46,6 @@
     s3_bucket:
       state: present
       name: '{{ log_bucket_1 }}'
-      object_ownership: BucketOwnerPreferred
     register: output
   - assert:
       that:
@@ -57,12 +56,22 @@
     s3_bucket:
       state: present
       name: '{{ log_bucket_2 }}'
-      object_ownership: BucketOwnerPreferred
     register: output
   - assert:
       that:
       - output is changed
       - output.name == log_bucket_2
+
+  - name: Create simple s3_bucket as third target for logs
+    s3_bucket:
+      state: present
+      name: '{{ log_bucket_3 }}'
+      object_ownership: BucketOwnerPreferred
+    register: output
+  - assert:
+      that:
+      - output is changed
+      - output.name == log_bucket_3
 
 # ============================================================
 
@@ -151,6 +160,76 @@
   - assert:
       that:
       - result is not changed
+
+# ============================================================
+
+  - name: ACL logging bucket (check_mode)
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_3 }}'
+      target_access: acl
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: ACL logging bucket
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_3 }}'
+      target_access: acl
+    register: result
+  - assert:
+      that:
+      - result is changed
+
+  - name: ACL logging bucket idempotency (check_mode)
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_3 }}'
+      target_access: acl
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
+  - name: ACL logging bucket idempotency
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_3 }}'
+      target_access: acl
+    register: result
+  - assert:
+      that:
+      - result is not changed
+
+  - name: ACL logging bucket convert to policy
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_3 }}'
+      target_access: policy
+    register: result
+  - assert:
+      that:
+      - result is changed
+
+  - name: policy logging bucket convert to ACL
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_3 }}'
+      target_access: acl
+    register: result
+  - assert:
+      that:
+      - result is changed
 
 # ============================================================
 
