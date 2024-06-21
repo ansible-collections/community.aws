@@ -34,6 +34,12 @@ options:
       - "The prefix that should be prepended to the generated log files written to the target_bucket."
     default: ""
     type: str
+  target_access:
+    description:
+      - "Permissions type for log delivery"
+    default: policy
+    choices: [ 'policy', 'acl' ]
+    type: str
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -57,6 +63,8 @@ EXAMPLES = r"""
     name: mywebsite.com
     state: absent
 """
+
+import json
 
 try:
     import botocore
@@ -85,8 +93,16 @@ def compare_bucket_logging(bucket_logging, target_bucket, target_prefix):
     return False
 
 
-def verify_acls(connection, module, target_bucket):
+def verify_acls(connection, module, bucket_name, target_access, target_bucket):
+    current_obj_ownership = "BucketOwnerEnforced"
     try:
+        current_ownership = connection.get_bucket_ownership_controls(aws_retry=True, Bucket=target_bucket)
+        rules = current_ownership["OwnershipControls"]["Rules"]
+        for rule in rules:
+            if "ObjectOwnership" in rule:
+                current_obj_ownership = rule["ObjectOwnership"]
+        if target_access == "acl" and current_obj_ownership == "BucketOwnerEnforced":
+            module.fail_json_aws(msg="The access type is set to ACL but it is disabled on target bucket")
         current_acl = connection.get_bucket_acl(aws_retry=True, Bucket=target_bucket)
         current_grants = current_acl["Grants"]
     except is_boto3_error_code("NoSuchBucket"):
@@ -95,25 +111,36 @@ def verify_acls(connection, module, target_bucket):
         botocore.exceptions.BotoCoreError,
         botocore.exceptions.ClientError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Failed to fetch target bucket ACL")
+        module.fail_json_aws(e, msg="Failed to fetch target bucket ownership")
 
     required_grant = {
         "Grantee": {"URI": "http://acs.amazonaws.com/groups/s3/LogDelivery", "Type": "Group"},
         "Permission": "FULL_CONTROL",
     }
 
-    for grant in current_grants:
-        if grant == required_grant:
+    updated_grants = []
+    if target_access == "acl":
+        if required_grant not in list(current_grants):
+            updated_grants = list(current_grants)
+            updated_grants.append(required_grant)
+        else:
             return False
+    else:
+        if required_grant in list(current_grants):
+            for grant in current_grants:
+                if grant != required_grant:
+                    updated_grants.append(grant)
+        else:
+            return False
+
+    updated_acl = dict(current_acl)
+    updated_acl["Grants"] = updated_grants
+    del updated_acl["ResponseMetadata"]
+    module.warn(json.dumps(updated_acl))
 
     if module.check_mode:
         return True
 
-    updated_acl = dict(current_acl)
-    updated_grants = list(current_grants)
-    updated_grants.append(required_grant)
-    updated_acl["Grants"] = updated_grants
-    del updated_acl["ResponseMetadata"]
     try:
         connection.put_bucket_acl(aws_retry=True, Bucket=target_bucket, AccessControlPolicy=updated_acl)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
@@ -122,10 +149,70 @@ def verify_acls(connection, module, target_bucket):
     return True
 
 
-def enable_bucket_logging(connection, module):
+def verify_policy(connection, module, bucket_name, target_access, target_bucket, target_prefix):
+    policy = {"Version": "2012-10-17", "Statement": []}
+    policy_statement = {
+        "Sid": bucket_name,
+        "Effect": "Allow",
+        "Principal": {"Service": "logging.s3.amazonaws.com"},
+        "Action": "s3:PutObject",
+        "Resource": f"arn:aws:s3:::{target_bucket}/{target_prefix}*",
+    }
+
+    try:
+        current_policy_raw = connection.get_bucket_policy(aws_retry=True, Bucket=target_bucket)
+    except is_boto3_error_code("NoSuchBucket"):
+        module.fail_json(msg=f"Target Bucket '{target_bucket}' not found")
+    except is_boto3_error_code("NoSuchBucketPolicy"):
+        current_policy_raw = {"Policy": json.dumps(policy)}
+    except (
+        botocore.exceptions.BotoCoreError,
+        botocore.exceptions.ClientError,
+    ) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to fetch target bucket policy")
+
+    try:
+        current_policy = json.loads(current_policy_raw["Policy"])
+    except json.JSONDecodeError as e:
+        module.fail_json(e, msg="Unable to parse policy")
+
+    new_policy_statements = []
+    new_policy = current_policy
+    for p in current_policy.get("Statement", []):
+        if p == policy_statement and target_access == "policy":
+            return False
+    if target_access == "acl":
+        for p in current_policy.get("Statement", []):
+            if p != policy_statement:
+                new_policy_statements.append(p)
+        new_policy["Statement"] = new_policy_statements
+        if new_policy == current_policy:
+            return False
+    else:
+        new_policy = current_policy
+        if new_policy["Statement"] is None:
+            new_policy["Statement"] = [policy_statement]
+        else:
+            new_policy["Statement"].append(policy_statement)
+
+    if module.check_mode:
+        return True
+
+    try:
+        connection.put_bucket_policy(aws_retry=True, Bucket=target_bucket, Policy=json.dumps(new_policy))
+    except is_boto3_error_code("MalformedPolicy"):
+        module.fail_json(msg=f"Bad policy:\n {new_policy}")
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to update target bucket policy to allow log delivery")
+
+    return True
+
+
+def enable_bucket_logging(connection, module: AnsibleAWSModule):
     bucket_name = module.params.get("name")
     target_bucket = module.params.get("target_bucket")
     target_prefix = module.params.get("target_prefix")
+    target_access = module.params.get("target_access")
     changed = False
 
     try:
@@ -139,7 +226,8 @@ def enable_bucket_logging(connection, module):
         module.fail_json_aws(e, msg="Failed to fetch current logging status")
 
     try:
-        changed |= verify_acls(connection, module, target_bucket)
+        changed |= verify_acls(connection, module, bucket_name, target_access, target_bucket)
+        changed |= verify_policy(connection, module, bucket_name, target_access, target_bucket, target_prefix)
 
         if not compare_bucket_logging(bucket_logging, target_bucket, target_prefix):
             bucket_logging = camel_dict_to_snake_dict(bucket_logging)
@@ -196,6 +284,7 @@ def main():
         name=dict(required=True),
         target_bucket=dict(required=False, default=None),
         target_prefix=dict(required=False, default=""),
+        target_access=dict(required=False, default="policy", choices=["policy", "acl"]),
         state=dict(required=False, default="present", choices=["present", "absent"]),
     )
 
