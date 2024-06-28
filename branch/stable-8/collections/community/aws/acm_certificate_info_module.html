@@ -162,6 +162,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-acm-c
 <li><p>Retrieve information for ACM certificates.</p></li>
 <li><p>Note that this will not return information about uploaded keys of size 4096 bits, due to a limitation of the ACM API.</p></li>
 <li><p>Prior to release 5.0.0 this module was called <code class="docutils literal notranslate"><span class="pre">community.aws.aws_acm_info</span></code>. The usage did not change.</p></li>
+<li><p>Requires the IAM permissions ‘acm:ListCertificates’, ‘acm:DescribeCertificate’, ‘acm:GetCertificate’, ‘acm:ListTagsForCertificate’</p></li>
 </ul>
 <p>Aliases: aws_acm_info</p>
 </section>
