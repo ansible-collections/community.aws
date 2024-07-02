@@ -451,7 +451,7 @@ h6 {
 }
 /* ansibleOptionLink is adapted from h1 .headerlink in sphinx_rtd_theme */
 /* This definition lives in the antsibull Sphinx extension; we update it here to use the icon from FontAwesome */
-/* https://github.com/ansible-community/antsibull/blob/main/sphinx_antsibull_ext/css/antsibull-minimal.scss */
+/* https://github.com/ansible-community/antsibull-docs/blob/main/src/sphinx_antsibull_ext/css/antsibull-minimal.scss */
 tr .ansibleOptionLink::after {
     content: "" !important;
     font-family: FontAwesome;
@@ -471,9 +471,10 @@ tr .ansibleOptionLink {
     }
     /*
      * Without this,
-     * for example most links in the page's TOC aren't usable anymore
+     * for example most links in the page's TOC aren't usable anymore, and tables
+	 * sometimes overlap the text above
      * */
-    section a[id] {
+    section a[id], section table[id] {
         padding-top: 0;
         margin-top: 0;
     }
@@ -485,3 +486,6 @@ tr .ansibleOptionLink {
 }
 
 .rst-content dl dt { margin-bottom: 0; }
+
+/*! Make sure that environment variable links are blue */
+.rst-content code.xref.std-envvar { color: #2980b9; }
