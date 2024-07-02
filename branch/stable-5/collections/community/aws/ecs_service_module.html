@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="2.11.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.ecs_service module – Create, terminate, start or stop a service in ECS &mdash; Ansible collections  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=c5b67dd2" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
+
+  
     <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
@@ -17,7 +20,7 @@
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="../../../_static/documentation_options.js?v=7f41d439"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
@@ -33,11 +36,9 @@
 
 <div class="DocSite-globalNav ansibleNav">
   <ul>
-    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
-    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
-    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
-    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
     <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+    <li><a href="https://forum.ansible.com/" target="_blank">Ansible community forum</a></li>
+    <li><a href="https://docs.ansible.com/" target="_blank">Documentation</a></li>
   </ul>
 </div>
 
@@ -135,7 +136,9 @@
 <h1>community.aws.ecs_service module – Create, terminate, start or stop a service in ECS<a class="headerlink" href="#community-aws-ecs-service-module-create-terminate-start-or-stop-a-service-in-ecs" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 5.5.1).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 5.5.1).</p>
+<p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
+To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-ecs-service-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -164,13 +167,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
-<li><p>boto3 &gt;= 1.22.0</p></li>
-<li><p>botocore &gt;= 1.25.0</p></li>
+<li><p>boto3 &gt;= 1.26.0</p></li>
+<li><p>botocore &gt;= 1.29.0</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
-<table class="ansible-option-table docutils align-default" style="width: 100%">
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Comments</p></th>
@@ -213,10 +216,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-capacity_provider_strategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-capacity-provider-strategy"><strong>capacity_provider_strategy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-capacity_provider_strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 4.0.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 4.0.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The capacity provider strategy to use with your service. You can specify a maximum of 6 providers per strategy.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -245,7 +248,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-client_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Unique, case-sensitive identifier you provide to ensure the idempotency of the request. Up to 32 ASCII characters are allowed.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -254,7 +257,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the cluster in which the service exists.</p>
 <p>If not specified, the cluster name will be <code class="docutils literal notranslate"><span class="pre">default</span></code>.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -263,9 +266,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">ANSIBLE_DEBUG_BOTOCORE_LOGS</span></code> environment variable may also be used.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
@@ -275,7 +278,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The time to wait before checking that the service is available.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">10</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">10</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -284,7 +287,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>Optional parameters that control the deployment_configuration.</p>
 <p>Format is ‘{“maximum_percent”:&lt;integer&gt;, “minimum_healthy_percent”:&lt;integer&gt;}</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -299,7 +302,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-deployment_configuration/deployment_circuit_breaker/enable" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If enabled, a service deployment will transition to a failed state and stop launching new tasks.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
@@ -311,7 +314,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-deployment_configuration/deployment_circuit_breaker/rollback" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If enabled, ECS will roll back your service to the last completed deployment after a failure.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
@@ -335,10 +338,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-deployment_controller"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-deployment-controller"><strong>deployment_controller</strong></p>
 <a class="ansibleOptionLink" href="#parameter-deployment_controller" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 4.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The deployment controller to use for the service. If no deploymenet controller is specified, the ECS controller is used.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -346,7 +349,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-deployment_controller/type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The deployment controller type to use.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ECS&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CODE_DEPLOY&quot;</span></code></p></li>
@@ -365,11 +368,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-enable_execute_command"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-enable-execute-command"><strong>enable_execute_command</strong></p>
 <a class="ansibleOptionLink" href="#parameter-enable_execute_command" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 5.4.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 5.4.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Whether or not to enable the execute command functionality for the containers in the ECS task.</p>
 <p>If <em>enable_execute_command=true</em> execute command functionality is enabled on all containers in the ECS task.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
@@ -393,12 +396,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-force_deletion"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-force-deletion"><strong>force_deletion</strong></p>
 <a class="ansibleOptionLink" href="#parameter-force_deletion" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 2.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Forcibly delete the service. Required when deleting a service with &gt;0 scale, or no target group.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
@@ -408,9 +411,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-force_new_deployment" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Force deployment of service even if there are no changes.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
@@ -427,7 +430,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-launch_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The launch type on which to run your service.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;EC2&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;FARGATE&quot;</span></code></p></li>
@@ -441,7 +444,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <td><div class="ansible-option-cell"><p>The list of ELBs defined for this service.</p>
 <p>Load balancers for an existing service cannot be updated, and it is an error to do so.</p>
 <p>When the deployment controller is CODE_DEPLOY changes to this value are simply ignored, and do not cause an error.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -465,7 +468,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-network_configuration/assign_public_ip" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether the task’s elastic network interface receives a public IP address.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
@@ -492,7 +495,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>The placement constraints for the tasks in the service.</p>
 <p>See <a class="reference external" href="https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PlacementConstraint.html">https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PlacementConstraint.html</a> for more details.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -514,7 +517,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-placement_strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The placement strategy objects to use for tasks in your service. You can specify a maximum of 5 strategy rules per service.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -534,7 +537,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-platform_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-platform-version"><strong>platform_version</strong></p>
 <a class="ansibleOptionLink" href="#parameter-platform_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 1.5.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Numeric part of platform version or LATEST</p>
 <p>See <a class="reference external" href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html">https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html</a> for more details.</p>
@@ -555,10 +558,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-propagate_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-propagate-tags"><strong>propagate_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-propagate_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 4.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Propagate tags from ECS task defintition or ECS service to ECS task.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TASK_DEFINITION&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SERVICE&quot;</span></code></p></li>
@@ -568,13 +571,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_placement_constraints"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-purge-placement-constraints"><strong>purge_placement_constraints</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_placement_constraints" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 5.3.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Toggle overwriting of existing placement constraints. This is needed for backwards compatibility.</p>
 <p>By default <em>purge_placement_constraints=false</em>. In a release after 2024-06-01 this will be changed to <em>purge_placement_constraints=true</em>.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
@@ -582,13 +585,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_placement_strategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-purge-placement-strategy"><strong>purge_placement_strategy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_placement_strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 5.3.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Toggle overwriting of existing placement strategy. This is needed for backwards compatibility.</p>
 <p>By default <em>purge_placement_strategy=false</em>. In a release after 2024-06-01 this will be changed to <em>purge_placement_strategy=true</em>.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
@@ -613,7 +616,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-repeat" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of times to check that the service is available.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">10</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">10</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -622,7 +625,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>The name or full Amazon Resource Name (ARN) of the IAM role that allows your Amazon ECS container agent to make calls to your load balancer on your behalf.</p>
 <p>This parameter is only required if you are using a load balancer with your service in a network mode other than <code class="docutils literal notranslate"><span class="pre">awsvpc</span></code>.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -631,7 +634,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>The scheduling strategy.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">REPLICA</span></code> if not given to preserve previous behavior.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DAEMON&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REPLICA&quot;</span></code></p></li>
@@ -660,7 +663,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-service_registries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Describes service discovery registries this service will register with.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -707,7 +710,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The desired state of the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
@@ -718,7 +721,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 4.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary of tags to add or remove from the resource.</p>
 </div></td>
@@ -738,23 +741,23 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p>Setting <em>validate_certs=false</em> is strongly discouraged, as an alternative, consider setting <em>aws_ca_bundle</em> instead.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">true</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 4.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Whether or not to wait for the service to be inactive.</p>
 <p>Waits only when <em>state</em> is <code class="docutils literal notranslate"><span class="pre">absent</span></code>.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
@@ -864,7 +867,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <section id="returned-facts">
 <h2><a class="toc-backref" href="#id6" role="doc-backlink">Returned Facts</a><a class="headerlink" href="#returned-facts" title="Link to this heading"></a></h2>
 <p>Facts returned by this module are added/updated in the <code class="docutils literal notranslate"><span class="pre">hostvars</span></code> host facts and can be referenced by name just like any other host fact. They do not need to be registered in order to use them.</p>
-<table class="ansible-option-table docutils align-default" style="width: 100%">
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
 <th class="head"><p>Description</p></th>
@@ -876,7 +879,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Details of deleted service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when service existed and was deleted</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when service existed and was deleted</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -884,7 +887,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/clusterArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the of the cluster that hosts the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -892,7 +895,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deploymentConfiguration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>dictionary of deploymentConfiguration</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -900,7 +903,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deploymentConfiguration/deploymentCircuitBreaker" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>dictionary of deploymentCircuitBreaker</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -908,7 +911,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deploymentConfiguration/deploymentCircuitBreaker/enable" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of the circuit breaker feature.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -916,7 +919,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deploymentConfiguration/deploymentCircuitBreaker/rollback" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of the rollback feature of the circuit breaker.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -924,7 +927,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deploymentConfiguration/maximumPercent" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>maximumPercent param</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -932,7 +935,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deploymentConfiguration/minimumHealthyPercent" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>minimumHealthyPercent param</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -940,7 +943,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/deployments" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>list of service deployments</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -948,7 +951,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/desiredCount" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The desired number of instantiations of the task definition to keep running on the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -956,7 +959,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/events" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>list of service events</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -964,7 +967,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/loadBalancers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of load balancer objects</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -972,7 +975,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/loadBalancers/containerName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the container to associate with the load balancer.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -980,7 +983,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/loadBalancers/containerPort" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The port on the container to associate with the load balancer.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -988,7 +991,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/loadBalancers/loadBalancerName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>the name</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -996,7 +999,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/pendingCount" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of tasks in the cluster that are in the PENDING state.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1004,7 +1007,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/placementConstraints" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of placement constraints objects</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1012,7 +1015,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/placementConstraints/expression" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A cluster query language expression to apply to the constraint. Note you cannot specify an expression if the constraint type is distinctInstance.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1020,7 +1023,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/placementConstraints/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of constraint. Valid values are distinctInstance and memberOf.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1028,7 +1031,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/placementStrategy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of placement strategy objects</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1036,7 +1039,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/placementStrategy/field" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The field to apply the placement strategy against. For the spread placement strategy, valid values are instanceId (or host, which has the same effect), or any platform or custom attribute that is applied to a container instance, such as attribute:ecs.availability-zone. For the binpack placement strategy, valid values are CPU and MEMORY.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1044,7 +1047,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/placementStrategy/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of placement strategy. Valid values are random, spread and binpack.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1052,7 +1055,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/propagateTags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of tag propagation applied to the resource</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1060,7 +1063,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/runningCount" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of tasks in the cluster that are in the RUNNING state.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1068,8 +1071,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/serviceArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) that identifies the service. The ARN contains the arn:aws:ecs namespace, followed by the region of the service, the AWS account ID of the service owner, the service namespace, and then the service name.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:ecs:us-east-1:123456789012:service/my-service&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:ecs:us-east-1:123456789012:service/my-service&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1077,7 +1080,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/serviceName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A user-generated string used to identify the service</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1085,7 +1088,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The valid values are ACTIVE, DRAINING, or INACTIVE.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1093,7 +1096,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The tags applied to this resource.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when tags found</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when tags found</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1101,7 +1104,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-ansible_facts/service/taskDefinition" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN of a task definition to use for tasks in the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 </tbody>
@@ -1109,8 +1112,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id7" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Link to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
-<table class="ansible-option-table docutils align-default" style="width: 100%">
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible Core vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="longtable ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
 <th class="head"><p>Description</p></th>
@@ -1122,16 +1125,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Details of created service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when creating a service</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when creating a service</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-service/capacityProviderStrategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-return-service-capacityproviderstrategy"><strong>capacityProviderStrategy</strong></p>
 <a class="ansibleOptionLink" href="#return-service/capacityProviderStrategy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
-<p><span class="ansible-option-versionadded">added in community.aws 4.0.0</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 4.0.0</em></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The capacity provider strategy to use with your service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1139,7 +1142,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/capacityProviderStrategy/base" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>How many tasks, at a minimum, should use the specified provider.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1147,7 +1150,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/capacityProviderStrategy/capacityProvider" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Name of capacity provider.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1155,7 +1158,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/capacityProviderStrategy/weight" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The relative percentage of the total number of launched tasks that should use the specified provider.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1163,7 +1166,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/clusterArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the of the cluster that hosts the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1171,7 +1174,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deploymentConfiguration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>dictionary of deploymentConfiguration</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1179,7 +1182,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deploymentConfiguration/deploymentCircuitBreaker" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>dictionary of deploymentCircuitBreaker</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1187,7 +1190,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deploymentConfiguration/deploymentCircuitBreaker/enable" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of the circuit breaker feature.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1195,7 +1198,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deploymentConfiguration/deploymentCircuitBreaker/rollback" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of the rollback feature of the circuit breaker.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1203,7 +1206,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deploymentConfiguration/maximumPercent" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>maximumPercent param</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1211,7 +1214,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deploymentConfiguration/minimumHealthyPercent" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>minimumHealthyPercent param</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1219,7 +1222,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/deployments" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>list of service deployments</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1227,7 +1230,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/desiredCount" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The desired number of instantiations of the task definition to keep running on the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1235,7 +1238,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/events" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>list of service events</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1244,7 +1247,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of load balancer objects</p>
 <p>Updating the loadbalancer configuration of an existing service requires botocore&gt;=1.24.14.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1252,7 +1255,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/loadBalancers/containerName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the container to associate with the load balancer.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1260,7 +1263,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/loadBalancers/containerPort" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The port on the container to associate with the load balancer.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1268,7 +1271,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/loadBalancers/loadBalancerName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>the name</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1276,7 +1279,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/pendingCount" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of tasks in the cluster that are in the PENDING state.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1284,7 +1287,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/placementConstraints" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of placement constraints objects</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1292,7 +1295,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/placementConstraints/expression" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A cluster query language expression to apply to the constraint. Note you cannot specify an expression if the constraint type is distinctInstance.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1300,7 +1303,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/placementConstraints/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of constraint. Valid values are distinctInstance and memberOf.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1308,7 +1311,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/placementStrategy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of placement strategy objects</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1316,7 +1319,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/placementStrategy/field" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The field to apply the placement strategy against. For the spread placement strategy, valid values are instanceId (or host, which has the same effect), or any platform or custom attribute that is applied to a container instance, such as attribute:ecs.availability-zone. For the binpack placement strategy, valid values are CPU and MEMORY.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1324,7 +1327,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/placementStrategy/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of placement strategy. Valid values are random, spread and binpack.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1332,7 +1335,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/propagateTags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of tag propagation applied to the resource.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1340,7 +1343,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/runningCount" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of tasks in the cluster that are in the RUNNING state.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1348,8 +1351,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/serviceArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) that identifies the service. The ARN contains the <code class="docutils literal notranslate"><span class="pre">arn:aws:ecs</span></code> namespace, followed by the region of the service, the AWS account ID of the service owner, the service namespace, and then the service name.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:ecs:us-east-1:123456789012:service/my-service&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:ecs:us-east-1:123456789012:service/my-service&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1357,7 +1360,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/serviceName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A user-generated string used to identify the service</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1365,7 +1368,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The valid values are ACTIVE, DRAINING, or INACTIVE.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1373,7 +1376,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The tags applied to this resource.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1381,7 +1384,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#return-service/taskDefinition" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN of a task definition to use for tasks in the service.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
 </tbody>
@@ -1397,11 +1400,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </section>
 <section id="collection-links">
 <h3>Collection links<a class="headerlink" href="#collection-links" title="Link to this heading"></a></h3>
-<p class="ansible-links">
-  <a href="https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" aria-role="button" target="_blank" rel="noopener external">Issue Tracker</a>
-  <a href="https://github.com/ansible-collections/community.aws" aria-role="button" target="_blank" rel="noopener external">Repository (Sources)</a>
-  <a href="./#communication-for-community-aws" aria-role="button" target="_blank">Communication</a>
-</p></section>
+<ul class="ansible-links">
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" rel="noopener external" target="_blank">Issue Tracker</a></span></li>
+<li><span><a aria-role="button" class="ansible-link reference external" href="https://github.com/ansible-collections/community.aws" rel="noopener external" target="_blank">Repository (Sources)</a></span></li>
+<li><span><a class="reference internal" href="index.html#communication-for-community-aws"><span class="std std-ref">Communication</span></a></span></li>
+</ul>
+</section>
 </section>
 </section>
 
