@@ -46,7 +46,7 @@ options:
     description:
       - Whether to enable AWS Multicast support. Valid only at the time of creation of the Transit Gateway.
     type: bool
-    version_added: 7.3.0
+    version_added: 8.1.0
   state:
     description:
       - C(present) to ensure resource is created.
