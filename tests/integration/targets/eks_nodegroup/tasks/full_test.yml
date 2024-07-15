@@ -123,6 +123,7 @@
       source_sg:
         - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
+    wait_timeout: 1500
   register: eks_nodegroup_result
 
 - name: check that eks_nodegroup is created
