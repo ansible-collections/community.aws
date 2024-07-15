@@ -84,7 +84,7 @@
       ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
       source_sg:
         - "{{ securitygroup_eks_nodegroup.group_id }}"
-    wait: True
+    wait: False
   register: eks_nodegroup_result
   check_mode: True
 
@@ -123,6 +123,7 @@
       source_sg:
         - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
+    wait_timeout: 1500
   register: eks_nodegroup_result
 
 - name: check that eks_nodegroup is created
@@ -463,7 +464,7 @@
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
     launch_template:
       name: '{{ lt.template.launch_template_name }}'
-    wait: True
+    wait: False
   register: eks_nodegroup_result
   check_mode: True
 
