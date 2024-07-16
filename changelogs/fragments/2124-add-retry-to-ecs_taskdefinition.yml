@@ -1,0 +1,2 @@
+bugfixes:
+  - ecs_taskdefinition - avoid throttling exceptions on task definitions with a large number of revisions by using the retry mechanism (https://github.com/ansible-collections/community.aws/issues/2123).
