@@ -929,7 +929,7 @@ class EcsTaskManager:
         return list(
             sorted(
                 [
-                    self.ecs.describe_task_definition(taskDefinition=arn)["taskDefinition"]
+                    self.ecs.describe_task_definition(aws_retry=True, taskDefinition=arn)["taskDefinition"]
                     for arn in data["taskDefinitionArns"]
                 ],
                 key=lambda td: td["revision"],
