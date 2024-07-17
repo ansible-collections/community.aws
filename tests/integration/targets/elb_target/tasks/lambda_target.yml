@@ -23,8 +23,8 @@
       name: "{{ lambda_name }}"
       state: present
       zip_file: /tmp/lambda.zip
-      runtime: python3.7
-      role: "{{ ROLE_ARN.arn }}"
+      runtime: python3.12
+      role: "{{ ROLE_ARN.iam_role.arn }}"
       handler: ansible_lambda_target.lambda_handler
       timeout: 30
     register: lambda_function

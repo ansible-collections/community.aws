@@ -309,7 +309,7 @@
       name: '{{ sns_topic_lambda_name }}'
       state: present
       zip_file: '{{ tempdir.path }}/{{ sns_topic_lambda_function }}.zip'
-      runtime: python3.9
+      runtime: python3.12
       role: '{{ sns_topic_lambda_role }}'
       handler: '{{ sns_topic_lambda_function }}.handler'
     register: lambda_result

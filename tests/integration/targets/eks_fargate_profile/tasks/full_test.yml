@@ -1,5 +1,5 @@
 # Creating dependencies
-- name: create IAM instance role 
+- name: create IAM instance role
   iam_role:
     name: 'ansible-test-aws_eks_fargate_profile'
     assume_role_policy_document: '{{ lookup(''file'',''eks-fargate-profile-trust-policy.json'') }}'
@@ -19,7 +19,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: fake_cluster
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -38,7 +38,7 @@
     name: fake_profile
     cluster_name: '{{ eks_cluster_name }}'
     state: absent
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -57,7 +57,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'public') | map(attribute='subnet.id') }}
@@ -72,13 +72,13 @@
       - not eks_fargate_profile_create.changed
       - eks_fargate_profile_create.msg.endswith("provided in Fargate Profile is not a private subnet")
 
-# Create Fargate_profile with wait 
+# Create Fargate_profile with wait
 - name: create Fargate Profile with wait (check mode)
   eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -99,7 +99,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -120,7 +120,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -141,7 +141,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -162,7 +162,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -185,7 +185,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -207,7 +207,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -230,7 +230,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -253,7 +253,7 @@
     name: '{{ eks_fargate_profile_name_b }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -272,7 +272,7 @@
     name: '{{ eks_fargate_profile_name_b }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -291,7 +291,7 @@
     name: '{{ eks_fargate_profile_name_b }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -310,7 +310,7 @@
     name: '{{ eks_fargate_profile_name_b }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ iam_role_fargate.arn }}'
+    role_arn: '{{ iam_role_fargate.iam_role.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -389,7 +389,7 @@
     that:
       - eks_fargate_profile_b_delete.changed
 
-- name: delete a fargate profile b 
+- name: delete a fargate profile b
   eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_b }}'
     cluster_name: '{{ eks_cluster_name }}'

@@ -1,2 +1,4 @@
 plugins/connection/aws_ssm.py yamllint:unparsable-with-libyaml # bug in ansible-test - https://github.com/ansible/ansible/issues/82353
 plugins/inventory/aws_mq.py yamllint:unparsable-with-libyaml # bug in ansible-test - https://github.com/ansible/ansible/issues/82353
+plugins/modules/ecs_cluster.py pylint:collection-deprecated-version
+plugins/modules/glue_connection.py pylint:collection-deprecated-version
