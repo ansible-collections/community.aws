@@ -508,9 +508,7 @@ def existing_templates(module):
                 if data["nextToken"]:
                     params["NextToken"] = data["nextToken"]
 
-                result = ec2.describe_launch_template_versions(aws_retry=True, **params)[
-                    "LaunchTemplateVersions"
-                ]
+                result = ec2.describe_launch_template_versions(aws_retry=True, **params)
 
                 data["LaunchTemplateVersions"] += result["LaunchTemplateVersions"]
                 data["nextToken"] = result.get("nextToken", None)
