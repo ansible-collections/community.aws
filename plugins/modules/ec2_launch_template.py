@@ -500,12 +500,26 @@ def existing_templates(module):
             template["DefaultVersionNumber"],
         )
         try:
-            return (
-                template,
-                ec2.describe_launch_template_versions(LaunchTemplateId=template_id, aws_retry=True)[
+            data = {"LaunchTemplateVersions": [], "nextToken": None}
+
+            def fetch():
+                params = {"LaunchTemplateId": template_id}
+
+                if data["nextToken"]:
+                    params["NextToken"] = data["nextToken"]
+
+                result = ec2.describe_launch_template_versions(aws_retry=True, **params)[
                     "LaunchTemplateVersions"
-                ],
-            )
+                ]
+
+                data["LaunchTemplateVersions"] += result["LaunchTemplateVersions"]
+                data["nextToken"] = result.get("nextToken", None)
+                return data["nextToken"] is not None
+
+            while fetch():
+                pass
+
+            return (template, data["LaunchTemplateVersions"])
         except (ClientError, BotoCoreError, WaiterError) as e:
             module.fail_json_aws(
                 e,
