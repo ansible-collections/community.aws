@@ -1,0 +1,2 @@
+bugfixes:
+  - ec2_launch_template - add handling for launch template version pagination
