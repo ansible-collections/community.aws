@@ -916,7 +916,7 @@ class EcsTaskManager:
             if data["nextToken"]:
                 params["nextToken"] = data["nextToken"]
 
-            result = self.ecs.list_task_definitions(**params)
+            result = self.ecs.list_task_definitions(aws_retry=True, **params)
             data["taskDefinitionArns"] += result["taskDefinitionArns"]
             data["nextToken"] = result.get("nextToken", None)
             return data["nextToken"] is not None
@@ -929,7 +929,7 @@ class EcsTaskManager:
         return list(
             sorted(
                 [
-                    self.ecs.describe_task_definition(taskDefinition=arn)["taskDefinition"]
+                    self.ecs.describe_task_definition(aws_retry=True, taskDefinition=arn)["taskDefinition"]
                     for arn in data["taskDefinitionArns"]
                 ],
                 key=lambda td: td["revision"],
@@ -937,7 +937,7 @@ class EcsTaskManager:
         )
 
     def deregister_task(self, taskArn):
-        response = self.ecs.deregister_task_definition(taskDefinition=taskArn)
+        response = self.ecs.deregister_task_definition(aws_retry=True, taskDefinition=taskArn)
         return response["taskDefinition"]
 
 
