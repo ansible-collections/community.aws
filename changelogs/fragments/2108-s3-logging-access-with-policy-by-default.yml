@@ -1,0 +1,2 @@
+breaking_changes:
+  - s3_logging - target bucket access method is changed from ACL to bucket policy. If plays require the old behavior, the action will need to specify ``target_access: acl`` (https://github.com/ansible-collections/community.aws/pull/2108)
