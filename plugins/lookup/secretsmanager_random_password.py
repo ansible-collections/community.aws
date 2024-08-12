@@ -69,18 +69,18 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
- - name: generate random password
-   debug: msg="{{ lookup('secretsmanager_random_password') }}"
+  - name: generate random password
+    debug: msg="{{ lookup('secretsmanager_random_password') }}"
 
- - name: generate random 12-character password without punctuation
-   debug: msg="{{ lookup('secretsmanager_random_password', 12, exclude_punctuation=True) }}"
+  - name: generate random 12-character password without punctuation
+    debug: msg="{{ lookup('secretsmanager_random_password', 12, exclude_punctuation=True) }}"
 
- - name: create a secret using a random password
-   community.aws.secretsmanager_secret:
-     name: 'test_secret_string'
-     state: present
-     secret_type: 'string'
-     secret: "{{ lookup('secretsmanager_random_password') }}"
+  - name: create a secret using a random password
+    community.aws.secretsmanager_secret:
+      name: 'test_secret_string'
+      state: present
+      secret_type: 'string'
+      secret: "{{ lookup('secretsmanager_random_password') }}"
 """
 
 RETURN = r"""
