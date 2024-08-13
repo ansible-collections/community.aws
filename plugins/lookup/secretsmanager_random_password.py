@@ -11,16 +11,15 @@ author:
 short_description: Generate a random password using AWS Secrets Manager
 description:
   - Look up (really generate) a random password using AWS Secrets Manager's
-    `secretsmanager:GetRandomPassword` API.
-  - Optional parameters can be passed into this lookup; I(password_length) and I(exclude_characters)
+    C(secretsmanager:GetRandomPassword) API.
+  - See U(https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetRandomPassword.html#API_GetRandomPassword_RequestParameters)
+    for information about the API for GetRandomPassword and how it can be used.
 
 options:
-  _terms:
-    description: As a shortcut, the password_length parameter can be specified as a term instead of using the keyword.
-    required: False
-    type: integer
   password_length:
-    description: The length of the password. If you do not include this parameter, the default length is 32 characters.
+    description: |-
+      The length of the password. If you do not include this parameter,
+      AWS will use a default value according to the API documentation (see link in description above).
     required: False
     type: integer
   exclude_characters:
@@ -34,7 +33,7 @@ options:
   exclude_punctuation:
     description: |-
       Specifies whether to exclude punctuation characters from the password:
-      `! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~` (included by default).
+      C(! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~) (included by default).
     required: False
     type: boolean
   exclude_uppercase:
@@ -73,7 +72,7 @@ EXAMPLES = r"""
     debug: msg="{{ lookup('secretsmanager_random_password') }}"
 
   - name: generate random 12-character password without punctuation
-    debug: msg="{{ lookup('secretsmanager_random_password', 12, exclude_punctuation=True) }}"
+    debug: msg="{{ lookup('secretsmanager_random_password', password_length=12, exclude_punctuation=True) }}"
 
   - name: create a secret using a random password
     community.aws.secretsmanager_secret:
@@ -107,8 +106,7 @@ from ansible_collections.amazon.aws.plugins.plugin_utils.lookup import AWSLookup
 class LookupModule(AWSLookupBase):
     def run(self, terms, variables=None, **kwargs):
         """
-        :param terms: a list containing the password length
-            e.g. ['example_secret_name', 'example_secret_too' ]
+        :param terms: an empty list (does not use)
         :param variables: ansible variables active at the time of the lookup
         :returns: A list of parameter values or a list of dictionaries if bypath=True.
         """
@@ -116,8 +114,8 @@ class LookupModule(AWSLookupBase):
         super().run(terms, variables, **kwargs)
 
         # validate argument terms
-        if len(terms) > 1:
-            raise AnsibleLookupError("secretsmanager_random_password must have zero or one argument")
+        if len(terms) > 0:
+            raise AnsibleLookupError("secretsmanager_random_password does not accept positional arguments")
 
         on_denied = self.get_option("on_denied")
 
@@ -130,13 +128,9 @@ class LookupModule(AWSLookupBase):
             )
 
         params = {}
-        # validate password length argument or option
+        # validate password length option
         self.debug(f"Options: {self.get_options()}")
         password_length = self.get_option("password_length")
-        if len(terms) == 1:
-            if password_length is not None:
-                raise AnsibleLookupError('"password_length" should be provided as argument or keyword, not both')
-            password_length = terms[0]
         if password_length is not None:
             if not isinstance(password_length, integer_types) or password_length < 1:
                 raise AnsibleLookupError('"password_length" must be an integer greater than zero, if provided')
