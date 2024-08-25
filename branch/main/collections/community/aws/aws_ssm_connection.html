@@ -2,7 +2,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.12.0" name="antsibull-docs" />
+<meta content="2.13.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.aws_ssm connection – connect to EC2 instances via AWS Systems Manager &mdash; Ansible collections  documentation</title>
@@ -359,7 +359,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <p><em class="ansible-option-versionadded">added in community.aws 5.2.0</em></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>SSM Session document to use when connecting.</p>
-<p>To configure the remote_user (when <code class="docutils literal notranslate"><span class="pre">become=False</span></code>, it is possible to use an SSM Session document and define the <code class="docutils literal notranslate"><span class="pre">runAsEnabled</span></code> and <code class="docutils literal notranslate"><span class="pre">runAsDefaultUser</span></code> parameters.  See also <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-schema.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-schema.html</a></p>
+<p>To configure the remote_user (when <code class="docutils literal notranslate"><span class="pre">become=False</span></code>, it is possible to use an SSM Session document and define the <code class="docutils literal notranslate"><span class="pre">runAsEnabled</span></code> and <code class="docutils literal notranslate"><span class="pre">runAsDefaultUser</span></code> parameters. See also <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-schema.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-schema.html</a></p>
 <p class="ansible-option-line"><strong class="ansible-option-configuration">Configuration:</strong></p>
 <ul class="simple">
 <li><p>Variable: ansible_aws_ssm_document</p></li>
@@ -386,7 +386,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">community.aws.aws_ssm</span></code> connection plugin does not support using the ``remote_user`` and ``ansible_user`` variables to configure the remote user.  The ``become_user`` parameter should be used to configure which user to run commands as.  Remote commands will often default to running as the ``ssm-agent`` user, however this will also depend on how SSM has been configured.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">community.aws.aws_ssm</span></code> connection plugin does not support using the ``remote_user`` and ``ansible_user`` variables to configure the remote user. The ``become_user`` parameter should be used to configure which user to run commands as. Remote commands will often default to running as the ``ssm-agent`` user, however this will also depend on how SSM has been configured.</p></li>
 <li><p>This plugin requires an S3 bucket to send files to/from the remote instance. This is required even for modules which do not explicitly send files (such as the <code class="docutils literal notranslate"><span class="pre">shell</span></code> or <code class="docutils literal notranslate"><span class="pre">command</span></code> modules), because Ansible sends over the <code class="docutils literal notranslate"><span class="pre">.py</span></code> files of the module itself, via S3.</p></li>
 <li><p>Files sent via S3 will be named in S3 with the EC2 host ID (e.g. <code class="docutils literal notranslate"><span class="pre">i-123abc/</span></code>) as the prefix.</p></li>
 <li><p>The files in S3 will be deleted by the end of the playbook run. If the play is terminated ungracefully, the files may remain in the bucket. If the bucket has versioning enabled, the files will remain in version history. If your tasks involve sending secrets to/from the remote instance (e.g. within a <code class="docutils literal notranslate"><span class="pre">shell</span></code> command, or a SQL password in the <code class="docutils literal notranslate"><span class="pre">community.postgresql.postgresql_query</span></code> module) then those passwords will be included in plaintext in those files in S3 indefinitely, visible to anyone with access to that bucket. Therefore it is recommended to use a bucket with versioning disabled/suspended.</p></li>
