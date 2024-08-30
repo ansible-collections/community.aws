@@ -1,0 +1,2 @@
+minor_changes:
+- s3_logging: Added ability to disable ACL on logging bucket with the ``acl`` parameter.
