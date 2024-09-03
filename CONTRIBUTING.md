@@ -114,9 +114,6 @@ For general information on running the integration tests see
 Ignore the part about `source hacking/env-setup`. That's only applicable for working on `ansible-core`.
 You should be able to use the `ansible-test` that's installed with Ansible generally.
 Look at [the section on configuration for cloud tests](https://docs.ansible.com/ansible/devel/dev_guide/testing_integration.html#other-configuration-for-cloud-tests).
-For questions about writing tests the Ansible AWS community can
-be found on Libera.Chat IRC as detailed below.
-
 
 - [Ansible Community Guide](https://docs.ansible.com/ansible/latest/community/index.html) - Details on contributing to Ansible
 - [Contributing to Collections](https://docs.ansible.com/ansible/devel/dev_guide/developing_collections.html#contributing-to-collections) - How to check out collection git repositories correctly
@@ -129,10 +126,3 @@ be found on Libera.Chat IRC as detailed below.
 The `community.aws` collection follows the Ansible project's
 [Code of Conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html).
 Please read and familiarize yourself with this document.
-
-### IRC
-Our IRC channels may require you to register your nickname. If you receive an error when you connect, see
-[Libera.Chat's Nickname Registration guide](https://libera.chat/guides/registration) for instructions.
-
-The `#ansible-aws` channel on [irc.libera.chat](https://libera.chat/) is the main and official place to discuss use and development
-of the `community.aws` collection.
