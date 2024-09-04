@@ -61,68 +61,223 @@ EXAMPLES = r"""
 
 RETURN = r"""
 elbs:
-  description: a list of load balancers
+  description: A list of load balancers
   returned: always
   type: list
-  sample:
-    elbs:
-      - attributes:
-          access_log:
-            enabled: false
-          connection_draining:
-            enabled: true
-            timeout: 300
-          connection_settings:
-            idle_timeout: 60
-          cross_zone_load_balancing:
-            enabled: true
-        availability_zones:
-          - "us-east-1a"
-          - "us-east-1b"
-          - "us-east-1c"
-          - "us-east-1d"
-          - "us-east-1e"
-        backend_server_description: []
-        canonical_hosted_zone_name: test-lb-XXXXXXXXXXXX.us-east-1.elb.amazonaws.com
-        canonical_hosted_zone_name_id: XXXXXXXXXXXXXX
-        created_time: '2017-08-23T18:25:03.280000+00:00'
-        dns_name: test-lb-XXXXXXXXXXXX.us-east-1.elb.amazonaws.com
-        health_check:
-          healthy_threshold: 10
-          interval: 30
-          target: HTTP:80/index.html
-          timeout: 5
-          unhealthy_threshold: 2
-        instances: []
-        instances_inservice: []
-        instances_inservice_count: 0
-        instances_outofservice: []
-        instances_outofservice_count: 0
-        instances_unknownservice: []
-        instances_unknownservice_count: 0
-        listener_descriptions:
-          - listener:
-              instance_port: 80
-              instance_protocol: HTTP
-              load_balancer_port: 80
-              protocol: HTTP
-            policy_names: []
-        load_balancer_name: test-lb
-        policies:
-          app_cookie_stickiness_policies: []
-          lb_cookie_stickiness_policies: []
-          other_policies: []
-        scheme: internet-facing
-        security_groups:
-          - sg-29d13055
-        source_security_group:
-          group_name: default
-          owner_alias: XXXXXXXXXXXX
-        subnets:
-          - subnet-XXXXXXXX
-          - subnet-XXXXXXXX
-        tags: {}
-        vpc_id: vpc-c248fda4
+  elements: dict
+  contains:
+    attributes:
+      description: Information about the load balancer attributes.
+      returned: always
+      type: dict
+      contains:
+        access_log:
+          description: Information on whether access logs are enabled or not.
+          type: dict
+          sample: {
+                    "enabled": false
+                  }
+        additional_attributes:
+          description: Information about additional load balancer attributes.
+          type: list
+          elements: dict
+          sample: [
+                    {
+                        "key": "elb.http.desyncmitigationmode",
+                        "value": "defensive"
+                    }
+                  ]
+        connection_draining:
+          description:
+            - Information on whether connection draining is enabled and
+              the maximum time, in seconds, to keep the existing connections open before deregistering the instances.
+          type: dict
+          sample: {
+                    "enabled": true,
+                    "timeout": 300
+                  }
+        connection_settings:
+          description: Information on connection settings.
+          type: dict
+          sample: {
+                    "idle_timeout": 60
+                  }
+        cross_zone_load_balancing:
+          description: Information on whether cross zone load balancing is enabled or npt.
+          type: dict
+          sample: {
+                    "enabled": true
+                  }
+    availability_zones:
+      description: The Availability Zones for the load balancer.
+      type: list
+      elements: str
+      returned: always
+      sample: [
+                "us-west-2a"
+              ]
+    backend_server_descriptions:
+      description: Information about your EC2 instances.
+      type: list
+      elements: dict
+      returned: always
+      sample: [
+                {
+                    instance_port: 8085,
+                    policy_names: [
+                        'MyPolicy1',
+                    ]
+                },
+              ]
+    canonical_hosted_zone_name:
+      description: The DNS name of the load balancer.
+      type: str
+      returned: always
+      sample: "test-123456789.us-west-2.elb.amazonaws.com"
+    canonical_hosted_zone_name_id:
+      description: The ID of the Amazon Route 53 hosted zone for the load balancer.
+      type: str
+      returned: always
+      sample: "Z1Z1ZZ5HABSF5"
+    created_time:
+      description: The date and time the load balancer was created.
+      type: str
+      returned: always
+      sample: "2024-09-04T17:52:22.270000+00:00"
+    dns_name:
+      description: The DNS name of the load balancer.
+      type: str
+      returned: "always"
+      sample: "test-123456789.us-west-2.elb.amazonaws.com"
+    health_check:
+      description:
+      type: Information about the health checks conducted on the load balancer.
+      returned: always
+      sample: {
+                "healthy_threshold": 10,
+                "interval": 5,
+                "target": "HTTP:80/index.html",
+                "timeout": 2,
+                "unhealthy_threshold": 2
+              }
+    instances:
+      description: The IDs of the instances for the load balancer.
+      type: list
+      elements: dict
+      returned: always
+      sample: [
+                {
+                    "instance_id": "i-11d1f111ea111111b"
+                }
+              ]
+    instances_inservice:
+      description: Information about instances for load balancer in state "InService".
+      type: list
+      returned: always
+      sample: [
+                "i-11d1f111ea111111b"
+              ]
+    instances_inservice_count:
+      description: Total number of instances for load balancer with state "InService".
+      type: int
+      returned: always
+      sample: 1
+    instances_outofservice:
+      description: Information about instances for load balancer in state "OutOfService".
+      type: list
+      returned: always
+      sample: [
+                "i-11d1f111ea111111b"
+              ]
+    instances_outofservice_count:
+      description: Total number of instances for load balancer with state "OutOfService".
+      type: int
+      returned: always
+      sample: 0
+    instances_unknownservice:
+      description: Information about instances for load balancer in state "Unknown".
+      type: list
+      returned: always
+      sample: [
+                "i-11d1f111ea111111b"
+              ]
+    instances_unknownservice_count:
+      description: Total number of instances for load balancer with state "Unknown".
+      type: int
+      returned: always
+      sample: 1
+    listener_descriptions:
+      description: Information about the listeners for the load balancer.
+      type: list
+      elements: dict
+      returned: always
+      sample: [
+                {
+                  "listener": {
+                      "instance_port": 80,
+                      "instance_protocol": "HTTP",
+                      "load_balancer_port": 80,
+                      "protocol": "HTTP"
+                  },
+                  "policy_names": []
+                }
+              ]
+    load_balancer_name:
+      description: The name of the elastic load balancer.
+      type: str
+      returned: always
+      sample: "MyLoadBalancer"
+    policies:
+      description: Information about the policies defined for the load balancer.
+      type: dict
+      returned: always
+      sample: {
+                "app_cookie_stickiness_policies": [],
+                "lb_cookie_stickiness_policies": [],
+                "other_policies": []
+              }
+    scheme:
+      description: The type of load balancer.
+      type: str
+      returned: always
+      sample: "internet-facing"
+    security_groups:
+      description: The security groups for the load balancer.
+      type: list
+      returned: always
+      sample: [
+                "sg-111111af1111cb111"
+              ]
+    source_security_group:
+      description:
+        - The security group for the load balancer,
+          which are used as part of inbound rules for registered instances.
+      type: dict
+      returned: always
+      sample: {
+                  "group_name": "default",
+                  "owner_alias": "721111111111"
+              }
+    subnets:
+      description: The IDs of the subnets for the load balancer.
+      type: list
+      returned: always
+      sample: [
+                "subnet-111111af1111cb111"
+              ]
+    tags:
+      description: The tags associated with a load balancer.
+      type: dict
+      returned: always
+      sample: {
+                "Env": "Dev",
+                "Owner": "Dev001"
+              }
+    vpc_id:
+      description: The ID of the VPC for the load balancer.
+      type: str
+      returned: always
+      sample: "vpc-0cc28c9e20d111111"
 """
 
 from typing import Any
