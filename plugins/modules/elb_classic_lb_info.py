@@ -150,8 +150,8 @@ elbs:
       returned: "always"
       sample: "test-123456789.us-west-2.elb.amazonaws.com"
     health_check:
-      description:
-      type: Information about the health checks conducted on the load balancer.
+      description: Information about the health checks conducted on the load balancer.
+      type: dict
       returned: always
       sample: {
                 "healthy_threshold": 10,
