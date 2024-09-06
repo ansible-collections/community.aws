@@ -61,7 +61,7 @@ EXAMPLES = r"""
 
 RETURN = r"""
 elbs:
-  description: A list of load balancers
+  description: A list of load balancers.
   returned: always
   type: list
   elements: dict
@@ -89,13 +89,21 @@ elbs:
                   ]
         connection_draining:
           description:
-            - Information on whether connection draining is enabled and
-              the maximum time, in seconds, to keep the existing connections open before deregistering the instances.
+            - Information on connection draining configuration of elastic load balancer.
           type: dict
           sample: {
                     "enabled": true,
                     "timeout": 300
                   }
+          contains:
+            enabled:
+              description: Whether connection draining is enabled
+              type: bool
+              returned: always
+            timeout:
+              description: The maximum time, in seconds, to keep the existing connections open before deregistering the instances.
+              type: int
+              returned: always
         connection_settings:
           description: Information on connection settings.
           type: dict
@@ -103,7 +111,7 @@ elbs:
                     "idle_timeout": 60
                   }
         cross_zone_load_balancing:
-          description: Information on whether cross zone load balancing is enabled or npt.
+          description: Information on whether cross zone load balancing is enabled or not.
           type: dict
           sample: {
                     "enabled": true
@@ -160,6 +168,27 @@ elbs:
                 "timeout": 2,
                 "unhealthy_threshold": 2
               }
+      contains:
+        healthy_threshold:
+          description: The number of consecutive health checks successes required before moving the instance to the Healthy state.
+          type: int
+          returned: always
+        interval:
+          description: The approximate interval, in seconds, between health checks of an individual instance.
+          type: int
+          returned: always
+        target:
+          description: The instance being checked. The protocol is either TCP, HTTP, HTTPS, or SSL. The range of valid ports is one (1) through 65535.
+          type: str
+          returned: always
+        timeout:
+          description: The amount of time, in seconds, during which no response means a failed health check.
+          type: int
+          returned: always
+        unhealthy_threshold:
+          description: The number of consecutive health checks successes required before moving the instance to the Unhealthy state.
+          type: int
+          returned: always
     instances:
       description: The IDs of the instances for the load balancer.
       type: list
@@ -236,6 +265,19 @@ elbs:
                 "lb_cookie_stickiness_policies": [],
                 "other_policies": []
               }
+      contains:
+        app_cookie_stickiness_policies:
+          description: The stickiness policies created using CreateAppCookieStickinessPolicy.
+          type: list
+          returned: always
+        lb_cookie_stickiness_policies:
+          description: The stickiness policies created using CreateLBCookieStickinessPolicy.
+          type: list
+          returned: always
+        other_policies:
+          description: The policies other than the stickiness policies.
+          type: list
+          returned: always
     scheme:
       description: The type of load balancer.
       type: str
@@ -258,6 +300,15 @@ elbs:
                   "group_name": "default",
                   "owner_alias": "721111111111"
               }
+      contains:
+        group_name:
+          description: The name of the security group.
+          type: str
+          returned: always
+        owner_alias:
+          description: The owner of the security group.
+          type: str
+          returned: always
     subnets:
       description: The IDs of the subnets for the load balancer.
       type: list
@@ -298,6 +349,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.elb_utils import describe_load_balancers
 
 
 def list_elbs(connection: Any, load_balancer_names: List[str]) -> List[Dict]:
