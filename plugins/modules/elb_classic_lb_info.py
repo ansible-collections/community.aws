@@ -350,8 +350,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_ta
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.elb_utils import describe_load_balancers
-
 
 def list_elbs(connection: Any, load_balancer_names: List[str]) -> List[Dict]:
     """
