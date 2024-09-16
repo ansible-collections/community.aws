@@ -8,9 +8,9 @@ DOCUMENTATION = r"""
 ---
 module: elb_classic_lb_info
 version_added: 1.0.0
-short_description: Gather information about EC2 Elastic Load Balancers in AWS
+short_description: Gather information about EC2 Classic Elastic Load Balancers in AWS
 description:
-  - Gather information about EC2 Elastic Load Balancers in AWS
+  - Gather information about EC2 Classic Elastic Load Balancers in AWS.
 author:
   - "Michael Schultz (@mjschultz)"
   - "Fernando Jose Pando (@nand0p)"
@@ -29,26 +29,26 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-# Output format tries to match amazon.aws.ec2_elb_lb module input parameters
+# Output format tries to match amazon.aws.elb_classic_lb module input parameters
 
-# Gather information about all ELBs
-- community.aws.elb_classic_lb_info:
+- name: Gather information about all ELBs
+  community.aws.elb_classic_lb_info:
   register: elb_info
 
 - ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
-# Gather information about a particular ELB
-- community.aws.elb_classic_lb_info:
+- name: Gather information about a particular ELB
+  community.aws.elb_classic_lb_info:
     names: frontend-prod-elb
   register: elb_info
 
 - ansible.builtin.debug:
     msg: "{{ elb_info.elbs.0.dns_name }}"
 
-# Gather information about a set of ELBs
-- community.aws.elb_classic_lb_info:
+- name: Gather information about a set of ELBs
+  community.aws.elb_classic_lb_info:
     names:
       - frontend-prod-elb
       - backend-prod-elb
@@ -97,7 +97,7 @@ elbs:
                   }
           contains:
             enabled:
-              description: Whether connection draining is enabled
+              description: Whether connection draining is enabled.
               type: bool
               returned: always
             timeout:
@@ -376,7 +376,7 @@ def list_elbs(connection: Any, load_balancer_names: List[str]) -> List[Dict]:
     return results
 
 
-def describe_elb(connection: Any, lb: Dict) -> Dict:
+def describe_elb(connection: Any, lb: Dict[str, Any]) -> Dict[str, Any]:
     """
     Describes an Elastic Load Balancer (ELB).
 
@@ -405,7 +405,7 @@ def describe_elb(connection: Any, lb: Dict) -> Dict:
 
 
 @AWSRetry.jittered_backoff()
-def get_all_lb(connection):
+def get_all_lb(connection: Any) -> List:
     """
     Get paginated result for information of all Elastic Load Balancers.
 
@@ -419,7 +419,7 @@ def get_all_lb(connection):
     return paginator.paginate().build_full_result()["LoadBalancerDescriptions"]
 
 
-def get_lb(connection: Any, load_balancer_name: str) -> Union[Dict, List]:
+def get_lb(connection: Any, load_balancer_name: str) -> Union[Dict[str, Any], List]:
     """
     Describes a specific Elastic Load Balancer (ELB) by name.
 
@@ -438,7 +438,7 @@ def get_lb(connection: Any, load_balancer_name: str) -> Union[Dict, List]:
         return []
 
 
-def get_lb_attributes(connection: Any, load_balancer_name: str) -> Dict:
+def get_lb_attributes(connection: Any, load_balancer_name: str) -> Dict[str, Any]:
     """
     Retrieves attributes of specific Elastic Load Balancer (ELB) by name.
 
@@ -455,7 +455,7 @@ def get_lb_attributes(connection: Any, load_balancer_name: str) -> Dict:
     return camel_dict_to_snake_dict(attributes)
 
 
-def get_tags(connection: Any, load_balancer_name: str) -> Dict:
+def get_tags(connection: Any, load_balancer_name: str) -> Dict[str, Any]:
     """
     Retrieves tags of specific Elastic Load Balancer (ELB) by name.
 
@@ -472,7 +472,7 @@ def get_tags(connection: Any, load_balancer_name: str) -> Dict:
     return boto3_tag_list_to_ansible_dict(tags[0]["Tags"])
 
 
-def lb_instance_health(connection: Any, load_balancer_name: str, instances: List[Dict], state: str) -> Tuple[List, int]:
+def lb_instance_health(connection: Any, load_balancer_name: str, instances: List[Dict[str, Any]], state: str) -> Tuple[List[str], int]:
     """
     Describes the health status of instances associated with a specific Elastic Load Balancer (ELB).
 
