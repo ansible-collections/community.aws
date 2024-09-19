@@ -1,0 +1,2 @@
+trivial:
+  - "Fix sanity errors happening with the ansible devel branch (e.g., unreachable code, using variable before assignment)."
