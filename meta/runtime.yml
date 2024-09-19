@@ -118,6 +118,7 @@ action_groups:
     - ec2_vpc_nacl
     - ec2_vpc_nacl_info
     - ec2_vpc_peer
+    - ec2_vpc_peering
     - ec2_vpc_peering_info
     - ec2_vpc_vgw
     - ec2_vpc_vgw_info
@@ -521,5 +522,12 @@ plugin_routing:
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
   module_utils:
+    ec2_vpc_peer:
+      redirect: amazon.aws.ec2_vpc_peer
+      deprecation:
+        removal_version: 11.0.0
+        warning_text: >-
+          ec2_vpc_peer has been renamed to ec2_vpc_peering.
+          Please update your tasks.
     route53:
       redirect: amazon.aws.route53
