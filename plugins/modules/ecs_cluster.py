@@ -339,7 +339,7 @@ def main():
     elif module.params["state"] == "has_instances":
         if not existing:
             module.fail_json(msg="Cluster '" + module.params["name"] + " not found.")
-            return
+
         # it exists, so we should delete it and mark changed.
         # return info about the cluster deleted
         delay = module.params["delay"]
@@ -361,7 +361,6 @@ def main():
                 + str(delay)
                 + " seconds each."
             )
-            return
 
     module.exit_json(**results)
 
