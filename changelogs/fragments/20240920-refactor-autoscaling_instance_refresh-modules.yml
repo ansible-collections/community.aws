@@ -1,4 +1,6 @@
 ---
+bugfixes:
+  - autoscaling_instance_refresh - Fix typo in module ``exit_json`` (https://github.com/ansible-collections/community.aws/issues/2019).
 minor_changes:
-  - autoscaling_instance_refresh: refactor module to use shared code from ``ansible_collections.amazon.aws.plugins.module_utils.autoscaling`` and add type hinting (https://github.com/ansible-collections/community.aws/pull/2150).
-  - autoscaling_instance_refresh_info: refactor module to use shared code from ``ansible_collections.amazon.aws.plugins.module_utils.autoscaling`` and add type hinting (https://github.com/ansible-collections/community.aws/pull/2150).
+  - autoscaling_instance_refresh - refactor module to use shared code from ``ansible_collections.amazon.aws.plugins.module_utils.autoscaling`` and add type hinting (https://github.com/ansible-collections/community.aws/pull/2150).
+  - autoscaling_instance_refresh_info - refactor module to use shared code from ``ansible_collections.amazon.aws.plugins.module_utils.autoscaling`` and add type hinting (https://github.com/ansible-collections/community.aws/pull/2150).
