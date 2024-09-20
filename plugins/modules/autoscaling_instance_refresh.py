@@ -57,6 +57,11 @@ options:
           - During this time, Amazon EC2 Auto Scaling does not immediately move on to the next replacement.
           - The default is to use the value for the health check grace period defined for the group.
         type: int
+      skip_matching:
+        description:
+          - Indicates whether skip matching is enabled.
+          - If enabled V(true), then Amazon EC2 Auto Scaling skips replacing instances that match the desired configuration.
+        type: bool
     type: dict
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -84,6 +89,7 @@ EXAMPLES = r"""
     preferences:
       min_healthy_percentage: 91
       instance_warmup: 60
+      skip_matching: true
 """
 
 RETURN = r"""
@@ -239,6 +245,7 @@ def main():
             options=dict(
                 min_healthy_percentage=dict(type="int", default=90),
                 instance_warmup=dict(type="int"),
+                skip_matching=dict(type="bool"),
             ),
         ),
     )
