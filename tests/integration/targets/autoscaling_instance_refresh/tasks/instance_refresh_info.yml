@@ -1,0 +1,92 @@
+---
+- name: test getting info for an ASG name
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+  register: output
+
+- assert:
+    that:
+      - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 7
+  vars:
+    inst_refresh_id_json_query: instance_refreshes[].instance_refresh_id
+
+- name: test using fake refresh ID
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+    ids: ['0e367f58-blabla-bla-bla-ca870dc5dbfe']
+  register: output
+
+- assert:
+    that:
+      - output.instance_refreshes | length == 0
+
+- name: test using a real refresh ID
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+    ids: [ '{{ refreshout.instance_refreshes.instance_refresh_id }}' ]
+  register: output
+
+- assert:
+    that:
+      - output.instance_refreshes | length == 1
+
+- name: test getting info for an ASG name which doesn't exist
+  autoscaling_instance_refresh_info:
+    name: n0n3x1stentname27b
+  ignore_errors: yes
+  register: output
+
+- assert:
+    that:
+      - "'Failed to describe InstanceRefreshes: An error occurred (ValidationError) when calling the DescribeInstanceRefreshes operation: AutoScalingGroup name not found - AutoScalingGroup n0n3x1stentname27b not found' in output.msg"
+
+- name: assert that the correct number of records are returned
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+  register: output
+
+- assert:
+    that:
+      - output.instance_refreshes | length == 7
+
+- name: assert that valid message with fake-token is returned
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+    next_token: "fake-token-123"
+  ignore_errors: yes
+  register: output
+
+- assert:
+    that:
+      - '"Failed to describe InstanceRefreshes: An error occurred (InvalidNextToken) when calling the DescribeInstanceRefreshes operation: The token ''********'' is invalid." in output.msg'
+
+- name: assert that max records=1 returns no more than one record
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+    max_records: 1
+  register: output_with_token
+
+- assert:
+    that:
+      - output_with_token.instance_refreshes | length == 1
+
+- name: assert that valid message with real-token is returned
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+    next_token: "{{ output_with_token.next_token }}"
+  register: output
+
+- assert:
+    that:
+      - output.instance_refreshes | length == 6
+
+- name: test using both real nextToken and max_records=1
+  autoscaling_instance_refresh_info:
+    name: "{{ asg_name }}"
+    max_records: 1
+    next_token: "{{ output_with_token.next_token }}"
+  register: output
+
+- assert:
+    that:
+      - output.instance_refreshes | length == 1

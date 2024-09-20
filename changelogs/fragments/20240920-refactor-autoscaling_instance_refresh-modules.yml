@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - autoscaling_instance_refresh: refactor module to use shared code from ``ansible_collections.amazon.aws.plugins.module_utils.autoscaling`` and add type hinting ().
+  - autoscaling_instance_refresh_info: refactor module to use shared code from ``ansible_collections.amazon.aws.plugins.module_utils.autoscaling`` and add type hinting ().

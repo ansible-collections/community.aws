@@ -1,0 +1,190 @@
+---
+- name: test invalid cancelation - V1 - (pre-refresh)
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  ignore_errors: true
+  register: result
+
+- assert:
+    that:
+      - "'An error occurred (ActiveInstanceRefreshNotFound) when calling the CancelInstanceRefresh operation: No in progress or pending Instance Refresh found for Auto Scaling group ' ~ resource_prefix ~ '-asg' in result.msg"
+
+- name: test starting a refresh with a valid ASG name - check_mode
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+  check_mode: true
+  register: output
+
+- assert:
+    that:
+      - output is changed
+      - '"autoscaling:StartInstanceRefresh" not in output.resource_actions'
+
+- name: test starting a refresh with a valid ASG name
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+  register: output
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: test starting a refresh with a valid ASG name - Idempotent
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+  ignore_errors: true
+  register: output
+
+- assert:
+    that:
+      - output is not changed
+      - '"Failed to start InstanceRefresh: An error occurred (InstanceRefreshInProgress) when calling the StartInstanceRefresh operation: An Instance Refresh is already in progress and blocks the execution of this Instance Refresh." in output.msg'
+
+- name: test starting a refresh with a valid ASG name - Idempotent (check_mode)
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+  check_mode: true
+  register: output
+
+- assert:
+    that:
+      - output is not changed
+      - '"In check_mode - Instance Refresh is already in progress, can not start new instance refresh." in output.msg'
+
+- name: test starting a refresh with a nonexistent ASG name
+  autoscaling_instance_refresh:
+    name: "nonexistentname-asg"
+    state: "started"
+  ignore_errors: yes
+  register: result
+
+- assert:
+    that:
+      - "'Failed to start InstanceRefresh: An error occurred (ValidationError) when calling the StartInstanceRefresh operation: AutoScalingGroup name not found' in result.msg"
+
+- name: test canceling a refresh with an ASG name - check_mode
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  check_mode: true
+  register: output
+
+- assert:
+    that:
+      - output is not failed
+      - output is changed
+      - '"autoscaling:CancelInstanceRefresh" not in output.resource_actions'
+
+- name: test canceling a refresh with an ASG name
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  register: output
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: test canceling a refresh with a ASG name - Idempotent
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  register: output
+  ignore_errors: true
+
+- assert:
+    that:
+      - output is not changed
+
+- name: test cancelling a refresh with a valid ASG name - Idempotent (check_mode)
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  check_mode: true
+  register: output
+
+- assert:
+    that:
+      - output is not changed
+
+- name: test starting a refresh with an ASG name and preferences dict
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+    preferences:
+      min_healthy_percentage: 10
+      instance_warmup: 10
+  retries: 5
+  register: output
+  until: output is not failed
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: re-test canceling a refresh with an ASG name
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  register: output
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: test valid start - V1 - (with preferences missing instance_warmup)
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+    preferences:
+      min_healthy_percentage: 10
+  retries: 5
+  register: output
+  until: output is not failed
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: re-test canceling a refresh with an ASG name
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+  register: output
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: test valid start - V2 - (with preferences missing min_healthy_percentage)
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "started"
+    preferences:
+      instance_warmup: 10
+  retries: 5
+  register: output
+  until: output is not failed
+
+- assert:
+    that:
+      - "'instance_refresh_id' in output.instance_refreshes"
+
+- name: test invalid cancelation - V2 - (with preferences)
+  autoscaling_instance_refresh:
+    name: "{{ asg_name }}"
+    state: "cancelled"
+    preferences:
+      min_healthy_percentage: 10
+      instance_warmup: 10
+  ignore_errors: yes
+  register: result
+
+- assert:
+    that:
+      - "'can not pass preferences dict when canceling a refresh' in result.msg"
