@@ -80,12 +80,12 @@ instance_refreshes:
     type: complex
     contains:
         instance_refresh_id:
-            description: instance refresh id
+            description: instance refresh id.
             returned: success
             type: str
             sample: "08b91cf7-8fa6-48af-b6a6-d227f40f1b9b"
         auto_scaling_group_name:
-            description: Name of autoscaling group
+            description: Name of autoscaling group.
             returned: success
             type: str
             sample: "public-webapp-production-1"
@@ -101,7 +101,7 @@ instance_refreshes:
               - Cancelling - An ongoing operation is being cancelled.
                 Cancellation does not roll back any replacements that have already been
                 completed, but it prevents new replacements from being started.
-              - Cancelled - The operation is cancelled.'
+              - Cancelled - The operation is cancelled.
             returned: success
             type: str
             sample: "Pending"
@@ -138,7 +138,7 @@ instance_refreshes:
             type: int
             sample: 100
         instances_to_update:
-            description: num. of instance to update
+            description: number of instances to update.
             returned: success
             type: int
             sample: 5

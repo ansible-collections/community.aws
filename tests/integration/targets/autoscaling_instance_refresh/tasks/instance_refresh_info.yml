@@ -1,5 +1,5 @@
 ---
-- name: test getting info for an ASG name
+- name: Test getting info for an ASG name
   autoscaling_instance_refresh_info:
     name: "{{ asg_name }}"
   register: output

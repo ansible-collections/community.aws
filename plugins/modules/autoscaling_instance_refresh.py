@@ -49,6 +49,7 @@ options:
         description:
           - Total percent of capacity in ASG that must remain healthy during instance refresh to allow operation to continue.
           - It is rounded up to the nearest integer.
+          - Value range is V(0) to V(100).
         type: int
         default: 90
       instance_warmup:
@@ -62,6 +63,14 @@ options:
           - Indicates whether skip matching is enabled.
           - If enabled V(true), then Amazon EC2 Auto Scaling skips replacing instances that match the desired configuration.
         type: bool
+      max_healthy_percentage:
+        description:
+          - Specifies the maximum percentage of the group that can be in service and healthy, or pending,
+            to support your workload when replacing instances.
+          - The value is expressed as a percentage of the desired capacity of the Auto Scaling group.
+          - Value range is V(100) to V(200).
+          - When specified, you must also specify O(preferences.min_healthy_percentage), and the difference between them cannot be greater than 100.
+        type: int
     type: dict
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -99,12 +108,12 @@ instance_refreshes:
     type: complex
     contains:
         instance_refresh_id:
-            description: instance refresh id
+            description: instance refresh id.
             returned: success
             type: str
             sample: "08b91cf7-8fa6-48af-b6a6-d227f40f1b9b"
         auto_scaling_group_name:
-            description: Name of autoscaling group
+            description: Name of autoscaling group.
             returned: success
             type: str
             sample: "public-webapp-production-1"
@@ -120,7 +129,7 @@ instance_refreshes:
               - Cancelling - An ongoing operation is being cancelled.
                 Cancellation does not roll back any replacements that have already been
                 completed, but it prevents new replacements from being started.
-              - Cancelled - The operation is cancelled.'
+              - Cancelled - The operation is cancelled.
             returned: success
             type: str
             sample: "Pending"
@@ -152,16 +161,20 @@ instance_refreshes:
             type: str
             sample: "2015-11-25T00:05:36.309Z"
         percentage_complete:
-            description: the % of completeness
+            description: the % of completeness.
             returned: success
             type: int
             sample: 100
         instances_to_update:
-            description: num. of instance to update
+            description: number of instances to update.
             returned: success
             type: int
             sample: 5
 """
+
+from typing import Dict
+from typing import Optional
+from typing import Union
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
@@ -173,6 +186,22 @@ from ansible_collections.amazon.aws.plugins.module_utils.autoscaling import star
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import scrub_none_parameters
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+
+
+def validate_healthy_percentage(preferences: Dict[str, Union[bool, int]]) -> Optional[str]:
+    min_healthy_percentage = preferences.get("min_healthy_percentage")
+    max_healthy_percentage = preferences.get("max_healthy_percentage")
+
+    if min_healthy_percentage is not None and (min_healthy_percentage < 0 or min_healthy_percentage > 90):
+        return "The value range for the min_healthy_percentage is 0 to 90."
+    if max_healthy_percentage is not None:
+        if max_healthy_percentage < 100 or max_healthy_percentage > 200:
+            return "The value range for the max_healthy_percentage is 100 to 200."
+        if min_healthy_percentage is None:
+            return "You must also specify min_healthy_percentage when max_healthy_percentage is specified."
+        if (max_healthy_percentage - min_healthy_percentage) > 100:
+            return "The difference between the max_healthy_percentage and min_healthy_percentage cannot be greater than 100."
+    return None
 
 
 def start_or_cancel_instance_refresh(conn, module: AnsibleAWSModule) -> None:
@@ -192,6 +221,9 @@ def start_or_cancel_instance_refresh(conn, module: AnsibleAWSModule) -> None:
     if preferences:
         if asg_state == "cancelled":
             module.fail_json(msg="can not pass preferences dict when canceling a refresh")
+        error = validate_healthy_percentage(preferences)
+        if error:
+            module.fail_json(msg=error)
         args["Preferences"] = snake_dict_to_camel_dict(scrub_none_parameters(preferences), capitalize_first=True)
     cmd_invocations = {
         "cancelled": cancel_instance_refresh,
@@ -246,6 +278,7 @@ def main():
                 min_healthy_percentage=dict(type="int", default=90),
                 instance_warmup=dict(type="int"),
                 skip_matching=dict(type="bool"),
+                max_healthy_percentage=dict(type="int"),
             ),
         ),
     )
