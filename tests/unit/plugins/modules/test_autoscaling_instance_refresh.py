@@ -10,8 +10,8 @@ from ansible_collections.community.aws.plugins.modules.autoscaling_instance_refr
     "min_healthy, max_healthy, expected_error",
     [
         (90, None, None),
-        (-1, None, "The value range for the min_healthy_percentage is 0 to 90."),
-        (91, None, "The value range for the min_healthy_percentage is 0 to 90."),
+        (-1, None, "The value range for the min_healthy_percentage is 0 to 100."),
+        (101, None, "The value range for the min_healthy_percentage is 0 to 100."),
         (None, 90, "The value range for the max_healthy_percentage is 100 to 200."),
         (None, 201, "The value range for the max_healthy_percentage is 100 to 200."),
         (None, 100, "You must also specify min_healthy_percentage when max_healthy_percentage is specified."),

@@ -35,7 +35,7 @@
           Name: "{{ subnet_name }}"
       register: testing_subnet
 
-    - name: create routing rules
+    - name: Create routing rules
       ec2_vpc_route_table:
         vpc_id: "{{ testing_vpc.vpc.id }}"
         tags:
@@ -46,7 +46,7 @@
         subnets:
           - "{{ testing_subnet.subnet.id }}"
 
-    - name: create a security group with the vpc created in the ec2_setup
+    - name: Create a security group with the vpc created in the ec2_setup
       ec2_security_group:
         name: "{{ sg_name }}"
         description: a security group for ansible tests
@@ -62,7 +62,7 @@
             cidr_ip: 0.0.0.0/0
       register: sg
 
-    - name: ensure launch configs exist
+    - name: Ensure launch configs exist
       autoscaling_launch_config:
         name: "{{ item }}"
         assign_public_ip: true
@@ -80,7 +80,7 @@
         - "{{ lc_name_1 }}"
         - "{{ lc_name_2 }}"
 
-    - name: launch asg and do not wait for instances to be deemed healthy (no ELB)
+    - name: Launch asg and do not wait for instances to be deemed healthy (no ELB)
       autoscaling_group:
         name: "{{ asg_name }}"
         launch_config_name: "{{ lc_name_1 }}"
@@ -92,7 +92,8 @@
         state: present
       register: output
 
-    - assert:
+    - name: Assert that there is no viable instance
+      assert:
         that:
         - "output.viable_instances == 0"
 
@@ -111,7 +112,7 @@
 
   always:
 
-    - name: kill asg
+    - name: Kill asg
       autoscaling_group:
         name: "{{ asg_name }}"
         state: absent
@@ -121,7 +122,7 @@
       retries: 10
     # Remove the testing dependencies
 
-    - name: remove the load balancer
+    - name: Remove the load balancer
       elb_classic_lb:
         name: "{{ load_balancer_name }}"
         state: absent
@@ -147,7 +148,7 @@
       ignore_errors: yes
       retries: 10
 
-    - name: remove launch configs
+    - name: Remove launch configs
       autoscaling_launch_config:
         name: "{{ item }}"
         state: absent
@@ -159,7 +160,7 @@
         - "{{ lc_name_1 }}"
         - "{{ lc_name_2 }}"
 
-    - name: delete launch template
+    - name: Delete launch template
       ec2_launch_template:
         name: "{{ resource_prefix }}-lt"
         state: absent
@@ -168,7 +169,7 @@
       until: del_lt is not failed
       ignore_errors: true
 
-    - name: remove the security group
+    - name: Remove the security group
       ec2_security_group:
         name: "{{ sg_name }}"
         description: a security group for ansible tests
@@ -179,7 +180,7 @@
       ignore_errors: yes
       retries: 10
 
-    - name: remove routing rules
+    - name: Remove routing rules
       ec2_vpc_route_table:
         state: absent
         vpc_id: "{{ testing_vpc.vpc.id }}"
@@ -195,7 +196,7 @@
       ignore_errors: yes
       retries: 10
 
-    - name: remove internet gateway
+    - name: Remove internet gateway
       ec2_vpc_igw:
         vpc_id: "{{ testing_vpc.vpc.id }}"
         state: absent
@@ -204,7 +205,7 @@
       ignore_errors: yes
       retries: 10
 
-    - name: remove the subnet
+    - name: Remove the subnet
       ec2_vpc_subnet:
         state: absent
         vpc_id: "{{ testing_vpc.vpc.id }}"
@@ -214,7 +215,7 @@
       ignore_errors: yes
       retries: 10
 
-    - name: remove the VPC
+    - name: Remove the VPC
       ec2_vpc_net:
         name: "{{ vpc_name }}"
         cidr_block: '{{ subnet_a_cidr }}'

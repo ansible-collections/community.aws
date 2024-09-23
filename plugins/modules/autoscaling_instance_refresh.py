@@ -63,6 +63,7 @@ options:
           - Indicates whether skip matching is enabled.
           - If enabled V(true), then Amazon EC2 Auto Scaling skips replacing instances that match the desired configuration.
         type: bool
+        version_added: 9.0.0
       max_healthy_percentage:
         description:
           - Specifies the maximum percentage of the group that can be in service and healthy, or pending,
@@ -71,6 +72,7 @@ options:
           - Value range is V(100) to V(200).
           - When specified, you must also specify O(preferences.min_healthy_percentage), and the difference between them cannot be greater than 100.
         type: int
+        version_added: 9.0.0
     type: dict
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -192,8 +194,8 @@ def validate_healthy_percentage(preferences: Dict[str, Union[bool, int]]) -> Opt
     min_healthy_percentage = preferences.get("min_healthy_percentage")
     max_healthy_percentage = preferences.get("max_healthy_percentage")
 
-    if min_healthy_percentage is not None and (min_healthy_percentage < 0 or min_healthy_percentage > 90):
-        return "The value range for the min_healthy_percentage is 0 to 90."
+    if min_healthy_percentage is not None and (min_healthy_percentage < 0 or min_healthy_percentage > 100):
+        return "The value range for the min_healthy_percentage is 0 to 100."
     if max_healthy_percentage is not None:
         if max_healthy_percentage < 100 or max_healthy_percentage > 200:
             return "The value range for the max_healthy_percentage is 100 to 200."
