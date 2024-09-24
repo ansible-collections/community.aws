@@ -1,0 +1,2 @@
+trivial:
+  - "ec2_transit_gateway_vpc_attachment: Modify doumentation and refactor to adhere to coding guidelines (https://github.com/ansible-collections/community.aws/pull/2157)."
