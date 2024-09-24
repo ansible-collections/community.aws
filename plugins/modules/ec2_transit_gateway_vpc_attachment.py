@@ -32,10 +32,10 @@ options:
     aliases: ['attachment_id']
   name:
     description:
-      - The O(Name) tag of the Transit Gateway attachment.
-      - Providing both V(id) and V(name) will set the O(Name) tag on an existing
+      - The C(Name) tag of the Transit Gateway attachment.
+      - Providing both V(id) and V(name) will set the C(Name) tag on an existing
         attachment the matching I(id).
-      - Setting the O(Name) tag in O(tags) will also result in the O(Name) tag being
+      - Setting the C(Name) tag in O(tags) will also result in the C(Name) tag being
         updated.
       - At least one of O(name), O(transit_gateway) and O(id) must be provided.
     type: str
