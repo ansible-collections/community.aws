@@ -306,6 +306,7 @@ def handle_vpc_attachments(conn, module: AnsibleAWSModule) -> None:
 
     module.exit_json(**results)
 
+
 def main():
     argument_spec = dict(
         state=dict(type="str", required=False, default="present", choices=["absent", "present"]),
@@ -335,6 +336,7 @@ def main():
 
     search_manager = TransitGatewayVpcAttachmentManager(module=module)
     handle_vpc_attachments(search_manager, module)
+
 
 if __name__ == "__main__":
     main()

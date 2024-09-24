@@ -368,7 +368,7 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
         return self._normalize_tgw_attachment(resource)
 
     def get_states(self):
-      return [
+        return [
             "available",
             "deleting",
             "failed",
