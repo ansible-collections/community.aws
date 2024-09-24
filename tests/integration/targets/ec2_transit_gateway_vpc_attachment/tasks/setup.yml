@@ -9,19 +9,19 @@
     subnet_az_b_2: '{{ ec2_availability_zone_names[1] }}'
 
 - name: 'Create Transit Gateways'
-  ec2_transit_gateway:
+  community.aws.ec2_transit_gateway:
     description: '{{ item.description }}'
     tags:
       Name: '{{ item.name }}'
   loop:
-  - description: 'Transit Gateway for testing ec2_transit_gateway_attachment'
+  - description: 'Transit Gateway for testing community.aws.ec2_transit_gateway_attachment'
     name: '{{ tgw_name }}'
-  - description: 'Second Transit Gateway for testing ec2_transit_gateway_attachment'
+  - description: 'Second Transit Gateway for testing community.aws.ec2_transit_gateway_attachment'
     name: '{{ tgw_name_2 }}'
   register: create_tgws
 
 - name: 'Create VPCs to attach to TGW'
-  ec2_vpc_net:
+  amazon.aws.ec2_vpc_net:
     cidr_block: '{{ item.cidr }}'
     name: '{{ item.name }}'
     ipv6_cidr: True
@@ -52,7 +52,7 @@
     vpc_ipv6_b: '{{ vpc_b.ipv6_cidr_block_association_set[0].ipv6_cidr_block }}'
 
 - name: 'Create subnets'
-  ec2_vpc_subnet:
+  amazon.aws.ec2_vpc_subnet:
     az: '{{ item.az }}'
     cidr: '{{ item.cidr }}'
     ipv6_cidr: '{{ item.ipv6_cidr }}'

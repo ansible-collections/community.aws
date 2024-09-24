@@ -14,9 +14,9 @@ options:
   transit_gateway:
     description:
       - The ID of the Transit Gateway that the attachment belongs to.
-      - When creating a new attachment, I(transit_gateway) must be provided.
-      - At least one of I(name), I(transit_gateway) and I(id) must be provided.
-      - I(transit_gateway) is an immutable setting and can not be updated on an
+      - When creating a new attachment, O(transit_gateway) must be provided.
+      - At least one of O(name), O(transit_gateway) and O(id) must be provided.
+      - O(transit_gateway) is an immutable setting and can not be updated on an
         existing attachment.
     type: str
     required: false
@@ -24,20 +24,20 @@ options:
   id:
     description:
       - The ID of the Transit Gateway Attachment.
-      - When I(id) is not set, a search using I(transit_gateway) and I(name) will be
+      - When O(id) is not set, a search using O(transit_gateway) and O(name) will be
         performed.  If multiple results are returned, the module will fail.
-      - At least one of I(name), I(transit_gateway) and I(id) must be provided.
+      - At least one of O(name), O(transit_gateway) and O(id) must be provided.
     type: str
     required: false
     aliases: ['attachment_id']
   name:
     description:
-      - The C(Name) tag of the Transit Gateway attachment.
-      - Providing both I(id) and I(name) will set the C(Name) tag on an existing
+      - The O(Name) tag of the Transit Gateway attachment.
+      - Providing both V(id) and V(name) will set the O(Name) tag on an existing
         attachment the matching I(id).
-      - Setting the C(Name) tag in I(tags) will also result in the C(Name) tag being
+      - Setting the O(Name) tag in O(tags) will also result in the O(Name) tag being
         updated.
-      - At least one of I(name), I(transit_gateway) and I(id) must be provided.
+      - At least one of O(name), O(transit_gateway) and O(id) must be provided.
     type: str
     required: false
   state:
@@ -56,8 +56,8 @@ options:
     required: false
   purge_subnets:
     description:
-      - If I(purge_subnets=true), existing subnets will be removed from the
-        attachment as necessary to match exactly what is defined by I(subnets).
+      - If O(purge_subnets=true), existing subnets will be removed from the
+        attachment as necessary to match exactly what is defined by O(subnets).
     type: bool
     required: false
     default: true
@@ -220,33 +220,13 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 from ansible_collections.community.aws.plugins.module_utils.transitgateway import TransitGatewayVpcAttachmentManager
 
 
-def main():
-    argument_spec = dict(
-        state=dict(type="str", required=False, default="present", choices=["absent", "present"]),
-        transit_gateway=dict(type="str", required=False, aliases=["transit_gateway_id"]),
-        id=dict(type="str", required=False, aliases=["attachment_id"]),
-        name=dict(type="str", required=False),
-        subnets=dict(type="list", elements="str", required=False),
-        purge_subnets=dict(type="bool", required=False, default=True),
-        tags=dict(type="dict", required=False, aliases=["resource_tags"]),
-        purge_tags=dict(type="bool", required=False, default=True),
-        appliance_mode_support=dict(type="bool", required=False),
-        dns_support=dict(type="bool", required=False),
-        ipv6_support=dict(type="bool", required=False),
-        wait=dict(type="bool", required=False, default=True),
-        wait_timeout=dict(type="int", required=False),
-    )
-
-    one_of = [
-        ["id", "transit_gateway", "name"],
-    ]
-
-    module = AnsibleAWSModule(
-        argument_spec=argument_spec,
-        supports_check_mode=True,
-        required_one_of=one_of,
-    )
-
+def handle_vpc_attachments(conn, module: AnsibleAWSModule) -> None:
+    """
+    Creates or deletes the vpc attachments.
+    Args:
+        conn (boto3.TransitGatewayVpcAttachmentManager.Client): Valid Boto3 ASG client.
+        module: AnsibleAWSModule object
+    """
     attach_id = module.params.get("id", None)
     tgw = module.params.get("transit_gateway", None)
     name = module.params.get("name", None)
@@ -258,32 +238,19 @@ def main():
 
     # When not provided with an ID see if one exists.
     if not attach_id:
-        search_manager = TransitGatewayVpcAttachmentManager(module=module)
         filters = dict()
         if tgw:
             filters["transit-gateway-id"] = tgw
         if name:
             filters["tag:Name"] = name
         if subnets:
-            vpc_id = search_manager.subnets_to_vpc(subnets)
+            vpc_id = conn.subnets_to_vpc(subnets)
             filters["vpc-id"] = vpc_id
 
         # Attachments lurk in a 'deleted' state, for a while, ignore them so we
         # can reuse the names
-        filters["state"] = [
-            "available",
-            "deleting",
-            "failed",
-            "failing",
-            "initiatingRequest",
-            "modifying",
-            "pendingAcceptance",
-            "pending",
-            "rollingBack",
-            "rejected",
-            "rejecting",
-        ]
-        attachments = search_manager.list(filters=filters)
+        filters["state"] = conn.get_states()
+        attachments = conn.list(filters=filters)
         if len(attachments) > 1:
             module.fail_json("Multiple matching attachments found, provide an ID", attachments=attachments)
         # If we find a match then we'll modify it by ID, otherwise we'll be
@@ -339,6 +306,35 @@ def main():
 
     module.exit_json(**results)
 
+def main():
+    argument_spec = dict(
+        state=dict(type="str", required=False, default="present", choices=["absent", "present"]),
+        transit_gateway=dict(type="str", required=False, aliases=["transit_gateway_id"]),
+        id=dict(type="str", required=False, aliases=["attachment_id"]),
+        name=dict(type="str", required=False),
+        subnets=dict(type="list", elements="str", required=False),
+        purge_subnets=dict(type="bool", required=False, default=True),
+        tags=dict(type="dict", required=False, aliases=["resource_tags"]),
+        purge_tags=dict(type="bool", required=False, default=True),
+        appliance_mode_support=dict(type="bool", required=False),
+        dns_support=dict(type="bool", required=False),
+        ipv6_support=dict(type="bool", required=False),
+        wait=dict(type="bool", required=False, default=True),
+        wait_timeout=dict(type="int", required=False),
+    )
+
+    one_of = [
+        ["id", "transit_gateway", "name"],
+    ]
+
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        required_one_of=one_of,
+    )
+
+    search_manager = TransitGatewayVpcAttachmentManager(module=module)
+    handle_vpc_attachments(search_manager, module)
 
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ options:
   id:
     description:
       - The ID of the Transit Gateway Attachment.
-      - Mutually exclusive with I(name) and I(filters)
+      - Mutually exclusive with O(name) and O(filters)
     type: str
     required: false
     aliases: ['attachment_id']
@@ -26,14 +26,14 @@ options:
   filters:
     description:
       - A dictionary of filters to apply. Each dict item consists of a filter key and a filter value.
-      - Setting a C(tag:Name) filter will override the I(name) parameter.
+      - Setting a C(tag:Name) filter will override the O(name) parameter.
     type: dict
     required: false
   include_deleted:
     description:
-      - If I(include_deleted=True), then attachments in a deleted state will
+      - If O(include_deleted=True), then attachments in a deleted state will
         also be returned.
-      - Setting a C(state) filter will override the I(include_deleted) parameter.
+      - Setting a C(state) filter will override the O(include_deleted) parameter.
     type: bool
     required: false
     default: false
@@ -162,6 +162,7 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
+        mutually_exclusive=mutually_exclusive,
     )
 
     name = module.params.get("name", None)
@@ -177,19 +178,7 @@ def main():
     if not module.params.get("include_deleted"):
         # Attachments lurk in a 'deleted' state, for a while, ignore them so we
         # can reuse the names
-        filters["state"] = [
-            "available",
-            "deleting",
-            "failed",
-            "failing",
-            "initiatingRequest",
-            "modifying",
-            "pendingAcceptance",
-            "pending",
-            "rollingBack",
-            "rejected",
-            "rejecting",
-        ]
+        filters["state"] = search_manager.get_states()
 
     if opt_filters:
         filters.update(opt_filters)
