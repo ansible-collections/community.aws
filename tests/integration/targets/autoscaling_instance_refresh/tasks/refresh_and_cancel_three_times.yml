@@ -3,7 +3,6 @@
   autoscaling_instance_refresh:
     name: "{{ asg_name }}"
     state: "started"
-  ignore_errors: no
   retries: 10
   delay: 5
   register: refreshout
@@ -13,4 +12,3 @@
   autoscaling_instance_refresh:
     name: "{{ asg_name }}"
     state: "cancelled"
-  ignore_errors: yes

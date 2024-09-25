@@ -65,7 +65,7 @@
   autoscaling_instance_refresh:
     name: "nonexistentname-asg"
     state: "started"
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 
 - name: Assert that module failed with proper message
@@ -197,7 +197,7 @@
     preferences:
       min_healthy_percentage: 10
       instance_warmup: 10
-  ignore_errors: yes
+  ignore_errors: true
   register: result
 
 - name: Assert that module failed with proper message

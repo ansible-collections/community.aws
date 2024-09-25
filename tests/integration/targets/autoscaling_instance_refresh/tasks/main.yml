@@ -118,7 +118,7 @@
         state: absent
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
     # Remove the testing dependencies
 
@@ -129,7 +129,7 @@
         security_group_ids:
           - "{{ sg.group_id }}"
         subnets: "{{ testing_subnet.subnet.id }}"
-        wait: yes
+        wait: true
         connection_draining_timeout: 60
         listeners:
           - protocol: http
@@ -145,7 +145,7 @@
             healthy_threshold: 2
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove launch configs
@@ -154,7 +154,7 @@
         state: absent
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
       loop:
         - "{{ lc_name_1 }}"
@@ -177,7 +177,7 @@
         state: absent
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove routing rules
@@ -193,7 +193,7 @@
           - "{{ testing_subnet.subnet.id }}"
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove internet gateway
@@ -202,7 +202,7 @@
         state: absent
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove the subnet
@@ -212,7 +212,7 @@
         cidr: '{{ subnet_a_cidr }}'
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove the VPC
@@ -222,5 +222,5 @@
         state: absent
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10

@@ -7,9 +7,7 @@
 - name: Assert that the correct number of records are returned
   assert:
     that:
-      - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 7
-  vars:
-    inst_refresh_id_json_query: instance_refreshes[].instance_refresh_id
+      - output.instance_refreshes | map(attribute='instance_refresh_id') | unique | length == 7
 
 - name: Test using fake refresh ID
   autoscaling_instance_refresh_info:
@@ -36,7 +34,7 @@
 - name: Test getting info for an ASG name which doesn't exist
   autoscaling_instance_refresh_info:
     name: n0n3x1stentname27b
-  ignore_errors: yes
+  ignore_errors: true
   register: output
 
 - name: Assert that module failed to return record
@@ -58,7 +56,7 @@
   autoscaling_instance_refresh_info:
     name: "{{ asg_name }}"
     next_token: "fake-token-123"
-  ignore_errors: yes
+  ignore_errors: true
   register: output
 
 - name: Assert that valid message with fake-token is returned

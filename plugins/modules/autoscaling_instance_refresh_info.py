@@ -11,8 +11,8 @@ version_added: 3.2.0
 short_description: Gather information about EC2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 description:
   - Describes one or more instance refreshes.
-  - You can determine the status of a request by looking at the I(status) parameter.
-  - Prior to release 5.0.0 this module was called C(community.aws.ec2_asg_instance_refresh_info).
+  - You can determine the status of a request by looking at the RV(status) return value.
+  - Prior to release 5.0.0 this module was called M(community.aws.ec2_asg_instance_refresh_info).
     The usage did not change.
 author:
   - "Dan Khersonsky (@danquixote)"
@@ -34,7 +34,7 @@ options:
     type: str
   max_records:
     description:
-      - The maximum number of items to return with this call. The default value is 50 and the maximum value is 100.
+      - The maximum number of items to return with this call. The default value is V(50) and the maximum value is V(100).
     type: int
     required: false
 extends_documentation_fragment:

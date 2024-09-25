@@ -12,7 +12,7 @@ short_description: Start or cancel an EC2 Auto Scaling Group (ASG) instance refr
 description:
   - Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
   - Can be used with M(community.aws.autoscaling_instance_refresh_info) to track the subsequent progress.
-  - Prior to release 5.0.0 this module was called C(community.aws.ec2_asg_instance_refresh).
+  - Prior to release 5.0.0 this module was called M(community.aws.ec2_asg_instance_refresh).
     The usage did not change.
 author:
   - "Dan Khersonsky (@danquixote)"
@@ -30,7 +30,7 @@ options:
     required: true
   strategy:
     description:
-      - The strategy to use for the instance refresh. The only valid value is C(Rolling).
+      - The strategy to use for the instance refresh. The only valid value is V(Rolling).
       - A rolling update is an update that is applied to all instances in an Auto Scaling group until all instances have been updated.
       - A rolling update can fail due to failed health checks or if instances are on standby or are protected from scale in.
       - If the rolling update process fails, any instances that were already replaced are not rolled back to their previous configuration.
@@ -40,9 +40,9 @@ options:
     description:
       - Set of preferences associated with the instance refresh request.
       - If not provided, the default values are used.
-      - For I(min_healthy_percentage), the default value is C(90).
-      - For I(instance_warmup), the default is to use the value specified for the health check grace period for the Auto Scaling group.
-      - Can not be specified when I(state) is set to 'cancelled'.
+      - For O(min_healthy_percentage), the default value is V(90).
+      - For O(instance_warmup), the default is to use the value specified for the health check grace period for the Auto Scaling group.
+      - Can not be specified when O(state=cancelled).
     required: false
     suboptions:
       min_healthy_percentage:
@@ -70,7 +70,7 @@ options:
             to support your workload when replacing instances.
           - The value is expressed as a percentage of the desired capacity of the Auto Scaling group.
           - Value range is V(100) to V(200).
-          - When specified, you must also specify O(preferences.min_healthy_percentage), and the difference between them cannot be greater than 100.
+          - When specified, you must also specify O(preferences.min_healthy_percentage), and the difference between them cannot be greater than V(100).
         type: int
         version_added: 9.0.0
     type: dict
@@ -105,12 +105,12 @@ EXAMPLES = r"""
 
 RETURN = r"""
 instance_refreshes:
-    description: Details of the instance refreshes for the Auto Scaling group..
+    description: Details of the instance refreshes for the Auto Scaling group.
     returned: always
     type: complex
     contains:
         instance_refresh_id:
-            description: instance refresh id.
+            description: Instance refresh id.
             returned: success
             type: str
             sample: "08b91cf7-8fa6-48af-b6a6-d227f40f1b9b"
