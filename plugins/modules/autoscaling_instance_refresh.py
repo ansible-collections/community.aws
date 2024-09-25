@@ -40,8 +40,8 @@ options:
     description:
       - Set of preferences associated with the instance refresh request.
       - If not provided, the default values are used.
-      - For O(min_healthy_percentage), the default value is V(90).
-      - For O(instance_warmup), the default is to use the value specified for the health check grace period for the Auto Scaling group.
+      - For O(preferences.min_healthy_percentage), the default value is V(90).
+      - For O(preferences.instance_warmup), the default is to use the value specified for the health check grace period for the Auto Scaling group.
       - Can not be specified when O(state=cancelled).
     required: false
     suboptions:

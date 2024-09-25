@@ -11,7 +11,7 @@ version_added: 3.2.0
 short_description: Gather information about EC2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 description:
   - Describes one or more instance refreshes.
-  - You can determine the status of a request by looking at the RV(status) return value.
+  - You can determine the status of a request by looking at the RV(instance_refreshes.status) return value.
   - Prior to release 5.0.0 this module was called M(community.aws.ec2_asg_instance_refresh_info).
     The usage did not change.
 author:
