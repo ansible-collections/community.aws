@@ -6,24 +6,24 @@
 
 DOCUMENTATION = r"""
 module: ec2_transit_gateway_info
-short_description: Gather information about ec2 transit gateways in AWS
+short_description: Retrieve information about EC2 Transit Gateways in AWS
 version_added: 1.0.0
 description:
-  - Gather information about ec2 transit gateways in AWS
+  - Gather information about EC2 Transit Gateways in AWS.
 author:
   - "Bob Boldin (@BobBoldin)"
 options:
   transit_gateway_ids:
     description:
-      - A list of transit gateway IDs to gather information for.
+      - A list of Transit Gateway IDs for which to gather information.
     aliases: [transit_gateway_id]
     type: list
     elements: str
     default: []
   filters:
     description:
-      - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
-        See U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html) for filters.
+      - A dictionary of filters to apply to the query. Each key-value pair represents a filter key and its corresponding value.
+      - For a complete list of available filters, refer to the AWS documentation: U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html).
     type: dict
     default: {}
 extends_documentation_fragment:
@@ -58,11 +58,12 @@ EXAMPLES = r"""
 
 RETURN = r"""
 transit_gateways:
-    description: >
-        Transit gateways that match the provided filters. Each element consists of a dict with all the information
-        related to that transit gateway.
+    description:
+      - Transit gateways that match the provided filters.
+      - Each element consists of a dict with all the information related to that transit gateway.
     returned: on success
-    type: complex
+    type: list
+    elements: dict
     contains:
         creation_time:
             description: The creation time.
@@ -77,65 +78,53 @@ transit_gateways:
         options:
             description: A dictionary of the transit gateway options.
             returned: always
-            type: complex
+            type: dict
             contains:
                  amazon_side_asn:
                     description:
-                      - A private Autonomous System Number (ASN) for  the  Amazon
-                        side  of  a  BGP session. The range is 64512 to 65534 for
-                        16-bit ASNs and 4200000000 to 4294967294 for 32-bit ASNs.
+                      - A private Autonomous System Number (ASN) for the Amazon ide of a BGP session.
+                      - The range is 64512 to 65534 for 16-bit ASNs and 4200000000 to 4294967294 for 32-bit ASNs.
                     returned: always
                     type: int
                     sample: 64512
                  auto_accept_shared_attachments:
-                    description:
-                       - Indicates whether attachment requests  are  automatically accepted.
+                    description: Indicates whether attachment requests are automatically accepted.
                     returned: always
                     type: str
                     sample: "enable"
                  default_route_table_association:
-                    description:
-                      - Indicates  whether resource attachments are automatically
-                        associated with the default association route table.
+                    description: Indicates whether resource attachments are automatically associated with the default association route table.
                     returned: always
                     type: str
                     sample: "disable"
                  association_default_route_table_id:
-                    description:
-                      - The ID of the default association route table.
+                    description: The ID of the default association route table.
                     returned: when present
                     type: str
-                    sample: "rtb-11223344"
+                    sample: "tgw-rtb-0fd332c911223344"
                  default_route_table_propagation:
-                    description:
-                      - Indicates  whether  resource  attachments   automatically
-                        propagate routes to the default propagation route table.
+                    description: Indicates whether resource attachments automatically propagate routes to the default propagation route table.
                     returned: always
                     type: str
                     sample: "disable"
                  dns_support:
-                    description:
-                      - Indicates whether DNS support is enabled.
+                    description: Indicates whether DNS support is enabled.
                     returned: always
                     type: str
                     sample: "enable"
                  multicast_support:
-                    description:
-                      - Indicates whether Multicast support is enabled.
+                    description: Indicates whether Multicast support is enabled.
                     returned: always
                     type: str
                     sample: "enable"
                     version_added: 7.3.0
                  propagation_default_route_table_id:
-                    description:
-                      - The ID of the default propagation route table.
+                    description: The ID of the default propagation route table.
                     returned: when present
                     type: str
                     sample: "rtb-11223344"
                  vpn_ecmp_support:
-                    description:
-                      - Indicates  whether  Equal Cost Multipath Protocol support
-                        is enabled.
+                    description: Indicates whether Equal Cost Multipath Protocol support is enabled.
                     returned: always
                     type: str
                     sample: "enable"
@@ -153,9 +142,10 @@ transit_gateways:
             description: A dict of tags associated with the transit gateway.
             returned: always
             type: dict
-            sample: '{
-              "Name": "A sample TGW"
-              }'
+            sample: {
+                      "Name": "A sample TGW",
+                      "Env": "Dev"
+                    }
         transit_gateway_arn:
             description: The Amazon Resource Name (ARN) of the transit gateway.
             returned: always
@@ -173,6 +163,8 @@ try:
 except ImportError:
     pass  # handled by imported AnsibleAWSModule
 
+
+from typing import List, Dict, Any
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
@@ -184,14 +176,14 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 
 class AnsibleEc2TgwInfo(object):
-    def __init__(self, module, results):
+    def __init__(self, module: AnsibleAWSModule, results: Dict[str, Any]) -> None:
         self._module = module
         self._results = results
         self._connection = self._module.client("ec2")
         self._check_mode = self._module.check_mode
 
     @AWSRetry.exponential_backoff()
-    def describe_transit_gateways(self):
+    def describe_transit_gateways(self) -> None:
         """
         Describe transit gateways.
 
@@ -223,7 +215,7 @@ class AnsibleEc2TgwInfo(object):
         return
 
 
-def setup_module_object():
+def setup_module_object() -> AnsibleAWSModule:
     """
     merge argument spec and create Ansible module object
     :return: Ansible module object
@@ -247,9 +239,9 @@ def main():
 
     results = dict(changed=False)
 
-    tgwf_manager = AnsibleEc2TgwInfo(module=module, results=results)
+    client = AnsibleEc2TgwInfo(module=module, results=results)
     try:
-        tgwf_manager.describe_transit_gateways()
+        client.describe_transit_gateways()
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
