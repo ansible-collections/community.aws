@@ -162,7 +162,7 @@
       ec2_transit_gateway:
         description: "{{ item }}"
         state: absent
-      ignore_errors: yes
+      ignore_errors: true
       loop:
        - "{{ tgw_description }}"
        - "{{ tgw_description_multicast }}"
