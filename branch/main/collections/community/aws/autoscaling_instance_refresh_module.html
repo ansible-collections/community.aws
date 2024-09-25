@@ -161,7 +161,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <ul class="simple">
 <li><p>Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.</p></li>
 <li><p>Can be used with <a class="reference internal" href="autoscaling_instance_refresh_info_module.html#ansible-collections-community-aws-autoscaling-instance-refresh-info-module"><span class="std std-ref">community.aws.autoscaling_instance_refresh_info</span></a> to track the subsequent progress.</p></li>
-<li><p>Prior to release 5.0.0 this module was called <code class="docutils literal notranslate"><span class="pre">community.aws.ec2_asg_instance_refresh</span></code>. The usage did not change.</p></li>
+<li><p>Prior to release 5.0.0 this module was called <a class="reference internal" href="ec2_asg_instance_refresh_module.html#ansible-collections-community-aws-ec2-asg-instance-refresh-module"><span class="std std-ref">community.aws.ec2_asg_instance_refresh</span></a>. The usage did not change.</p></li>
 </ul>
 <p>Aliases: ec2_asg_instance_refresh</p>
 </section>
@@ -256,9 +256,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Set of preferences associated with the instance refresh request.</p>
 <p>If not provided, the default values are used.</p>
-<p>For <em>min_healthy_percentage</em>, the default value is <code class="docutils literal notranslate"><span class="pre">90</span></code>.</p>
-<p>For <em>instance_warmup</em>, the default is to use the value specified for the health check grace period for the Auto Scaling group.</p>
-<p>Can not be specified when <em>state</em> is set to ‘cancelled’.</p>
+<p>For <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-preferences-min-healthy-percentage"><span class="std std-ref"><span class="pre">preferences.min_healthy_percentage</span></span></a></strong></code>, the default value is <code class="ansible-value docutils literal notranslate"><span class="pre">90</span></code>.</p>
+<p>For <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-preferences-instance-warmup"><span class="std std-ref"><span class="pre">preferences.instance_warmup</span></span></a></strong></code>, the default is to use the value specified for the health check grace period for the Auto Scaling group.</p>
+<p>Can not be specified when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-state"><span class="std std-ref"><span class="pre">state=cancelled</span></span></a></code>.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -271,12 +271,38 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-preferences/max_healthy_percentage"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-preferences-max-healthy-percentage"><strong>max_healthy_percentage</strong></p>
+<a class="ansibleOptionLink" href="#parameter-preferences/max_healthy_percentage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 9.0.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the maximum percentage of the group that can be in service and healthy, or pending, to support your workload when replacing instances.</p>
+<p>The value is expressed as a percentage of the desired capacity of the Auto Scaling group.</p>
+<p>Value range is <code class="ansible-value docutils literal notranslate"><span class="pre">100</span></code> to <code class="ansible-value docutils literal notranslate"><span class="pre">200</span></code>.</p>
+<p>When specified, you must also specify <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-preferences-min-healthy-percentage"><span class="std std-ref"><span class="pre">preferences.min_healthy_percentage</span></span></a></strong></code>, and the difference between them cannot be greater than <code class="ansible-value docutils literal notranslate"><span class="pre">100</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-preferences/min_healthy_percentage"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-preferences-min-healthy-percentage"><strong>min_healthy_percentage</strong></p>
 <a class="ansibleOptionLink" href="#parameter-preferences/min_healthy_percentage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Total percent of capacity in ASG that must remain healthy during instance refresh to allow operation to continue.</p>
 <p>It is rounded up to the nearest integer.</p>
+<p>Value range is <code class="ansible-value docutils literal notranslate"><span class="pre">0</span></code> to <code class="ansible-value docutils literal notranslate"><span class="pre">100</span></code>.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">90</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-preferences/skip_matching"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-preferences-skip-matching"><strong>skip_matching</strong></p>
+<a class="ansibleOptionLink" href="#parameter-preferences/skip_matching" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 9.0.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates whether skip matching is enabled.</p>
+<p>If enabled <code class="ansible-value docutils literal notranslate"><span class="pre">true</span></code>, then Amazon EC2 Auto Scaling skips replacing instances that match the desired configuration.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -357,7 +383,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <div class="ansibleOptionAnchor" id="parameter-strategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-parameter-strategy"><strong>strategy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The strategy to use for the instance refresh. The only valid value is <code class="docutils literal notranslate"><span class="pre">Rolling</span></code>.</p>
+<td><div class="ansible-option-cell"><p>The strategy to use for the instance refresh. The only valid value is <code class="ansible-value docutils literal notranslate"><span class="pre">Rolling</span></code>.</p>
 <p>A rolling update is an update that is applied to all instances in an Auto Scaling group until all instances have been updated.</p>
 <p>A rolling update can fail due to failed health checks or if instances are on standby or are protected from scale in.</p>
 <p>If the rolling update process fails, any instances that were already replaced are not rolled back to their previous configuration.</p>
@@ -411,6 +437,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">    </span><span class="nt">preferences</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">min_healthy_percentage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">91</span>
 <span class="w">      </span><span class="nt">instance_warmup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">      </span><span class="nt">skip_matching</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
 </section>
@@ -425,74 +452,88 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-auto_scaling_group_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-auto-scaling-group-name"><strong>auto_scaling_group_name</strong></p>
-<a class="ansibleOptionLink" href="#return-auto_scaling_group_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<div class="ansibleOptionAnchor" id="return-instance_refreshes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes"><strong>instance_refreshes</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Name of autoscaling group</p>
+<td><div class="ansible-option-cell"><p>Details of the instance refreshes for the Auto Scaling group.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/auto_scaling_group_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-auto-scaling-group-name"><strong>auto_scaling_group_name</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/auto_scaling_group_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Name of autoscaling group.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;public-webapp-production-1&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-end_time"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-end-time"><strong>end_time</strong></p>
-<a class="ansibleOptionLink" href="#return-end_time" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/end_time"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-end-time"><strong>end_time</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/end_time" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The date and time this ASG was created, in ISO 8601 format.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The date and time this ASG was created, in ISO 8601 format.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2015-11-25T00:05:36.309Z&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-instance_refresh_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refresh-id"><strong>instance_refresh_id</strong></p>
-<a class="ansibleOptionLink" href="#return-instance_refresh_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/instance_refresh_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-instance-refresh-id"><strong>instance_refresh_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/instance_refresh_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>instance refresh id</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Instance refresh id.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;08b91cf7-8fa6-48af-b6a6-d227f40f1b9b&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-instances_to_update"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instances-to-update"><strong>instances_to_update</strong></p>
-<a class="ansibleOptionLink" href="#return-instances_to_update" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/instances_to_update"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-instances-to-update"><strong>instances_to_update</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/instances_to_update" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>num. of instance to update</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>number of instances to update.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">5</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-percentage_complete"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-percentage-complete"><strong>percentage_complete</strong></p>
-<a class="ansibleOptionLink" href="#return-percentage_complete" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/percentage_complete"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-percentage-complete"><strong>percentage_complete</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/percentage_complete" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>the % of completeness</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>the % of completeness.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">100</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-start_time"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-start-time"><strong>start_time</strong></p>
-<a class="ansibleOptionLink" href="#return-start_time" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/preferences"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-preferences"><strong>preferences</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/preferences" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The date and time this ASG was created, in ISO 8601 format.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The preferences for an instance refresh.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;AlarmSpecification&quot;:</span> <span class="pre">{&quot;Alarms&quot;:</span> <span class="pre">[&quot;my-alarm&quot;]},</span> <span class="pre">&quot;AutoRollback&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;InstanceWarmup&quot;:</span> <span class="pre">200,</span> <span class="pre">&quot;MinHealthyPercentage&quot;:</span> <span class="pre">90,</span> <span class="pre">&quot;ScaleInProtectedInstances&quot;:</span> <span class="pre">&quot;Ignore&quot;,</span> <span class="pre">&quot;SkipMatching&quot;:</span> <span class="pre">false,</span> <span class="pre">&quot;StandbyInstances&quot;:</span> <span class="pre">&quot;Ignore&quot;}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/start_time"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-start-time"><strong>start_time</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/start_time" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The date and time this ASG was created, in ISO 8601 format.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2015-11-25T00:05:36.309Z&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-status"><strong>status</strong></p>
-<a class="ansibleOptionLink" href="#return-status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instance_refreshes/status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-autoscaling-instance-refresh-module-return-instance-refreshes-status"><strong>status</strong></p>
+<a class="ansibleOptionLink" href="#return-instance_refreshes/status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The current state of the group when DeleteAutoScalingGroup is in progress.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current state of the group when DeleteAutoScalingGroup is in progress.</p>
 <p>The following are the possible statuses</p>
-<p>Pending – The request was created, but the operation has not started.</p>
-<p>InProgress – The operation is in progress.</p>
-<p>Successful – The operation completed successfully.</p>
-<p>Failed – The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</p>
-<p>Cancelling –</p>
-<p>An ongoing operation is being cancelled.</p>
-<p>Cancellation does not roll back any replacements that have already been completed,</p>
-<p>but it prevents new replacements from being started.</p>
-<p>Cancelled – The operation is cancelled.</p>
+<p>Pending - The request was created, but the operation has not started.</p>
+<p>InProgress - The operation is in progress.</p>
+<p>Successful - The operation completed successfully.</p>
+<p>Failed - The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</p>
+<p>Cancelling - An ongoing operation is being cancelled. Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.</p>
+<p>Cancelled - The operation is cancelled.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Pending&quot;</span></code></p>
 </div></td>
