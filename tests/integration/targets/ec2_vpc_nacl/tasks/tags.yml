@@ -30,7 +30,7 @@
 
   # ============================================================
 
-  - name: create a network ACL using subnet IDs
+  - name: Create a network ACL using subnet IDs
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -38,7 +38,7 @@
       state: 'present'
     register: nacl
 
-  - name: assert the network acl was created
+  - name: Assert the network acl was created
     assert:
       that:
         - nacl.changed
@@ -48,13 +48,13 @@
     set_fact:
       nacl_id: '{{ nacl.nacl_id }}'
 
-  - name: get network ACL facts
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl_id }}"
     register: nacl_info
 
-  - name: assert the nacl has the correct attributes
+  - name: Assert the nacl has the correct attributes
     assert:
       that:
         - nacl_info.nacls[0].nacl_id == nacl_id
@@ -62,7 +62,7 @@
 
   # ============================================================
 
-  - name: (check) add tags
+  - name: Add tags (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -72,13 +72,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would change
+  - name: Assert would change
     assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
-  - name: add tags
+  - name: Add tags
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -86,13 +86,14 @@
       tags: "{{ first_tags }}"
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify the tags were added
+  - name: Verify the tags were added
     assert:
       that:
         - nacl is changed
@@ -100,7 +101,7 @@
         - nacl_info.nacls[0].nacl_id == nacl_id
         - nacl_info.nacls[0].tags == ( first_tags | combine(name_tags) )
 
-  - name: (check) add tags - IDEMPOTENCY
+  - name: Add tags - IDEMPOTENCY (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -110,13 +111,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would not change
+  - name: Assert would not change
     assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
-  - name: add tags - IDEMPOTENCY
+  - name: Add tags - IDEMPOTENCY
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -124,13 +125,14 @@
       tags: "{{ first_tags }}"
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify no change
+  - name: Verify no change
     assert:
       that:
         - nacl is not changed
@@ -140,13 +142,13 @@
 
   # ============================================================
 
-  - name: get network ACL facts by filter
+  - name: Get network ACL facts by filter
     ec2_vpc_nacl_info:
       filters:
         "tag:Name": "{{ nacl_name }}"
     register: nacl_info
 
-  - name: assert the facts are the same as before
+  - name: Assert the facts are the same as before
     assert:
       that:
         - nacl_info.nacls | length == 1
@@ -155,7 +157,7 @@
 
   # ============================================================
 
-  - name: (check) modify tags with purge
+  - name: Modify tags with purge (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -165,13 +167,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would change
+  - name: Assert would change
     assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
-  - name: modify tags with purge
+  - name: Modify tags with purge
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -179,13 +181,14 @@
       tags: "{{ second_tags }}"
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify the tags were added
+  - name: Verify the tags were added
     assert:
       that:
         - nacl is changed
@@ -193,7 +196,7 @@
         - nacl_info.nacls[0].nacl_id == nacl_id
         - nacl_info.nacls[0].tags == ( second_tags | combine(name_tags) )
 
-  - name: (check) modify tags with purge - IDEMPOTENCY
+  - name: Modify tags with purge - IDEMPOTENCY (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -203,13 +206,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would not change
+  - name: Assert would not change
     assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
-  - name: modify tags with purge - IDEMPOTENCY
+  - name: Modify tags with purge - IDEMPOTENCY
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -217,13 +220,14 @@
       tags: "{{ second_tags }}"
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify no change
+  - name: Verify no change
     assert:
       that:
         - nacl is not changed
@@ -233,7 +237,7 @@
 
   # ============================================================
 
-  - name: (check) modify tags without purge
+  - name: Modify tags without purge (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -244,13 +248,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would change
+  - name: Assert would change
     assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
-  - name: modify tags without purge
+  - name: Modify tags without purge
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -259,13 +263,14 @@
       state: 'present'
       purge_tags: False
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify the tags were added
+  - name: Verify the tags were added
     assert:
       that:
         - nacl is changed
@@ -273,7 +278,7 @@
         - nacl_info.nacls[0].nacl_id == nacl_id
         - nacl_info.nacls[0].tags == ( final_tags | combine(name_tags) )
 
-  - name: (check) modify tags without purge - IDEMPOTENCY
+  - name: Modify tags without purge - IDEMPOTENCY (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -284,13 +289,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would not change
+  - name: Assert would not change
     assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
-  - name: modify tags without purge - IDEMPOTENCY
+  - name: Modify tags without purge - IDEMPOTENCY
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -299,13 +304,14 @@
       state: 'present'
       purge_tags: False
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify no change
+  - name: Verify no change
     assert:
       that:
         - nacl is not changed
@@ -315,7 +321,7 @@
 
   # ============================================================
 
-  - name: (check) No change to tags without setting tags
+  - name: No change to tags without setting tags (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -324,7 +330,7 @@
     register: nacl
     check_mode: True
 
-  - name: assert would change
+  - name: Assert would change
     assert:
       that:
         - nacl is not changed
@@ -337,13 +343,14 @@
       subnets: "{{ subnet_ids }}"
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify the tags were added
+  - name: Verify the tags were added
     assert:
       that:
         - nacl is not changed
@@ -353,7 +360,7 @@
 
   # ============================================================
 
-  - name: (check) remove non name tags
+  - name: Remove non name tags (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -363,13 +370,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would change
+  - name: Assert would change
     assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
-  - name: remove non name tags
+  - name: Remove non name tags
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -377,13 +384,14 @@
       tags: {}
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify the tags were added
+  - name: Verify the tags were added
     assert:
       that:
         - nacl is changed
@@ -391,7 +399,7 @@
         - nacl_info.nacls[0].nacl_id == nacl_id
         - nacl_info.nacls[0].tags == name_tags
 
-  - name: (check) remove non name tags - IDEMPOTENCY
+  - name: Remove non name tags - IDEMPOTENCY (check mode)
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -401,13 +409,13 @@
     register: nacl
     check_mode: True
 
-  - name: assert would not change
+  - name: Assert would not change
     assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
-  - name: remove non name tags - IDEMPOTENCY
+  - name: Remove non name tags - IDEMPOTENCY
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -415,13 +423,14 @@
       tags: {}
       state: 'present'
     register: nacl
-  - name: get network ACL facts
+
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
-  - name: verify no change
+  - name: Verify no change
     assert:
       that:
         - nacl is not changed
@@ -432,14 +441,14 @@
   # ============================================================
 
   always:
-  - name: remove the network ACL
+  - name: Remove the network ACL
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       state: absent
     register: nacl
 
-  - name: assert nacl was removed
+  - name: Assert nacl was removed
     assert:
       that:
         - nacl.changed

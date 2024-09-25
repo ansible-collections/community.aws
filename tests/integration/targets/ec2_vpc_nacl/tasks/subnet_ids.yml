@@ -1,6 +1,6 @@
 # ============================================================
 
-- name: create ingress and egress rules using subnet IDs
+- name: Create ingress and egress rules using subnet IDs
   ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
@@ -19,19 +19,19 @@
 - set_fact:
     nacl_id: "{{ nacl.nacl_id }}"
 
-- name: assert the network acl was created
+- name: Assert the network acl was created
   assert:
     that:
       - nacl.changed
       - nacl.nacl_id.startswith('acl-')
 
-- name: get network ACL facts
+- name: Get network ACL facts
   ec2_vpc_nacl_info:
     nacl_ids:
       - "{{ nacl_id }}"
   register: nacl_facts
 
-- name: assert the nacl has the correct attributes
+- name: Assert the nacl has the correct attributes
   assert:
     that:
       - nacl_facts.nacls | length == 1
@@ -44,7 +44,7 @@
 
 # ============================================================
 
-- name: test idempotence
+- name: Test idempotence
   ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
@@ -60,27 +60,27 @@
     state: 'present'
   register: nacl
 
-- name: assert the network acl already existed
+- name: Assert the network acl already existed
   assert:
     that:
       - not nacl.changed
       - nacl.nacl_id == nacl_id
       - nacl.nacl_id.startswith('acl-')
 
-- name: get network ACL facts
+- name: Get network ACL facts
   ec2_vpc_nacl_info:
     nacl_ids:
       - "{{ nacl.nacl_id }}"
   register: nacl_facts_idem
 
-- name: assert the facts are the same as before
+- name: Assert the facts are the same as before
   assert:
     that:
       - nacl_facts_idem == nacl_facts
 
 # ============================================================
 
-- name: remove a subnet from the network ACL
+- name: Remove a subnet from the network ACL
   ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
@@ -99,20 +99,20 @@
     state: 'present'
   register: nacl
 
-- name: assert the network ACL changed
+- name: Assert the network ACL changed
   assert:
     that:
       - nacl.changed
       - nacl.nacl_id.startswith('acl-')
       - nacl.nacl_id == nacl_id
 
-- name: get network ACL facts
+- name: Get network ACL facts
   ec2_vpc_nacl_info:
     nacl_id:
       - "{{ nacl.nacl_id }}"
   register: nacl_facts
 
-- name: assert the nacl has the correct attributes
+- name: Assert the nacl has the correct attributes
   assert:
     that:
       - nacl_facts.nacls | length == 1
@@ -125,7 +125,7 @@
 
 # ============================================================
 
-- name: remove the network ACL
+- name: Remove the network ACL
   ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
@@ -137,7 +137,7 @@
     that:
       - nacl.changed
 
-- name: re-remove the network ACL by name (test idempotency)
+- name: Re-remove the network ACL by name (test idempotency)
   ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
@@ -148,14 +148,14 @@
     that:
       - nacl is not changed
 
-- name: re-remove the network ACL by id (test idempotency)
+- name: Re-remove the network ACL by id (test idempotency)
   ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     nacl_id: "{{ nacl_id }}"
     state: absent
   register: nacl
 
-- name: assert nacl was removed
+- name: Assert nacl was removed
   assert:
     that:
       - nacl is not changed

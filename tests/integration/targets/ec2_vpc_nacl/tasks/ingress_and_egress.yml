@@ -1,6 +1,6 @@
 # ============================================================
 - block:
-  - name: create ingress and egress rules using subnet IDs
+  - name: Create ingress and egress rules using subnet IDs
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -16,19 +16,19 @@
       state: 'present'
     register: nacl
 
-  - name: assert the network acl was created
+  - name: Assert the network acl was created
     assert:
       that:
         - nacl.changed
         - nacl.nacl_id.startswith('acl-')
 
-  - name: get network ACL facts
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_facts
 
-  - name: assert the nacl has the correct attributes
+  - name: Assert the nacl has the correct attributes
     assert:
       that:
         - nacl_facts.nacls | length == 1
@@ -37,7 +37,7 @@
 
   # ============================================================
 
-  - name: remove an ingress rule
+  - name: Remove an ingress rule
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -52,19 +52,19 @@
       state: 'present'
     register: nacl
 
-  - name: assert the network acl changed
+  - name: Assert the network acl changed
     assert:
       that:
         - nacl.changed
         - nacl.nacl_id.startswith('acl-')
 
-  - name: get network ACL facts
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_facts
 
-  - name: assert the nacl has the correct attributes
+  - name: Assert the nacl has the correct attributes
     assert:
       that:
         - nacl_facts.nacls | length == 1
@@ -73,7 +73,7 @@
 
   # ============================================================
 
-  - name: remove the egress rule
+  - name: Remove the egress rule
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -87,19 +87,19 @@
       state: 'present'
     register: nacl
 
-  - name: assert the network acl changed
+  - name: Assert the network acl changed
     assert:
       that:
         - nacl.changed
         - nacl.nacl_id.startswith('acl-')
 
-  - name: get network ACL facts
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_facts
 
-  - name: assert the nacl has the correct attributes
+  - name: Assert the nacl has the correct attributes
     assert:
       that:
         - nacl_facts.nacls | length == 1
@@ -108,7 +108,7 @@
 
   # ============================================================
 
-  - name: add egress rules
+  - name: Add egress rules
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
@@ -124,19 +124,19 @@
       state: 'present'
     register: nacl
 
-  - name: assert the network acl changed
+  - name: Assert the network acl changed
     assert:
       that:
         - nacl.changed
         - nacl.nacl_id.startswith('acl-')
 
-  - name: get network ACL facts
+  - name: Get network ACL facts
     ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_facts
 
-  - name: assert the nacl has the correct attributes
+  - name: Assert the nacl has the correct attributes
     assert:
       that:
         - nacl_facts.nacls | length == 1
@@ -145,14 +145,14 @@
 
   # ============================================================
 
-  - name: remove the network ACL
+  - name: Remove the network ACL
     ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       state: absent
     register: nacl
 
-  - name: assert nacl was removed
+  - name: Assert nacl was removed
     assert:
       that:
         - nacl.changed

@@ -15,13 +15,15 @@ options:
   name:
     description:
       - Tagged name identifying a network ACL.
-      - One and only one of the I(name) or I(nacl_id) is required.
+      - One and only one of the O(name) or O(nacl_id) is required.
+      - Mutually exclusive with O(nacl_id).
     required: false
     type: str
   nacl_id:
     description:
       - NACL id identifying a network ACL.
-      - One and only one of the I(name) or I(nacl_id) is required.
+      - One and only one of the O(name) or O(nacl_id) is required.
+      - Mutually exclusive with O(name).
     required: false
     type: str
   vpc_id:
@@ -142,10 +144,6 @@ EXAMPLES = r"""
 """
 
 RETURN = r"""
-task:
-  description: The result of the create, or delete action.
-  returned: success
-  type: dict
 nacl_id:
   description: The id of the NACL (when creating or updating an ACL)
   returned: success
@@ -153,14 +151,21 @@ nacl_id:
   sample: acl-123456789abcdef01
 """
 
-try:
-    import botocore
-except ImportError:
-    pass  # Handled by AnsibleAWSModule
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
 
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_network_acl
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_network_acl_entry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_network_acl
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_network_acl_entry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_network_acls
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_subnets
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import replace_network_acl_association
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -170,70 +175,63 @@ PROTOCOL_NUMBERS = {"all": -1, "icmp": 1, "tcp": 6, "udp": 17, "ipv6-icmp": 58}
 
 
 # Utility methods
-def icmp_present(entry):
-    if len(entry) == 6 and entry[1] in ["icmp", "ipv6-icmp"] or entry[1] in [1, 58]:
-        return True
+def icmp_present(entry: List[str]) -> bool:
+    return len(entry) == 6 and entry[1] in ["icmp", "ipv6-icmp"] or entry[1] in [1, 58]
 
 
-def subnets_removed(nacl_id, subnets, client, module):
-    results = find_acl_by_id(nacl_id, client, module)
-    associations = results["NetworkAcls"][0]["Associations"]
-    subnet_ids = [assoc["SubnetId"] for assoc in associations]
-    return [subnet for subnet in subnet_ids if subnet not in subnets]
-
-
-def subnets_added(nacl_id, subnets, client, module):
-    results = find_acl_by_id(nacl_id, client, module)
-    associations = results["NetworkAcls"][0]["Associations"]
-    subnet_ids = [assoc["SubnetId"] for assoc in associations]
-    return [subnet for subnet in subnets if subnet not in subnet_ids]
-
-
-def subnets_changed(nacl, client, module):
+def subnets_changed(client, module: AnsibleAWSModule, nacl_id: str, subnets_ids: List[str]) -> bool:
     changed = False
     vpc_id = module.params.get("vpc_id")
-    nacl_id = nacl["NetworkAcls"][0]["NetworkAclId"]
-    subnets = subnets_to_associate(nacl, client, module)
-    if not subnets:
-        default_nacl_id = find_default_vpc_nacl(vpc_id, client, module)[0]
-        subnets = find_subnet_ids_by_nacl_id(nacl_id, client, module)
-        if subnets:
-            replace_network_acl_association(default_nacl_id, subnets, client, module)
-            changed = True
-            return changed
-        changed = False
+
+    if not subnets_ids:
+        default_nacl_id = find_default_vpc_nacl(client, module, vpc_id)
+        # Find subnets by Network ACL ids
+        network_acls = describe_network_acls(
+            client, Filters=[{"Name": "association.network-acl-id", "Values": [nacl_id]}]
+        )
+        subnets = [
+            association["SubnetId"]
+            for nacl in network_acls
+            for association in nacl["Associations"]
+            if association["SubnetId"]
+        ]
+        changed = associate_nacl_to_subnets(client, module, default_nacl_id, subnets)
         return changed
-    subs_added = subnets_added(nacl_id, subnets, client, module)
-    if subs_added:
-        replace_network_acl_association(nacl_id, subs_added, client, module)
-        changed = True
-    subs_removed = subnets_removed(nacl_id, subnets, client, module)
-    if subs_removed:
-        default_nacl_id = find_default_vpc_nacl(vpc_id, client, module)[0]
-        replace_network_acl_association(default_nacl_id, subs_removed, client, module)
-        changed = True
+
+    network_acls = describe_network_acls(client, NetworkAclIds=[nacl_id])
+    current_subnets = [
+        association["SubnetId"]
+        for nacl in network_acls
+        for association in nacl["Associations"]
+        if association["SubnetId"]
+    ]
+    subnets_added = [subnet for subnet in subnets_ids if subnet not in current_subnets]
+    subnets_removed = [subnet for subnet in current_subnets if subnet not in subnets_ids]
+
+    if subnets_added:
+        changed |= associate_nacl_to_subnets(client, module, nacl_id, subnets_added)
+    if subnets_removed:
+        default_nacl_id = find_default_vpc_nacl(client, module, vpc_id)
+        changed |= associate_nacl_to_subnets(client, module, default_nacl_id, subnets_removed)
+
     return changed
 
 
-def nacls_changed(nacl, client, module):
+def nacls_changed(client, module: AnsibleAWSModule, nacl_info: Dict[str, Any]) -> bool:
     changed = False
-    params = dict()
-    params["egress"] = module.params.get("egress")
-    params["ingress"] = module.params.get("ingress")
+    entries = nacl_info["Entries"]
+    nacl_id = nacl_info["NetworkAclId"]
+    current_egress_rules = [rule for rule in entries if rule["Egress"] is True and rule["RuleNumber"] < 32767]
+    current_ingress_rules = [rule for rule in entries if rule["Egress"] is False and rule["RuleNumber"] < 32767]
 
-    nacl_id = nacl["NetworkAcls"][0]["NetworkAclId"]
-    nacl = describe_network_acl(client, module)
-    entries = nacl["NetworkAcls"][0]["Entries"]
-    egress = [rule for rule in entries if rule["Egress"] is True and rule["RuleNumber"] < 32767]
-    ingress = [rule for rule in entries if rule["Egress"] is False and rule["RuleNumber"] < 32767]
-    if rules_changed(egress, params["egress"], True, nacl_id, client, module):
-        changed = True
-    if rules_changed(ingress, params["ingress"], False, nacl_id, client, module):
-        changed = True
+    # Egress Rules
+    changed |= rules_changed(client, module, nacl_id, current_egress_rules, True)
+    # Ingress Rules
+    changed |= rules_changed(client, module, nacl_id, current_ingress_rules, False)
     return changed
 
 
-def tags_changed(nacl_id, client, module):
+def tags_changed(client, module: AnsibleAWSModule, nacl_id: str) -> bool:
     tags = module.params.get("tags")
     name = module.params.get("name")
     purge_tags = module.params.get("purge_tags")
@@ -255,42 +253,102 @@ def tags_changed(nacl_id, client, module):
     )
 
 
-def rules_changed(aws_rules, param_rules, Egress, nacl_id, client, module):
+def ansible_to_boto3_dict_rule(ansible_rule: List[Any], egress: bool) -> Dict[str, Any]:
+    boto3_rule = {}
+    if isinstance(ansible_rule, list):
+        boto3_rule["RuleNumber"] = ansible_rule[0]
+        boto3_rule["Protocol"] = str(PROTOCOL_NUMBERS[ansible_rule[1]])
+        boto3_rule["RuleAction"] = ansible_rule[2]
+        boto3_rule["Egress"] = egress
+        if is_ipv6(ansible_rule[3]):
+            boto3_rule["Ipv6CidrBlock"] = ansible_rule[3]
+        else:
+            boto3_rule["CidrBlock"] = ansible_rule[3]
+        if icmp_present(ansible_rule):
+            boto3_rule["IcmpTypeCode"] = {"Type": int(ansible_rule[4]), "Code": int(ansible_rule[5])}
+        else:
+            if ansible_rule[6] or ansible_rule[7]:
+                boto3_rule["PortRange"] = {"From": ansible_rule[6], "To": ansible_rule[7]}
+    return boto3_rule
+
+
+def diff_network_acl_rules(
+    new_rules: List[Dict[str, Any]], current_rules: List[Dict[str, Any]]
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    rules_to_add = []
+    rules_to_remove = []
+
+    # Find all rule to add
+    for rule in new_rules:
+        _match = False
+        for existing in current_rules:
+            if existing["RuleNumber"] == rule["RuleNumber"] and existing == rule:
+                _match = True
+                break
+        if not _match:
+            rules_to_add.append(rule)
+
+    # Find all rule to remove
+    for existing in current_rules:
+        _match = False
+        for rule in new_rules:
+            if existing["RuleNumber"] == rule["RuleNumber"] and existing == rule:
+                _match = True
+                break
+        if not _match:
+            rules_to_remove.append(existing)
+
+    return rules_to_add, rules_to_remove
+
+
+def rules_changed(
+    client, module: AnsibleAWSModule, nacl_id: str, current_rules: List[Dict[str, Any]], egress: bool
+) -> bool:
     changed = False
-    rules = list()
-    for entry in param_rules:
-        rules.append(process_rule_entry(entry, Egress))
-    if rules == aws_rules:
-        return changed
+    new_rules = []
+
+    if egress:
+        new_rules += [ansible_to_boto3_dict_rule(r, egress=True) for r in module.params.get("egress")]
     else:
-        removed_rules = [x for x in aws_rules if x not in rules]
-        if removed_rules:
-            params = dict()
-            for rule in removed_rules:
-                params["NetworkAclId"] = nacl_id
-                params["RuleNumber"] = rule["RuleNumber"]
-                params["Egress"] = Egress
-                delete_network_acl_entry(params, client, module)
-            changed = True
-        added_rules = [x for x in rules if x not in aws_rules]
-        if added_rules:
-            for rule in added_rules:
-                rule["NetworkAclId"] = nacl_id
-                create_network_acl_entry(rule, client, module)
-            changed = True
+        new_rules += [ansible_to_boto3_dict_rule(r, egress=False) for r in module.params.get("ingress")]
+
+    added_rules, removed_rules = diff_network_acl_rules(new_rules, current_rules)
+    if not added_rules and not removed_rules:
+        return changed
+
+    # Added Rules
+    for rule in added_rules:
+        changed = True
+        if not module.check_mode:
+            rule_number = rule.pop("RuleNumber")
+            protocol = rule.pop("Protocol")
+            rule_action = rule.pop("RuleAction")
+            egress = rule.pop("Egress")
+            create_network_acl_entry(
+                client,
+                network_acl_id=nacl_id,
+                protocol=protocol,
+                egress=egress,
+                rule_action=rule_action,
+                rule_number=rule_number,
+                **rule,
+            )
+
+    # Removed Rules
+    for rule in removed_rules:
+        changed = True
+        if not module.check_mode:
+            delete_network_acl_entry(client, network_acl_id=nacl_id, rule_number=rule["RuleNumber"], egress=egress)
+
     return changed
 
 
-def is_ipv6(cidr):
+def is_ipv6(cidr: str) -> bool:
     return ":" in cidr
 
 
-def process_rule_entry(entry, Egress):
-    params = dict()
-    params["RuleNumber"] = entry[0]
-    params["Protocol"] = str(PROTOCOL_NUMBERS[entry[1]])
-    params["RuleAction"] = entry[2]
-    params["Egress"] = Egress
+def process_rule_entry(entry: List[Any]) -> Dict[str, Any]:
+    params = {}
     if is_ipv6(entry[3]):
         params["Ipv6CidrBlock"] = entry[3]
     else:
@@ -300,275 +358,175 @@ def process_rule_entry(entry, Egress):
     else:
         if entry[6] or entry[7]:
             params["PortRange"] = {"From": entry[6], "To": entry[7]}
+
     return params
 
 
-def restore_default_associations(assoc_ids, default_nacl_id, client, module):
-    if assoc_ids:
-        params = dict()
-        params["NetworkAclId"] = default_nacl_id[0]
-        for assoc_id in assoc_ids:
-            params["AssociationId"] = assoc_id
-            restore_default_acl_association(params, client, module)
-        return True
-
-
-def construct_acl_entries(nacl, client, module):
+def construct_acl_entries(client, module: AnsibleAWSModule, nacl_id: str) -> bool:
+    changed = False
+    # Process list entries
     for entry in module.params.get("ingress"):
-        params = process_rule_entry(entry, Egress=False)
-        params["NetworkAclId"] = nacl["NetworkAcl"]["NetworkAclId"]
-        create_network_acl_entry(params, client, module)
-    for rule in module.params.get("egress"):
-        params = process_rule_entry(rule, Egress=True)
-        params["NetworkAclId"] = nacl["NetworkAcl"]["NetworkAclId"]
-        create_network_acl_entry(params, client, module)
-
-
-# Module invocations
-def setup_network_acl(client, module):
-    changed = False
-    nacl = describe_network_acl(client, module)
-    if not nacl["NetworkAcls"]:
-        tags = {}
-        if module.params.get("name"):
-            tags["Name"] = module.params.get("name")
-        tags.update(module.params.get("tags") or {})
-        nacl = create_network_acl(module.params.get("vpc_id"), client, module, tags)
-        nacl_id = nacl["NetworkAcl"]["NetworkAclId"]
-        subnets = subnets_to_associate(nacl, client, module)
-        replace_network_acl_association(nacl_id, subnets, client, module)
-        construct_acl_entries(nacl, client, module)
         changed = True
-        return changed, nacl["NetworkAcl"]["NetworkAclId"]
-    else:
-        changed = False
-        nacl_id = nacl["NetworkAcls"][0]["NetworkAclId"]
-        changed |= subnets_changed(nacl, client, module)
-        changed |= nacls_changed(nacl, client, module)
-        changed |= tags_changed(nacl_id, client, module)
-        return changed, nacl_id
-
-
-def remove_network_acl(client, module):
-    changed = False
-    result = dict()
-    nacl = describe_network_acl(client, module)
-    if nacl["NetworkAcls"]:
-        nacl_id = nacl["NetworkAcls"][0]["NetworkAclId"]
-        vpc_id = nacl["NetworkAcls"][0]["VpcId"]
-        associations = nacl["NetworkAcls"][0]["Associations"]
-        assoc_ids = [a["NetworkAclAssociationId"] for a in associations]
-        default_nacl_id = find_default_vpc_nacl(vpc_id, client, module)
-        if not default_nacl_id:
-            result = {vpc_id: "Default NACL ID not found - Check the VPC ID"}
-            return changed, result
-        if restore_default_associations(assoc_ids, default_nacl_id, client, module):
-            delete_network_acl(nacl_id, client, module)
-            changed = True
-            result[nacl_id] = "Successfully deleted"
-            return changed, result
-        if not assoc_ids:
-            delete_network_acl(nacl_id, client, module)
-            changed = True
-            result[nacl_id] = "Successfully deleted"
-            return changed, result
-    return changed, result
-
-
-# Boto3 client methods
-@AWSRetry.jittered_backoff()
-def _create_network_acl(client, *args, **kwargs):
-    return client.create_network_acl(*args, **kwargs)
-
-
-def create_network_acl(vpc_id, client, module, tags):
-    params = dict(VpcId=vpc_id)
-    if tags:
-        params["TagSpecifications"] = boto3_tag_specifications(tags, ["network-acl"])
-    try:
-        if module.check_mode:
-            nacl = dict(NetworkAcl=dict(NetworkAclId="nacl-00000000"))
-        else:
-            nacl = _create_network_acl(client, **params)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-    return nacl
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidNetworkAclID.NotFound"])
-def _create_network_acl_entry(client, *args, **kwargs):
-    return client.create_network_acl_entry(*args, **kwargs)
-
-
-def create_network_acl_entry(params, client, module):
-    try:
         if not module.check_mode:
-            _create_network_acl_entry(client, **params)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-
-
-@AWSRetry.jittered_backoff()
-def _delete_network_acl(client, *args, **kwargs):
-    return client.delete_network_acl(*args, **kwargs)
-
-
-def delete_network_acl(nacl_id, client, module):
-    try:
-        if not module.check_mode:
-            _delete_network_acl(client, NetworkAclId=nacl_id)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidNetworkAclID.NotFound"])
-def _delete_network_acl_entry(client, *args, **kwargs):
-    return client.delete_network_acl_entry(*args, **kwargs)
-
-
-def delete_network_acl_entry(params, client, module):
-    try:
-        if not module.check_mode:
-            _delete_network_acl_entry(client, **params)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-
-
-@AWSRetry.jittered_backoff()
-def _describe_network_acls(client, **kwargs):
-    return client.describe_network_acls(**kwargs)
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidNetworkAclID.NotFound"])
-def _describe_network_acls_retry_missing(client, **kwargs):
-    return client.describe_network_acls(**kwargs)
-
-
-def describe_acl_associations(subnets, client, module):
-    if not subnets:
-        return []
-    try:
-        results = _describe_network_acls_retry_missing(
-            client, Filters=[{"Name": "association.subnet-id", "Values": subnets}]
-        )
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-    associations = results["NetworkAcls"][0]["Associations"]
-    return [a["NetworkAclAssociationId"] for a in associations if a["SubnetId"] in subnets]
-
-
-def describe_network_acl(client, module):
-    try:
-        if module.params.get("nacl_id"):
-            nacl = _describe_network_acls(
-                client, Filters=[{"Name": "network-acl-id", "Values": [module.params.get("nacl_id")]}]
+            create_network_acl_entry(
+                client,
+                network_acl_id=nacl_id,
+                protocol=str(PROTOCOL_NUMBERS[entry[1]]),
+                egress=False,
+                rule_action=entry[2],
+                rule_number=entry[0],
+                **process_rule_entry(entry),
             )
-        else:
-            nacl = _describe_network_acls(client, Filters=[{"Name": "tag:Name", "Values": [module.params.get("name")]}])
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-    return nacl
-
-
-def find_acl_by_id(nacl_id, client, module):
-    try:
-        return _describe_network_acls_retry_missing(client, NetworkAclIds=[nacl_id])
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-
-
-def find_default_vpc_nacl(vpc_id, client, module):
-    try:
-        response = _describe_network_acls_retry_missing(client, Filters=[{"Name": "vpc-id", "Values": [vpc_id]}])
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-    nacls = response["NetworkAcls"]
-    return [n["NetworkAclId"] for n in nacls if n["IsDefault"] is True]
-
-
-def find_subnet_ids_by_nacl_id(nacl_id, client, module):
-    try:
-        results = _describe_network_acls_retry_missing(
-            client, Filters=[{"Name": "association.network-acl-id", "Values": [nacl_id]}]
-        )
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
-    if results["NetworkAcls"]:
-        associations = results["NetworkAcls"][0]["Associations"]
-        return [s["SubnetId"] for s in associations if s["SubnetId"]]
-    else:
-        return []
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidNetworkAclID.NotFound"])
-def _replace_network_acl_association(client, *args, **kwargs):
-    return client.replace_network_acl_association(*args, **kwargs)
-
-
-def replace_network_acl_association(nacl_id, subnets, client, module):
-    params = dict()
-    params["NetworkAclId"] = nacl_id
-    for association in describe_acl_associations(subnets, client, module):
-        params["AssociationId"] = association
-        try:
-            if not module.check_mode:
-                _replace_network_acl_association(client, **params)
-        except botocore.exceptions.ClientError as e:
-            module.fail_json_aws(e)
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidNetworkAclID.NotFound"])
-def _replace_network_acl_entry(client, *args, **kwargs):
-    return client.replace_network_acl_entry(*args, **kwargs)
-
-
-def replace_network_acl_entry(entries, Egress, nacl_id, client, module):
-    for entry in entries:
-        params = entry
-        params["NetworkAclId"] = nacl_id
-        try:
-            if not module.check_mode:
-                _replace_network_acl_entry(client, **params)
-        except botocore.exceptions.ClientError as e:
-            module.fail_json_aws(e)
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidNetworkAclID.NotFound"])
-def _replace_network_acl_association(client, *args, **kwargs):
-    return client.replace_network_acl_association(*args, **kwargs)
-
-
-def restore_default_acl_association(params, client, module):
-    try:
+    for entry in module.params.get("egress"):
+        changed = True
         if not module.check_mode:
-            _replace_network_acl_association(client, **params)
-    except botocore.exceptions.ClientError as e:
+            create_network_acl_entry(
+                client,
+                network_acl_id=nacl_id,
+                protocol=str(PROTOCOL_NUMBERS[entry[1]]),
+                egress=True,
+                rule_action=entry[2],
+                rule_number=entry[0],
+                **process_rule_entry(entry),
+            )
+
+    return changed
+
+
+def associate_nacl_to_subnets(client, module: AnsibleAWSModule, nacl_id: str, subnets_ids: List[str]) -> bool:
+    changed = False
+    if subnets_ids:
+        network_acls = describe_network_acls(client, Filters=[{"Name": "association.subnet-id", "Values": subnets_ids}])
+        associations = [
+            association["NetworkAclAssociationId"]
+            for nacl in network_acls
+            for association in nacl["Associations"]
+            if association["SubnetId"] in subnets_ids
+        ]
+        for association_id in associations:
+            changed = True
+            if not module.check_mode:
+                replace_network_acl_association(client, network_acl_id=nacl_id, association_id=association_id)
+    return changed
+
+
+def ensure_present(client, module: AnsibleAWSModule) -> None:
+    changed = False
+    nacl = describe_network_acl(client, module)
+    nacl_id = None
+    subnets_ids = []
+    subnets = module.params.get("subnets")
+    if subnets:
+        subnets_ids = find_subnets_ids(client, module, subnets)
+
+    if not nacl:
+        if module.check_mode:
+            module.exit_json(changed=True, msg="Would have created Network ACL if not in check mode.")
+
+        # Create Network ACL
+        tags = {}
+        name = module.params.get("name")
+        vpc_id = module.params.get("vpc_id")
+        if name:
+            tags["Name"] = name
+        if module.params.get("tags"):
+            tags.update(module.params.get("tags"))
+        nacl = create_network_acl(client, vpc_id, tags)
+        changed = True
+
+        # Associate Subnets to Network ACL
+        nacl_id = nacl["NetworkAclId"]
+        associate_nacl_to_subnets(client, module, nacl_id, subnets_ids)
+
+        # Create Network ACL entries
+        construct_acl_entries(client, module, nacl_id)
+    else:
+        nacl_id = nacl["NetworkAclId"]
+        changed |= subnets_changed(client, module, nacl_id, subnets_ids)
+        changed |= nacls_changed(client, module, nacl)
+        changed |= tags_changed(client, module, nacl_id)
+
+    module.exit_json(changed=changed, nacl_id=nacl_id)
+
+
+def ensure_absent(client, module: AnsibleAWSModule) -> None:
+    changed = False
+    result = {}
+    nacl = describe_network_acl(client, module)
+    if not nacl:
+        module.exit_json(changed=changed)
+
+    nacl_id = nacl["NetworkAclId"]
+    vpc_id = nacl["VpcId"]
+    associations = nacl["Associations"]
+    assoc_ids = [a["NetworkAclAssociationId"] for a in associations]
+
+    # Find default NACL associated to the VPC
+    default_nacl_id = find_default_vpc_nacl(client, module, vpc_id)
+    if not default_nacl_id:
+        module.exit_json(changed=changed, msg="Default NACL ID not found - Check the VPC ID")
+
+    # Replace Network ACL association
+    for assoc_id in assoc_ids:
+        changed = True
+        if not module.check_mode:
+            replace_network_acl_association(client, network_acl_id=default_nacl_id, association_id=assoc_id)
+
+    # Delete Network ACL
+    changed = True
+    if module.check_mode:
+        module.exit_json(changed=changed, msg=f"Would have deleted Network ACL id '{nacl_id}' if not in check mode.")
+
+    changed = delete_network_acl(client, network_acl_id=nacl_id)
+    module.exit_json(changed=changed, msg=f"Network ACL id '{nacl_id}' successfully deleted.")
+
+
+def describe_network_acl(client, module: AnsibleAWSModule) -> Optional[Dict[str, Any]]:
+    nacl_id = module.params.get("nacl_id")
+    name = module.params.get("name")
+    try:
+        if nacl_id:
+            filters = [{"Name": "network-acl-id", "Values": [nacl_id]}]
+        else:
+            filters = [{"Name": "tag:Name", "Values": [name]}]
+        network_acls = describe_network_acls(client, Filters=filters)
+        return None if not network_acls else network_acls[0]
+    except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
 
-@AWSRetry.jittered_backoff()
-def _describe_subnets(client, *args, **kwargs):
-    return client.describe_subnets(*args, **kwargs)
+def find_default_vpc_nacl(client, module: AnsibleAWSModule, vpc_id: str) -> Optional[str]:
+    default_nacl_id = None
+    try:
+        for nacl in describe_network_acls(client, Filters=[{"Name": "vpc-id", "Values": [vpc_id]}]):
+            if nacl.get("IsDefault", False):
+                default_nacl_id = nacl["NetworkAclId"]
+                break
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
+    return default_nacl_id
 
 
-def subnets_to_associate(nacl, client, module):
-    params = list(module.params.get("subnets"))
-    if not params:
-        return []
-    all_found = []
-    if any(x.startswith("subnet-") for x in params):
-        try:
-            subnets = _describe_subnets(client, Filters=[{"Name": "subnet-id", "Values": params}])
-            all_found.extend(subnets.get("Subnets", []))
-        except botocore.exceptions.ClientError as e:
-            module.fail_json_aws(e)
-    if len(params) != len(all_found):
-        try:
-            subnets = _describe_subnets(client, Filters=[{"Name": "tag:Name", "Values": params}])
-            all_found.extend(subnets.get("Subnets", []))
-        except botocore.exceptions.ClientError as e:
-            module.fail_json_aws(e)
-    return list(set(s["SubnetId"] for s in all_found if s.get("SubnetId")))
+def find_subnets_ids(client, module: AnsibleAWSModule, subnets_ids_or_names: List[str]) -> List[str]:
+    subnets_ids = []
+    subnets_names = []
+    try:
+        # Find Subnets by ID
+        subnets = describe_subnets(client, Filters=[{"Name": "subnet-id", "Values": subnets_ids_or_names}])
+        subnets_ids += [subnet["SubnetId"] for subnet in subnets]
+        subnets_names += [tag["Value"] for subnet in subnets for tag in subnet.get("Tags", []) if tag["Key"] == "Name"]
+
+        # Find Subnets by Name
+        subnets = describe_subnets(client, Filters=[{"Name": "tag:Name", "Values": subnets_ids_or_names}])
+        subnets_ids += [subnet["SubnetId"] for subnet in subnets]
+        subnets_names += [tag["Value"] for subnet in subnets for tag in subnet.get("Tags", []) if tag["Key"] == "Name"]
+
+        unexisting_subnets = [s for s in subnets_ids_or_names if s not in subnets_names + subnets_ids]
+        if unexisting_subnets:
+            module.fail_json(msg=f"The following subnets do not exist: {unexisting_subnets}")
+        return subnets_ids
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
 
 def main():
@@ -576,30 +534,32 @@ def main():
         vpc_id=dict(),
         name=dict(),
         nacl_id=dict(),
-        subnets=dict(required=False, type="list", default=list(), elements="str"),
+        subnets=dict(required=False, type="list", default=[], elements="str"),
         tags=dict(required=False, type="dict", aliases=["resource_tags"]),
         purge_tags=dict(required=False, type="bool", default=True),
         ingress=dict(required=False, type="list", default=list(), elements="list"),
         egress=dict(required=False, type="list", default=list(), elements="list"),
         state=dict(default="present", choices=["present", "absent"]),
     )
+
+    mutually_exclusive = [
+        ["name", "nacl_id"],
+    ]
+
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         required_one_of=[["name", "nacl_id"]],
         required_if=[["state", "present", ["vpc_id"]]],
+        mutually_exclusive=mutually_exclusive,
     )
-
-    state = module.params.get("state").lower()
 
     client = module.client("ec2")
 
-    invocations = {
-        "present": setup_network_acl,
-        "absent": remove_network_acl,
-    }
-    (changed, results) = invocations[state](client, module)
-    module.exit_json(changed=changed, nacl_id=results)
+    if module.params.get("state") == "present":
+        ensure_present(client, module)
+    else:
+        ensure_absent(client, module)
 
 
 if __name__ == "__main__":
