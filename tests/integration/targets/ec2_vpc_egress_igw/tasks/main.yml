@@ -34,9 +34,9 @@
     assert:
       that:
         - result is failed
-        - 'err_msg in result.msg'
+        - e_msg in result.exception
     vars:
-      err_msg: "Invalid vpc ID 'vpc-02394e50abc1807e8' provided"
+      e_msg: "The vpc ID 'vpc-02394e50abc1807e8' does not exist"
 
   # ============================================================
   - name: Create a VPC

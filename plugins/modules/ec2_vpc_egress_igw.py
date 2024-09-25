@@ -74,12 +74,11 @@ from typing import Union
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_egress_only_internet_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_egress_only_internet_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_egress_only_internet_gateways
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
@@ -103,8 +102,8 @@ def delete_eigw(module: AnsibleAWSModule, connection, eigw_id: str) -> Dict[str,
 
     try:
         changed = delete_egress_only_internet_gateway(connection, egress_only_internet_gateway_id=eigw_id)
-    except AnsibleAWSError as e:
-        module.fail_json_aws(e, msg=f"Could not delete Egress-Only Internet Gateway {eigw_id} from VPC {vpc_id}")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     return dict(changed=changed)
 
@@ -127,10 +126,8 @@ def create_eigw(module: AnsibleAWSModule, connection, vpc_id: str) -> Dict[str, 
     try:
         response = create_egress_only_internet_gateway(connection, vpc_id=vpc_id, tags=module.params.get("tags"))
         changed = True
-    except is_ansible_aws_error_code("InvalidVpcID.NotFound") as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg=f"Invalid vpc ID '{vpc_id}' provided")
-    except AnsibleAWSError as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg=f"Could not create Egress-Only Internet Gateway for vpc ID {vpc_id}")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     gateway = response.get("EgressOnlyInternetGateway", {})
     state = gateway.get("Attachments", [{}])[0].get("State")
@@ -165,8 +162,8 @@ def find_egress_only_igw(module: AnsibleAWSModule, connection, vpc_id: str) -> O
                         "gateway_id": eigw.get("EgressOnlyInternetGatewayId"),
                         "tags": boto3_tag_list_to_ansible_dict(eigw.get("Tags", [])),
                     }
-    except AnsibleAWSError as e:
-        module.fail_json_aws(e, msg="Could not get list of existing Egress-Only Internet Gateways")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     return result
 
