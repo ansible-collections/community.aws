@@ -1248,7 +1248,7 @@ def main():
     elif module.params["state"] == "deleting":
         if not existing:
             module.fail_json(msg="Service '" + module.params["name"] + " not found.")
-            return
+
         # it exists, so we should delete it and mark changed.
         # return info about the cluster deleted
         delay = module.params["delay"]
@@ -1263,7 +1263,6 @@ def main():
             time.sleep(delay)
         if i is repeat - 1:
             module.fail_json(msg=f"Service still not deleted after {repeat} tries of {delay} seconds each.")
-            return
 
     module.exit_json(**results)
 

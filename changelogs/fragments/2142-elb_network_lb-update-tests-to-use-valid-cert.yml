@@ -1,0 +1,2 @@
+trivial:
+  - elb_network_lb - Update tests to use valid cert RSA 3072-bit instead of 4096 (https://github.com/ansible-collections/community.aws/pull/2142).

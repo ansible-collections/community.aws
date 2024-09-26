@@ -170,7 +170,7 @@ class VGWRetry(AWSRetry):
             response_code = (response_code,)
 
         for code in response_code:
-            if super().found(response_code, catch_extra_error_codes):
+            if super(VGWRetry, VGWRetry).found(response_code, catch_extra_error_codes):
                 return True
 
         return False
@@ -420,6 +420,7 @@ def ensure_vgw_absent(client, module):
     changed = False
     params = dict()
     result = dict()
+    deleted_vgw = None
     params["Name"] = module.params.get("name")
     params["VpcId"] = module.params.get("vpc_id")
     params["Type"] = module.params.get("type")
