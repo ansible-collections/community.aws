@@ -472,7 +472,9 @@ def get_tags(connection: Any, load_balancer_name: str) -> Dict[str, Any]:
     return boto3_tag_list_to_ansible_dict(tags[0]["Tags"])
 
 
-def lb_instance_health(connection: Any, load_balancer_name: str, instances: List[Dict[str, Any]], state: str) -> Tuple[List[str], int]:
+def lb_instance_health(
+    connection: Any, load_balancer_name: str, instances: List[Dict[str, Any]], state: str
+) -> Tuple[List[str], int]:
     """
     Describes the health status of instances associated with a specific Elastic Load Balancer (ELB).
 
@@ -501,9 +503,7 @@ def main():
         supports_check_mode=True,
     )
 
-    connection = module.client(
-        "elb", retry_decorator=AWSRetry.jittered_backoff(retries=5, delay=5)
-    )
+    connection = module.client("elb", retry_decorator=AWSRetry.jittered_backoff(retries=5, delay=5))
 
     try:
         elbs = list_elbs(connection, module.params.get("names"))
