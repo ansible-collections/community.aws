@@ -15,7 +15,7 @@
         tgw_description: "{{ resource_prefix }}-tgw"
 
     - name: test create transit gateway without tags
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         description: "{{ tgw_description }}"
       register: create_result
     - name: assert changed is True
@@ -24,7 +24,7 @@
           - create_result.changed == True
 
     - name: test update transit gateway with tags by description
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         description: "{{ tgw_description }}"
         tags:
           Name: Ansible Test TGW
@@ -37,7 +37,7 @@
           - "'Name' in result.transit_gateway.tags"
 
     - name: test update transit gateway with new tag and purge_tags false
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         transit_gateway_id: '{{ create_result.transit_gateway.transit_gateway_id }}'
         purge_tags: False
         tags:
@@ -51,7 +51,7 @@
           - "'Name' in result.transit_gateway.tags"
 
     - name: test update transit gateway with purge_tags true
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         transit_gateway_id: '{{ create_result.transit_gateway.transit_gateway_id }}'
         purge_tags: True
         tags:
@@ -65,7 +65,7 @@
           - "'Name' not in result.transit_gateway.tags"
 
     - name: test idempotence
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         description: "{{ tgw_description }}"
         purge_tags: True
         tags:
@@ -81,7 +81,7 @@
        tgw_description_multicast: "{{ resource_prefix }}-tgw-multicast"
 
     - name: test create transit gateway with multicast enabled
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         description: "{{ tgw_description_multicast }}"
         multicast_support: true
       register: create_result
@@ -159,7 +159,7 @@
   always:
     ###### TEARDOWN STARTS HERE ######
     - name: delete transit gateway
-      ec2_transit_gateway:
+      community.aws.ec2_transit_gateway:
         description: "{{ item }}"
         state: absent
       ignore_errors: true
