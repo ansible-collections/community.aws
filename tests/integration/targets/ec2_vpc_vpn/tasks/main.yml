@@ -36,7 +36,7 @@
     register: cgw
 
   - name: create transit gateway
-    ec2_transit_gateway:
+    community.aws.ec2_transit_gateway:
       description: "Transit Gateway for vpn attachment"
     register: tgw
 
@@ -222,7 +222,7 @@
     ignore_errors: true
 
   - name: delete transit gateway
-    ec2_transit_gateway:
+    community.aws.ec2_transit_gateway:
       transit_gateway_id: '{{ tgw.transit_gateway.transit_gateway_id }}'
       state: absent
     ignore_errors: true
