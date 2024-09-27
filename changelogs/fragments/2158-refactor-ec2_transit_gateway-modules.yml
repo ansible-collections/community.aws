@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - ec2_transit_gateway - Refactor ec2_transit_gateway module (https://github.com/ansible-collections/community.aws/pull/2158).
+  - ec2_transit_gateway_info - Refactor ec2_transit_gateway_info module (https://github.com/ansible-collections/community.aws/pull/2158).
