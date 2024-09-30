@@ -410,21 +410,21 @@ def describe_peering_connections(client, module: AnsibleAWSModule, params) -> Di
 
     try:
         peering_connections = describe_vpc_peering_connections(
-            client, **{"Filters": ansible_dict_to_boto3_filter_list(filters)}
+            client, Filters=ansible_dict_to_boto3_filter_list(filters)
         )
-        if peering_connections["VpcPeeringConnections"] == []:
+        if peering_connections == []:
             # Try again with the VPC/Peer relationship reversed
             filters = {
                 "requester-vpc-info.vpc-id": params["PeerVpcId"],
                 "accepter-vpc-info.vpc-id": params["VpcId"],
             }
             peering_connections = describe_vpc_peering_connections(
-                client, **{"Filters": ansible_dict_to_boto3_filter_list(filters)}
+                client, Filters=ansible_dict_to_boto3_filter_list(filters)
             )
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
-    return peering_connections["VpcPeeringConnections"]
+    return peering_connections
 
 
 def is_active(peering_connection: Dict[str, Any]) -> bool:
@@ -530,8 +530,8 @@ def get_peering_connection_by_id(client, module: AnsibleAWSModule, peering_id: s
     filters["VpcPeeringConnectionIds"] = [peering_id]
 
     try:
-        result = describe_vpc_peering_connections(client, **filters)
-        return result["VpcPeeringConnections"][0]
+        result = describe_vpc_peering_connections(client, VpcPeeringConnectionIds=[peering_id])
+        return result[0]
     except is_boto3_error_code("InvalidVpcPeeringConnectionId.Malformed") as e:
         module.fail_json_aws(e, msg="Malformed connection ID")
     except AnsibleEC2Error as e:  # pylint: disable=duplicate-except
