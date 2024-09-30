@@ -146,7 +146,6 @@ action_groups:
     - elasticache_subnet_group
     - elasticbeanstalk_app
     - elb_classic_lb
-    - elb_classic_lb_info
     - elb_instance
     - elb_network_lb
     - elb_target
@@ -520,6 +519,8 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
+    elb_classic_lb_info:
+      redirect: amazon.aws.elb_classic_lb_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
