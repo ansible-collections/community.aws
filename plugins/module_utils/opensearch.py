@@ -63,6 +63,10 @@ def get_domain_config(client, module, domain_name):
         for k in response["DomainConfig"]:
             if "Options" in response["DomainConfig"][k]:
                 domain_config[k] = response["DomainConfig"][k]["Options"]
+                # describe_domain_config method returns both CurrentState and DesiredState
+                # while update_domain_config only expects DesiredState
+                if k == "AIMLOptions" and "CurrentState" in domain_config[k]:
+                    del domain_config[k]["AIMLOptions"]["CurrentState"]
         domain_config["DomainName"] = domain_name
         # If ES cluster is attached to the Internet, the "VPCOptions" property is not present.
         if "VPCOptions" in domain_config:
