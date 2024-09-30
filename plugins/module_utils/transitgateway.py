@@ -4,149 +4,50 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from copy import deepcopy
+try:
+    from botocore.exceptions import BotoCoreError
+    from botocore.exceptions import ClientError
+except ImportError:
+    pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from typing import Optional
+from typing import Dict
+from typing import Any
+from typing import List
+from .modules import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
+
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
-from ansible_collections.community.aws.plugins.module_utils.ec2 import BaseEc2Manager
-from ansible_collections.community.aws.plugins.module_utils.ec2 import Boto3Mixin
-from ansible_collections.community.aws.plugins.module_utils.ec2 import Ec2WaiterFactory
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_attachments
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_tgw_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_subnets
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import boto3_resource_to_ansible_dict
 
 
-class TgwWaiterFactory(Ec2WaiterFactory):
-    @property
-    def _waiter_model_data(self):
-        data = super(TgwWaiterFactory, self)._waiter_model_data
-        # split the TGW waiters so we can keep them close to everything else.
-        tgw_data = dict(
-            tgw_attachment_available=dict(
-                operation="DescribeTransitGatewayAttachments",
-                delay=5,
-                maxAttempts=120,
-                acceptors=[
-                    dict(
-                        state="success",
-                        matcher="pathAll",
-                        expected="available",
-                        argument="TransitGatewayAttachments[].State",
-                    ),
-                ],
-            ),
-            tgw_attachment_deleted=dict(
-                operation="DescribeTransitGatewayAttachments",
-                delay=5,
-                maxAttempts=120,
-                acceptors=[
-                    dict(
-                        state="retry",
-                        matcher="pathAll",
-                        expected="deleting",
-                        argument="TransitGatewayAttachments[].State",
-                    ),
-                    dict(
-                        state="success",
-                        matcher="pathAll",
-                        expected="deleted",
-                        argument="TransitGatewayAttachments[].State",
-                    ),
-                    dict(
-                        state="success",
-                        matcher="path",
-                        expected=True,
-                        argument="length(TransitGatewayAttachments[]) == `0`",
-                    ),
-                    dict(state="success", matcher="error", expected="InvalidRouteTableID.NotFound"),
-                ],
-            ),
-        )
-        data.update(tgw_data)
-        return data
-
-
-class TGWAttachmentBoto3Mixin(Boto3Mixin):
-    def __init__(self, module, **kwargs):
-        self.tgw_waiter_factory = TgwWaiterFactory(module)
-        super(TGWAttachmentBoto3Mixin, self).__init__(module, **kwargs)
-
-    # Paginators can't be (easily) wrapped, so we wrap this method with the
-    # retry - retries the full fetch, but better than simply giving up.
-    @AWSRetry.jittered_backoff()
-    def _paginated_describe_transit_gateway_vpc_attachments(self, **params):
-        paginator = self.client.get_paginator("describe_transit_gateway_vpc_attachments")
-        return paginator.paginate(**params).build_full_result()
-
-    @Boto3Mixin.aws_error_handler("describe transit gateway attachments")
-    def _describe_vpc_attachments(self, **params):
-        result = self._paginated_describe_transit_gateway_vpc_attachments(**params)
-        return result.get("TransitGatewayVpcAttachments", None)
-
-    @Boto3Mixin.aws_error_handler("create transit gateway attachment")
-    def _create_vpc_attachment(self, **params):
-        result = self.client.create_transit_gateway_vpc_attachment(aws_retry=True, **params)
-        return result.get("TransitGatewayVpcAttachment", None)
-
-    @Boto3Mixin.aws_error_handler("modify transit gateway attachment")
-    def _modify_vpc_attachment(self, **params):
-        result = self.client.modify_transit_gateway_vpc_attachment(aws_retry=True, **params)
-        return result.get("TransitGatewayVpcAttachment", None)
-
-    @Boto3Mixin.aws_error_handler("delete transit gateway attachment")
-    def _delete_vpc_attachment(self, **params):
-        try:
-            result = self.client.delete_transit_gateway_vpc_attachment(aws_retry=True, **params)
-        except is_boto3_error_code("ResourceNotFoundException"):
-            return None
-        return result.get("TransitGatewayVpcAttachment", None)
-
-    @Boto3Mixin.aws_error_handler("transit gateway attachment to finish deleting")
-    def _wait_tgw_attachment_deleted(self, **params):
-        waiter = self.tgw_waiter_factory.get_waiter("tgw_attachment_deleted")
-        waiter.wait(**params)
-
-    @Boto3Mixin.aws_error_handler("transit gateway attachment to become available")
-    def _wait_tgw_attachment_available(self, **params):
-        waiter = self.tgw_waiter_factory.get_waiter("tgw_attachment_available")
-        waiter.wait(**params)
-
-    def _normalize_tgw_attachment(self, rtb):
-        return self._normalize_boto3_resource(rtb)
-
-    def _get_tgw_vpc_attachment(self, **params):
-        # Only for use with a single attachment, use _describe_vpc_attachments for
-        # multiple tables.
-        attachments = self._describe_vpc_attachments(**params)
-
-        if not attachments:
-            return None
-
-        attachment = attachments[0]
-        return attachment
-
-
-class BaseTGWManager(BaseEc2Manager):
-    @Boto3Mixin.aws_error_handler("connect to AWS")
-    def _create_client(self, client_name="ec2"):
-        if client_name == "ec2":
-            error_codes = ["IncorrectState"]
-        else:
-            error_codes = []
-
-        retry_decorator = AWSRetry.jittered_backoff(
-            catch_extra_error_codes=error_codes,
-        )
-        client = self.module.client(client_name, retry_decorator=retry_decorator)
-        return client
-
-
-class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager):
+class TransitGatewayVpcAttachmentManager:
     TAG_RESOURCE_TYPE = "transit-gateway-attachment"
 
-    def __init__(self, module, id=None):
-        self._subnet_updates = dict()
-        super(TransitGatewayVpcAttachmentManager, self).__init__(module=module, id=id)
+    def __init__(self, module: AnsibleAWSModule, id: Optional[str] = None) -> None:
+        self.module = module
+        self.subnet_updates = dict()
+        self.id = id
+        self.changed = False
+        self.results = {"changed": False}
+        self.wait = module.params.get("wait")
+        self.connection = self.module.client("ec2")
+        self.check_mode = self.module.check_mode
+        self.original_resource = dict()
+        self.updated_resource = dict()
+        self.resource_updates = dict()
+        self.preupdate_resource = dict()
+        self._wait_timeout = None
 
-    def _get_id_params(self, id=None, id_list=False):
+    def get_id_params(self, id: Optional[str] = None, id_list: bool = False) -> Dict[str, List[str]]:
         if not id:
             id = self.resource_id
         if not id:
@@ -157,14 +58,8 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
             return dict(TransitGatewayAttachmentIds=[id])
         return dict(TransitGatewayAttachmentId=id)
 
-    def _extra_error_output(self):
-        output = super(TransitGatewayVpcAttachmentManager, self)._extra_error_output()
-        if self.resource_id:
-            output["TransitGatewayAttachmentId"] = self.resource_id
-        return output
-
-    def _filter_immutable_resource_attributes(self, resource):
-        resource = super(TransitGatewayVpcAttachmentManager, self)._filter_immutable_resource_attributes(resource)
+    def filter_immutable_resource_attributes(self, resource: Dict[str, Any]) -> Dict[str, Any]:
+        resource = deepcopy(resource)
         resource.pop("TransitGatewayId", None)
         resource.pop("VpcId", None)
         resource.pop("VpcOwnerId", None)
@@ -174,7 +69,7 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
         resource.pop("Tags", None)
         return resource
 
-    def _set_option(self, name, value):
+    def set_option(self, name: str, value: Optional[bool]) -> bool:
         if value is None:
             return False
         # For now VPC Attachment options are all enable/disable
@@ -183,42 +78,59 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
         else:
             value = "disable"
 
-        options = deepcopy(self._preupdate_resource.get("Options", dict()))
-        options.update(self._resource_updates.get("Options", dict()))
+        options = deepcopy(self.preupdate_resource.get("Options", dict()))
+        options.update(self.resource_updates.get("Options", dict()))
         options[name] = value
 
-        return self._set_resource_value("Options", options)
+        return self.set_resource_value("Options", options)
 
-    def set_dns_support(self, value):
-        return self._set_option("DnsSupport", value)
+    def set_resource_value(self, key, value, description=None, immutable=False):
+        if value is None:
+            return False
+        if value == self._get_resource_value(key):
+            return False
+        if immutable and self.original_resource:
+            if description is None:
+                description = key
+            self.module.fail_json(msg=f"{description} can not be updated after creation")
+        self.resource_updates[key] = value
+        self.changed = True
+        return True
 
-    def set_multicast_support(self, value):
-        return self._set_option("MulticastSupport", value)
+    def get_resource_value(self, key, default=None):
+        default_value = self.preupdate_resource.get(key, default)
+        return self.resource_updates.get(key, default_value)
 
-    def set_ipv6_support(self, value):
-        return self._set_option("Ipv6Support", value)
+    def set_dns_support(self, value: Optional[bool]) -> bool:
+        return self.set_option("DnsSupport", value)
 
-    def set_appliance_mode_support(self, value):
-        return self._set_option("ApplianceModeSupport", value)
+    def set_multicast_support(self, value: Optional[bool]) -> bool:
+        return self.set_option("MulticastSupport", value)
 
-    def set_transit_gateway(self, tgw_id):
-        return self._set_resource_value("TransitGatewayId", tgw_id)
+    def set_ipv6_support(self, value: Optional[bool]) -> bool:
+        return self.set_option("Ipv6Support", value)
 
-    def set_vpc(self, vpc_id):
-        return self._set_resource_value("VpcId", vpc_id)
+    def set_appliance_mode_support(self, value: Optional[bool]) -> bool:
+        return self.set_option("ApplianceModeSupport", value)
 
-    def set_subnets(self, subnets=None, purge=True):
+    def set_transit_gateway(self, tgw_id: str) -> bool:
+        return self.set_resource_value("TransitGatewayId", tgw_id)
+
+    def set_vpc(self, vpc_id: str) -> bool:
+        return self.set_resource_value("VpcId", vpc_id)
+
+    def set_subnets(self, subnets: Optional[List[str]] = None, purge: bool = True) -> bool:
         if subnets is None:
             return False
 
-        current_subnets = set(self._preupdate_resource.get("SubnetIds", []))
+        current_subnets = set(self.preupdate_resource.get("SubnetIds", []))
         desired_subnets = set(subnets)
         if not purge:
             desired_subnets = desired_subnets.union(current_subnets)
 
         # We'll pull the VPC ID from the subnets, no point asking for
         # information we 'know'.
-        subnet_details = self._describe_subnets(SubnetIds=list(desired_subnets))
+        subnet_details = describe_subnets(SubnetIds=list(desired_subnets))
         vpc_id = self.subnets_to_vpc(desired_subnets, subnet_details)
         self._set_resource_value("VpcId", vpc_id, immutable=True)
 
@@ -235,16 +147,16 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
         subnets_to_remove = list(current_subnets.difference(desired_subnets))
         if not subnets_to_remove and not subnets_to_add:
             return False
-        self._subnet_updates = dict(add=subnets_to_add, remove=subnets_to_remove)
-        self._set_resource_value("SubnetIds", list(desired_subnets))
+        self.subnet_updates = dict(add=subnets_to_add, remove=subnets_to_remove)
+        self.set_resource_value("SubnetIds", list(desired_subnets))
         return True
 
-    def subnets_to_vpc(self, subnets, subnet_details=None):
+    def subnets_to_vpc(self, subnets: List[str], subnet_details: Optional[List[Dict[str, Any]]] = None) -> Optional[str]:
         if not subnets:
             return None
 
         if subnet_details is None:
-            subnet_details = self._describe_subnets(SubnetIds=list(subnets))
+            subnet_details = describe_subnets(SubnetIds=list(subnets))
 
         vpcs = [s.get("VpcId") for s in subnet_details]
         if len(set(vpcs)) > 1:
@@ -256,40 +168,122 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
 
         return vpcs[0]
 
-    def _do_deletion_wait(self, id=None, **params):
-        all_params = self._get_id_params(id=id, id_list=True)
-        all_params.update(**params)
-        return self._wait_tgw_attachment_deleted(**all_params)
+    def merge_resource_changes(self, filter_immutable=True, creation=False):
+        resource = deepcopy(self.preupdate_resource)
+        resource.update(self.resource_updates)
 
-    def _do_creation_wait(self, id=None, **params):
-        all_params = self._get_id_params(id=id, id_list=True)
-        all_params.update(**params)
-        return self._wait_tgw_attachment_available(**all_params)
+        if filter_immutable:
+            resource = self.filter_immutable_resource_attributes(resource)
 
-    def _do_update_wait(self, id=None, **params):
-        all_params = self._get_id_params(id=id, id_list=True)
-        all_params.update(**params)
-        return self._wait_tgw_attachment_available(**all_params)
+        return resource
 
-    def _do_create_resource(self):
-        params = self._merge_resource_changes(filter_immutable=False, creation=True)
-        response = self._create_vpc_attachment(**params)
+    def wait_tgw_attachment_deleted(self, **params: Any) -> None:
+        if self.wait:
+            try:
+                waiter = get_waiter(self.connection, "transit_gateway_vpc_attachment_deleted")
+                waiter.wait(**params)
+            except (BotoCoreError, ClientError) as e:
+                self.module.fail_json_aws(e)
+
+    def wait_tgw_attachment_available(self, **params: Any) -> None:
+        if self.wait:
+            try:
+                waiter = get_waiter(self.connection, "transit_gateway_vpc_attachment_available")
+                waiter.wait(**params)
+            except (BotoCoreError, ClientError) as e:
+                self.module.fail_json_aws(e)
+
+    def do_deletion_wait(self, id: Optional[str] = None, **params: Any) -> None:
+        all_params = self.get_id_params(id=id, id_list=True)
+        all_params.update(**params)
+        return self.wait_tgw_attachment_deleted(**all_params)
+
+    def do_creation_wait(self, id: Optional[str] = None, **params: Any) -> None:
+        all_params = self.get_id_params(id=id, id_list=True)
+        all_params.update(**params)
+        return self.wait_tgw_attachment_available(**all_params)
+
+    def do_update_wait(self, id: Optional[str] = None, **params: Any) -> None:
+        all_params = self.get_id_params(id=id, id_list=True)
+        all_params.update(**params)
+        return self.wait_tgw_attachment_available(**all_params)
+
+    @property
+    def waiter_config(self):
+        params = dict()
+        if self._wait_timeout:
+            delay = min(5, self._wait_timeout)
+            max_attempts = self._wait_timeout // delay
+            config = dict(Delay=delay, MaxAttempts=max_attempts)
+            params["WaiterConfig"] = config
+        return params
+
+    def wait_for_deletion(self):
+        if not self.wait:
+            return
+        params = self.waiter_config
+        self.do_deletion_wait(**params)
+
+    def wait_for_creation(self):
+        if not self.wait:
+            return
+        params = self.waiter_config
+        self.do_creation_wait(**params)
+
+    def wait_for_update(self):
+        if not self.wait:
+            return
+        params = self.waiter_config
+        self.do_update_wait(**params)
+
+    def generate_updated_resource(self):
+        """
+        Merges all pending changes into self.updated_resource
+        Used during check mode where it's not possible to get and
+        refresh the resource
+        """
+        return self.merge_resource_changes(filter_immutable=False)
+
+    def flush_create(self):
+        changed = True
+
+        if not self.module.check_mode:
+            changed = self.do_create_resource()
+            self.wait_for_creation()
+            self.do_creation_wait()
+            self.updated_resource = self.get_resource()
+        else:  # (CHECK MODE)
+            self.updated_resource = self.normalize_tgw_attachment(self.generate_updated_resource())
+
+        self.resource_updates = dict()
+        self.changed = changed
+        return True
+
+    def check_updates_pending(self):
+        if self.resource_updates:
+            return True
+        return False
+
+    def do_create_resource(self) -> Optional[Dict[str, Any]]:
+        params = self.merge_resource_changes(filter_immutable=False, creation=True)
+        response = create_vpc_attachment(**params)
         if response:
             self.resource_id = response.get("TransitGatewayAttachmentId", None)
         return response
 
-    def _do_update_resource(self):
-        if self._preupdate_resource.get("State", None) == "pending":
+    def do_update_resource(self) -> bool:
+        if self.preupdate_resource.get("State", None) == "pending":
             # Resources generally don't like it if you try to update before creation
             # is complete.  If things are in a 'pending' state they'll often throw
             # exceptions.
-            self._wait_for_creation()
-        elif self._preupdate_resource.get("State", None) == "deleting":
+
+            self.wait_for_creation()
+        elif self.preupdate_resource.get("State", None) == "deleting":
             self.module.fail_json(msg="Deletion in progress, unable to update", route_tables=[self.original_resource])
 
-        updates = self._filter_immutable_resource_attributes(self._resource_updates)
-        subnets_to_add = self._subnet_updates.get("add", [])
-        subnets_to_remove = self._subnet_updates.get("remove", [])
+        updates = self.filter_immutable_resource_attributes(self.resource_updates)
+        subnets_to_add = self.subnet_updates.get("add", [])
+        subnets_to_remove = self.subnet_updates.get("remove", [])
         if subnets_to_add:
             updates["AddSubnetIds"] = subnets_to_add
         if subnets_to_remove:
@@ -301,19 +295,19 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
         if self.module.check_mode:
             return True
 
-        updates.update(self._get_id_params(id_list=False))
-        self._modify_vpc_attachment(**updates)
+        updates.update(self.get_id_params(id_list=False))
+        modify_vpc_attachment(**updates)
         return True
 
-    def get_resource(self):
+    def get_resource(self) -> Optional[Dict[str, Any]]:
         return self.get_attachment()
 
-    def delete(self, id=None):
+    def delete(self, id: Optional[str] = None) -> bool:
         if id:
-            id_params = self._get_id_params(id=id, id_list=True)
-            result = self._get_tgw_vpc_attachment(**id_params)
+            id_params = self.get_id_params(id=id, id_list=True)
+            result = get_tgw_vpc_attachment(**id_params)
         else:
-            result = self._preupdate_resource
+            result = self.preupdate_resource
 
         self.updated_resource = dict()
 
@@ -321,53 +315,53 @@ class TransitGatewayVpcAttachmentManager(TGWAttachmentBoto3Mixin, BaseTGWManager
             return False
 
         if result.get("State") == "deleting":
-            self._wait_for_deletion()
+            self.wait_for_deletion()
             return False
 
         if self.module.check_mode:
             self.changed = True
             return True
 
-        id_params = self._get_id_params(id=id, id_list=False)
+        id_params = self.get_id_params(id=id, id_list=False)
 
-        result = self._delete_vpc_attachment(**id_params)
+        result = delete_vpc_attachment(**id_params)
 
         self.changed |= bool(result)
 
-        self._wait_for_deletion()
+        self.wait_for_deletion()
         return bool(result)
 
-    def list(self, filters=None, id=None):
+    def list(self, filters: Optional[Dict[str, Any]] = None, id: Optional[str] = None) -> List[Dict[str, Any]]:
         params = dict()
         if id:
             params["TransitGatewayAttachmentIds"] = [id]
         if filters:
             params["Filters"] = ansible_dict_to_boto3_filter_list(filters)
-        attachments = self._describe_vpc_attachments(**params)
+        attachments = describe_vpc_attachments(**params)
         if not attachments:
-            return list()
+            return []
 
-        return [self._normalize_tgw_attachment(a) for a in attachments]
+        return [self.normalize_tgw_attachment(a) for a in attachments]
 
-    def get_attachment(self, id=None):
+    def get_attachment(self, id: Optional[str] = None) -> Optional[Dict[str, Any]]:
         # RouteTable needs a list, Association/Propagation needs a single ID
-        id_params = self._get_id_params(id=id, id_list=True)
-        id_param = self._get_id_params(id=id, id_list=False)
-        result = self._get_tgw_vpc_attachment(**id_params)
+        id_params = self.get_id_params(id=id, id_list=True)
+        id_param = self.get_id_params(id=id, id_list=False)
+        result = get_tgw_vpc_attachment(**id_params)
 
         if not result:
             return None
 
         if not id:
-            self._preupdate_resource = deepcopy(result)
+            self.preupdate_resource = deepcopy(result)
 
-        attachment = self._normalize_tgw_attachment(result)
+        attachment = self.normalize_tgw_attachment(result)
         return attachment
 
-    def _normalize_resource(self, resource):
-        return self._normalize_tgw_attachment(resource)
+    def normalize_tgw_attachment(self, resource: Dict[str, Any]) -> Dict[str, Any]:
+        return boto3_resource_to_ansible_dict(resource, force_tags=False)
 
-    def get_states(self):
+    def get_states(self) -> List[str]:
         return [
             "available",
             "deleting",
