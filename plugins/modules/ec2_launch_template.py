@@ -21,6 +21,7 @@ options:
   template_id:
     description:
     - The ID for the launch template, can be used for all cases except creating a new Launch Template.
+    - At least one of O(template_id) and O(template_name) must be specified.
     aliases: [id]
     type: str
   template_name:
@@ -31,6 +32,7 @@ options:
       nothing happens.
     - If a launch template with the specified name already exists and the configuration has changed,
       a new version of the launch template is created.
+    - At least one of O(template_id) and O(template_name) must be specified.
     aliases: [name]
     type: str
   default_version:
@@ -367,20 +369,23 @@ options:
         version_added: 3.1.0
         type: str
         description: >
-          - Wether the instance metadata endpoint is available via IPv6 (C(enabled)) or not (C(disabled)).
+          - Wether the instance metadata endpoint is available via IPv6 (V(enabled)) or not (V(disabled)).
         choices: [enabled, disabled]
         default: 'disabled'
       instance_metadata_tags:
         version_added: 3.1.0
         type: str
         description:
-          - Wether the instance tags are availble (C(enabled)) via metadata endpoint or not (C(disabled)).
+          - Wether the instance tags are availble (V(enabled)) via metadata endpoint or not (V(disabled)).
         choices: [enabled, disabled]
         default: 'disabled'
+notes:
+  - Support for O(purge_tags) was added in release 8.1.0.
 extends_documentation_fragment:
 - amazon.aws.common.modules
 - amazon.aws.region.modules
 - amazon.aws.boto3
+- amazon.aws.tags
 """
 
 EXAMPLES = r"""
@@ -411,70 +416,217 @@ EXAMPLES = r"""
 
 RETURN = r"""
 latest_version:
-  description: Latest available version of the launch template
-  returned: when state=present
+  description: The latest available version number of the launch template.
+  returned: when RV(latest_template) has a version number.
   type: int
 default_version:
   description: The version that will be used if only the template name is specified. Often this is the same as the latest version, but not always.
-  returned: when state=present
+  returned: when RV(default_template) has a version number.
   type: int
+template:
+  description: Latest available version of the launch template.
+  returned: when O(state=present)
+  returned: always
+  type: complex
+  contains:
+    launch_template_id:
+      description: The ID of the launch template.
+      type: str
+      returned: always
+    launch_template_name:
+      description: The name of the launch template.
+      type: str
+      returned: always
+    create_time:
+      description: The time launch template was created.
+      type: str
+      returned: always
+    created_by:
+      description: The principal that created the launch template.
+      type: str
+      returned: always
+    default_version_number:
+      description: The version number of the default version of the launch template.
+      type: int
+      returned: always
+    latest_version_number:
+      description: The version number of the latest version of the launch template.
+      type: int
+      returned: always
+    tags:
+      description: A dictionary of tags assigned to image.
+      returned: when AMI is created or already exists
+      type: dict
+      sample: {
+          "Env": "devel",
+          "Name": "nat-server"
+      }
+versions:
+  description: All available versions of the launch template.
+  returned: when O(state=present)
+  type: list
+  elements: dict
+  returned: always
+  contains:
+    launch_template_id:
+      description: The ID of the launch template.
+      type: str
+      returned: always
+    launch_template_name:
+      description: The name of the launch template.
+      type: str
+      returned: always
+    create_time:
+      description: The time launch template was created.
+      type: str
+      returned: always
+    created_by:
+      description: The principal that created the launch template.
+      type: str
+      returned: always
+    default_version_number:
+      description: The version number of the default version of the launch template.
+      type: int
+      returned: always
+    latest_version_number:
+      description: The version number of the latest version of the launch template.
+      type: int
+      returned: always
+    tags:
+      description: A dictionary of tags assigned to image.
+      returned: when AMI is created or already exists
+      type: dict
+      sample: {
+          "Env": "devel",
+          "Name": "nat-server"
+      }
+latest_template:
+  description: The latest available version of the launch template.
+  returned: when O(state=present)
+  returned: always
+  type: complex
+  contains:
+  type: complex
+  contains:
+    launch_template_id:
+      description: The ID of the launch template.
+      type: str
+      returned: always
+    launch_template_name:
+      description: The name of the launch template.
+      type: str
+      returned: always
+    create_time:
+      description: The time launch template was created.
+      type: str
+      returned: always
+    created_by:
+      description: The principal that created the launch template.
+      type: str
+      returned: always
+    default_version_number:
+      description: The version number of the default version of the launch template.
+      type: int
+      returned: always
+    latest_version_number:
+      description: The version number of the latest version of the launch template.
+      type: int
+      returned: always
+    tags:
+      description: A dictionary of tags assigned to image.
+      returned: when AMI is created or already exists
+      type: dict
+      sample: {
+          "Env": "devel",
+          "Name": "nat-server"
+      }
+default_template:
+  description: The launch template version that will be used if only the template name is specified. Often this is the same as the latest version, but not always.
+  returned: when O(state=present)
+  returned: always
+  type: complex
+  contains:
+    launch_template_id:
+      description: The ID of the launch template.
+      type: str
+      returned: always
+    launch_template_name:
+      description: The name of the launch template.
+      type: str
+      returned: always
+    create_time:
+      description: The time launch template was created.
+      type: str
+      returned: always
+    created_by:
+      description: The principal that created the launch template.
+      type: str
+      returned: always
+    default_version_number:
+      description: The version number of the default version of the launch template.
+      type: int
+      returned: always
+    latest_version_number:
+      description: The version number of the latest version of the launch template.
+      type: int
+      returned: always
+    tags:
+      description: A dictionary of tags assigned to image.
+      returned: when AMI is created or already exists
+      type: dict
+      sample: {
+          "Env": "devel",
+          "Name": "nat-server"
+      }
 """
 
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
 from uuid import uuid4
-
-try:
-    from botocore.exceptions import BotoCoreError
-    from botocore.exceptions import ClientError
-    from botocore.exceptions import WaiterError
-except ImportError:
-    pass  # caught by AnsibleAWSModule
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.arn import validate_aws_arn
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_launch_template
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_launch_template_version
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_launch_template
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_launch_template_versions
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_launch_template_versions
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_launch_templates
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import determine_iam_arn_from_name
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_launch_template
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import scrub_none_parameters
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
-def determine_iam_role(module, name_or_arn):
-    if validate_aws_arn(name_or_arn, service="iam", resource_type="instance-profile"):
-        return {"arn": name_or_arn}
-    iam = module.client("iam", retry_decorator=AWSRetry.jittered_backoff())
+def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, Any]], Optional[List[Dict[str, Any]]]]:
+    launch_template = None
+    launch_template_versions = []
     try:
-        role = iam.get_instance_profile(InstanceProfileName=name_or_arn, aws_retry=True)
-        return {"arn": role["InstanceProfile"]["Arn"]}
-    except is_boto3_error_code("NoSuchEntity") as e:
-        module.fail_json_aws(e, msg=f"Could not find instance_role {name_or_arn}")
-    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(
-            e,
-            msg=f"An error occurred while searching for instance_role {name_or_arn}. Please try supplying the full ARN.",
-        )
-
-
-def existing_templates(module):
-    ec2 = module.client("ec2", retry_decorator=AWSRetry.jittered_backoff())
-    matches = None
-    try:
-        if module.params.get("template_id"):
-            matches = ec2.describe_launch_templates(
-                LaunchTemplateIds=[module.params.get("template_id")], aws_retry=True
+        params = {}
+        template_id = module.params.get("template_id")
+        template_name = module.params.get("template_name")
+        if template_id:
+            params["launch_template_ids"] = [template_id]
+        else:
+            params["launch_template_names"] = [template_name]
+        launch_templates = describe_launch_templates(client, **params)
+        if launch_templates:
+            launch_template = launch_templates[0]
+            launch_template_versions = describe_launch_template_versions(
+                LaunchTemplateId=launch_template["LaunchTemplateId"]
             )
-        elif module.params.get("template_name"):
-            matches = ec2.describe_launch_templates(
-                LaunchTemplateNames=[module.params.get("template_name")], aws_retry=True
-            )
-    except is_boto3_error_code("InvalidLaunchTemplateName.NotFoundException") as e:
-        # no named template was found, return nothing/empty versions
-        return None, []
-    except is_boto3_error_code("InvalidLaunchTemplateId.Malformed") as e:  # pylint: disable=duplicate-except
+        return launch_template, launch_template_versions
+    except is_ansible_aws_error_code("InvalidLaunchTemplateId.Malformed") as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
             msg=(
@@ -482,46 +634,28 @@ def existing_templates(module):
                 " with `lt-....`"
             ),
         )
-    except is_boto3_error_code("InvalidLaunchTemplateId.NotFoundException") as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(
-            e,
-            msg=(
-                f"Launch template with ID {module.params.get('launch_template_id')} could not be found, please supply a"
-                " name instead so that a new template can be created"
-            ),
-        )
-    except (ClientError, BotoCoreError, WaiterError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Could not check existing launch templates. This may be an IAM permission problem.")
-    else:
-        template = matches["LaunchTemplates"][0]
-        template_id, template_version, template_default = (
-            template["LaunchTemplateId"],
-            template["LatestVersionNumber"],
-            template["DefaultVersionNumber"],
-        )
-        try:
-            return (
-                template,
-                ec2.describe_launch_template_versions(LaunchTemplateId=template_id, aws_retry=True)[
-                    "LaunchTemplateVersions"
-                ],
-            )
-        except (ClientError, BotoCoreError, WaiterError) as e:
-            module.fail_json_aws(
-                e,
-                msg=f"Could not find launch template versions for {template['LaunchTemplateName']} (ID: {template_id}).",
-            )
+    except AnsibleEC2Error as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws_error(e)
+    # except is_boto3_error_code("InvalidLaunchTemplateId.NotFoundException") as e:  # pylint: disable=duplicate-except
+    #     module.fail_json_aws(
+    #         e,
+    #         msg=(
+    #             f"Launch template with ID {module.params.get('launch_template_id')} could not be found, please supply a"
+    #             " name instead so that a new template can be created"
+    #         ),
+    #     )
+    # except (ClientError, BotoCoreError, WaiterError) as e:  # pylint: disable=duplicate-except
+    #     module.fail_json_aws(e, msg="Could not check existing launch templates. This may be an IAM permission problem.")
 
 
-def params_to_launch_data(module, template_params):
-    if template_params.get("tags"):
-        tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
-        template_params["tag_specifications"] = [
-            {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume")
-        ]
-        del template_params["tags"]
-    if module.params.get("iam_instance_profile"):
-        template_params["iam_instance_profile"] = determine_iam_role(module, module.params["iam_instance_profile"])
+def params_to_launch_data(
+    template_params: Dict[str, Any], iam_instance_profile_arn: Optional[str] = None
+) -> Dict[str, Any]:
+    if iam_instance_profile_arn:
+        template_params["iam_instance_profile"] = {"arn": iam_instance_profile_arn}
+    for interface in template_params.get("network_interfaces") or []:
+        if interface.get("ipv6_addresses"):
+            interface["ipv6_addresses"] = [{"ipv6_address": x} for x in interface["ipv6_addresses"]]
     params = snake_dict_to_camel_dict(
         dict((k, v) for k, v in template_params.items() if v is not None),
         capitalize_first=True,
@@ -529,170 +663,194 @@ def params_to_launch_data(module, template_params):
     return params
 
 
-def delete_template(module):
-    ec2 = module.client("ec2", retry_decorator=AWSRetry.jittered_backoff())
-    template, template_versions = existing_templates(module)
+def validate_string_as_int(module: AnsibleAWSModule, version: str, param_name: str) -> int:
+    try:
+        return int(version)
+    except ValueError:
+        module.fail_json(msg=f'{param_name} param was not a valid integer, got "{version}"')
+
+
+def ensure_absent(
+    client, module: AnsibleAWSModule, existing: Optional[Dict[str, Any]], existing_versions: List[Dict[str, Any]]
+) -> None:
     deleted_versions = []
-    if template or template_versions:
-        non_default_versions = [to_text(t["VersionNumber"]) for t in template_versions if not t["DefaultVersion"]]
+    deleted_template = {}
+    changed = False
+
+    if existing:
+        launch_template_id = existing["LaunchTemplateId"]
+        non_default_versions = [to_text(t["VersionNumber"]) for t in existing_versions if not t["DefaultVersion"]]
+
         if non_default_versions:
+            if module.check_mode:
+                module.exit_json(
+                    changed=True,
+                    msg=f"Would have deleted launch template versions: {non_default_versions} if not in check mode",
+                )
             try:
-                v_resp = ec2.delete_launch_template_versions(
-                    LaunchTemplateId=template["LaunchTemplateId"],
-                    Versions=non_default_versions,
-                    aws_retry=True,
+                v_resp = delete_launch_template_versions(
+                    client, launch_template_id=launch_template_id, versions=non_default_versions
                 )
                 if v_resp["UnsuccessfullyDeletedLaunchTemplateVersions"]:
                     module.warn(
                         f"Failed to delete template versions {v_resp['UnsuccessfullyDeletedLaunchTemplateVersions']} on"
-                        f" launch template {template['LaunchTemplateId']}"
+                        f" launch template {launch_template_id}"
                     )
                 deleted_versions = [
                     camel_dict_to_snake_dict(v) for v in v_resp["SuccessfullyDeletedLaunchTemplateVersions"]
                 ]
-            except (ClientError, BotoCoreError) as e:
+            except AnsibleEC2Error as e:
                 module.fail_json_aws(
-                    e,
-                    msg=f"Could not delete existing versions of the launch template {template['LaunchTemplateId']}",
+                    e, msg=f"Could not delete existing versions of the launch template {launch_template_id}"
                 )
-        try:
-            resp = ec2.delete_launch_template(
-                LaunchTemplateId=template["LaunchTemplateId"],
-                aws_retry=True,
+
+        if module.check_mode:
+            module.exit_json(
+                changed=True, msg=f"Would have deleted launch template {launch_template_id} if not in check mode"
             )
-        except (ClientError, BotoCoreError) as e:
-            module.fail_json_aws(e, msg=f"Could not delete launch template {template['LaunchTemplateId']}")
-        return {
-            "deleted_versions": deleted_versions,
-            "deleted_template": camel_dict_to_snake_dict(resp["LaunchTemplate"]),
-            "changed": True,
-        }
-    else:
-        return {"changed": False}
+        try:
+            deleted_template = delete_launch_template(client, launch_template_id=launch_template_id)
+        except AnsibleEC2Error as e:
+            module.fail_json_aws(e, msg=f"Could not delete launch template {launch_template_id}")
 
-
-def create_or_update(module, template_options):
-    ec2 = module.client(
-        "ec2", retry_decorator=AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidLaunchTemplateId.NotFound"])
+    module.exit_json(
+        changed=changed, deleted_versions=deleted_versions, deleted_template=camel_dict_to_snake_dict(deleted_template)
     )
-    template, template_versions = existing_templates(module)
-    out = {}
-    lt_data = params_to_launch_data(module, dict((k, v) for k, v in module.params.items() if k in template_options))
-    lt_data = scrub_none_parameters(lt_data, descend_into_lists=True)
 
-    if not (template or template_versions):
-        # create a full new one
-        try:
-            resp = ec2.create_launch_template(
-                LaunchTemplateName=module.params["template_name"],
-                LaunchTemplateData=lt_data,
-                ClientToken=uuid4().hex,
-                aws_retry=True,
-            )
-        except (ClientError, BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't create launch template")
-        template, template_versions = existing_templates(module)
-        out["changed"] = True
-    elif template and template_versions:
-        most_recent = sorted(template_versions, key=lambda x: x["VersionNumber"])[-1]
-        if lt_data == most_recent["LaunchTemplateData"] and module.params["version_description"] == most_recent.get(
-            "VersionDescription", ""
-        ):
-            out["changed"] = False
-            return out
-        try:
-            if module.params.get("source_version") in (None, ""):
-                resp = ec2.create_launch_template_version(
-                    LaunchTemplateId=template["LaunchTemplateId"],
-                    LaunchTemplateData=lt_data,
-                    ClientToken=uuid4().hex,
-                    VersionDescription=str(module.params["version_description"]),
-                    aws_retry=True,
-                )
-            elif module.params.get("source_version") == "latest":
-                resp = ec2.create_launch_template_version(
-                    LaunchTemplateId=template["LaunchTemplateId"],
-                    LaunchTemplateData=lt_data,
-                    ClientToken=uuid4().hex,
-                    SourceVersion=str(most_recent["VersionNumber"]),
-                    VersionDescription=str(module.params["version_description"]),
-                    aws_retry=True,
-                )
+
+def add_launch_template_version(
+    client,
+    module: AnsibleAWSModule,
+    launch_template_id: str,
+    existing_versions: List[Dict[str, Any]],
+    most_recent_version_number: str,
+) -> None:
+    source_version = module.params.get("source_version")
+    version_description = module.params.get("version_description")
+
+    params = {
+        "LaunchTemplateId": launch_template_id,
+        "ClientToken": uuid4().hex,
+        "VersionDescription": version_description,
+    }
+
+    if source_version == "latest":
+        params.update({"SourceVersion": most_recent_version_number})
+    elif source_version not in (None, ""):
+        # Source version passed as int
+        source_version_int = validate_string_as_int(module, source_version, "source_version")
+        # get source template version
+        next_source_version = next(
+            (v for v in existing_versions if v["VersionNumber"] == source_version_int),
+            None,
+        )
+        if next_source_version is None:
+            module.fail_json(msg=f'source_version does not exist, got "{source_version}"')
+        params.update({"SourceVersion": str(next_source_version["VersionNumber"])})
+
+    if module.check_mode:
+        module.exit_json(changed=True, msg="Would have created launch template version if not in check mode.")
+
+    try:
+        # Create Launch template version
+        launch_template_version = create_launch_template_version(client, **params)
+
+        # Modify default version
+        default_version = module.params.get("default_version")
+        if default_version not in (None, ""):
+            if default_version == "latest":
+                default_version = to_text(launch_template_version["VersionNumber"])
             else:
-                try:
-                    int(module.params.get("source_version"))
-                except ValueError:
-                    module.fail_json(
-                        msg=f"source_version param was not a valid integer, got \"{module.params.get('source_version')}\""
-                    )
-                # get source template version
-                source_version = next(
-                    (v for v in template_versions if v["VersionNumber"] == int(module.params.get("source_version"))),
-                    None,
-                )
-                if source_version is None:
-                    module.fail_json(
-                        msg=f"source_version does not exist, got \"{module.params.get('source_version')}\""
-                    )
-                resp = ec2.create_launch_template_version(
-                    LaunchTemplateId=template["LaunchTemplateId"],
-                    LaunchTemplateData=lt_data,
-                    ClientToken=uuid4().hex,
-                    SourceVersion=str(source_version["VersionNumber"]),
-                    VersionDescription=str(module.params["version_description"]),
-                    aws_retry=True,
-                )
-
-            if module.params.get("default_version") in (None, ""):
-                # no need to do anything, leave the existing version as default
-                pass
-            elif module.params.get("default_version") == "latest":
-                set_default = ec2.modify_launch_template(
-                    LaunchTemplateId=template["LaunchTemplateId"],
-                    DefaultVersion=to_text(resp["LaunchTemplateVersion"]["VersionNumber"]),
-                    ClientToken=uuid4().hex,
-                    aws_retry=True,
-                )
-            else:
-                try:
-                    int(module.params.get("default_version"))
-                except ValueError:
-                    module.fail_json(
-                        msg=f"default_version param was not a valid integer, got \"{module.params.get('default_version')}\""
-                    )
-                set_default = ec2.modify_launch_template(
-                    LaunchTemplateId=template["LaunchTemplateId"],
-                    DefaultVersion=to_text(int(module.params.get("default_version"))),
-                    ClientToken=uuid4().hex,
-                    aws_retry=True,
-                )
-        except (ClientError, BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't create subsequent launch template version")
-        template, template_versions = existing_templates(module)
-        out["changed"] = True
-    return out
+                default_version = to_text(validate_string_as_int(module, default_version, "default_version"))
+            params = {
+                "LaunchTemplateId": launch_template_id,
+                "ClientToken": uuid4().hex,
+                "DefaultVersion": default_version,
+            }
+            modify_launch_template(**params)
+    except AnsibleEC2Error as e:
+        module.fail_json_aws_error(e)
 
 
-def format_module_output(module):
-    output = {}
-    template, template_versions = existing_templates(module)
+def format_module_output(client, module: AnsibleAWSModule) -> Dict[str, Any]:
+    # Describe launch template
+    template, template_versions = find_existing(client, module)
     template = camel_dict_to_snake_dict(template)
     template_versions = [camel_dict_to_snake_dict(v) for v in template_versions]
+    # Convert tags
     for v in template_versions:
         for ts in v["launch_template_data"].get("tag_specifications") or []:
             ts["tags"] = boto3_tag_list_to_ansible_dict(ts.pop("tags"))
-    output.update(dict(template=template, versions=template_versions))
-    output["default_template"] = [v for v in template_versions if v.get("default_version")][0]
-    output["latest_template"] = [
-        v
-        for v in template_versions
-        if (v.get("version_number") and int(v["version_number"]) == int(template["latest_version_number"]))
-    ][0]
-    if "version_number" in output["default_template"]:
-        output["default_version"] = output["default_template"]["version_number"]
-    if "version_number" in output["latest_template"]:
-        output["latest_version"] = output["latest_template"]["version_number"]
-    return output
+    result = {
+        "template": template,
+        "versions": template_versions,
+        "default_template": [v for v in template_versions if v.get("default_version")][0],
+        "latest_template": [
+            v
+            for v in template_versions
+            if (v.get("version_number") and int(v["version_number"]) == int(template["latest_version_number"]))
+        ][0],
+    }
+    if "version_number" in result["default_template"]:
+        result["default_version"] = result["default_template"]["version_number"]
+    if "version_number" in result["latest_template"]:
+        result["latest_version"] = result["latest_template"]["version_number"]
+    return result
+
+
+def ensure_present(
+    client,
+    module: AnsibleAWSModule,
+    template_options: Dict[str, Any],
+    existing: Optional[Dict[str, Any]],
+    existing_versions: List[Dict[str, Any]],
+) -> None:
+    template_name = module.params["template_name"]
+    tags = module.params["tags"]
+    purge_tags = module.params["purge_tags"]
+    version_description = module.params.get("version_description")
+    iam_instance_profile = module.params.get("iam_instance_profile")
+    if iam_instance_profile:
+        iam_instance_profile = determine_iam_arn_from_name(module, iam_instance_profile)
+    launch_template_data = params_to_launch_data(
+        dict((k, v) for k, v in module.params.items() if k in template_options), iam_instance_profile
+    )
+    launch_template_data = scrub_none_parameters(launch_template_data, descend_into_lists=True)
+    changed = False
+
+    if not (existing or existing_versions):
+        # Create Launch template
+        if module.check_mode:
+            module.exit_json(changed=True, msg="Would have created launch template if not in check mode.")
+        try:
+            create_launch_template(
+                client,
+                launch_template_name=template_name,
+                launch_template_data=launch_template_data,
+                tags=tags,
+                ClientToken=uuid4().hex,
+            )
+            changed = True
+        except AnsibleEC2Error as e:
+            module.fail_json_aws_error(e)
+    else:
+        launch_template_id = existing["LaunchTemplateId"]
+        most_recent = sorted(existing_versions, key=lambda x: x["VersionNumber"])[-1]
+        if not (
+            launch_template_data == most_recent["LaunchTemplateData"]
+            and version_description == most_recent.get("VersionDescription", "")
+        ):
+            changed = True
+            add_launch_template_version(
+                client, module, launch_template_id, existing_versions, str(most_recent["VersionNumber"])
+            )
+
+        # Ensure tags
+        changed |= ensure_ec2_tags(
+            client, module, launch_template_id, resource_type="launch-template", tags=tags, purge_tags=purge_tags
+        )
+
+    module.exit_json(changed=changed, **format_module_output(client, module))
 
 
 def main():
@@ -738,7 +896,6 @@ def main():
             type="list",
             elements="dict",
         ),
-        iam_instance_profile=dict(),
         image_id=dict(),
         instance_initiated_shutdown_behavior=dict(choices=["stop", "terminate"]),
         instance_market_options=dict(
@@ -802,42 +959,39 @@ def main():
         ram_disk_id=dict(),
         security_group_ids=dict(type="list", elements="str"),
         security_groups=dict(type="list", elements="str"),
-        tags=dict(type="dict", aliases=["resource_tags"]),
         user_data=dict(),
     )
 
-    arg_spec = dict(
+    argument_spec = dict(
         state=dict(choices=["present", "absent"], default="present"),
         template_name=dict(aliases=["name"]),
         template_id=dict(aliases=["id"]),
         default_version=dict(default="latest"),
         source_version=dict(default="latest"),
         version_description=dict(default=""),
+        iam_instance_profile=dict(),
+        tags=dict(type="dict", aliases=["resource_tags"]),
+        purge_tags=dict(type="bool", default=True),
     )
 
-    arg_spec.update(template_options)
+    argument_spec.update(template_options)
 
     module = AnsibleAWSModule(
-        argument_spec=arg_spec,
+        argument_spec=argument_spec,
         required_one_of=[
             ("template_name", "template_id"),
         ],
         supports_check_mode=True,
     )
 
-    for interface in module.params.get("network_interfaces") or []:
-        if interface.get("ipv6_addresses"):
-            interface["ipv6_addresses"] = [{"ipv6_address": x} for x in interface["ipv6_addresses"]]
+    state = module.params.get("state")
+    client = module.client("ec2")
+    launch_template, launch_template_versions = find_existing(client, module)
 
-    if module.params.get("state") == "present":
-        out = create_or_update(module, template_options)
-        out.update(format_module_output(module))
-    elif module.params.get("state") == "absent":
-        out = delete_template(module)
+    if state == "present":
+        ensure_present(client, module, template_options, launch_template, launch_template_versions)
     else:
-        module.fail_json(msg=f"Unsupported value \"{module.params.get('state')}\" for `state` parameter")
-
-    module.exit_json(**out)
+        ensure_absent(client, module, launch_template, launch_template_versions)
 
 
 if __name__ == "__main__":
