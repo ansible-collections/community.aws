@@ -14,31 +14,31 @@ options:
   id:
     description:
       - The ID of the Transit Gateway Attachment.
-      - Mutually exclusive with O(name) and O(filters)
+      - Mutually exclusive with O(name) and O(filters).
     type: str
     required: false
-    aliases: ['attachment_id']
+    aliases: ["attachment_id"]
   name:
     description:
-      - The C(Name) tag of the Transit Gateway attachment.
+      - The V(Name) tag of the Transit Gateway attachment.
     type: str
     required: false
   filters:
     description:
       - A dictionary of filters to apply. Each dict item consists of a filter key and a filter value.
-      - Setting a C(tag:Name) filter will override the O(name) parameter.
+      - Setting a V(tag:Name) filter will override the O(name) parameter.
     type: dict
     required: false
   include_deleted:
     description:
       - If O(include_deleted=True), then attachments in a deleted state will
         also be returned.
-      - Setting a C(state) filter will override the O(include_deleted) parameter.
+      - Setting a V(state) filter will override the O(include_deleted) parameter.
     type: bool
     required: false
     default: false
 author:
-  - "Mark Chappell (@tremble)"
+  - Mark Chappell (@tremble)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -46,19 +46,19 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-# Describe a specific Transit Gateway attachment.
-- community.aws.ec2_transit_gateway_vpc_attachment_info:
-    id: 'tgw-attach-0123456789abcdef0'
+- name: Describe a specific Transit Gateway attachment
+  community.aws.ec2_transit_gateway_vpc_attachment_info:
+    id: "tgw-attach-0123456789abcdef0"
 
-# Describe all attachments attached to a transit gateway.
-- community.aws.ec2_transit_gateway_vpc_attachment_info:
+- name: Describe all attachments attached to a transit gateway
+  community.aws.ec2_transit_gateway_vpc_attachment_info:
     filters:
-      transit-gateway-id: tgw-0fedcba9876543210'
+      transit-gateway-id: "tgw-0fedcba9876543210"
 
-# Describe all attachments in an account.
-- community.aws.ec2_transit_gateway_vpc_attachment_info:
+- name: Describe all attachments in an account
+  community.aws.ec2_transit_gateway_vpc_attachment_info:
     filters:
-      transit-gateway-id: tgw-0fedcba9876543210'
+      transit-gateway-id: "tgw-0fedcba9876543210"
 """
 
 RETURN = r"""
@@ -73,7 +73,7 @@ transit_gateway_attachments:
         - An ISO 8601 date time stamp of when the attachment was created.
       type: str
       returned: success
-      example: '2022-03-10T16:40:26+00:00'
+      example: "2022-03-10T16:40:26+00:00"
     options:
       description:
         - Additional VPC attachment options.
@@ -85,32 +85,32 @@ transit_gateway_attachments:
             - Indicates whether appliance mode support is enabled.
           type: str
           returned: success
-          example: 'enable'
+          example: "enable"
         dns_support:
           description:
             - Indicates whether DNS support is enabled.
           type: str
           returned: success
-          example: 'disable'
+          example: "disable"
         ipv6_support:
           description:
             - Indicates whether IPv6 support is disabled.
           type: str
           returned: success
-          example: 'disable'
+          example: "disable"
     state:
       description:
         - The state of the attachment.
       type: str
       returned: success
-      example: 'deleting'
+      example: "deleting"
     subnet_ids:
       description:
         - The IDs of the subnets in use by the attachment.
       type: list
       elements: str
       returned: success
-      example: ['subnet-0123456789abcdef0', 'subnet-11111111111111111']
+      example: ["subnet-0123456789abcdef0", "subnet-11111111111111111"]
     tags:
       description:
         - A dictionary representing the resource tags.
@@ -121,25 +121,25 @@ transit_gateway_attachments:
         - The ID of the attachment.
       type: str
       returned: success
-      example: 'tgw-attach-0c0c5fd0b0f01d1c9'
+      example: "tgw-attach-0c0c5fd0b0f01d1c9"
     transit_gateway_id:
       description:
         - The ID of the transit gateway that the attachment is connected to.
       type: str
       returned: success
-      example: 'tgw-0123456789abcdef0'
+      example: "tgw-0123456789abcdef0"
     vpc_id:
       description:
         - The ID of the VPC that the attachment is connected to.
       type: str
       returned: success
-      example: 'vpc-0123456789abcdef0'
+      example: "vpc-0123456789abcdef0"
     vpc_owner_id:
       description:
         - The ID of the account that the VPC belongs to.
       type: str
       returned: success
-      example: '123456789012'
+      example: "123456789012"
 """
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

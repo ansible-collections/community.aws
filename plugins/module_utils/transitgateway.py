@@ -10,22 +10,27 @@ try:
 except ImportError:
     pass
 
-from typing import Optional
+from typing import NoReturn, Optional
 from typing import Dict
 from typing import Any
 from typing import List
+
 from .modules import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_attachments
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_attachment
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_vpc_attachment
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_attachment
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_tgw_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_subnets
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import boto3_resource_to_ansible_dict
 
 
@@ -45,11 +50,16 @@ class TransitGatewayVpcAttachmentManager:
         self.updated_resource = dict()
         self.resource_updates = dict()
         self.preupdate_resource = dict()
-        self._wait_timeout = None
+        self.wait_timeout = None
+
+        # Name parameter is unique (by region) and can not be modified.
+        if self.id:
+            resource = deepcopy(self.get_resource())
+            self.original_resource = resource
 
     def get_id_params(self, id: Optional[str] = None, id_list: bool = False) -> Dict[str, List[str]]:
         if not id:
-            id = self.resource_id
+            id = self.id
         if not id:
             # Users should never see this, but let's cover ourself
             self.module.fail_json(msg="Attachment identifier parameter missing")
@@ -66,7 +76,6 @@ class TransitGatewayVpcAttachmentManager:
         resource.pop("State", None)
         resource.pop("SubnetIds", None)
         resource.pop("CreationTime", None)
-        resource.pop("Tags", None)
         return resource
 
     def set_option(self, name: str, value: Optional[bool]) -> bool:
@@ -84,10 +93,14 @@ class TransitGatewayVpcAttachmentManager:
 
         return self.set_resource_value("Options", options)
 
-    def set_resource_value(self, key, value, description=None, immutable=False):
+    def set_tags(self, tags: Dict[str, Any], purge_tags: bool) -> NoReturn:
+        if self.id:
+            self.changed |= ensure_ec2_tags(self.connection, self.module, self.id, resource_type=self.TAG_RESOURCE_TYPE, tags=tags, purge_tags=purge_tags)
+
+    def set_resource_value(self, key, value, description: Optional[str] = None, immutable: bool = False):
         if value is None:
             return False
-        if value == self._get_resource_value(key):
+        if value == self.get_resource_value(key):
             return False
         if immutable and self.original_resource:
             if description is None:
@@ -119,6 +132,24 @@ class TransitGatewayVpcAttachmentManager:
     def set_vpc(self, vpc_id: str) -> bool:
         return self.set_resource_value("VpcId", vpc_id)
 
+    def set_wait(self, wait: bool) -> bool:
+        if wait is None:
+            return False
+        if wait == self.wait:
+            return False
+
+        self.wait = wait
+        return True
+
+    def set_wait_timeout(self, timeout: int) -> bool:
+        if timeout is None:
+            return False
+        if timeout == self.wait_timeout:
+            return False
+
+        self.wait_timeout = timeout
+        return True
+
     def set_subnets(self, subnets: Optional[List[str]] = None, purge: bool = True) -> bool:
         if subnets is None:
             return False
@@ -130,9 +161,12 @@ class TransitGatewayVpcAttachmentManager:
 
         # We'll pull the VPC ID from the subnets, no point asking for
         # information we 'know'.
-        subnet_details = describe_subnets(SubnetIds=list(desired_subnets))
+        try:
+            subnet_details = describe_subnets(self.connection, SubnetIds=list(desired_subnets))
+        except AnsibleEC2Error as e:
+            self.module.fail_json_aws_error(e)
         vpc_id = self.subnets_to_vpc(desired_subnets, subnet_details)
-        self._set_resource_value("VpcId", vpc_id, immutable=True)
+        self.set_resource_value("VpcId", vpc_id, immutable=True)
 
         # Only one subnet per-AZ is permitted
         azs = [s.get("AvailabilityZoneId") for s in subnet_details]
@@ -156,7 +190,10 @@ class TransitGatewayVpcAttachmentManager:
             return None
 
         if subnet_details is None:
-            subnet_details = describe_subnets(SubnetIds=list(subnets))
+            try:
+                subnet_details = describe_subnets(self.connection, SubnetIds=list(subnets))
+            except AnsibleEC2Error as e:
+                self.module.fail_json_aws_error(e)
 
         vpcs = [s.get("VpcId") for s in subnet_details]
         if len(set(vpcs)) > 1:
@@ -174,6 +211,12 @@ class TransitGatewayVpcAttachmentManager:
 
         if filter_immutable:
             resource = self.filter_immutable_resource_attributes(resource)
+
+        if creation:
+            tags = boto3_tag_list_to_ansible_dict(resource.pop('Tags', []))
+            tag_specs = boto3_tag_specifications(tags, types=[self.TAG_RESOURCE_TYPE])
+            if tag_specs:
+                resource["TagSpecifications"] = tag_specs
 
         return resource
 
@@ -211,9 +254,9 @@ class TransitGatewayVpcAttachmentManager:
     @property
     def waiter_config(self):
         params = dict()
-        if self._wait_timeout:
-            delay = min(5, self._wait_timeout)
-            max_attempts = self._wait_timeout // delay
+        if self.wait_timeout:
+            delay = min(5, self.wait_timeout)
+            max_attempts = self.wait_timeout // delay
             config = dict(Delay=delay, MaxAttempts=max_attempts)
             params["WaiterConfig"] = config
         return params
@@ -266,9 +309,12 @@ class TransitGatewayVpcAttachmentManager:
 
     def do_create_resource(self) -> Optional[Dict[str, Any]]:
         params = self.merge_resource_changes(filter_immutable=False, creation=True)
-        response = create_vpc_attachment(**params)
+        try:
+            response = create_vpc_attachment(self.connection, **params)
+        except AnsibleEC2Error as e:
+            self.module.fail_json_aws_error(e)
         if response:
-            self.resource_id = response.get("TransitGatewayAttachmentId", None)
+            self.id = response.get("TransitGatewayAttachmentId", None)
         return response
 
     def do_update_resource(self) -> bool:
@@ -296,7 +342,10 @@ class TransitGatewayVpcAttachmentManager:
             return True
 
         updates.update(self.get_id_params(id_list=False))
-        modify_vpc_attachment(**updates)
+        try:
+            modify_vpc_attachment(self.connection, **updates)
+        except AnsibleEC2Error as e:
+            self.module.fail_json_aws_error(e)
         return True
 
     def get_resource(self) -> Optional[Dict[str, Any]]:
@@ -305,7 +354,7 @@ class TransitGatewayVpcAttachmentManager:
     def delete(self, id: Optional[str] = None) -> bool:
         if id:
             id_params = self.get_id_params(id=id, id_list=True)
-            result = get_tgw_vpc_attachment(**id_params)
+            result = get_tgw_vpc_attachment(self.connection, self.module, **id_params)
         else:
             result = self.preupdate_resource
 
@@ -324,7 +373,10 @@ class TransitGatewayVpcAttachmentManager:
 
         id_params = self.get_id_params(id=id, id_list=False)
 
-        result = delete_vpc_attachment(**id_params)
+        try:
+            result = delete_vpc_attachment(self.connection, **id_params)
+        except AnsibleEC2Error as e:
+            self.module.fail_json_aws_error(e)
 
         self.changed |= bool(result)
 
@@ -337,7 +389,10 @@ class TransitGatewayVpcAttachmentManager:
             params["TransitGatewayAttachmentIds"] = [id]
         if filters:
             params["Filters"] = ansible_dict_to_boto3_filter_list(filters)
-        attachments = describe_vpc_attachments(**params)
+        try:
+            attachments = describe_vpc_attachments(self.connection, **params)
+        except AnsibleEC2Error as e:
+            self.module.fail_json_aws_error(e)
         if not attachments:
             return []
 
@@ -346,8 +401,7 @@ class TransitGatewayVpcAttachmentManager:
     def get_attachment(self, id: Optional[str] = None) -> Optional[Dict[str, Any]]:
         # RouteTable needs a list, Association/Propagation needs a single ID
         id_params = self.get_id_params(id=id, id_list=True)
-        id_param = self.get_id_params(id=id, id_list=False)
-        result = get_tgw_vpc_attachment(**id_params)
+        result = get_tgw_vpc_attachment(self.connection, self.module, **id_params)
 
         if not result:
             return None
@@ -359,7 +413,7 @@ class TransitGatewayVpcAttachmentManager:
         return attachment
 
     def normalize_tgw_attachment(self, resource: Dict[str, Any]) -> Dict[str, Any]:
-        return boto3_resource_to_ansible_dict(resource, force_tags=False)
+        return boto3_resource_to_ansible_dict(resource, force_tags=True)
 
     def get_states(self) -> List[str]:
         return [
@@ -375,3 +429,24 @@ class TransitGatewayVpcAttachmentManager:
             "rejected",
             "rejecting",
         ]
+
+    def flush_update(self):
+        if not self.check_updates_pending():
+            self.updated_resource = self.original_resource
+            return False
+
+        if not self.module.check_mode:
+            self.do_update_resource()
+            self.wait_for_update()
+            self.updated_resource = self.get_resource()
+        else:  # (CHECK_MODE)
+            self.updated_resource = self.normalize_tgw_attachment(self.generate_updated_resource())
+
+        self._resource_updates = dict()
+        return True
+
+    def flush_changes(self):
+        if self.original_resource:
+            return self.flush_update()
+        else:
+            return self.flush_create()

@@ -2,7 +2,7 @@
 # =============================================================================
 # Creation
 - block:
-  - name: '(CHECK_MODE) Create an attachment - minimal parameters'
+  - name: (CHECK_MODE) Create an attachment - minimal parameters
     check_mode: True
     community.aws.ec2_transit_gateway_vpc_attachment:
       transit_gateway: '{{ tgw_id }}'
@@ -150,7 +150,7 @@
 
 # =====
 
-  - name: '(CHECK_MODE) By Id - minimal parameters -- IDEMPOTENCY'
+  - name: (CHECK_MODE) By Id - minimal parameters -- IDEMPOTENCY
     check_mode: True
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'

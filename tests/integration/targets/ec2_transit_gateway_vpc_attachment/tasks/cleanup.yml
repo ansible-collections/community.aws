@@ -1,12 +1,12 @@
 ---
-- name: 'Describe all attachments on our VPC'
+- name: Describe all attachments on our VPC
   community.aws.ec2_transit_gateway_vpc_attachment_info:
     filters:
       transit-gateway-id: '{{ tgw_id }}'
   register: info
   ignore_errors: True
 
-- name: 'Start deletion of all attachments'
+- name: Start deletion of all attachments
   community.aws.ec2_transit_gateway_vpc_attachment:
     state: absent
     id: '{{ item.transit_gateway_attachment_id }}'
@@ -14,7 +14,7 @@
   loop: '{{ info.attachments }}'
   ignore_errors: True
 
-- name: 'Wait for deletion of all attachments'
+- name: Wait for deletion of all attachments
   community.aws.ec2_transit_gateway_vpc_attachment:
     state: absent
     id: '{{ item.transit_gateway_attachment_id }}'
@@ -22,7 +22,7 @@
   loop: '{{ info.attachments }}'
   ignore_errors: True
 
-- name: 'Delete subnets'
+- name: Delete subnets
   amazon.aws.ec2_vpc_subnet:
     state: absent
     cidr: '{{ item.cidr }}'
@@ -42,7 +42,7 @@
     vpc_id: '{{ vpc_id_a }}'
   ignore_errors: True
 
-- name: 'Create VPCs to attach to TGW'
+- name: Delete VPCs to attach to TGW
   amazon.aws.ec2_vpc_net:
     state: absent
     cidr_block: '{{ item.cidr }}'
@@ -54,7 +54,7 @@
     name: '{{ vpc_name_b }}'
   ignore_errors: True
 
-- name: 'Create Transit Gateways'
+- name: Delete Transit Gateways
   community.aws.ec2_transit_gateway:
     state: absent
     transit_gateway_id: '{{ item.tgw_id }}'

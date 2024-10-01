@@ -20,22 +20,22 @@ options:
         existing attachment.
     type: str
     required: false
-    aliases: ['transit_gateway_id']
+    aliases: ["transit_gateway_id"]
   id:
     description:
       - The ID of the Transit Gateway Attachment.
       - When O(id) is not set, a search using O(transit_gateway) and O(name) will be
-        performed.  If multiple results are returned, the module will fail.
+        performed. If multiple results are returned, the module will fail.
       - At least one of O(name), O(transit_gateway) and O(id) must be provided.
     type: str
     required: false
-    aliases: ['attachment_id']
+    aliases: ["attachment_id"]
   name:
     description:
-      - The C(Name) tag of the Transit Gateway attachment.
-      - Providing both V(id) and V(name) will set the C(Name) tag on an existing
-        attachment the matching I(id).
-      - Setting the C(Name) tag in O(tags) will also result in the C(Name) tag being
+      - The V(Name) tag of the Transit Gateway attachment.
+      - Providing both O(id) and O(name) will set the V(Name) tag on an existing
+        attachment the matching O(id).
+      - Setting the V(Name) tag in O(tags) will also result in the V(Name) tag being
         updated.
       - At least one of O(name), O(transit_gateway) and O(id) must be provided.
     type: str
@@ -45,7 +45,7 @@ options:
       - Create or remove the Transit Gateway attachment.
     type: str
     required: false
-    choices: ['present', 'absent']
+    choices: ["present", "absent"]
     default: 'present'
   subnets:
     description:
@@ -94,7 +94,7 @@ options:
     type: int
     required: false
 author:
-  - "Mark Chappell (@tremble)"
+  - Mark Chappell (@tremble)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -103,36 +103,36 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-# Create a Transit Gateway attachment
-- community.aws.ec2_transit_gateway_vpc_attachment:
-    state: present
-    transit_gateway: 'tgw-123456789abcdef01'
-    name: AnsibleTest-1
+- name: Create a Transit Gateway attachment
+  community.aws.ec2_transit_gateway_vpc_attachment:
+    state: "present"
+    transit_gateway: "tgw-123456789abcdef01"
+    name: "AnsibleTest-1"
     subnets:
-      - subnet-00000000000000000
-      - subnet-11111111111111111
-      - subnet-22222222222222222
+      - "subnet-00000000000000000"
+      - "subnet-11111111111111111"
+      - "subnet-22222222222222222"
     ipv6_support: true
     purge_subnets: true
     dns_support: true
     appliance_mode_support: true
     tags:
-      TestTag: changed data in Test Tag
+      TestTag: "changed data in Test Tag"
 
-# Set sub options on a Transit Gateway attachment
-- community.aws.ec2_transit_gateway_vpc_attachment:
-    state: present
-    id: 'tgw-attach-0c0c5fd0b0f01d1c9'
-    name: AnsibleTest-1
+- name: Set sub options on a Transit Gateway attachment
+  community.aws.ec2_transit_gateway_vpc_attachment:
+    state: "present"
+    id: "tgw-attach-0c0c5fd0b0f01d1c9"
+    name: "AnsibleTest-1"
     ipv6_support: true
     purge_subnets: false
     dns_support: false
     appliance_mode_support: true
 
-# Delete the transit gateway
-- community.aws.ec2_transit_gateway_vpc_attachment:
-    state: absent
-    id: 'tgw-attach-0c0c5fd0b0f01d1c9'
+- name: Delete the transit gateway
+  community.aws.ec2_transit_gateway_vpc_attachment:
+    state: "absent"
+    id: "tgw-attach-0c0c5fd0b0f01d1c9"
 """
 
 RETURN = r"""
@@ -147,7 +147,7 @@ transit_gateway_attachments:
         - An ISO 8601 date time stamp of when the attachment was created.
       type: str
       returned: success
-      example: '2022-03-10T16:40:26+00:00'
+      example: "2022-03-10T16:40:26+00:00"
     options:
       description:
         - Additional VPC attachment options.
@@ -159,32 +159,32 @@ transit_gateway_attachments:
             - Indicates whether appliance mode support is enabled.
           type: str
           returned: success
-          example: 'enable'
+          example: "enable"
         dns_support:
           description:
             - Indicates whether DNS support is enabled.
           type: str
           returned: success
-          example: 'disable'
+          example: "disable"
         ipv6_support:
           description:
             - Indicates whether IPv6 support is disabled.
           type: str
           returned: success
-          example: 'disable'
+          example: "disable"
     state:
       description:
         - The state of the attachment.
       type: str
       returned: success
-      example: 'deleting'
+      example: "deleting"
     subnet_ids:
       description:
         - The IDs of the subnets in use by the attachment.
       type: list
       elements: str
       returned: success
-      example: ['subnet-0123456789abcdef0', 'subnet-11111111111111111']
+      example: ["subnet-0123456789abcdef0", "subnet-11111111111111111"]
     tags:
       description:
         - A dictionary representing the resource tags.
@@ -195,25 +195,25 @@ transit_gateway_attachments:
         - The ID of the attachment.
       type: str
       returned: success
-      example: 'tgw-attach-0c0c5fd0b0f01d1c9'
+      example: "tgw-attach-0c0c5fd0b0f01d1c9"
     transit_gateway_id:
       description:
         - The ID of the transit gateway that the attachment is connected to.
       type: str
       returned: success
-      example: 'tgw-0123456789abcdef0'
+      example: "tgw-0123456789abcdef0"
     vpc_id:
       description:
         - The ID of the VPC that the attachment is connected to.
       type: str
       returned: success
-      example: 'vpc-0123456789abcdef0'
+      example: "vpc-0123456789abcdef0"
     vpc_owner_id:
       description:
         - The ID of the account that the VPC belongs to.
       type: str
       returned: success
-      example: '123456789012'
+      example: "1234567890122
 """
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
@@ -259,8 +259,8 @@ def handle_vpc_attachments(conn, module: AnsibleAWSModule) -> None:
             attach_id = attachments[0]["transit_gateway_attachment_id"]
 
     manager = TransitGatewayVpcAttachmentManager(module=module, id=attach_id)
-    manager.set_wait(module.params.get("wait", None))
-    manager.set_wait_timeout(module.params.get("wait_timeout", None))
+    manager.set_wait(module.params.get('wait', None))
+    manager.set_wait_timeout(module.params.get('wait_timeout', None))
 
     if state == "absent":
         manager.delete()
@@ -268,12 +268,12 @@ def handle_vpc_attachments(conn, module: AnsibleAWSModule) -> None:
         if not attach_id:
             if not tgw:
                 module.fail_json(
-                    "No existing attachment found.  To create a new attachment"
+                    "No existing attachment found. To create a new attachment"
                     " the `transit_gateway` parameter must be provided."
                 )
             if not subnets:
                 module.fail_json(
-                    "No existing attachment found.  To create a new attachment"
+                    "No existing attachment found. To create a new attachment"
                     " the `subnets` parameter must be provided."
                 )
 
