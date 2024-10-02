@@ -219,14 +219,9 @@ from typing import Any
 from typing import Dict
 from typing import Optional
 
-try:
-    from botocore.exceptions import BotoCoreError
-    from botocore.exceptions import ClientError
-except ImportError:
-    pass  # handled by imported AnsibleAWSModule
-
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
@@ -286,7 +281,7 @@ class AnsibleEc2Tgw:
                 else:
                     sleep(polling_increment_secs)
 
-            except ClientError as e:
+            except AnsibleEC2Error as e:
                 self._module.fail_json_aws(e)
 
         if not status_achieved:
@@ -309,7 +304,7 @@ class AnsibleEc2Tgw:
 
         try:
             response = AWSRetry.exponential_backoff()(self._connection.describe_transit_gateways)(Filters=filters)
-        except (ClientError, BotoCoreError) as e:
+        except AnsibleEC2Error as e:
             self._module.fail_json_aws(e)
 
         tgw = None
@@ -361,7 +356,7 @@ class AnsibleEc2Tgw:
 
         try:
             response = self._connection.create_transit_gateway(Description=description, Options=options)
-        except (ClientError, BotoCoreError) as e:
+        except AnsibleEC2Error as e:
             self._module.fail_json_aws(e)
 
         tgw_id = response["TransitGateway"]["TransitGatewayId"]
@@ -386,7 +381,7 @@ class AnsibleEc2Tgw:
 
         try:
             response = self._connection.delete_transit_gateway(TransitGatewayId=tgw_id)
-        except (ClientError, BotoCoreError) as e:
+        except AnsibleEC2Error as e:
             self._module.fail_json_aws(e)
 
         if wait:
@@ -421,7 +416,7 @@ class AnsibleEc2Tgw:
                     self._module.fail_json(msg="Failed to create Transit Gateway: description argument required")
                 tgw = self.create_tgw(description)
                 self._results["changed"] = True
-            except (BotoCoreError, ClientError) as e:
+            except AnsibleEC2Error as e:
                 self._module.fail_json_aws(e, msg="Unable to create Transit Gateway")
 
         self._results["changed"] |= ensure_ec2_tags(
@@ -457,7 +452,7 @@ class AnsibleEc2Tgw:
                 self._results["transit_gateway"] = self.get_matching_tgw(
                     tgw_id=tgw["transit_gateway_id"], skip_deleted=False
                 )
-            except (BotoCoreError, ClientError) as e:
+            except AnsibleEC2Error as e:
                 self._module.fail_json_aws(e, msg="Unable to delete Transit Gateway")
 
         return self._results
