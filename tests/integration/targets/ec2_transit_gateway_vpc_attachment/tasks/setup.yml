@@ -24,7 +24,7 @@
   amazon.aws.ec2_vpc_net:
     cidr_block: '{{ item.cidr }}'
     name: '{{ item.name }}'
-    ipv6_cidr: True
+    ipv6_cidr: true
   loop:
   - cidr: '{{ vpc_cidr_a }}'
     name: '{{ vpc_name_a }}'
