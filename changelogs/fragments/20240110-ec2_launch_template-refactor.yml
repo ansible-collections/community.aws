@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - ec2_launch_template - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` and update ``RETURN`` block ().
+  - ec2_launch_template - add the possibility to delete specific versions of a launch template using ``versions_to_delete`` ().
+  - ec2_launch_template - add the ``purge_tags`` option ().

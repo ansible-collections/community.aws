@@ -46,6 +46,15 @@ options:
     - The description of a launch template version.
     default: ""
     type: str
+  versions_to_delete:
+    description:
+    - The version numbers of a launch template versions to delete.
+    - Use O(default_version) to specify a new default version when deleting the current default version.
+    - By default, the latest version will be made the default.
+    - Ignored when O(state=present).
+    type: list
+    elements: int
+    version_added: 8.1.0
   state:
     description:
     - Whether the launch template should exist or not.
@@ -411,7 +420,20 @@ EXAMPLES = r"""
     name: "my_template"
     state: absent
 
-# This module does not yet allow deletion of specific versions of launch templates
+- name: Delete a specific version of an ec2 launch template
+  community.aws.ec2_launch_template:
+    name: "my_template"
+    versions_to_delete:
+      - 2
+    state: absent
+
+- name: Delete a specific version of an ec2 launch template and change the default version
+  community.aws.ec2_launch_template:
+    name: "my_template"
+    versions_to_delete:
+      - 1
+    default_version: 2
+    state: absent
 """
 
 RETURN = r"""
@@ -426,7 +448,6 @@ default_version:
 template:
   description: Latest available version of the launch template.
   returned: when O(state=present)
-  returned: always
   type: complex
   contains:
     launch_template_id:
@@ -466,7 +487,6 @@ versions:
   returned: when O(state=present)
   type: list
   elements: dict
-  returned: always
   contains:
     launch_template_id:
       description: The ID of the launch template.
@@ -477,35 +497,58 @@ versions:
       type: str
       returned: always
     create_time:
-      description: The time launch template was created.
+      description: The time the version was created.
       type: str
       returned: always
     created_by:
-      description: The principal that created the launch template.
+      description: The principal that created the version.
       type: str
       returned: always
-    default_version_number:
-      description: The version number of the default version of the launch template.
+    default_version:
+      description: Indicates whether the version is the default version.
+      type: bool
+      returned: always
+    version_number:
+      description: The version number.
       type: int
       returned: always
-    latest_version_number:
-      description: The version number of the latest version of the launch template.
-      type: int
+    version_description:
+      description: The description for the version.
+      type: str
       returned: always
-    tags:
-      description: A dictionary of tags assigned to image.
-      returned: when AMI is created or already exists
+    launch_template_data:
+      description: Information about the launch template.
+      returned: always
       type: dict
       sample: {
-          "Env": "devel",
-          "Name": "nat-server"
+          "BlockDeviceMappings": [
+              {
+                  "DeviceName": "/dev/sdb",
+                  "Ebs": {
+                      "DeleteOnTermination": true,
+                      "Encrypted": true,
+                      "VolumeSize": 5
+                  }
+              }
+          ],
+          "EbsOptimized": false,
+          "ImageId": "ami-0231217be14a6f3ba",
+          "InstanceType": "t2.micro",
+          "NetworkInterfaces": [
+              {
+                  "AssociatePublicIpAddress": false,
+                  "DeviceIndex": 0,
+                  "Ipv6Addresses": [
+                      {
+                          "Ipv6Address": "2001:0:130F:0:0:9C0:876A:130B"
+                      }
+                  ]
+              }
+          ]
       }
 latest_template:
   description: The latest available version of the launch template.
   returned: when O(state=present)
-  returned: always
-  type: complex
-  contains:
   type: complex
   contains:
     launch_template_id:
@@ -541,9 +584,10 @@ latest_template:
           "Name": "nat-server"
       }
 default_template:
-  description: The launch template version that will be used if only the template name is specified. Often this is the same as the latest version, but not always.
+  description:
+    - The launch template version that will be used if only the template name is specified.
+    - Often this is the same as the latest version, but not always.
   returned: when O(state=present)
-  returned: always
   type: complex
   contains:
     launch_template_id:
@@ -578,6 +622,61 @@ default_template:
           "Env": "devel",
           "Name": "nat-server"
       }
+deleted_template:
+  description: information about a launch template deleted.
+  returned: when O(state=absent)
+  type: complex
+  contains:
+    launch_template_id:
+      description: The ID of the launch template.
+      type: str
+      returned: always
+    launch_template_name:
+      description: The name of the launch template.
+      type: str
+      returned: always
+    create_time:
+      description: The time launch template was created.
+      type: str
+      returned: always
+    created_by:
+      description: The principal that created the launch template.
+      type: str
+      returned: always
+    default_version_number:
+      description: The version number of the default version of the launch template.
+      type: int
+      returned: always
+    latest_version_number:
+      description: The version number of the latest version of the launch template.
+      type: int
+      returned: always
+    tags:
+      description: A dictionary of tags assigned to image.
+      returned: when AMI is created or already exists
+      type: dict
+      sample: {
+          "Env": "devel",
+          "Name": "nat-server"
+      }
+deleted_versions:
+  description: Information about deleted launch template versions.
+  returned: when O(state=absent)
+  type: list
+  elements: dict
+  contains:
+    launch_template_id:
+      description: The ID of the launch template.
+      type: str
+      returned: always
+    launch_template_name:
+      description: The name of the launch template.
+      type: str
+      returned: always
+    version_number:
+      description: The version number of the launch template.
+      type: int
+      returned: always
 """
 
 from typing import Any
@@ -591,6 +690,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import normalize_boto3_result
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_launch_template
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_launch_template_version
@@ -602,6 +702,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import determine_ia
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_launch_template
 from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import scrub_none_parameters
 
@@ -623,9 +724,9 @@ def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, 
         if launch_templates:
             launch_template = launch_templates[0]
             launch_template_versions = describe_launch_template_versions(
-                LaunchTemplateId=launch_template["LaunchTemplateId"]
+                client, LaunchTemplateId=launch_template["LaunchTemplateId"]
             )
-        return launch_template, launch_template_versions
+        return normalize_boto3_result(launch_template), normalize_boto3_result(launch_template_versions)
     except is_ansible_aws_error_code("InvalidLaunchTemplateId.Malformed") as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
@@ -634,18 +735,8 @@ def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, 
                 " with `lt-....`"
             ),
         )
-    except AnsibleEC2Error as e:  # pylint: disable=duplicate-except
+    except AnsibleAWSError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws_error(e)
-    # except is_boto3_error_code("InvalidLaunchTemplateId.NotFoundException") as e:  # pylint: disable=duplicate-except
-    #     module.fail_json_aws(
-    #         e,
-    #         msg=(
-    #             f"Launch template with ID {module.params.get('launch_template_id')} could not be found, please supply a"
-    #             " name instead so that a new template can be created"
-    #         ),
-    #     )
-    # except (ClientError, BotoCoreError, WaiterError) as e:  # pylint: disable=duplicate-except
-    #     module.fail_json_aws(e, msg="Could not check existing launch templates. This may be an IAM permission problem.")
 
 
 def params_to_launch_data(
@@ -670,6 +761,56 @@ def validate_string_as_int(module: AnsibleAWSModule, version: str, param_name: s
         module.fail_json(msg=f'{param_name} param was not a valid integer, got "{version}"')
 
 
+def validate_version_deletion(
+    module: AnsibleAWSModule, launch_template_id: str, existing_versions: List[Dict[str, Any]]
+) -> Tuple[List[str], Optional[int]]:
+    versions_to_delete = module.params.get("versions_to_delete")
+    launch_template_versions_to_delete = []
+    default_version_to_set = None
+    if versions_to_delete:
+        unique_versions_to_delete = list(set(versions_to_delete))
+        launch_template_versions_to_delete = [
+            t["VersionNumber"] for t in existing_versions if t["VersionNumber"] in unique_versions_to_delete
+        ]
+        if len(launch_template_versions_to_delete) != len(unique_versions_to_delete):
+            missing = [m for m in unique_versions_to_delete if m not in launch_template_versions_to_delete]
+            module.fail_json(
+                msg=f"The following versions {missing} do not exist for launch template id '{launch_template_id}'."
+            )
+
+        remaining_versions = [
+            t["VersionNumber"]
+            for t in existing_versions
+            if t["VersionNumber"] not in launch_template_versions_to_delete
+        ]
+
+        # Find the default version
+        default_version = module.params.get("default_version")
+        if default_version in (None, ""):
+            default_version_int = [t["VersionNumber"] for t in existing_versions if t["DefaultVersion"]][0]
+        elif default_version == "latest":
+            default_version_int = max(remaining_versions, default=None)
+            default_version_to_set = default_version_int
+        else:
+            default_version_int = validate_string_as_int(module, default_version, "default_version")
+            default_version_to_set = default_version_int
+
+        # Ensure we are not deleting the default version
+        if default_version_int in launch_template_versions_to_delete or not remaining_versions:
+            module.fail_json(msg="Cannot delete the launch template default version.")
+
+        if default_version_to_set and default_version_to_set not in remaining_versions:
+            module.fail_json(
+                msg=f"Could not set version '{default_version_to_set}' as default,"
+                "the launch template version was not found for the specified launch template id '{launch_template_id}'."
+            )
+    else:
+        # By default delete all non default version before the launch template deletion
+        launch_template_versions_to_delete = [t["VersionNumber"] for t in existing_versions if not t["DefaultVersion"]]
+
+    return [to_text(v) for v in launch_template_versions_to_delete], default_version_to_set
+
+
 def ensure_absent(
     client, module: AnsibleAWSModule, existing: Optional[Dict[str, Any]], existing_versions: List[Dict[str, Any]]
 ) -> None:
@@ -679,52 +820,56 @@ def ensure_absent(
 
     if existing:
         launch_template_id = existing["LaunchTemplateId"]
-        non_default_versions = [to_text(t["VersionNumber"]) for t in existing_versions if not t["DefaultVersion"]]
-
-        if non_default_versions:
-            if module.check_mode:
-                module.exit_json(
-                    changed=True,
-                    msg=f"Would have deleted launch template versions: {non_default_versions} if not in check mode",
-                )
-            try:
-                v_resp = delete_launch_template_versions(
-                    client, launch_template_id=launch_template_id, versions=non_default_versions
-                )
-                if v_resp["UnsuccessfullyDeletedLaunchTemplateVersions"]:
-                    module.warn(
-                        f"Failed to delete template versions {v_resp['UnsuccessfullyDeletedLaunchTemplateVersions']} on"
-                        f" launch template {launch_template_id}"
-                    )
-                deleted_versions = [
-                    camel_dict_to_snake_dict(v) for v in v_resp["SuccessfullyDeletedLaunchTemplateVersions"]
-                ]
-            except AnsibleEC2Error as e:
-                module.fail_json_aws(
-                    e, msg=f"Could not delete existing versions of the launch template {launch_template_id}"
-                )
-
-        if module.check_mode:
-            module.exit_json(
-                changed=True, msg=f"Would have deleted launch template {launch_template_id} if not in check mode"
-            )
+        v_to_delete, v_default = validate_version_deletion(module, launch_template_id, existing_versions)
         try:
-            deleted_template = delete_launch_template(client, launch_template_id=launch_template_id)
-        except AnsibleEC2Error as e:
-            module.fail_json_aws(e, msg=f"Could not delete launch template {launch_template_id}")
+            # Update default version
+            if v_default:
+                changed = True
+                if not module.check_mode:
+                    modify_launch_template(
+                        client,
+                        LaunchTemplateId=launch_template_id,
+                        ClientToken=uuid4().hex,
+                        DefaultVersion=to_text(v_default),
+                    )
+            # Delete versions
+            if v_to_delete:
+                changed = True
+                if not module.check_mode:
+                    response = delete_launch_template_versions(
+                        client, launch_template_id=launch_template_id, versions=v_to_delete
+                    )
+                    if response["UnsuccessfullyDeletedLaunchTemplateVersions"]:
+                        module.warn(
+                            f"Failed to delete template versions {response['UnsuccessfullyDeletedLaunchTemplateVersions']} on"
+                            f" launch template {launch_template_id}"
+                        )
+                    deleted_versions = [
+                        camel_dict_to_snake_dict(v) for v in response["SuccessfullyDeletedLaunchTemplateVersions"]
+                    ]
 
-    module.exit_json(
-        changed=changed, deleted_versions=deleted_versions, deleted_template=camel_dict_to_snake_dict(deleted_template)
-    )
+            # Delete the launch template when a list of versions was not specified
+            if not module.params.get("versions_to_delete"):
+                changed = True
+                if not module.check_mode:
+                    deleted_template = delete_launch_template(client, launch_template_id=launch_template_id)
+                    deleted_template = camel_dict_to_snake_dict(deleted_template, ignore_list=["Tags"])
+                    if "tags" in deleted_template:
+                        deleted_template["tags"] = boto3_tag_list_to_ansible_dict(deleted_template.get("tags", []))
+        except AnsibleEC2Error as e:
+            module.fail_json_aws_error(e)
+
+    module.exit_json(changed=changed, deleted_versions=deleted_versions, deleted_template=deleted_template)
 
 
 def add_launch_template_version(
     client,
     module: AnsibleAWSModule,
     launch_template_id: str,
+    launch_template_data: Dict[str, Any],
     existing_versions: List[Dict[str, Any]],
     most_recent_version_number: str,
-) -> None:
+) -> int:
     source_version = module.params.get("source_version")
     version_description = module.params.get("version_description")
 
@@ -753,34 +898,50 @@ def add_launch_template_version(
 
     try:
         # Create Launch template version
-        launch_template_version = create_launch_template_version(client, **params)
-
-        # Modify default version
-        default_version = module.params.get("default_version")
-        if default_version not in (None, ""):
-            if default_version == "latest":
-                default_version = to_text(launch_template_version["VersionNumber"])
-            else:
-                default_version = to_text(validate_string_as_int(module, default_version, "default_version"))
-            params = {
-                "LaunchTemplateId": launch_template_id,
-                "ClientToken": uuid4().hex,
-                "DefaultVersion": default_version,
-            }
-            modify_launch_template(**params)
+        launch_template_version = create_launch_template_version(
+            client, launch_template_data=launch_template_data, **params
+        )
+        return launch_template_version["VersionNumber"]
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
+
+
+def ensure_default_version(
+    client,
+    module: AnsibleAWSModule,
+    launch_template_id: str,
+    current_default_version_number: int,
+    most_recent_version_number: int,
+) -> bool:
+    # Modify default version
+    default_version = module.params.get("default_version")
+    changed = False
+    if default_version not in (None, ""):
+        if default_version == "latest":
+            default_version = to_text(most_recent_version_number)
+        else:
+            default_version = to_text(validate_string_as_int(module, default_version, "default_version"))
+        if to_text(current_default_version_number) != default_version:
+            changed = True
+            try:
+                if not module.check_mode:
+                    modify_launch_template(
+                        client,
+                        LaunchTemplateId=launch_template_id,
+                        ClientToken=uuid4().hex,
+                        DefaultVersion=default_version,
+                    )
+            except AnsibleEC2Error as e:
+                module.fail_json_aws_error(e)
+    return changed
 
 
 def format_module_output(client, module: AnsibleAWSModule) -> Dict[str, Any]:
     # Describe launch template
     template, template_versions = find_existing(client, module)
-    template = camel_dict_to_snake_dict(template)
+    template = camel_dict_to_snake_dict(template, ignore_list=["Tags"])
+    template["tags"] = boto3_tag_list_to_ansible_dict(template.get("tags", []))
     template_versions = [camel_dict_to_snake_dict(v) for v in template_versions]
-    # Convert tags
-    for v in template_versions:
-        for ts in v["launch_template_data"].get("tag_specifications") or []:
-            ts["tags"] = boto3_tag_list_to_ansible_dict(ts.pop("tags"))
     result = {
         "template": template,
         "versions": template_versions,
@@ -829,22 +990,34 @@ def ensure_present(
                 launch_template_data=launch_template_data,
                 tags=tags,
                 ClientToken=uuid4().hex,
+                VersionDescription=version_description,
             )
             changed = True
         except AnsibleEC2Error as e:
             module.fail_json_aws_error(e)
     else:
         launch_template_id = existing["LaunchTemplateId"]
+        default_version_number = existing["DefaultVersionNumber"]
         most_recent = sorted(existing_versions, key=lambda x: x["VersionNumber"])[-1]
+        most_recent_version_number = most_recent["VersionNumber"]
         if not (
             launch_template_data == most_recent["LaunchTemplateData"]
             and version_description == most_recent.get("VersionDescription", "")
         ):
             changed = True
-            add_launch_template_version(
-                client, module, launch_template_id, existing_versions, str(most_recent["VersionNumber"])
+            most_recent_version_number = add_launch_template_version(
+                client,
+                module,
+                launch_template_id,
+                launch_template_data,
+                existing_versions,
+                str(most_recent["VersionNumber"]),
             )
 
+        # Ensure default version
+        changed |= ensure_default_version(
+            client, module, launch_template_id, default_version_number, most_recent_version_number
+        )
         # Ensure tags
         changed |= ensure_ec2_tags(
             client, module, launch_template_id, resource_type="launch-template", tags=tags, purge_tags=purge_tags
@@ -972,6 +1145,7 @@ def main():
         iam_instance_profile=dict(),
         tags=dict(type="dict", aliases=["resource_tags"]),
         purge_tags=dict(type="bool", default=True),
+        versions_to_delete=dict(type="list", elements="int"),
     )
 
     argument_spec.update(template_options)
