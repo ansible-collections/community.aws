@@ -23,7 +23,8 @@ options:
   filters:
     description:
       - A dictionary of filters to apply to the query. Each key-value pair represents a filter key and its corresponding value.
-      - For a complete list of available filters, refer to the AWS documentation: U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html).
+      - For a complete list of available filters,
+        refer to the AWS documentation U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html).
     type: dict
     default: {}
 extends_documentation_fragment:
@@ -164,7 +165,9 @@ except ImportError:
     pass  # handled by imported AnsibleAWSModule
 
 
-from typing import List, Dict, Any
+from typing import Any
+from typing import Dict
+
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
