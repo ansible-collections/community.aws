@@ -159,76 +159,71 @@ transit_gateways:
             sample: "tgw-02c42332e6b7da829"
 """
 
-try:
-    import botocore
-except ImportError:
-    pass  # handled by imported AnsibleAWSModule
-
-
 from typing import Any
 from typing import Dict
+from typing import List
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
-class AnsibleEc2TgwInfo(object):
-    def __init__(self, module: AnsibleAWSModule, results: Dict[str, Any]) -> None:
-        self._module = module
-        self._results = results
-        self._connection = self._module.client("ec2")
-        self._check_mode = self._module.check_mode
+def get_transit_gateway_response(module: AnsibleAWSModule, connection) -> Dict[str, Any]:
+    """
+    Get transit gateway response from AWS.
 
-    @AWSRetry.exponential_backoff()
-    def describe_transit_gateways(self) -> None:
-        """
-        Describe transit gateways.
+    module     : AnsibleAWSModule object
+    connection : boto3 client connection object
+    :return: Response from describe_transit_gateways call
+    """
+    filters = ansible_dict_to_boto3_filter_list(module.params["filters"])
+    transit_gateway_ids = module.params["transit_gateway_ids"]
 
-        module  : AnsibleAWSModule object
-        connection  : boto3 client connection object
-        """
-        # collect parameters
-        filters = ansible_dict_to_boto3_filter_list(self._module.params["filters"])
-        transit_gateway_ids = self._module.params["transit_gateway_ids"]
+    try:
+        return connection.describe_transit_gateways(TransitGatewayIds=transit_gateway_ids, Filters=filters)
+    except is_boto3_error_code("InvalidTransitGatewayID.NotFound"):
+        return {"TransitGateways": []}
 
-        # init empty list for return vars
-        transit_gateway_info = list()
 
-        # Get the basic transit gateway info
-        try:
-            response = self._connection.describe_transit_gateways(
-                TransitGatewayIds=transit_gateway_ids, Filters=filters
-            )
-        except is_boto3_error_code("InvalidTransitGatewayID.NotFound"):
-            self._results["transit_gateways"] = []
-            return
+def extract_transit_gateway_info(transit_gateway: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extract and transform transit gateway information.
 
-        for transit_gateway in response["TransitGateways"]:
-            transit_gateway_info.append(camel_dict_to_snake_dict(transit_gateway, ignore_list=["Tags"]))
-            # convert tag list to ansible dict
-            transit_gateway_info[-1]["tags"] = boto3_tag_list_to_ansible_dict(transit_gateway.get("Tags", []))
+    transit_gateway : The transit gateway data from AWS
+    :return: Transformed transit gateway information
+    """
+    tgw_data = camel_dict_to_snake_dict(transit_gateway, ignore_list=["Tags"])
+    tgw_data["tags"] = boto3_tag_list_to_ansible_dict(transit_gateway.get("Tags", []))
+    return tgw_data
 
-        self._results["transit_gateways"] = transit_gateway_info
-        return
+
+def describe_transit_gateways(module: AnsibleAWSModule, connection) -> List[Dict[str, Any]]:
+    """
+    Describe transit gateways.
+
+    module     : AnsibleAWSModule object
+    connection : boto3 client connection object
+    :return: List of transit gateways
+    """
+    response = get_transit_gateway_response(module, connection)
+    return [extract_transit_gateway_info(tgw) for tgw in response["TransitGateways"]]
 
 
 def setup_module_object() -> AnsibleAWSModule:
     """
-    merge argument spec and create Ansible module object
+    Merge argument spec and create Ansible module object.
     :return: Ansible module object
     """
-
-    argument_spec = dict(
-        transit_gateway_ids=dict(type="list", default=[], elements="str", aliases=["transit_gateway_id"]),
-        filters=dict(type="dict", default={}),
-    )
+    argument_spec = {
+        "transit_gateway_ids": {"type": "list", "default": [], "elements": "str", "aliases": ["transit_gateway_id"]},
+        "filters": {"type": "dict", "default": {}},
+    }
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
@@ -240,12 +235,12 @@ def setup_module_object() -> AnsibleAWSModule:
 
 def main():
     module = setup_module_object()
+    results = {"changed": False}
 
-    results = dict(changed=False)
-
-    client = AnsibleEc2TgwInfo(module=module, results=results)
+    connection = module.client("ec2")
     try:
-        client.describe_transit_gateways()
+        transit_gateways = describe_transit_gateways(module, connection)
+        results["transit_gateways"] = transit_gateways
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
