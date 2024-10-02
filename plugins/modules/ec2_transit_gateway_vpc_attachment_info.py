@@ -39,6 +39,7 @@ options:
     default: false
 author:
   - Mark Chappell (@tremble)
+  - Alina Buzachis (@alinabuzachis)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -57,12 +58,10 @@ EXAMPLES = r"""
 
 - name: Describe all attachments in an account
   community.aws.ec2_transit_gateway_vpc_attachment_info:
-    filters:
-      transit-gateway-id: "tgw-0fedcba9876543210"
 """
 
 RETURN = r"""
-transit_gateway_attachments:
+attachments:
   description: The attributes of the Transit Gateway attachments.
   type: list
   elements: dict
@@ -98,6 +97,12 @@ transit_gateway_attachments:
           type: str
           returned: success
           example: "disable"
+        security_group_referencing_support:
+          description:
+              - Indicated weather security group referencing support is disabled.
+            type: str
+            returned: success
+            example: "enable"
     state:
       description:
         - The state of the attachment.
@@ -142,8 +147,17 @@ transit_gateway_attachments:
       example: "123456789012"
 """
 
+from typing import Any
+from typing import Dict
+from typing import List
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_attachments
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import boto3_resource_to_ansible_dict
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.community.aws.plugins.module_utils.transitgateway import TransitGatewayVpcAttachmentManager
+from ansible_collections.community.aws.plugins.module_utils.transitgateway import get_states
 
 
 def main():
@@ -165,25 +179,42 @@ def main():
         mutually_exclusive=mutually_exclusive,
     )
 
-    name = module.params.get("name", None)
-    id = module.params.get("id", None)
-    opt_filters = module.params.get("filters", None)
+    name = module.params.get("name")
+    attachment_id = module.params.get("id")
+    opt_filters = module.params.get("filters")
+    include_deleted = module.params.get("include_deleted")
 
-    search_manager = TransitGatewayVpcAttachmentManager(module=module)
-    filters = dict()
+    client = module.client("ec2")
 
+    params: Dict[str, Any] = {}
+    filters: Dict[str, Any] = {}
+    attachments: List[Dict[str, Any]] = []
+
+    if attachment_id:
+        params["TransitGatewayAttachmentIds"] = [attachment_id]
+
+    # Add filter by name if provided
     if name:
         filters["tag:Name"] = name
 
-    if not module.params.get("include_deleted"):
-        # Attachments lurk in a 'deleted' state, for a while, ignore them so we
-        # can reuse the names
-        filters["state"] = search_manager.get_states()
+    # Include only active states if "include_deleted" is False
+    if not include_deleted:
+        filters["state"] = get_states()
 
+    # Include any additional filters provided by the user
     if opt_filters:
         filters.update(opt_filters)
 
-    attachments = search_manager.list(filters=filters, id=id)
+    if filters:
+        params["Filters"] = ansible_dict_to_boto3_filter_list(filters)
+
+    try:
+        result = describe_vpc_attachments(client, **params)
+    except AnsibleEC2Error as e:
+        module.fail_json_aws_error(e)
+
+    if result:
+        attachments = [boto3_resource_to_ansible_dict(attachment) for attachment in result]
 
     module.exit_json(changed=False, attachments=attachments, filters=filters)
 

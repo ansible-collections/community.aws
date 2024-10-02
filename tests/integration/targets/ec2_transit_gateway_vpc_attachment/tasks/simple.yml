@@ -3,7 +3,7 @@
 # Creation
 - block:
   - name: (CHECK_MODE) Create an attachment - minimal parameters
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       transit_gateway: '{{ tgw_id }}'
       subnets:
@@ -70,7 +70,7 @@
       simple_attachment_id: '{{ simple_attach.attachments[0].transit_gateway_attachment_id }}'
 
   - name: (CHECK_MODE) Create an attachment - minimal parameters -- IDEMPOTENCY
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       transit_gateway: '{{ tgw_id }}'
       subnets:
@@ -151,7 +151,7 @@
 # =====
 
   - name: (CHECK_MODE) By Id - minimal parameters -- IDEMPOTENCY
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
@@ -233,7 +233,7 @@
 # Set a name
 
   - name: '(CHECK_MODE) Set name'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       name: '{{ attachment_name }}'
@@ -314,7 +314,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Set name -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       name: '{{ attachment_name }}'
@@ -397,7 +397,7 @@
 # =====
 
   - name: '(CHECK_MODE) By Name - minimal parameters -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       subnets:
@@ -621,7 +621,7 @@
 # Tag attachment
 
   - name: '(CHECK_MODE) Set tags'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       tags:
@@ -726,7 +726,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Set tags -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       tags:
@@ -880,7 +880,7 @@
 # =====
 
   - name: '(CHECK_MODE) No change to tags with name set -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
     register: simple_attach
@@ -977,7 +977,7 @@
 # =====
 
   - name: '(CHECK_MODE) Update tags'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       purge_tags: False
@@ -1080,7 +1080,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Update tags -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       purge_tags: False
@@ -1185,7 +1185,7 @@
 # =====
 
   - name: '(CHECK_MODE) Remove tags'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       tags:
@@ -1278,7 +1278,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Remove tags -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       tags:
@@ -1373,7 +1373,7 @@
 # =====
 
   - name: '(CHECK_MODE) Add tags with no purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       purge_tags: False
@@ -1470,7 +1470,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Add tags with no purge -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       purge_tags: False
@@ -1569,7 +1569,7 @@
 # =====
 
   - name: '(CHECK_MODE) Remove all tags with name set'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       tags: {}
@@ -1650,7 +1650,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Remove all tags with name set -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name }}'
       tags: {}
@@ -1733,7 +1733,7 @@
 # =====
 
   - name: '(CHECK_MODE) Remove all tags including name'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       tags: {}
@@ -1810,7 +1810,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Remove all tags including name -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       tags: {}
@@ -1890,10 +1890,10 @@
 # Options
 
   - name: '(CHECK_MODE) Set IPv6 support'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      ipv6_support: True
+      ipv6_support: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -1931,7 +1931,7 @@
   - name: 'Set IPv6 support'
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      ipv6_support: True
+      ipv6_support: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -1967,10 +1967,10 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Set IPv6 support -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      ipv6_support: True
+      ipv6_support: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -2008,7 +2008,7 @@
   - name: 'Set IPv6 support -- IDEMPOTENCY'
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      ipv6_support: True
+      ipv6_support: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -2046,7 +2046,7 @@
 # =====
 
   - name: '(CHECK_MODE) Set DNS support'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       dns_support: False
@@ -2123,7 +2123,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Set DNS support -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       dns_support: False
@@ -2202,10 +2202,10 @@
 # =====
 
   - name: '(CHECK_MODE) Set Appliance Mode support'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      appliance_mode_support: True
+      appliance_mode_support: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -2243,7 +2243,7 @@
   - name: 'Set Appliance Mode support'
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      appliance_mode_support: True
+      appliance_mode_support: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -2279,10 +2279,10 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Set Appliance Mode support -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      appliance_mode_support: True
+      appliance_mode_support: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -2320,7 +2320,7 @@
   - name: 'Set Appliance Mode support -- IDEMPOTENCY'
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      appliance_mode_support: True
+      appliance_mode_support: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -2358,7 +2358,7 @@
 # =====
 
   - name: '(CHECK_MODE) Update IPv6 support'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       ipv6_support: False
@@ -2435,7 +2435,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Update IPv6 support -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       ipv6_support: False
@@ -2514,10 +2514,10 @@
 # =====
 
   - name: '(CHECK_MODE) Update DNS support'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      dns_support: True
+      dns_support: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -2555,7 +2555,7 @@
   - name: 'Update DNS support'
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      dns_support: True
+      dns_support: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -2591,10 +2591,10 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Update DNS support -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      dns_support: True
+      dns_support: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -2632,7 +2632,7 @@
   - name: 'Update DNS support -- IDEMPOTENCY'
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
-      dns_support: True
+      dns_support: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -2670,7 +2670,7 @@
 # =====
 
   - name: '(CHECK_MODE) Update Appliance Mode support'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       appliance_mode_support: False
@@ -2747,7 +2747,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Update Appliance Mode support -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       appliance_mode_support: False
@@ -2827,14 +2827,14 @@
 # Subnet Management
 
   - name: '(CHECK_MODE) Try to add subnet from a different VPC - no purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_b_2 }}'
       purge_subnets: False
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2848,8 +2848,8 @@
       - '{{ subnet_id_b_2 }}'
       purge_subnets: False
     register: simple_attach
-    ignore_errors: True
-  
+    ignore_errors: true
+
   - name: Assert that the test failed
     ansible.builtin.assert:
       that:
@@ -2858,15 +2858,15 @@
 # =====
 
   - name: '(CHECK_MODE) Try to add subnet from a different VPC - with purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_b_2 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2879,9 +2879,9 @@
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_b_2 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2891,14 +2891,14 @@
 # =====
 
   - name: '(CHECK_MODE) Try to add subnet in the same AZ - no purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_b_1a }}'
       purge_subnets: False
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2912,7 +2912,7 @@
       - '{{ subnet_id_a_1a }}'
       purge_subnets: False
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2922,15 +2922,15 @@
 # =====
 
   - name: '(CHECK_MODE) Try to add subnet in the same AZ - with purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_1a }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2943,9 +2943,9 @@
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_1a }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
-    ignore_errors: True
+    ignore_errors: true
 
   - name: Assert that the test failed
     ansible.builtin.assert:
@@ -2955,7 +2955,7 @@
 # =====
 
   - name: '(CHECK_MODE) Add subnet - without purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
@@ -3038,7 +3038,7 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Add subnet - without purge -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
@@ -3123,14 +3123,14 @@
 # =====
 
   - name: '(CHECK_MODE) Add subnet - with purge'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3174,7 +3174,7 @@
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3212,14 +3212,14 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Add subnet - with purge -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -3263,7 +3263,7 @@
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -3303,13 +3303,13 @@
 # =====
 
   - name: '(CHECK_MODE) Remove subnet'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3351,7 +3351,7 @@
       subnets:
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3388,13 +3388,13 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Remove subnet -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -3436,7 +3436,7 @@
       subnets:
       - '{{ subnet_id_a_2 }}'
       - '{{ subnet_id_a_3 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -3475,13 +3475,13 @@
 # =====
 
   - name: '(CHECK_MODE) Remove and add subnet'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3523,7 +3523,7 @@
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3560,13 +3560,13 @@
       attachment: '{{ simple_attach.attachments[0] }}'
 
   - name: '(CHECK_MODE) Remove and add subnet -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       id: '{{ simple_attachment_id }}'
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -3608,7 +3608,7 @@
       subnets:
       - '{{ subnet_id_a_1 }}'
       - '{{ subnet_id_a_2 }}'
-      purge_subnets: True
+      purge_subnets: true
     register: simple_attach
 
   - name: Assert that there is no change
@@ -3648,7 +3648,7 @@
 # Deletion
 
   - name: '(CHECK_MODE) Delete an attachment - minimal parameters'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       state: absent
       id: '{{ simple_attachment_id }}'
@@ -3673,7 +3673,7 @@
       - simple_attach is changed
 
   - name: '(CHECK_MODE) Delete an attachment - minimal parameters -- IDEMPOTENCY'
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       state: absent
       id: '{{ simple_attachment_id }}'
@@ -3703,4 +3703,4 @@
       state: absent
       id: '{{ simple_attachment_id }}'
       wait: False
-    ignore_errors: True
+    ignore_errors: true

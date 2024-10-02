@@ -95,6 +95,7 @@ options:
     required: false
 author:
   - Mark Chappell (@tremble)
+  - Alina Buzachis (@alinabuzachis)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -136,7 +137,7 @@ EXAMPLES = r"""
 """
 
 RETURN = r"""
-transit_gateway_attachments:
+attachments:
   description: The attributes of the Transit Gateway attachments.
   type: list
   elements: dict
@@ -172,6 +173,12 @@ transit_gateway_attachments:
           type: str
           returned: success
           example: "disable"
+        security_group_referencing_support:
+          description:
+              - Indicated weather security group referencing support is disabled.
+            type: str
+            returned: success
+            example: "enable"
     state:
       description:
         - The state of the attachment.
@@ -216,92 +223,68 @@ transit_gateway_attachments:
       example: "1234567890122
 """
 
+from typing import NoReturn
+
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import boto3_resource_to_ansible_dict
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.community.aws.plugins.module_utils.transitgateway import TransitGatewayVpcAttachmentManager
+from ansible_collections.community.aws.plugins.module_utils.transitgateway import find_existing_attachment
+from ansible_collections.community.aws.plugins.module_utils.transitgateway import get_states
+from ansible_collections.community.aws.plugins.module_utils.transitgateway import subnets_to_vpc
 
 
-def handle_vpc_attachments(conn, module: AnsibleAWSModule) -> None:
+def handle_vpc_attachments(client, module: AnsibleAWSModule) -> NoReturn:
     """
-    Creates or deletes the vpc attachments.
+    Handle the creation, modification, or deletion of VPC attachments
+    based on the parameters provided in the Ansible module.
+
     Args:
-        conn (boto3.TransitGatewayVpcAttachmentManager.Client): Valid Boto3 ASG client.
-        module: AnsibleAWSModule object
+        client: The AWS client to interact with EC2 services.
+        module: An instance of AnsibleAWSModule.
+
+    Returns:
+        NoReturn: The function exits by calling module.exit_json()
+                  with the results of the operation.
     """
     attach_id = module.params.get("id", None)
-    tgw = module.params.get("transit_gateway", None)
-    name = module.params.get("name", None)
-    tags = module.params.get("tags", None)
-    purge_tags = module.params.get("purge_tags")
-    state = module.params.get("state")
-    subnets = module.params.get("subnets", None)
-    purge_subnets = module.params.get("purge_subnets")
+    attachment = None
 
-    # When not provided with an ID see if one exists.
     if not attach_id:
-        filters = dict()
-        if tgw:
-            filters["transit-gateway-id"] = tgw
-        if name:
-            filters["tag:Name"] = name
-        if subnets:
-            vpc_id = conn.subnets_to_vpc(subnets)
+        filters = {}
+        if module.params.get("transit_gateway"):
+            filters["transit-gateway-id"] = module.params["transit_gateway"]
+        if module.params.get("name"):
+            filters["tag:Name"] = module.params["name"]
+        if module.params.get("subnets"):
+            vpc_id = subnets_to_vpc(client, module, module.params["subnets"])
             filters["vpc-id"] = vpc_id
 
         # Attachments lurk in a 'deleted' state, for a while, ignore them so we
         # can reuse the names
-        filters["state"] = conn.get_states()
-        attachments = conn.list(filters=filters)
-        if len(attachments) > 1:
-            module.fail_json("Multiple matching attachments found, provide an ID", attachments=attachments)
-        # If we find a match then we'll modify it by ID, otherwise we'll be
-        # creating a new RTB.
-        if attachments:
-            attach_id = attachments[0]["transit_gateway_attachment_id"]
+        filters["state"] = get_states()
 
-    manager = TransitGatewayVpcAttachmentManager(module=module, id=attach_id)
-    manager.set_wait(module.params.get('wait', None))
-    manager.set_wait_timeout(module.params.get('wait_timeout', None))
-
-    if state == "absent":
-        manager.delete()
+        attachment = find_existing_attachment(client, module, filters=filters)
+        if attachment:
+            attach_id = attachment["TransitGatewayAttachmentId"]
     else:
-        if not attach_id:
-            if not tgw:
-                module.fail_json(
-                    "No existing attachment found. To create a new attachment"
-                    " the `transit_gateway` parameter must be provided."
-                )
-            if not subnets:
-                module.fail_json(
-                    "No existing attachment found. To create a new attachment"
-                    " the `subnets` parameter must be provided."
-                )
+        attachment = find_existing_attachment(client, module, attachment_id=attach_id)
 
-        # name is just a special case of tags.
-        if name:
-            new_tags = dict(Name=name)
-            if tags is None:
-                purge_tags = False
-            else:
-                new_tags.update(tags)
-            tags = new_tags
+    manager = TransitGatewayVpcAttachmentManager(client, module, attachment, attachment_id=attach_id)
 
-        manager.set_transit_gateway(tgw)
-        manager.set_subnets(subnets, purge_subnets)
-        manager.set_tags(tags, purge_tags)
-        manager.set_dns_support(module.params.get("dns_support", None))
-        manager.set_ipv6_support(module.params.get("ipv6_support", None))
-        manager.set_appliance_mode_support(module.params.get("appliance_mode_support", None))
-        manager.flush_changes()
+    if module.params["state"] == "absent":
+        manager.delete_attachment()
+    else:
+        manager.create_or_modify_attachment()
 
     results = dict(
         changed=manager.changed,
-        attachments=[manager.updated_resource],
+        attachments=[manager.updated],
     )
     if manager.changed:
         results["diff"] = dict(
-            before=manager.original_resource,
-            after=manager.updated_resource,
+            before=boto3_resource_to_ansible_dict(manager.existing),
+            after=manager.updated,
         )
 
     module.exit_json(**results)
@@ -334,8 +317,9 @@ def main():
         required_one_of=one_of,
     )
 
-    search_manager = TransitGatewayVpcAttachmentManager(module=module)
-    handle_vpc_attachments(search_manager, module)
+    client = module.client("ec2")
+
+    handle_vpc_attachments(client, module)
 
 
 if __name__ == "__main__":

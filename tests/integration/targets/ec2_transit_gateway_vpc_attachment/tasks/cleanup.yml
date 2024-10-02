@@ -4,23 +4,23 @@
     filters:
       transit-gateway-id: '{{ tgw_id }}'
   register: info
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Start deletion of all attachments
   community.aws.ec2_transit_gateway_vpc_attachment:
     state: absent
     id: '{{ item.transit_gateway_attachment_id }}'
-    wait: False
+    wait: false
   loop: '{{ info.attachments }}'
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Wait for deletion of all attachments
   community.aws.ec2_transit_gateway_vpc_attachment:
     state: absent
     id: '{{ item.transit_gateway_attachment_id }}'
-    wait: True
+    wait: true
   loop: '{{ info.attachments }}'
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Delete subnets
   amazon.aws.ec2_vpc_subnet:
@@ -52,7 +52,13 @@
     name: '{{ vpc_name_a }}'
   - cidr: '{{ vpc_cidr_b }}'
     name: '{{ vpc_name_b }}'
-  ignore_errors: True
+  ignore_errors: true
+
+- name: Gather info about all transit gateways
+  community.aws.ec2_transit_gateway_info:
+    transit_gateway_ids:
+      - '{{ tgw_id }}'
+      - '{{ tgw_id_2 }}'
 
 - name: Delete Transit Gateways
   community.aws.ec2_transit_gateway:
@@ -61,4 +67,4 @@
   loop:
   - tgw_id: '{{ tgw_id }}'
   - tgw_id: '{{ tgw_id_2 }}'
-  ignore_errors: True
+  ignore_errors: true

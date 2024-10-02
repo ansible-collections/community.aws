@@ -9,7 +9,7 @@
 
 - block:
   - name: (CHECK_MODE) Create an attachment - complex parameters
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name_complex }}'
       transit_gateway: '{{ tgw_id }}'
@@ -19,8 +19,8 @@
       tags:
         tagA: 'example Value'
         Tag_B: 'second value'
-      appliance_mode_support: True
-      ipv6_support: True
+      appliance_mode_support: true
+      ipv6_support: true
     register: complex_attach
 
   - name: Assert that the test is successful
@@ -41,13 +41,13 @@
       - attachment.subnet_ids | length == 2
       - subnet_id_b_1 in attachment.subnet_ids
       - subnet_id_b_2 in attachment.subnet_ids
-      # - attachment.tags | length == 3
-      # - '"Name" in attachment.tags'
-      # - '"tagA" in attachment.tags'
-      # - '"Tag_B" in attachment.tags'
-      # - attachment.tags.Name == attachment_name_complex
-      # - attachment.tags.tagA == "example Value"
-      # - attachment.tags.Tag_B == "second value"
+      - attachment.tags | length == 3
+      - '"Name" in attachment.tags'
+      - '"tagA" in attachment.tags'
+      - '"Tag_B" in attachment.tags'
+      - attachment.tags.Name == attachment_name_complex
+      - attachment.tags.tagA == "example Value"
+      - attachment.tags.Tag_B == "second value"
       - attachment.transit_gateway_id == tgw_id
       - attachment.vpc_id == vpc_id_b
     vars:
@@ -63,9 +63,8 @@
       tags:
         tagA: 'example Value'
         Tag_B: 'second value'
-      appliance_mode_support: True
-      ipv6_support: True
-      wait: false
+      appliance_mode_support: true
+      ipv6_support: true
     register: complex_attach
 
   - name: Assert that the test is successful
@@ -96,13 +95,13 @@
       - attachment.options.ipv6_support == 'enable'
       - attachment.transit_gateway_attachment_id.startswith('tgw-attach-')
       - attachment.state == 'available'
-      # - attachment.tags | length == 3
-      # - '"Name" in attachment.tags'
-      # - '"tagA" in attachment.tags'
-      # - '"Tag_B" in attachment.tags'
-      # - attachment.tags.Name == attachment_name_complex
-      # - attachment.tags.tagA == "example Value"
-      # - attachment.tags.Tag_B == "second value"
+      - attachment.tags | length == 3
+      - '"Name" in attachment.tags'
+      - '"tagA" in attachment.tags'
+      - '"Tag_B" in attachment.tags'
+      - attachment.tags.Name == attachment_name_complex
+      - attachment.tags.tagA == "example Value"
+      - attachment.tags.Tag_B == "second value"
       - attachment.vpc_owner_id == vpc_owner_b
     vars:
       attachment: '{{ complex_attach.attachments[0] }}'
@@ -112,7 +111,7 @@
       complex_attachment_id: '{{ complex_attach.attachments[0].transit_gateway_attachment_id }}'
 
   - name: (CHECK_MODE) Create an attachment - complex parameters -- IDEMPOTENCY
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name_complex }}'
       transit_gateway: '{{ tgw_id }}'
@@ -122,8 +121,8 @@
       tags:
         tagA: 'example Value'
         Tag_B: 'second value'
-      appliance_mode_support: True
-      ipv6_support: True
+      appliance_mode_support: true
+      ipv6_support: true
     register: complex_attach
 
   - name: Assert that there is no change
@@ -154,13 +153,13 @@
       - attachment.options.ipv6_support == 'enable'
       - attachment.transit_gateway_attachment_id == complex_attachment_id
       - attachment.state == 'available'
-      # - attachment.tags | length == 3
-      # - '"Name" in attachment.tags'
-      # - '"tagA" in attachment.tags'
-      # - '"Tag_B" in attachment.tags'
-      # - attachment.tags.Name == attachment_name_complex
-      # - attachment.tags.tagA == "example Value"
-      # - attachment.tags.Tag_B == "second value"
+      - attachment.tags | length == 3
+      - '"Name" in attachment.tags'
+      - '"tagA" in attachment.tags'
+      - '"Tag_B" in attachment.tags'
+      - attachment.tags.Name == attachment_name_complex
+      - attachment.tags.tagA == "example Value"
+      - attachment.tags.Tag_B == "second value"
       - attachment.vpc_owner_id == vpc_owner_b
     vars:
       attachment: '{{ complex_attach.attachments[0] }}'
@@ -175,8 +174,8 @@
       tags:
         tagA: 'example Value'
         Tag_B: 'second value'
-      appliance_mode_support: True
-      ipv6_support: True
+      appliance_mode_support: true
+      ipv6_support: true
     register: complex_attach
 
   - name: Assert that there is no change
@@ -207,13 +206,13 @@
       - attachment.options.ipv6_support == 'enable'
       - attachment.transit_gateway_attachment_id == complex_attachment_id
       - attachment.state == 'available'
-      # - attachment.tags | length == 3
-      # - '"Name" in attachment.tags'
-      # - '"tagA" in attachment.tags'
-      # - '"Tag_B" in attachment.tags'
-      # - attachment.tags.Name == attachment_name_complex
-      # - attachment.tags.tagA == "example Value"
-      # - attachment.tags.Tag_B == "second value"
+      - attachment.tags | length == 3
+      - '"Name" in attachment.tags'
+      - '"tagA" in attachment.tags'
+      - '"Tag_B" in attachment.tags'
+      - attachment.tags.Name == attachment_name_complex
+      - attachment.tags.tagA == "example Value"
+      - attachment.tags.Tag_B == "second value"
       - attachment.vpc_owner_id == vpc_owner_b
     vars:
       attachment: '{{ complex_attach.attachments[0] }}'
@@ -222,19 +221,19 @@
 # Update
 
   - name: (CHECK_MODE) Update an attachment - complex parameters
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name_complex }}'
       transit_gateway: '{{ tgw_id }}'
       subnets:
       - '{{ subnet_id_b_1 }}'
-      purge_subnets: True
+      purge_subnets: true
       tags:
         tagC: '3'
         Tag_D: 'Hello again dear world'
-      purge_tags: False
-      dns_support: False
-      ipv6_support: False
+      purge_tags: false
+      dns_support: false
+      ipv6_support: false
     register: complex_attach
 
   - name: Assert that the test is successful
@@ -285,13 +284,13 @@
       transit_gateway: '{{ tgw_id }}'
       subnets:
       - '{{ subnet_id_b_1 }}'
-      purge_subnets: True
+      purge_subnets: true
       tags:
         tagC: '3'
         Tag_D: 'Hello again dear world'
-      purge_tags: False
-      dns_support: False
-      ipv6_support: False
+      purge_tags: false
+      dns_support: false
+      ipv6_support: false
     register: complex_attach
 
   - name: Assert that the test is successful
@@ -337,19 +336,19 @@
       attachment: '{{ complex_attach.attachments[0] }}'
 
   - name: (CHECK_MODE) Update an attachment - complex parameters -- IDEMPOTENCY
-    check_mode: True
+    check_mode: true
     community.aws.ec2_transit_gateway_vpc_attachment:
       name: '{{ attachment_name_complex }}'
       transit_gateway: '{{ tgw_id }}'
       subnets:
       - '{{ subnet_id_b_1 }}'
-      purge_subnets: True
+      purge_subnets: true
       tags:
         tagC: '3'
         Tag_D: 'Hello again dear world'
-      purge_tags: False
-      dns_support: False
-      ipv6_support: False
+      purge_tags: false
+      dns_support: false
+      ipv6_support: false
     register: complex_attach
 
   - name: Assert that there is no change
@@ -400,13 +399,13 @@
       transit_gateway: '{{ tgw_id }}'
       subnets:
       - '{{ subnet_id_b_1 }}'
-      purge_subnets: True
+      purge_subnets: true
       tags:
         tagC: '3'
         Tag_D: 'Hello again dear world'
-      purge_tags: False
-      dns_support: False
-      ipv6_support: False
+      purge_tags: false
+      dns_support: false
+      ipv6_support: false
     register: complex_attach
 
   - name: Assert that there is no change
