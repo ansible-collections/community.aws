@@ -25,6 +25,7 @@ options:
     default: {}
 author:
   - Karen Cheng (@Etherdaemon)
+  - Alina Buzachis (@alinabuzachis)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

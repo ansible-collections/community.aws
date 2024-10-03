@@ -54,6 +54,7 @@ notes:
   - Support for O(purge_tags) was added in release 2.0.0.
 author:
   - Mike Mochan (@mmochan)
+  - Alina Buzachis (@alinabuzachis)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -475,6 +476,9 @@ def create_peering_connection(client, module: AnsibleAWSModule) -> Tuple[bool, D
     if module.params.get("tags"):
         params["TagSpecifications"] = boto3_tag_specifications(module.params["tags"], types="vpc-peering-connection")
 
+    if module.check_mode:
+        return (True, {"VpcPeeringConnectionId": ""})
+
     try:
         peering_connection = create_vpc_peering_connection(client, **params)
         if module.params.get("wait"):
@@ -515,12 +519,13 @@ def delete_peering_connection(client, module: AnsibleAWSModule) -> NoReturn:
             peering_id=peering_id,
         )
 
-    try:
-        delete_vpc_peering_connection(client, peering_id)
-        if module.params.get("wait"):
-            wait_for_state(client, module, "deleted", peering_id)
-    except AnsibleEC2Error as e:
-        module.fail_json_aws_error(e)
+    if not module.check_mode:
+      try:
+          delete_vpc_peering_connection(client, peering_id)
+          if module.params.get("wait"):
+              wait_for_state(client, module, "deleted", peering_id)
+      except AnsibleEC2Error as e:
+          module.fail_json_aws_error(e)
 
     module.exit_json(changed=True, peering_id=peering_id)
 
@@ -545,26 +550,20 @@ def accept_reject_peering_connection(client, module: AnsibleAWSModule, state: st
     vpc_peering_connection = get_peering_connection_by_id(client, module, peering_id)
 
     if not (is_active(vpc_peering_connection) or is_rejected(vpc_peering_connection)):
-        try:
-            if state == "accept":
-                changed |= accept_vpc_peering_connection(client, peering_id)
-                target_state = "active"
-            else:
-                changed |= reject_vpc_peering_connection(client, peering_id)
-                target_state = "rejected"
+        if not module.check_mode:
+            try:
+                if state == "accept":
+                    changed |= accept_vpc_peering_connection(client, peering_id)
+                    target_state = "active"
+                else:
+                    changed |= reject_vpc_peering_connection(client, peering_id)
+                    target_state = "rejected"
 
-            if module.params.get("tags"):
-                changed |= add_ec2_tags(
-                    client,
-                    module,
-                    peering_id,
-                    module.params["tags"],
-                )
-
-            if module.params.get("wait"):
-                wait_for_state(client, module, target_state, peering_id)
-        except AnsibleEC2Error as e:
-            module.fail_json_aws_error(e)
+                if module.params.get("wait"):
+                  wait_for_state(client, module, target_state, peering_id)
+            except AnsibleEC2Error as e:
+                module.fail_json_aws_error(e)
+        changed = True
 
     changed |= ensure_ec2_tags(
         client,
@@ -598,7 +597,7 @@ def main():
         ("state", "reject", ["peering_id"]),
     ]
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, required_if=required_if)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True, required_if=required_if)
 
     state = module.params.get("state")
     peering_id = module.params.get("peering_id")
