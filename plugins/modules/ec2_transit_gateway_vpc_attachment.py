@@ -220,7 +220,7 @@ attachments:
         - The ID of the account that the VPC belongs to.
       type: str
       returned: success
-      example: "1234567890122
+      example: "1234567890122"
 """
 
 from typing import NoReturn
