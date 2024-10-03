@@ -55,7 +55,7 @@ EXAMPLES = r"""
 RETURN = r"""
 vpn_connections:
     description: List of one or more EC2 VPN Connections.
-    returned: list
+    type: list
     elements: dict
     contains:
       category:
@@ -75,57 +75,41 @@ vpn_connections:
       gateway_association_state:
         description: The current state of the gateway association.
         type: str
-        returned: O(state=present)
         sample: "associated"
       options:
         description: The VPN connection options.
         type: list
         elements: dict
-        returned: O(state=present)
         contains:
           static_routes_only:
             description: If the VPN connection only allows static routes.
-            returned: O(state=present)
             type: bool
-            sample:
-              static_routes_only: true
+            sample: true
           enable_acceleration:
             description: Indicates whether acceleration is enabled for the VPN connection.
-            returned: O(state=present)
             type: bool
-            sample:
-              enable_acceleration: false
+            sample: false
           local_ipv4_network_cidr:
             description: The IPv4 CIDR on the customer gateway (on-premises) side of the VPN connection.
-            returned: O(state=present)
             type: str
-            sample:
-              local_ipv4_network_cidr: "0.0.0.0/0"
+            sample: "0.0.0.0/0"
           outside_ip_address_type:
             description: The external IP address of the VPN tunnel.
-            returned: O(state=present)
             type: str
-            sample:
-              outside_ip_address_type: "PublicIpv4"
+            sample: "PublicIpv4"
           remote_ipv4_network_cidr:
             description: The IPv4 CIDR on the Amazon Web Services side of the VPN connection.
-            returned: O(state=present)
             type: str
-            sample:
-              remote_ipv4_network_cidr: "0.0.0.0/0"
+            sample: "0.0.0.0/0"
           tunnel_inside_ip_version:
             description: Indicates whether the VPN tunnels process IPv4 or IPv6 traffic.
-            returned: O(state=present)
             type: str
-            sample:
-              tunnel_inside_ip_version: "ipv4"
+            sample: "ipv4"
           tunnel_options:
             description: Indicates the VPN tunnel options.
-            returned: O(state=present)
             type: list
             elements: dict
-            sample:
-              tunnel_inside_ip_version: [
+            sample: [
                   {
                       "log_options": {
                           "cloud_watch_log_options": {
@@ -140,47 +124,38 @@ vpn_connections:
             contains:
               log_options:
                 description: Options for logging VPN tunnel activity.
-                returned: O(state=present)
                 type: dict
                 contains:
                   cloud_watch_log_options:
                     description: Options for sending VPN tunnel logs to CloudWatch.
                     type: dict
-                    returned: O(state=present)
               outside_ip_address:
                 description: The external IP address of the VPN tunnel.
                 type: str
-                returned: O(state=present)
               pre_shared_key:
                 description:
                   - The pre-shared key (PSK) to establish initial authentication between the
                     virtual private gateway and the customer gateway.
                 type: str
-                returned: O(state=present)
               tunnel_inside_cidr:
                 description: The range of inside IPv4 addresses for the tunnel.
                 type: str
-                returned: O(state=present)
       routes:
         description: List of static routes associated with the VPN connection.
         returned: always
         type: list
         elements: dict
         contains:
-          contains:
-            destination_cidr_block:
-              description:
-                - The CIDR block associated with the local subnet of the customer data center.
-              type: str
-              returned: O(state=present)
-            source:
-              description: Indicates how the routes were provided.
-              type: str
-              returned: O(state=present)
-            state:
-              description: The current state of the static route.
-              type: str
-                    returned: O(state=present)
+          destination_cidr_block:
+            description:
+              - The CIDR block associated with the local subnet of the customer data center.
+            type: str
+          source:
+            description: Indicates how the routes were provided.
+            type: str
+          state:
+            description: The current state of the static route.
+            type: str
       state:
         description: The current state of the VPN connection.
         returned: always
@@ -191,7 +166,7 @@ vpn_connections:
         returned: always
         type: dict
         sample: {
-                    "Name": "test-conn"
+                  "Name": "test-conn"
                 }
       type:
         description: The type of VPN connection.

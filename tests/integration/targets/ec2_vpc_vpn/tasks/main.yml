@@ -55,7 +55,6 @@
         - result is failed
         - result.msg == "parameters are mutually exclusive: vpn_gateway_id|transit_gateway_id"
 
-
   - name: Create EC2 VPN Connection, with customer gateway and transit_gateway
     community.aws.ec2_vpc_vpn:
       customer_gateway_id: '{{ cgw.gateway.customer_gateway.customer_gateway_id }}'
@@ -141,7 +140,8 @@
     register: result
     check_mode: true
 
-  - ansible.builtin.assert:
+  - name: Assert EC2 VPN Connection is deleted (check_mode)
+    ansible.builtin.assert:
       that:
         - result is changed
 
@@ -151,7 +151,8 @@
       vpn_connection_id: '{{ vpn_id }}'
     register: result
 
-  - ansible.builtin.assert:
+  - name: Assert EC2 VPN Connection is deleted
+    ansible.builtin.assert:
       that:
         - result is changed
 
@@ -162,7 +163,8 @@
     register: result
     check_mode: true
 
-  - ansible.builtin.assert:
+  - name: Assert result has not changed (idempotency check_mode)
+    ansible.builtin.assert:
       that:
         - result is not changed
 
@@ -172,7 +174,8 @@
       vpn_connection_id: '{{ vpn_id }}'
     register: result
 
-  - ansible.builtin.assert:
+  - name: Assert result has not changed (idempotency)
+    ansible.builtin.assert:
       that:
         - result is not changed
 
