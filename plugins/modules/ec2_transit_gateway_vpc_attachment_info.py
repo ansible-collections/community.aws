@@ -72,7 +72,7 @@ attachments:
         - An ISO 8601 date time stamp of when the attachment was created.
       type: str
       returned: success
-      example: "2022-03-10T16:40:26+00:00"
+      sample: "2022-03-10T16:40:26+00:00"
     options:
       description:
         - Additional VPC attachment options.
@@ -84,38 +84,38 @@ attachments:
             - Indicates whether appliance mode support is enabled.
           type: str
           returned: success
-          example: "enable"
+          sample: "enable"
         dns_support:
           description:
             - Indicates whether DNS support is enabled.
           type: str
           returned: success
-          example: "disable"
+          sample: "disable"
         ipv6_support:
           description:
             - Indicates whether IPv6 support is disabled.
           type: str
           returned: success
-          example: "disable"
+          sample: "disable"
         security_group_referencing_support:
           description:
             - Indicated weather security group referencing support is disabled.
           type: str
           returned: success
-          example: "enable"
+          sample: "enable"
     state:
       description:
         - The state of the attachment.
       type: str
       returned: success
-      example: "deleting"
+      sample: "deleting"
     subnet_ids:
       description:
         - The IDs of the subnets in use by the attachment.
       type: list
       elements: str
       returned: success
-      example: ["subnet-0123456789abcdef0", "subnet-11111111111111111"]
+      sample: ["subnet-0123456789abcdef0", "subnet-11111111111111111"]
     tags:
       description:
         - A dictionary representing the resource tags.
@@ -126,25 +126,25 @@ attachments:
         - The ID of the attachment.
       type: str
       returned: success
-      example: "tgw-attach-0c0c5fd0b0f01d1c9"
+      sample: "tgw-attach-0c0c5fd0b0f01d1c9"
     transit_gateway_id:
       description:
         - The ID of the transit gateway that the attachment is connected to.
       type: str
       returned: success
-      example: "tgw-0123456789abcdef0"
+      sample: "tgw-0123456789abcdef0"
     vpc_id:
       description:
         - The ID of the VPC that the attachment is connected to.
       type: str
       returned: success
-      example: "vpc-0123456789abcdef0"
+      sample: "vpc-0123456789abcdef0"
     vpc_owner_id:
       description:
         - The ID of the account that the VPC belongs to.
       type: str
       returned: success
-      example: "123456789012"
+      sample: "123456789012"
 """
 
 from typing import Any
