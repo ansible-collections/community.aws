@@ -87,9 +87,9 @@ options:
     description:
       - An alternative to using O(vpn_connection_id). If multiple matches are found, O(vpn_connection_id) is required.
         If one of the following suboptions is a list of items to filter by, only one item needs to match to find the VPN
-        that correlates. e.g. if the filter O(filters.cidr) is V(['194.168.2.0/24', '192.168.2.0/24']) and the VPN route only has the
+        that correlates. e.g. if the filter O(filters.cidr) is V(["194.168.2.0/24", "192.168.2.0/24"]) and the VPN route only has the
         destination cidr block of V(192.168.2.0/24) it will be found with this filter (assuming there are not multiple
-        VPNs that are matched). Another example, if the filter O(filters.vpn) is equal to V(['vpn-ccf7e7ad', 'vpn-cb0ae2a2']) and one
+        VPNs that are matched). Another example, if the filter O(filters.vpn) is equal to V(["vpn-ccf7e7ad", "vpn-cb0ae2a2"]) and one
         of of the VPNs has the state deleted (exists but is unmodifiable) and the other exists and is not deleted,
         it will be found via this filter.
     suboptions:
@@ -239,8 +239,7 @@ changed:
   description: If the VPN connection has changed.
   type: bool
   returned: always
-  sample:
-    changed: true
+  sample: true
 customer_gateway_configuration:
   description: The configuration of the VPN connection.
   returned: O(state=present)
@@ -249,26 +248,22 @@ customer_gateway_id:
   description: The customer gateway connected via the connection.
   type: str
   returned: O(state=present)
-  sample:
-    customer_gateway_id: "cgw-1220c87b"
+  sample: "cgw-1220c87b"
 gateway_association_state:
   description: The current state of the gateway association.
   type: str
   returned: O(state=present)
-  sample:
-    gateway_association_state: "associated"
+  sample: "associated"
 vpn_gateway_id:
   description: The virtual private gateway connected via the connection.
   type: str
   returned: O(state=present)
-  sample:
-    vpn_gateway_id: "vgw-cb0ae2a2"
+  sample: "vgw-cb0ae2a2"
 transit_gateway_id:
   description: The transit gateway id to which the vpn connection can be attached.
   type: str
   returned: O(state=present)
-  sample:
-    transit_gateway_id: "tgw-cb0ae2a2"
+  sample: "tgw-cb0ae2a2"
 options:
   description: The VPN connection options.
   type: list
@@ -279,46 +274,38 @@ options:
       description: If the VPN connection only allows static routes.
       returned: O(state=present)
       type: bool
-      sample:
-        static_routes_only: true
+      sample: true
     enable_acceleration:
       description: Indicates whether acceleration is enabled for the VPN connection.
       returned: O(state=present)
       type: bool
-      sample:
-        enable_acceleration: false
+      sample: false
     local_ipv4_network_cidr:
       description: The IPv4 CIDR on the customer gateway (on-premises) side of the VPN connection.
       returned: O(state=present)
       type: str
-      sample:
-        local_ipv4_network_cidr: "0.0.0.0/0"
+      sample: "0.0.0.0/0"
     outside_ip_address_type:
       description: The external IP address of the VPN tunnel.
       returned: O(state=present)
       type: str
-      sample:
-        outside_ip_address_type: "PublicIpv4"
+      sample: "PublicIpv4"
     remote_ipv4_network_cidr:
       description: The IPv4 CIDR on the Amazon Web Services side of the VPN connection.
       returned: O(state=present)
       type: str
-      sample:
-        remote_ipv4_network_cidr: "0.0.0.0/0"
+      sample: "0.0.0.0/0"
     tunnel_inside_ip_version:
       description: Indicates whether the VPN tunnels process IPv4 or IPv6 traffic.
       returned: O(state=present)
       type: str
-      sample:
-        tunnel_inside_ip_version: "ipv4"
+      sample: "ipv4"
     tunnel_options:
       description: Indicates the VPN tunnel options.
       returned: O(state=present)
       type: list
       elements: dict
-      sample:
-        tunnel_inside_ip_version: [
-            {
+      sample: [{
                 "log_options": {
                     "cloud_watch_log_options": {
                         "log_enabled": false
@@ -327,8 +314,7 @@ options:
                 "outside_ip_address": "34.225.101.10",
                 "pre_shared_key": "8n7hnjNE8zhIt4VpMOIfcrw6XnUTHLW9",
                 "tunnel_inside_cidr": "169.254.31.8/30"
-            },
-        ]
+            }]
       contains:
         log_options:
           description: Options for logging VPN tunnel activity.
@@ -357,8 +343,7 @@ routes:
   description: The routes of the VPN connection.
   type: list
   returned: O(state=present)
-  sample:
-    routes: [{
+  sample: [{
               "destination_cidr_block": "192.168.1.0/24",
               "state": "available"
             }]
@@ -380,29 +365,25 @@ state:
   description: The status of the VPN connection.
   type: str
   returned: O(state=present)
-  sample:
-    state: "available"
+  sample: "available"
 tags:
   description: The tags associated with the connection.
   type: dict
-  returned:O(state=present)
-  sample:
-    tags:
-      name: "ansible-test"
-      other: "tag"
+  returned: O(state=present)
+  sample: {
+      "name": "ansible-test",
+      "other": "tag"
+    }
 type:
   description: The type of VPN connection (currently only ipsec.1 is available).
   type: str
-  returned: V(state=present)
-  sample:
-    type: "ipsec.1"
+  returned: O(state=present)
+  sample: "ipsec.1"
 vgw_telemetry:
   type: list
   returned: O(state=present)
   description: The telemetry for the VPN tunnel.
-  sample:
-    vgw_telemetry: [
-        {
+  sample: [{
             "accepted_route_count": 0,
             "last_status_change": "2024-09-30T13:12:33+00:00",
             "outside_ip_address": "34.225.101.10",
@@ -440,8 +421,7 @@ vpn_connection_id:
   description: The identifier for the VPN connection.
   type: str
   returned: O(state=present)
-  sample:
-    vpn_connection_id: "vpn-781e0e19"
+  sample: "vpn-781e0e19"
 """
 
 try:
@@ -733,15 +713,15 @@ def check_for_routes_update(client, module: AnsibleAWSModule, vpn_connection_id:
         if attribute in ("tags", "routes", "state"):
             continue
         elif attribute == "options":
-            will_be = module.params.get("static_only", None)
+            will_be = module.params.get("static_only")
             is_now = bool(current_attrs[attribute]["static_routes_only"])
             attribute = "static_only"
         elif attribute == "type":
-            will_be = module.params.get("connection_type", None)
+            will_be = module.params.get("connection_type")
             is_now = current_attrs[attribute]
         else:
             is_now = current_attrs[attribute]
-            will_be = module.params.get(attribute, None)
+            will_be = module.params.get(attribute)
 
         if will_be is not None and to_text(will_be) != to_text(is_now):
             module.fail_json(
