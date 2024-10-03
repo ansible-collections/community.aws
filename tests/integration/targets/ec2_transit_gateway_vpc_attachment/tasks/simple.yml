@@ -3652,7 +3652,7 @@
     community.aws.ec2_transit_gateway_vpc_attachment:
       state: absent
       id: '{{ simple_attachment_id }}'
-      wait: False
+      wait: false
     register: simple_attach
 
   - name: Assert that the test is successful
@@ -3664,7 +3664,7 @@
     community.aws.ec2_transit_gateway_vpc_attachment:
       state: absent
       id: '{{ simple_attachment_id }}'
-      wait: False
+      wait: false
     register: simple_attach
 
   - name: Assert that the test is successful

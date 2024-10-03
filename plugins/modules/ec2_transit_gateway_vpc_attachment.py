@@ -175,10 +175,10 @@ attachments:
           example: "disable"
         security_group_referencing_support:
           description:
-              - Indicated weather security group referencing support is disabled.
-            type: str
-            returned: success
-            example: "enable"
+            - Indicated weather security group referencing support is disabled.
+          type: str
+          returned: success
+          example: "enable"
     state:
       description:
         - The state of the attachment.
