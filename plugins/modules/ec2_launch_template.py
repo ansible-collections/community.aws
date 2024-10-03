@@ -517,7 +517,7 @@ def params_to_launch_data(module, template_params):
     if template_params.get("tags"):
         tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
         template_params["tag_specifications"] = [
-            {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume")
+            {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume", "network-interface")
         ]
         del template_params["tags"]
     if module.params.get("iam_instance_profile"):
