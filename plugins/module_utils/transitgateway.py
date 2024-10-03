@@ -497,9 +497,10 @@ class TransitGatewayVpcAttachmentManager:
     def delete_attachment(self):
         """Delete attachment"""
         if self.existing.get("State") == "deleting":
-            self.state_manager.wait_for_state_change("deleted")
+            if self.module.params.get("wait"):
+                self.state_manager.wait_for_state_change("deleted")
             self.change = False
-
-        self.changed |= self.state_manager.delete_attachment()
-        if self.module.params.get("wait"):
-            self.state_manager.wait_for_state_change("deleted")
+        else:
+            self.changed |= self.state_manager.delete_attachment()
+            if self.module.params.get("wait"):
+                self.state_manager.wait_for_state_change("deleted")
