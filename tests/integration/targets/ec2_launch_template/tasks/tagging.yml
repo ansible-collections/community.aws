@@ -8,7 +8,7 @@
       community.aws.ec2_launch_template:
         name: "{{ test_launch_template_name }}"
         instance_type: t2.micro
-        tags:
+        template_tags:
           ResourcePrefix: "{{ resource_prefix }}"
           InstanceType: "t2.micro"
       register: _create_with_tags
@@ -35,7 +35,7 @@
       community.aws.ec2_launch_template:
         name: "{{ test_launch_template_name }}"
         instance_type: t2.micro
-        tags:
+        template_tags:
           ResourcePrefix: "{{ resource_prefix }}"
           InstanceType: "t2.micro"
       register: _create_with_tags_idempotency
@@ -62,9 +62,9 @@
       community.aws.ec2_launch_template:
         name: "{{ test_launch_template_name }}"
         instance_type: t2.micro
-        tags:
+        template_tags:
           Phase: integration
-        purge_tags: false
+        purge_template_tags: false
       register: _add_tag
 
     - name: Retrieve Launch template information
@@ -91,9 +91,9 @@
       community.aws.ec2_launch_template:
         name: "{{ test_launch_template_name }}"
         instance_type: t3.micro
-        tags:
+        template_tags:
           Team: Ansible
-        purge_tags: true
+        purge_template_tags: true
       register: _add_tag_and_version
 
     - name: Retrieve Launch template information
@@ -122,8 +122,8 @@
       community.aws.ec2_launch_template:
         name: "{{ test_launch_template_name }}"
         instance_type: t3.micro
-        tags: {}
-        purge_tags: true
+        template_tags: {}
+        purge_template_tags: true
       register: _purge_tags
 
     - name: Retrieve Launch template information

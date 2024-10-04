@@ -388,13 +388,29 @@ options:
           - Wether the instance tags are availble (V(enabled)) via metadata endpoint or not (V(disabled)).
         choices: [enabled, disabled]
         default: 'disabled'
-notes:
-  - Support for O(purge_tags) was added in release 8.1.0.
+  template_tags:
+    description:
+      - A dictionary representing the tags to be applied to the launch template.
+      - If the O(template_tags) parameter is not set then tags will not be modified.
+    type: dict
+    required: false
+  purge_template_tags:
+    description:
+      - If O(purge_template_tags=true) and O(template_tags) is set, existing tags will be purged
+        from the resource to match exactly what is defined by O(template_tags) parameter.
+      - If the O(template_tags) parameter is not set then tags will not be modified, even
+        if O(purge_template_tags=True).
+      - Tag keys beginning with V(aws:) are reserved by Amazon and can not be
+        modified.  As such they will be ignored for the purposes of the
+        O(purge_template_tags) parameter.  See the Amazon documentation for more information
+        U(https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions).
+    type: bool
+    default: true
+    required: false
 extends_documentation_fragment:
 - amazon.aws.common.modules
 - amazon.aws.region.modules
 - amazon.aws.boto3
-- amazon.aws.tags
 """
 
 EXAMPLES = r"""
@@ -701,8 +717,9 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_lau
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import determine_iam_arn_from_name
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_launch_template
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import scrub_none_parameters
 
@@ -742,6 +759,12 @@ def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, 
 def params_to_launch_data(
     template_params: Dict[str, Any], iam_instance_profile_arn: Optional[str] = None
 ) -> Dict[str, Any]:
+    if template_params.get("tags"):
+        tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
+        template_params["tag_specifications"] = [
+            {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume")
+        ]
+        del template_params["tags"]
     if iam_instance_profile_arn:
         template_params["iam_instance_profile"] = {"arn": iam_instance_profile_arn}
     for interface in template_params.get("network_interfaces") or []:
@@ -801,7 +824,7 @@ def validate_version_deletion(
 
         if default_version_to_set and default_version_to_set not in remaining_versions:
             module.fail_json(
-                msg=f"Could not set version '{default_version_to_set}' as default,"
+                msg=f"Could not set version '{default_version_to_set}' as default, "
                 "the launch template version was not found for the specified launch template id '{launch_template_id}'."
             )
     else:
@@ -967,8 +990,8 @@ def ensure_present(
     existing_versions: List[Dict[str, Any]],
 ) -> None:
     template_name = module.params["template_name"]
-    tags = module.params["tags"]
-    purge_tags = module.params["purge_tags"]
+    template_tags = module.params["template_tags"]
+    purge_template_tags = module.params["purge_template_tags"]
     version_description = module.params.get("version_description")
     iam_instance_profile = module.params.get("iam_instance_profile")
     if iam_instance_profile:
@@ -988,7 +1011,7 @@ def ensure_present(
                 client,
                 launch_template_name=template_name,
                 launch_template_data=launch_template_data,
-                tags=tags,
+                tags=template_tags,
                 ClientToken=uuid4().hex,
                 VersionDescription=version_description,
             )
@@ -1020,7 +1043,12 @@ def ensure_present(
         )
         # Ensure tags
         changed |= ensure_ec2_tags(
-            client, module, launch_template_id, resource_type="launch-template", tags=tags, purge_tags=purge_tags
+            client,
+            module,
+            launch_template_id,
+            resource_type="launch-template",
+            tags=template_tags,
+            purge_tags=purge_template_tags,
         )
 
     module.exit_json(changed=changed, **format_module_output(client, module))
@@ -1132,6 +1160,7 @@ def main():
         ram_disk_id=dict(),
         security_group_ids=dict(type="list", elements="str"),
         security_groups=dict(type="list", elements="str"),
+        tags=dict(type="dict", aliases=["resource_tags"]),
         user_data=dict(),
     )
 
@@ -1143,8 +1172,8 @@ def main():
         source_version=dict(default="latest"),
         version_description=dict(default=""),
         iam_instance_profile=dict(),
-        tags=dict(type="dict", aliases=["resource_tags"]),
-        purge_tags=dict(type="bool", default=True),
+        template_tags=dict(type="dict"),
+        purge_template_tags=dict(type="bool", default=True),
         versions_to_delete=dict(type="list", elements="int"),
     )
 
