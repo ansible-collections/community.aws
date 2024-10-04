@@ -580,13 +580,13 @@ def find_connection_response(module, connections: Optional[List[Dict[str, Any]]]
     returns None if the connection does not exist, raise an error if multiple matches are found."""
 
     # Found no connections
-    if not connections or "VpnConnections" not in connections:
+    if not connections:
         return None
 
     # Too many results
-    elif connections and len(connections["VpnConnections"]) > 1:
+    elif connections and len(connections) > 1:
         viable = []
-        for each in connections["VpnConnections"]:
+        for each in connections:
             # deleted connections are not modifiable
             if each["State"] not in ("deleted", "deleting"):
                 viable.append(each)
@@ -605,10 +605,10 @@ def find_connection_response(module, connections: Optional[List[Dict[str, Any]]]
             )
 
     # Found unique match
-    elif connections and len(connections["VpnConnections"]) == 1:
+    elif connections and len(connections) == 1:
         # deleted connections are not modifiable
-        if connections["VpnConnections"][0]["State"] not in ("deleted", "deleting"):
-            return connections["VpnConnections"][0]
+        if connections[0]["State"] not in ("deleted", "deleting"):
+            return connections[0]
 
 
 def create_connection(
@@ -660,7 +660,7 @@ def create_connection(
     try:
         vpn = create_vpn_connection(client, **vpn_connection_params)
         client.get_waiter("vpn_connection_available").wait(
-            VpnConnectionIds=[vpn["VpnConnection"]["VpnConnectionId"]],
+            VpnConnectionIds=[vpn["VpnConnectionId"]],
             WaiterConfig={"Delay": delay, "MaxAttempts": max_attempts},
         )
     except WaiterError as e:
@@ -670,7 +670,7 @@ def create_connection(
     except AnsibleEC2Error as e:
         module.fail_json_aws(e, msg="Failed to create VPN connection")
 
-    return vpn["VpnConnection"]
+    return vpn
 
 
 def delete_connection(client, module: AnsibleAWSModule, vpn_connection_id: str) -> NoReturn:
