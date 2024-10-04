@@ -520,12 +520,12 @@ def delete_peering_connection(client, module: AnsibleAWSModule) -> NoReturn:
         )
 
     if not module.check_mode:
-      try:
-          delete_vpc_peering_connection(client, peering_id)
-          if module.params.get("wait"):
-              wait_for_state(client, module, "deleted", peering_id)
-      except AnsibleEC2Error as e:
-          module.fail_json_aws_error(e)
+        try:
+            delete_vpc_peering_connection(client, peering_id)
+            if module.params.get("wait"):
+                wait_for_state(client, module, "deleted", peering_id)
+        except AnsibleEC2Error as e:
+            module.fail_json_aws_error(e)
 
     module.exit_json(changed=True, peering_id=peering_id)
 
@@ -560,7 +560,7 @@ def accept_reject_peering_connection(client, module: AnsibleAWSModule, state: st
                     target_state = "rejected"
 
                 if module.params.get("wait"):
-                  wait_for_state(client, module, target_state, peering_id)
+                    wait_for_state(client, module, target_state, peering_id)
             except AnsibleEC2Error as e:
                 module.fail_json_aws_error(e)
         changed = True
