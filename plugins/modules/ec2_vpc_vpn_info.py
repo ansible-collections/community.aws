@@ -252,7 +252,7 @@ def list_vpn_connections(client, module: AnsibleAWSModule) -> NoReturn:
     except AnsibleEC2Error as e:
         module.fail_json_aws(e, msg="Could not describe customer gateways")
 
-    snaked_vpn_connections = [camel_dict_to_snake_dict(vpn_connection) for vpn_connection in result["VpnConnections"]]
+    snaked_vpn_connections = [camel_dict_to_snake_dict(vpn_connection) for vpn_connection in result]
     if snaked_vpn_connections:
         for vpn_connection in snaked_vpn_connections:
             vpn_connection["tags"] = boto3_tag_list_to_ansible_dict(vpn_connection.get("tags", []))
