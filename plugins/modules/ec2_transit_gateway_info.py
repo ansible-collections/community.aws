@@ -184,7 +184,6 @@ def get_transit_gateway_response(module: AnsibleAWSModule, connection) -> Dict[s
     filters = ansible_dict_to_boto3_filter_list(module.params["filters"])
     transit_gateway_ids = module.params["transit_gateway_ids"]
 
-    result = {}
     params = {}
     if transit_gateway_ids:
         params["TransitGatewayIds"] = transit_gateway_ids
@@ -192,8 +191,8 @@ def get_transit_gateway_response(module: AnsibleAWSModule, connection) -> Dict[s
         params["Filters"] = filters
 
     try:
-        result["TransitGateways"] = describe_ec2_transit_gateways(connection, **params)
-        return result
+        result = describe_ec2_transit_gateways(connection, **params)
+        return result if result else {"TransitGateways": []}
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 

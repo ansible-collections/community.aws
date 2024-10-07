@@ -222,6 +222,7 @@ from typing import Optional
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_transit_gateways
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
@@ -303,7 +304,7 @@ class AnsibleEc2Tgw:
             filters = ansible_dict_to_boto3_filter_list({"transit-gateway-id": tgw_id})
 
         try:
-            response = AWSRetry.exponential_backoff()(self._connection.describe_transit_gateways)(Filters=filters)
+            response = describe_ec2_transit_gateways(self._connection, Filters=filters)
         except AnsibleEC2Error as e:
             self._module.fail_json_aws(e)
 
