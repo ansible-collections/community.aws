@@ -165,9 +165,8 @@ from typing import List
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_transit_gateways
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
@@ -185,10 +184,18 @@ def get_transit_gateway_response(module: AnsibleAWSModule, connection) -> Dict[s
     filters = ansible_dict_to_boto3_filter_list(module.params["filters"])
     transit_gateway_ids = module.params["transit_gateway_ids"]
 
+    result = {}
+    params = {}
+    if transit_gateway_ids:
+        params["TransitGatewayIds"] = transit_gateway_ids
+    if filters:
+        params["Filters"] = filters
+
     try:
-        return connection.describe_transit_gateways(TransitGatewayIds=transit_gateway_ids, Filters=filters)
-    except is_boto3_error_code("InvalidTransitGatewayID.NotFound"):
-        return {"TransitGateways": []}
+        result["TransitGateways"] = describe_ec2_transit_gateways(connection, **params)
+        return result
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
 
 def extract_transit_gateway_info(transit_gateway: Dict[str, Any]) -> Dict[str, Any]:
