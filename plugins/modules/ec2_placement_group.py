@@ -25,8 +25,8 @@ options:
   partition_count:
     description:
       - The number of partitions.
-      - Valid only when I(Strategy) is set to C(partition).
-      - Must be a value between C(1) and C(7).
+      - Valid only when O(Strategy) is set to V(partition).
+      - Must be a value between V(1) and V(7).
     type: int
     version_added: 3.1.0
   state:
@@ -86,7 +86,7 @@ RETURN = r"""
 placement_group:
   description: Placement group attributes
   returned: when state != absent
-  type: complex
+  type: dict
   contains:
     name:
       description: PG name
@@ -110,34 +110,28 @@ placement_group:
           other: value2
 """
 
-try:
-    import botocore
-except ImportError:
-    pass  # caught by AnsibleAWSModule
+from typing import Any
+from typing import Dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_ec2_placement_group
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_ec2_placement_group
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_placement_groups
+from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 
-from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
-@AWSRetry.exponential_backoff()
-def search_placement_group(connection, module):
+def search_placement_group(connection, module: AnsibleAWSModule) -> Dict[str, Any]:
     """
     Check if a placement group exists.
     """
     name = module.params.get("name")
-    try:
-        response = connection.describe_placement_groups(Filters=[{"Name": "group-name", "Values": [name]}])
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg=f"Couldn't find placement group named [{name}]")
+    response = describe_ec2_placement_groups(connection, Filters=[{"Name": "group-name", "Values": [name]}])
 
-    if len(response["PlacementGroups"]) != 1:
+    if len(response) != 1:
         return None
     else:
-        placement_group = response["PlacementGroups"][0]
+        placement_group = response[0]
         return {
             "name": placement_group["GroupName"],
             "state": placement_group["State"],
@@ -146,13 +140,12 @@ def search_placement_group(connection, module):
         }
 
 
-@AWSRetry.exponential_backoff(catch_extra_error_codes=["InvalidPlacementGroup.Unknown"])
-def get_placement_group_information(connection, name):
+def get_placement_group_information(connection, name: str) -> Dict[str, Any]:
     """
     Retrieve information about a placement group.
     """
-    response = connection.describe_placement_groups(GroupNames=[name])
-    placement_group = response["PlacementGroups"][0]
+    response = describe_ec2_placement_groups(connection, GroupNames=[name])
+    placement_group = response[0]
     return {
         "name": placement_group["GroupName"],
         "state": placement_group["State"],
@@ -161,8 +154,7 @@ def get_placement_group_information(connection, name):
     }
 
 
-@AWSRetry.exponential_backoff()
-def create_placement_group(connection, module):
+def create_placement_group(connection, module: AnsibleAWSModule) -> None:
     name = module.params.get("name")
     strategy = module.params.get("strategy")
     tags = module.params.get("tags")
@@ -180,9 +172,8 @@ def create_placement_group(connection, module):
         params["PartitionCount"] = partition_count
     params["DryRun"] = module.check_mode
 
-    try:
-        connection.create_placement_group(**params)
-    except is_boto3_error_code("DryRunOperation"):
+    response = create_ec2_placement_group(connection, **params)
+    if response.get("boto3_error_code") == "DryRunOperation":
         module.exit_json(
             changed=True,
             placement_group={
@@ -192,24 +183,13 @@ def create_placement_group(connection, module):
                 "tags": tags,
             },
         )
-    except (
-        botocore.exceptions.ClientError,
-        botocore.exceptions.BotoCoreError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg=f"Couldn't create placement group [{name}]")
-
     module.exit_json(changed=True, placement_group=get_placement_group_information(connection, name))
 
 
-@AWSRetry.exponential_backoff()
-def delete_placement_group(connection, module):
+def delete_placement_group(connection, module: AnsibleAWSModule) -> None:
     name = module.params.get("name")
 
-    try:
-        connection.delete_placement_group(GroupName=name, DryRun=module.check_mode)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg=f"Couldn't delete placement group [{name}]")
-
+    delete_ec2_placement_group(connection, name, module.check_mode)
     module.exit_json(changed=True)
 
 

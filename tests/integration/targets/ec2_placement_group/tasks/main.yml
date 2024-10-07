@@ -22,7 +22,8 @@
       check_mode: true
       register: pg_1_create_check_mode
 
-    - assert:
+    - name: Assert that placement group data is returned (check mode)
+      ansible.builtin.assert:
         that:
           - pg_1_create_check_mode is changed
           - pg_1_create_check_mode.placement_group.name == resource_prefix ~ '-pg1'
@@ -35,10 +36,11 @@
         state: present
       register: pg_1_create
 
-    - set_fact:
+    - ansible.builtin.set_fact:
         placement_group_names: "{{ placement_group_names + [pg_1_create.placement_group.name] }}"
 
-    - assert:
+    - name: Assert that placement group is created
+      ansible.builtin.assert:
         that:
           - pg_1_create is changed
           - pg_1_create.placement_group.name == resource_prefix ~ '-pg1'
@@ -51,7 +53,8 @@
           - '{{ resource_prefix }}-pg1'
       register: pg_1_info_result
 
-    - assert:
+    - name: Assert that placement group is created
+      ansible.builtin.assert:
         that:
           - pg_1_info_result is not changed
           - pg_1_info_result.placement_groups[0].name == resource_prefix ~ '-pg1'
@@ -65,7 +68,8 @@
         state: present
       register: pg_1_create
 
-    - assert:
+    - name: Assert that placement group is not created (idempotent)
+      ansible.builtin.assert:
         that:
           - pg_1_create is not changed
           - pg_1_create.placement_group.name == resource_prefix ~ '-pg1'
@@ -79,7 +83,8 @@
       check_mode: true
       register: pg_1_create_check_mode_idem
 
-    - assert:
+    - name: Assert that placement group is not created (idempotent - check_mode)
+      ansible.builtin.assert:
         that:
           - pg_1_create_check_mode_idem is not changed
           - pg_1_create_check_mode_idem.placement_group.name == resource_prefix ~ '-pg1'
@@ -94,7 +99,8 @@
       check_mode: true
       register: pg_2_create_check_mode
 
-    - assert:
+    - name: Assert that placement group is created
+      ansible.builtin.assert:
         that:
           - pg_2_create_check_mode is changed
           - pg_2_create_check_mode.placement_group.name == resource_prefix ~ '-pg2'
@@ -108,14 +114,15 @@
         strategy: spread
       register: pg_2_create
 
-    - assert:
+    - name: Assert that placement group is created
+      ansible.builtin.assert:
         that:
           - pg_2_create is changed
           - pg_2_create.placement_group.name == resource_prefix ~ '-pg2'
           - pg_2_create.placement_group.state == "available"
           - '"ec2:CreatePlacementGroup" in pg_2_create.resource_actions'
 
-    - set_fact:
+    - ansible.builtin.set_fact:
         placement_group_names: "{{ placement_group_names + [pg_2_create.placement_group.name] }}"
 
     - name: Gather information about placement group 2
@@ -124,7 +131,8 @@
           - '{{ resource_prefix }}-pg2'
       register: pg_2_info_result
 
-    - assert:
+    - name: Assert that placement group is created
+      ansible.builtin.assert:
         that:
           - pg_2_info_result is not changed
           - pg_2_info_result.placement_groups[0].name == resource_prefix ~ '-pg2'
@@ -139,7 +147,8 @@
         strategy: spread
       register: pg_2_create
 
-    - assert:
+    - name: Assert that placement group exists (idempotent) 
+      ansible.builtin.assert:
         that:
           - pg_2_create is not changed
           - pg_2_create.placement_group.name == resource_prefix ~ '-pg2'
@@ -154,7 +163,8 @@
       check_mode: true
       register: pg_2_create_check_mode_idem
 
-    - assert:
+    - name: Assert that placement group exists (idempotent - check_mode) 
+      ansible.builtin.assert:
         that:
           - pg_2_create_check_mode_idem is not changed
           - pg_2_create_check_mode_idem.placement_group.name == resource_prefix ~ '-pg2'
@@ -170,7 +180,8 @@
       check_mode: true
       register: pg_3_create_check_mode
 
-    - assert:
+    - name: Assert that placement group exists 
+      ansible.builtin.assert:
         that:
           - pg_3_create_check_mode is changed
           - pg_3_create_check_mode.placement_group.name == resource_prefix ~ '-pg3'
@@ -185,14 +196,15 @@
         partition_count: 4
       register: pg_3_create
 
-    - assert:
+    - name: Assert that placement group exists 
+      ansible.builtin.assert:
         that:
           - pg_3_create is changed
           - pg_3_create.placement_group.name == resource_prefix ~ '-pg3'
           - pg_3_create.placement_group.state == "available"
           - '"ec2:CreatePlacementGroup" in pg_3_create.resource_actions'
 
-    - set_fact:
+    - ansible.builtin.set_fact:
         placement_group_names: "{{ placement_group_names + [pg_3_create.placement_group.name] }}"
 
 
@@ -202,7 +214,8 @@
           - '{{ resource_prefix }}-pg3'
       register: pg_3_info_result
 
-    - assert:
+    - name: Assert that placement group exists 
+      ansible.builtin.assert:
         that:
           - pg_3_info_result is not changed
           - pg_3_info_result.placement_groups[0].name == resource_prefix ~ '-pg3'
@@ -218,7 +231,8 @@
         partition_count: 4
       register: pg_3_create
 
-    - assert:
+    - name: Assert that placement group exists (idempotent)
+      ansible.builtin.assert:
         that:
           - pg_3_create is not changed
           - pg_3_create.placement_group.name == resource_prefix ~ '-pg3'
@@ -234,7 +248,8 @@
       check_mode: true
       register: pg_3_create_check_mode_idem
 
-    - assert:
+    - name: Assert that placement group exists (idempotent - check_mode)
+      ansible.builtin.assert:
         that:
           - pg_3_create_check_mode_idem is not changed
           - pg_3_create_check_mode_idem.placement_group.name == resource_prefix ~ '-pg3'
@@ -252,7 +267,8 @@
       check_mode: true
       register: pg_4_create_check_mode
 
-    - assert:
+    - name: Assert that placement group exists (check-mode)
+      ansible.builtin.assert:
         that:
           - pg_4_create_check_mode is changed
           - pg_4_create_check_mode.placement_group.name == resource_prefix ~ '-pg4'
@@ -271,7 +287,8 @@
           bar: test2
       register: pg_4_create
 
-    - assert:
+    - name: Assert that placement group exists
+      ansible.builtin.assert:
         that:
           - pg_4_create is changed
           - pg_4_create.placement_group.name == resource_prefix ~ '-pg4'
@@ -280,7 +297,7 @@
           - pg_4_create.placement_group.tags.bar == "test2"
           - '"ec2:CreatePlacementGroup" in pg_4_create.resource_actions'
 
-    - set_fact:
+    - ansible.builtin.set_fact:
         placement_group_names: "{{ placement_group_names + [pg_4_create.placement_group.name] }}"
 
     - name: Gather information about placement group 4
@@ -289,7 +306,8 @@
           - '{{ resource_prefix }}-pg4'
       register: pg_4_info_result
 
-    - assert:
+    - name: Assert that placement group exists
+      ansible.builtin.assert:
         that:
           - pg_4_info_result is not changed
           - pg_4_info_result.placement_groups[0].name == resource_prefix ~ '-pg4'
@@ -309,7 +327,8 @@
           bar: test2
       register: pg_4_create
 
-    - assert:
+    - name: Assert that placement group exists (idempotent)
+      ansible.builtin.assert:
         that:
           - pg_4_create is not changed
           - pg_4_create.placement_group.name == resource_prefix ~ '-pg4'
@@ -330,7 +349,8 @@
       check_mode: true
       register: pg_4_create_check_mode_idem
 
-    - assert:
+    - name: Assert that placement group exists (idempotent - check-mode)
+      ansible.builtin.assert:
         that:
           - pg_4_create_check_mode_idem is not changed
           - pg_4_create_check_mode_idem.placement_group.name == resource_prefix ~ '-pg4'
@@ -357,7 +377,8 @@
       register: pg_1_delete_check_mode
       ignore_errors: true
 
-    - assert:
+    - name: Assert that placement group exists (check mode)
+      ansible.builtin.assert:
         that:
           - pg_1_delete_check_mode is not changed
           - pg_1_delete_check_mode.error.code == 'DryRunOperation'
@@ -369,7 +390,8 @@
         state: absent
       register: pg_1_delete
 
-    - assert:
+    - name: Assert that deletion is successful
+      ansible.builtin.assert:
         that:
           - pg_1_delete is changed
           - '"ec2:DeletePlacementGroup" in pg_1_delete.resource_actions'
@@ -380,7 +402,8 @@
         state: absent
       register: pg_1_delete
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_1_delete is not changed
           - '"ec2:DeletePlacementGroup" not in pg_1_delete.resource_actions'
@@ -393,7 +416,8 @@
       register: pg_1_delete_check_mode_idem
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_1_delete_check_mode_idem is not changed
           - '"ec2:DeletePlacementGroup" not in pg_1_delete_check_mode_idem.resource_actions'
@@ -406,7 +430,8 @@
       register: pg_2_delete_check_mode
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_2_delete_check_mode is not changed
           - pg_2_delete_check_mode.error.code == 'DryRunOperation'
@@ -418,7 +443,8 @@
         state: absent
       register: pg_2_delete
 
-    - assert:
+    - name: Assert that there is change
+      ansible.builtin.assert:
         that:
           - pg_2_delete is changed
           - '"ec2:DeletePlacementGroup" in pg_2_delete.resource_actions'
@@ -429,7 +455,8 @@
         state: absent
       register: pg_2_delete
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_2_delete is not changed
           - '"ec2:DeletePlacementGroup" not in pg_2_delete.resource_actions'
@@ -442,7 +469,8 @@
       register: pg_2_delete_check_mode_idem
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_2_delete_check_mode_idem is not changed
           - '"ec2:DeletePlacementGroup" not in pg_2_delete_check_mode_idem.resource_actions'
@@ -455,7 +483,8 @@
       register: pg_3_delete_check_mode
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_3_delete_check_mode is not changed
           - pg_3_delete_check_mode.error.code == 'DryRunOperation'
@@ -467,7 +496,8 @@
         state: absent
       register: pg_3_delete
 
-    - assert:
+    - name: Assert that there is change
+      ansible.builtin.assert:
         that:
           - pg_3_delete is changed
           - '"ec2:DeletePlacementGroup" in pg_3_delete.resource_actions'
@@ -477,8 +507,9 @@
         name: '{{ resource_prefix }}-pg3'
         state: absent
       register: pg_3_delete
-
-    - assert:
+  
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_3_delete is not changed
           - '"ec2:DeletePlacementGroup" not in pg_3_delete.resource_actions'
@@ -491,7 +522,8 @@
       register: pg_3_delete_check_mode_idem
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_3_delete_check_mode_idem is not changed
           - '"ec2:DeletePlacementGroup" not in pg_3_delete_check_mode_idem.resource_actions'
@@ -504,7 +536,8 @@
       register: pg_4_delete_check_mode
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_4_delete_check_mode is not changed
           - pg_4_delete_check_mode.error.code == 'DryRunOperation'
@@ -517,7 +550,8 @@
         state: absent
       register: pg_4_delete
 
-    - assert:
+    - name: Assert that there is change
+      ansible.builtin.assert:
         that:
           - pg_4_delete is changed
           - '"ec2:DeletePlacementGroup" in pg_4_delete.resource_actions'
@@ -528,7 +562,8 @@
         state: absent
       register: pg_4_delete
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_4_delete is not changed
           - '"ec2:DeletePlacementGroup" not in pg_4_delete.resource_actions'
@@ -541,7 +576,8 @@
       register: pg_4_delete_check_mode_idem
       ignore_errors: true
 
-    - assert:
+    - name: Assert that there is no change
+      ansible.builtin.assert:
         that:
           - pg_4_delete_check_mode_idem is not changed
           - '"ec2:DeletePlacementGroup" not in pg_4_delete_check_mode_idem.resource_actions'
