@@ -222,6 +222,8 @@ from typing import Optional
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_ec2_transit_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_ec2_transit_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_transit_gateways
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
@@ -355,8 +357,10 @@ class AnsibleEc2Tgw:
         options["DnsSupport"] = self.enable_option_flag(self._module.params.get("dns_support"))
         options["MulticastSupport"] = self.enable_option_flag(self._module.params.get("multicast_support"))
 
+        params = {"Description": description, "Options": options}
+
         try:
-            response = self._connection.create_transit_gateway(Description=description, Options=options)
+            response = create_ec2_transit_gateway(self._connection, **params)
         except AnsibleEC2Error as e:
             self._module.fail_json_aws(e)
 
@@ -379,9 +383,9 @@ class AnsibleEc2Tgw:
         """
         wait = self._module.params.get("wait")
         wait_timeout = self._module.params.get("wait_timeout")
-
+        params = {"TransitGatewayId": tgw_id}
         try:
-            response = self._connection.delete_transit_gateway(TransitGatewayId=tgw_id)
+            response = delete_ec2_transit_gateway(self._connection, **params)
         except AnsibleEC2Error as e:
             self._module.fail_json_aws(e)
 
