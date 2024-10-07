@@ -54,7 +54,7 @@ options:
     - Ignored when O(state=present).
     type: list
     elements: int
-    version_added: 8.1.0
+    version_added: 9.0.0
   state:
     description:
     - Whether the launch template should exist or not.
@@ -74,7 +74,7 @@ options:
     elements: dict
     suboptions:
       device_name:
-        description: The device name (for example, /dev/sdh or xvdh).
+        description: The device name (for example, V(/dev/sdh) or V(xvdh)).
         type: str
       no_device:
         description: Suppresses the specified device included in the block device mapping of the AMI.
@@ -133,9 +133,9 @@ options:
           throughput:
             description: >
               The throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
-              Valid Range - Minimum value of 125. Maximum value of 1000.
+              Valid Range - Minimum value of V(125). Maximum value of V(1000).
             type: int
-            version_added: 8.1.0
+            version_added: 9.0.0
   cpu_options:
     description:
     - Choose CPU settings for the EC2 instances that will be created with this template.
@@ -148,24 +148,21 @@ options:
       threads_per_core:
         description: >
           The number of threads per CPU core. To disable Intel Hyper-Threading
-          Technology for the instance, specify a value of 1. Otherwise, specify
-          the default value of 2.
+          Technology for the instance, specify a value of V(1). Otherwise, specify
+          the default value of V(2).
         type: int
   credit_specification:
     description: The credit option for CPU usage of the instance. Valid for T2 or T3 instances only.
     type: dict
     suboptions:
       cpu_credits:
-        description: >
-          The credit option for CPU usage of a T2 or T3 instance. Valid values
-          are C(standard) and C(unlimited).
+        description:
+          - The credit option for CPU usage of a T2 or T3 instance. Valid values are C(standard) and C(unlimited).
         type: str
   disable_api_termination:
-    description: >
-      This helps protect instances from accidental termination. If set to true,
-      you can't terminate the instance using the Amazon EC2 console, CLI, or
-      API. To change this attribute to false after launch, use
-      I(ModifyInstanceAttribute).
+    description:
+      - This helps protect instances from accidental termination.
+      - If set to V(true), you can't terminate the instance using the Amazon EC2 console, CLI, or API.
     type: bool
   ebs_optimized:
     description: >
@@ -204,20 +201,19 @@ options:
     type: dict
     suboptions:
       market_type:
-        description: The market type. This should always be 'spot'.
+        description: The market type. This should always be V(spot).
         type: str
       spot_options:
         description: Spot-market specific settings.
         type: dict
         suboptions:
           block_duration_minutes:
-            description: >
-              The required duration for the Spot Instances (also known as Spot
-              blocks), in minutes. This value must be a multiple of 60 (60,
-              120, 180, 240, 300, or 360).
+            description:
+              - The required duration for the Spot Instances (also known as Spot blocks), in minutes.
+              - This value must be a multiple of V(60) (V(60), V(120), V(180), V(240), V(300), or V(360)).
             type: int
           instance_interruption_behavior:
-            description: The behavior when a Spot Instance is interrupted. The default is C(terminate).
+            description: The behavior when a Spot Instance is interrupted. The default is V(terminate).
             choices: [hibernate, stop, terminate]
             type: str
           max_price:
@@ -228,22 +224,21 @@ options:
             choices: [one-time, persistent]
             type: str
   instance_type:
-    description: >
-      The instance type, such as C(c5.2xlarge). For a full list of instance types, see
-      U(http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
+    description:
+      - The instance type, such as V(c5.2xlarge). For a full list of instance types, see
+        U(http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
     type: str
   kernel_id:
-    description: >
-      The ID of the kernel. We recommend that you use PV-GRUB instead of
-      kernels and RAM disks. For more information, see
-      U(http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/UserProvidedkernels.html)
+    description:
+      - The ID of the kernel.
+      - We recommend that you use PV-GRUB instead of kernels and RAM disks. For more information, see
+        U(http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/UserProvidedkernels.html)
     type: str
   key_name:
     description:
     - The name of the key pair. You can create a key pair using M(amazon.aws.ec2_key).
     - If you do not specify a key pair, you can't connect to the instance
-      unless you choose an AMI that is configured to allow users another way to
-      log in.
+      unless you choose an AMI that is configured to allow users another way to log in.
     type: str
   monitoring:
     description: Settings for instance monitoring.
@@ -274,16 +269,15 @@ options:
         type: list
         elements: str
       ipv6_address_count:
-        description: >
-          The number of IPv6 addresses to assign to a network interface. Amazon
-          EC2 automatically selects the IPv6 addresses from the subnet range.
-          You can't use this option if specifying the I(ipv6_addresses) option.
+        description:
+          - The number of IPv6 addresses to assign to a network interface.
+          - Amazon EC2 automatically selects the IPv6 addresses from the subnet range.
+          - You can't use this option if specifying the O(network_interfaces.ipv6_addresses) option.
         type: int
       ipv6_addresses:
-        description: >
-          A list of one or more specific IPv6 addresses from the IPv6 CIDR
-          block range of your subnet. You can't use this option if you're
-          specifying the I(ipv6_address_count) option.
+        description:
+          - A list of one or more specific IPv6 addresses from the IPv6 CIDR block range of your subnet.
+          - You can't use this option if you're specifying the O(network_interfaces.ipv6_address_count) option.
         type: list
         elements: str
       network_interface_id:
@@ -329,31 +323,23 @@ options:
   security_groups:
     description: >
       A list of security group names (Default VPC or EC2-Classic) that the new instances will be added to.
-      For any VPC other than Default, you must use I(security_group_ids).
+      For any VPC other than Default, you must use O(security_group_ids).
     type: list
     elements: str
   source_version:
-    description: >
-      The version number of the launch template version on which to base the new version.
-      The new version inherits the same launch parameters as the source version, except for parameters that you explicity specify.
-      Snapshots applied to the block device mapping are ignored when creating a new version unless they are explicitly included.
+    description:
+      - The version number of the launch template version on which to base the new version.
+      - The new version inherits the same launch parameters as the source version, except for parameters that you explicity specify.
+      - Snapshots applied to the O(block_device_mappings) are ignored when creating a new version unless they are explicitly included.
     type: str
     default: latest
     version_added: 4.1.0
-  tags:
-    type: dict
-    description:
-    - A set of key-value pairs to be applied to resources when this Launch Template is used.
-    - "Tag key constraints: Tag keys are case-sensitive and accept a maximum of 127 Unicode characters. May not begin with I(aws:)"
-    - "Tag value constraints: Tag values are case-sensitive and accept a maximum of 255 Unicode characters."
-    - This field is deprecated and will be removed in a release after 2026-12-01, use O(tag_specifications) instead.
-    aliases: ['resource_tags']
   tag_specifications:
     description:
     - The tags to apply to the resources when this Launch template is used.
     type: list
     elements: dict
-    version_added: 8.1.0
+    version_added: 9.0.0
     suboptions:
       resource_type:
         description:
@@ -389,61 +375,43 @@ options:
     suboptions:
       http_endpoint:
         type: str
-        description: >
-          This parameter enables or disables the HTTP metadata endpoint on your instances.
+        description: This parameter enables or disables the HTTP metadata endpoint on your instances.
         choices: [enabled, disabled]
         default: 'enabled'
       http_put_response_hop_limit:
         type: int
-        description: >
-          The desired HTTP PUT response hop limit for instance metadata requests.
-          The larger the number, the further instance metadata requests can travel.
+        description:
+          - The desired HTTP PUT response hop limit for instance metadata requests.
+          - The larger the number, the further instance metadata requests can travel.
         default: 1
       http_tokens:
         type: str
-        description: >
-          The state of token usage for your instance metadata requests.
+        description: The state of token usage for your instance metadata requests.
         choices: [optional, required]
         default: 'optional'
       http_protocol_ipv6:
         version_added: 3.1.0
         type: str
-        description: >
-          - Wether the instance metadata endpoint is available via IPv6 (V(enabled)) or not (V(disabled)).
+        description:
+          - Whether the instance metadata endpoint is available via IPv6.
         choices: [enabled, disabled]
         default: 'disabled'
       instance_metadata_tags:
         version_added: 3.1.0
         type: str
         description:
-          - Wether the instance tags are availble (V(enabled)) via metadata endpoint or not (V(disabled)).
+          - Whether the instance tags are availble (V(enabled)) via metadata endpoint or not (V(disabled)).
         choices: [enabled, disabled]
         default: 'disabled'
-  template_tags:
-    description:
-      - A dictionary representing the tags to be applied to the launch template.
-      - If the O(template_tags) parameter is not set then tags will not be modified.
-    type: dict
-    required: false
-    version_added: 8.1.0
-  purge_template_tags:
-    description:
-      - If O(purge_template_tags=true) and O(template_tags) is set, existing tags will be purged
-        from the resource to match exactly what is defined by O(template_tags) parameter.
-      - If the O(template_tags) parameter is not set then tags will not be modified, even
-        if O(purge_template_tags=True).
-      - Tag keys beginning with V(aws:) are reserved by Amazon and can not be
-        modified.  As such they will be ignored for the purposes of the
-        O(purge_template_tags) parameter.  See the Amazon documentation for more information
-        U(https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions).
-    type: bool
-    default: true
-    required: false
-    version_added: 8.1.0
+notes:
+  - The O(tags) option used has been in release 9.0.0 to be applied to the launch template resource instead of launch template resource.
+  - Use O(tag_specifications) to define tags to be applied to resources when this Launch Template is used.
+  - Support for O(purge_tags) was added in release 9.0.0.
 extends_documentation_fragment:
 - amazon.aws.common.modules
 - amazon.aws.region.modules
 - amazon.aws.boto3
+- amazon.aws.tags
 """
 
 EXAMPLES = r"""
@@ -490,7 +458,7 @@ EXAMPLES = r"""
     image_id: "ami-04b762b4289fba92b"
     instance_type: t2.micro
     disable_api_termination: true
-    template_tags:
+    tags:
       Some: tag
       Another: tag
 
@@ -598,27 +566,428 @@ versions:
       description: Information about the launch template.
       returned: always
       type: dict
+      contains:
+        kernel_id:
+          description:
+            - The ID of the kernel.
+          returned: if applicable
+          type: str
+        image_id:
+          description: The ID of the AMI or a Systems Manager parameter.
+          type: str
+          returned: if applicable
+        instance_type:
+          description: The instance type.
+          type: str
+          returned: if applicable
+        key_name:
+          description: The name of the key pair.
+          type: str
+          returned: if applicable
+        monitoring:
+          description: The monitoring for the instance.
+          type: dict
+          returned: if applicable
+          contains:
+            enabled:
+              description: Indicates whether detailed monitoring is enabled. Otherwise, basic monitoring is enabled.
+              type: bool
+              returned: always
+        placement:
+          description: The placement of the instance.
+          type: dict
+          returned: if applicable
+          contains:
+            availability_zone:
+              description: The Availability Zone of the instance.
+              type: str
+              returned: if applicable
+            affinity:
+              description: The affinity setting for the instance on the Dedicated Host.
+              type: str
+              returned: if applicable
+            group_name:
+              description: The name of the placement group for the instance.
+              type: str
+              returned: if applicable
+            host_id:
+              description: The ID of the Dedicated Host for the instance.
+              type: str
+              returned: if applicable
+            tenancy:
+              description: The tenancy of the instance.
+              type: str
+              returned: if applicable
+            host_resource_group_arn:
+              description: The ARN of the host resource group in which to launch the instances.
+              type: str
+              returned: if applicable
+            partition_number:
+              description: The number of the partition the instance should launch in.
+              type: int
+              returned: if applicable
+            group_id:
+              description: The Group ID of the placement group.
+              type: str
+              returned: if applicable
+        ebs_optimized:
+          description:
+            - Indicates whether the instance is optimized for Amazon EBS I/O.
+          type: bool
+          returned: always
+        iam_instance_profile:
+          description:
+            - The IAM instance profile.
+          type: dict
+          returned: if application
+          contains:
+            arn:
+              description: The Amazon Resource Name (ARN) of the instance profile.
+              type: str
+              returned: always
+            name:
+              description: The name of the instance profile.
+              type: str
+              returned: always
+        block_device_mappings:
+          description: The block device mappings.
+          type: list
+          elements: dict
+          returned: if applicable
+          contains:
+            device_name:
+              description: The device name.
+              type: str
+              returned: always
+            virtual_name:
+              description: The virtual device name.
+              type: str
+              returned: always
+            ebs:
+              description: Information about the block device for an EBS volume.
+              type: str
+              returned: if applicable
+              contains:
+                encrypted:
+                  description: Indicates whether the EBS volume is encrypted.
+                  type: bool
+                  returned: always
+                delete_on_termination:
+                  description: Indicates whether the EBS volume is deleted on instance termination.
+                  type: bool
+                  returned: always
+                iops:
+                  description: The number of I/O operations per second (IOPS) that the volume supports.
+                  type: int
+                  returned: always
+                kms_key_id:
+                  description: The ARN of the Key Management Service (KMS) CMK used for encryption.
+                  type: int
+                  returned: always
+                snapshot_id:
+                  description: The ID of the snapshot.
+                  type: str
+                  returned: always
+                volume_size:
+                  description: The size of the volume, in GiB.
+                  type: int
+                  returned: always
+                volume_type:
+                  description: The volume type.
+                  type: str
+                  returned: always
+                throughput:
+                  description: The throughput that the volume supports, in MiB/s.
+                  type: int
+                  returned: always
+            no_device:
+              description: To omit the device from the block device mapping, specify an empty string.
+              type: str
+        network_interfaces:
+          description: The network interfaces.
+          type: list
+          elements: dict
+          returned: if applicable
+          contains:
+            associate_carrier_ip_address:
+              description: Indicates whether to associate a Carrier IP address with eth0 for a new network interface.
+              type: bool
+              returned: always
+            associate_public_ip_address:
+              description: Indicates whether to associate a public IPv4 address with eth0 for a new network interface.
+              type: bool
+              returned: always
+            delete_on_termination:
+              description: Indicates whether the network interface is deleted when the instance is terminated.
+              type: bool
+              returned: always
+            description:
+              description: A description for the network interface.
+              type: str
+              returned: always
+            device_index:
+              description: The device index for the network interface attachment.
+              type: int
+              returned: always
+            groups:
+              description: The IDs of one or more security groups.
+              type: list
+              elements: str
+              returned: if applicable
+            interface_type:
+              description: The type of network interface.
+              type: str
+              returned: always
+            ipv6_address_count:
+              description: The number of IPv6 addresses for the network interface.
+              type: int
+              returned: if applicable
+            ipv6_addresses:
+              description: The IPv6 addresses for the network interface.
+              returned: if applicable
+              type: list
+              elements: dict
+              contains:
+                ipv6_address:
+                  description: The IPv6 address.
+                  type: str
+                  returned: always
+                is_primary_ipv6:
+                  description: Determines if an IPv6 address associated with a network interface is the primary IPv6 address.
+                  type: bool
+                  returned: always
+            network_interface_id:
+              description: The ID of the network interface.
+              type: str
+              returned: always
+            private_ip_address:
+              description: The primary private IPv4 address of the network interface.
+              type: str
+              returned: if applicable
+            private_ip_addresses:
+              description: A list of private IPv4 addresses.
+              type: list
+              elements: str
+              returned: if applicable
+              contains:
+                primary:
+                  description: Indicates whether the private IPv4 address is the primary private IPv4 address.
+                  type: bool
+                  returned: always
+                private_ip_address:
+                  description: The private IPv4 address.
+                  type: bool
+                  returned: always
+            secondary_private_ip_address_count:
+              description: The number of secondary private IPv4 addresses for the network interface.
+              type: int
+              returned: if applicable
+            subnet_id:
+              description: The ID of the subnet for the network interface.
+              type: str
+              returned: always
+            network_card_index:
+              description: The index of the network card.
+              type: int
+              returned: if applicable
+            ipv4_prefixes:
+              description: A list of IPv4 prefixes assigned to the network interface.
+              type: list
+              elements: dict
+              returned: if applicable
+              contains:
+                ipv4_prefix:
+                  description: The IPv4 delegated prefixes assigned to the network interface.
+                  type: str
+                  returned: always
+            ipv4_prefix_count:
+              description: The number of IPv4 prefixes that Amazon Web Services automatically assigned to the network interface.
+              type: int
+              returned: if applicable
+            ipv6_prefixes:
+              description: A list of IPv6 prefixes assigned to the network interface.
+              type: list
+              elements: dict
+              returned: if applicable
+              contains:
+                ipv6_prefix:
+                  description: The IPv6 delegated prefixes assigned to the network interface.
+                  type: str
+                  returned: always
+            ipv6_prefix_count:
+              description: The number of IPv6 prefixes that Amazon Web Services automatically assigned to the network interface.
+              type: int
+              returned: if applicable
+            primary_ipv6:
+              description: The primary IPv6 address of the network interface.
+              type: str
+              returned: if applicable
+            ena_srd_specification:
+              description: Contains the ENA Express settings for instances launched from your launch template.
+              type: dict
+              returned: if applicable
+              contains:
+                ena_srd_enabled:
+                  description: Indicates whether ENA Express is enabled for the network interface.
+                  type: bool
+                  returned: always
+                ena_srd_udp_specification:
+                  description: Configures ENA Express for UDP network traffic.
+                  type: dict
+                  returned: always
+                  contains:
+                    ena_srd_udp_enabled:
+                      description: Indicates whether UDP traffic to and from the instance uses ENA Express.
+                      type: bool
+                      returned: always
+            connection_tracking_specification:
+              description:
+                - A security group connection tracking specification that enables you to set the timeout
+                  for connection tracking on an Elastic network interface.
+              type: dict
+              returned: if applicable
+              contains:
+                tcp_established_timeout:
+                  description: Timeout (in seconds) for idle TCP connections in an established state.
+                  type: int
+                  returned: always
+                udp_timeout:
+                  description:
+                    - Timeout (in seconds) for idle UDP flows that have seen traffic only in a single direction
+                      or a single request-response transaction.
+                  type: int
+                  returned: always
+                udp_stream_timeout:
+                  description:
+                    - Timeout (in seconds) for idle UDP flows classified as streams which have seen more
+                      than one request-response transaction.
+                  type: int
+                  returned: always
+        ram_disk_id:
+          description: The ID of the RAM disk, if applicable.
+          type: str
+          returned: if applicable
+        disable_api_termination:
+          description: If set to true, indicates that the instance cannot be terminated using the Amazon EC2 console, command line tool, or API.
+          type: bool
+          returned: if applicable
+        instance_initiated_shutdown_behavior:
+          description: Indicates whether an instance stops or terminates when you initiate shutdown from the instance.
+          type: str
+          returned: if applicable
+        user_data:
+          description: The user data for the instance.
+          type: str
+          returned: if applicable
+        tag_specifications:
+          description: The tags that are applied to the resources that are created during instance launch.
+          type: list
+          elements: dict
+          returned: if applicable
+          contains:
+            resource_type:
+              description: The type of resource to tag.
+              type: str
+              returned: always
+            tags:
+              description: The tags for the resource.
+              type: list
+              elements: dict
+              contains:
+                key:
+                  description: The key of the tag.
+                  type: str
+                  returned: always
+                value:
+                  description: The value of the tag.
+                  type: str
+                  returned: always
+        enclave_options:
+          description: Indicates whether the instance is enabled for Amazon Web Services Nitro Enclaves.
+          type: dict
+          returned: if applicable
+          contains:
+            enabled:
+              description: If this parameter is set to true, the instance is enabled for Amazon Web Services Nitro Enclaves.
+              type: bool
+              returned: always
+        metadata_options:
+          description: The metadata options for the instance.
+          type: dict
+          returned: if applicable
+          contains:
+            state:
+              description: The state of the metadata option changes.
+              type: str
+              returned: if applicable
+            http_tokens:
+              description: Indicates whether IMDSv2 is required.
+              type: str
+              returned: if applicable
+            http_put_response_hop_limit:
+              description: The desired HTTP PUT response hop limit for instance metadata requests.
+              type: int
+              returned: if applicable
+            http_endpoint:
+              description: Enables or disables the HTTP metadata endpoint on your instances.
+              type: str
+              returned: if applicable
+            http_protocol_ipv6:
+              description: Enables or disables the IPv6 endpoint for the instance metadata service.
+              type: str
+              returned: if applicable
+            instance_metadata_tags:
+              description: Set to enabled to allow access to instance tags from the instance metadata.
+              type: str
+              returned: if applicable
+        cpu_options:
+          description: The CPU options for the instance.
+          type: dict
+          returned: if applicable
+          contains:
+            core_count:
+              description: The number of CPU cores for the instance.
+              type: int
+              returned: if applicable
+            threads_per_core:
+              description: The number of threads per CPU core.
+              type: int
+              returned: if applicable
+            amd_sev_snp:
+              description: Indicates whether the instance is enabled for AMD SEV-SNP.
+              type: int
+              returned: if applicable
+        security_group_ids:
+          description: The security group IDs.
+          type: list
+          elements: str
+          returned: if applicable
+        security_groups:
+          description: The security group names.
+          type: list
+          elements: str
+          returned: if applicable
       sample: {
-          "BlockDeviceMappings": [
+          "block_device_mappings": [
               {
-                  "DeviceName": "/dev/sdb",
-                  "Ebs": {
-                      "DeleteOnTermination": true,
-                      "Encrypted": true,
-                      "VolumeSize": 5
+                  "device_name": "/dev/sdb",
+                  "ebs": {
+                      "delete_on_termination": true,
+                      "encrypted": true,
+                      "volumeSize": 5
                   }
               }
           ],
-          "EbsOptimized": false,
-          "ImageId": "ami-0231217be14a6f3ba",
-          "InstanceType": "t2.micro",
-          "NetworkInterfaces": [
+          "ebs_optimized": false,
+          "image_id": "ami-0231217be14a6f3ba",
+          "instance_type": "t2.micro",
+          "network_interfaces": [
               {
-                  "AssociatePublicIpAddress": false,
-                  "DeviceIndex": 0,
-                  "Ipv6Addresses": [
+                  "associate_public_ip_address": false,
+                  "device_index": 0,
+                  "ipv6_addresses": [
                       {
-                          "Ipv6Address": "2001:0:130F:0:0:9C0:876A:130B"
+                          "ipv6_address": "2001:0:130F:0:0:9C0:876A:130B"
                       }
                   ]
               }
@@ -779,10 +1148,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_lau
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import determine_iam_arn_from_name
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_launch_template
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import scrub_none_parameters
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
@@ -791,49 +1158,25 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, Any]], Optional[List[Dict[str, Any]]]]:
     launch_template = None
     launch_template_versions = []
-    try:
-        params = {}
-        template_id = module.params.get("template_id")
-        template_name = module.params.get("template_name")
-        if template_id:
-            params["launch_template_ids"] = [template_id]
-        else:
-            params["launch_template_names"] = [template_name]
-        launch_templates = describe_launch_templates(client, **params)
-        if launch_templates:
-            launch_template = launch_templates[0]
-            launch_template_versions = describe_launch_template_versions(
-                client, LaunchTemplateId=launch_template["LaunchTemplateId"]
-            )
-        return normalize_boto3_result(launch_template), normalize_boto3_result(launch_template_versions)
-    except is_ansible_aws_error_code("InvalidLaunchTemplateId.Malformed") as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(
-            e,
-            msg=(
-                f"Launch template with ID {module.params.get('launch_template_id')} is not a valid ID. It should start"
-                " with `lt-....`"
-            ),
+    params = {}
+    template_id = module.params.get("template_id")
+    template_name = module.params.get("template_name")
+    if template_id:
+        params["launch_template_ids"] = [template_id]
+    else:
+        params["launch_template_names"] = [template_name]
+    launch_templates = describe_launch_templates(client, **params)
+    if launch_templates:
+        launch_template = launch_templates[0]
+        launch_template_versions = describe_launch_template_versions(
+            client, LaunchTemplateId=launch_template["LaunchTemplateId"]
         )
-    except AnsibleAWSError as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws_error(e)
+    return normalize_boto3_result(launch_template), normalize_boto3_result(launch_template_versions)
 
 
 def params_to_launch_data(
     template_params: Dict[str, Any], iam_instance_profile_arn: Optional[str] = None
 ) -> Dict[str, Any]:
-    if template_params.get("tag_specifications"):
-        template_params["tag_specifications"] = [
-            {"resource_type": ts["resource_type"], "tags": ansible_dict_to_boto3_tag_list(ts["tags"])}
-            for ts in template_params["tag_specifications"]
-        ]
-    if template_params.get("tags"):
-        if "tag_specifications" not in template_params:
-            template_params["tag_specifications"] = []
-        tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
-        template_params["tag_specifications"] += [
-            {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume", "network-interface")
-        ]
-        del template_params["tags"]
     if iam_instance_profile_arn:
         template_params["iam_instance_profile"] = {"arn": iam_instance_profile_arn}
     for interface in template_params.get("network_interfaces") or []:
@@ -913,43 +1256,41 @@ def ensure_absent(
     if existing:
         launch_template_id = existing["LaunchTemplateId"]
         v_to_delete, v_default = validate_version_deletion(module, launch_template_id, existing_versions)
-        try:
-            # Update default version
-            if v_default:
-                changed = True
-                if not module.check_mode:
-                    modify_launch_template(
-                        client,
-                        LaunchTemplateId=launch_template_id,
-                        ClientToken=uuid4().hex,
-                        DefaultVersion=to_text(v_default),
-                    )
-            # Delete versions
-            if v_to_delete:
-                changed = True
-                if not module.check_mode:
-                    response = delete_launch_template_versions(
-                        client, launch_template_id=launch_template_id, versions=v_to_delete
-                    )
-                    if response["UnsuccessfullyDeletedLaunchTemplateVersions"]:
-                        module.warn(
-                            f"Failed to delete template versions {response['UnsuccessfullyDeletedLaunchTemplateVersions']} on"
-                            f" launch template {launch_template_id}"
-                        )
-                    deleted_versions = [
-                        camel_dict_to_snake_dict(v) for v in response["SuccessfullyDeletedLaunchTemplateVersions"]
-                    ]
 
-            # Delete the launch template when a list of versions was not specified
-            if not module.params.get("versions_to_delete"):
-                changed = True
-                if not module.check_mode:
-                    deleted_template = delete_launch_template(client, launch_template_id=launch_template_id)
-                    deleted_template = camel_dict_to_snake_dict(deleted_template, ignore_list=["Tags"])
-                    if "tags" in deleted_template:
-                        deleted_template["tags"] = boto3_tag_list_to_ansible_dict(deleted_template.get("tags", []))
-        except AnsibleEC2Error as e:
-            module.fail_json_aws_error(e)
+        # Update default version
+        if v_default:
+            changed = True
+            if not module.check_mode:
+                modify_launch_template(
+                    client,
+                    LaunchTemplateId=launch_template_id,
+                    ClientToken=uuid4().hex,
+                    DefaultVersion=to_text(v_default),
+                )
+        # Delete versions
+        if v_to_delete:
+            changed = True
+            if not module.check_mode:
+                response = delete_launch_template_versions(
+                    client, launch_template_id=launch_template_id, versions=v_to_delete
+                )
+                if response["UnsuccessfullyDeletedLaunchTemplateVersions"]:
+                    module.warn(
+                        f"Failed to delete template versions {response['UnsuccessfullyDeletedLaunchTemplateVersions']} on"
+                        f" launch template {launch_template_id}"
+                    )
+                deleted_versions = [
+                    camel_dict_to_snake_dict(v) for v in response["SuccessfullyDeletedLaunchTemplateVersions"]
+                ]
+
+        # Delete the launch template when a list of versions was not specified
+        if not module.params.get("versions_to_delete"):
+            changed = True
+            if not module.check_mode:
+                deleted_template = delete_launch_template(client, launch_template_id=launch_template_id)
+                deleted_template = camel_dict_to_snake_dict(deleted_template, ignore_list=["Tags"])
+                if "tags" in deleted_template:
+                    deleted_template["tags"] = boto3_tag_list_to_ansible_dict(deleted_template.get("tags"))
 
     module.exit_json(changed=changed, deleted_versions=deleted_versions, deleted_template=deleted_template)
 
@@ -988,14 +1329,11 @@ def add_launch_template_version(
     if module.check_mode:
         module.exit_json(changed=True, msg="Would have created launch template version if not in check mode.")
 
-    try:
-        # Create Launch template version
-        launch_template_version = create_launch_template_version(
-            client, launch_template_data=launch_template_data, **params
-        )
-        return launch_template_version["VersionNumber"]
-    except AnsibleEC2Error as e:
-        module.fail_json_aws_error(e)
+    # Create Launch template version
+    launch_template_version = create_launch_template_version(
+        client, launch_template_data=launch_template_data, **params
+    )
+    return launch_template_version["VersionNumber"]
 
 
 def ensure_default_version(
@@ -1015,16 +1353,13 @@ def ensure_default_version(
             default_version = to_text(validate_string_as_int(module, default_version, "default_version"))
         if to_text(current_default_version_number) != default_version:
             changed = True
-            try:
-                if not module.check_mode:
-                    modify_launch_template(
-                        client,
-                        LaunchTemplateId=launch_template_id,
-                        ClientToken=uuid4().hex,
-                        DefaultVersion=default_version,
-                    )
-            except AnsibleEC2Error as e:
-                module.fail_json_aws_error(e)
+            if not module.check_mode:
+                modify_launch_template(
+                    client,
+                    LaunchTemplateId=launch_template_id,
+                    ClientToken=uuid4().hex,
+                    DefaultVersion=default_version,
+                )
     return changed
 
 
@@ -1032,7 +1367,8 @@ def format_module_output(client, module: AnsibleAWSModule) -> Dict[str, Any]:
     # Describe launch template
     template, template_versions = find_existing(client, module)
     template = camel_dict_to_snake_dict(template, ignore_list=["Tags"])
-    template["tags"] = boto3_tag_list_to_ansible_dict(template.get("tags", []))
+    if "tags" in template:
+        template["tags"] = boto3_tag_list_to_ansible_dict(template.get("tags"))
     template_versions = [camel_dict_to_snake_dict(v) for v in template_versions]
     result = {
         "template": template,
@@ -1059,15 +1395,23 @@ def ensure_present(
     existing_versions: List[Dict[str, Any]],
 ) -> None:
     template_name = module.params["template_name"]
-    template_tags = module.params["template_tags"]
-    purge_template_tags = module.params["purge_template_tags"]
+    tags = module.params["tags"]
+    tag_specifications = module.params.get("tag_specifications")
     version_description = module.params.get("version_description")
     iam_instance_profile = module.params.get("iam_instance_profile")
+    # IAM instance profile
     if iam_instance_profile:
-        iam_instance_profile = determine_iam_arn_from_name(module, iam_instance_profile)
+        iam_instance_profile = determine_iam_arn_from_name(module.client("iam"), iam_instance_profile)
+    # Convert Launch template data
     launch_template_data = params_to_launch_data(
         dict((k, v) for k, v in module.params.items() if k in template_options), iam_instance_profile
     )
+    # Tag specifications
+    if tag_specifications:
+        boto3_tag_specs = []
+        for tag_spec in tag_specifications:
+            boto3_tag_specs.extend(boto3_tag_specifications(tag_spec["tags"], types=tag_spec["resource_type"]))
+        launch_template_data["TagSpecifications"] = boto3_tag_specs
     launch_template_data = scrub_none_parameters(launch_template_data, descend_into_lists=True)
     changed = False
 
@@ -1075,18 +1419,15 @@ def ensure_present(
         # Create Launch template
         if module.check_mode:
             module.exit_json(changed=True, msg="Would have created launch template if not in check mode.")
-        try:
-            create_launch_template(
-                client,
-                launch_template_name=template_name,
-                launch_template_data=launch_template_data,
-                tags=template_tags,
-                ClientToken=uuid4().hex,
-                VersionDescription=version_description,
-            )
-            changed = True
-        except AnsibleEC2Error as e:
-            module.fail_json_aws_error(e)
+        create_launch_template(
+            client,
+            launch_template_name=template_name,
+            launch_template_data=launch_template_data,
+            tags=tags,
+            ClientToken=uuid4().hex,
+            VersionDescription=version_description,
+        )
+        changed = True
     else:
         launch_template_id = existing["LaunchTemplateId"]
         default_version_number = existing["DefaultVersionNumber"]
@@ -1116,8 +1457,8 @@ def ensure_present(
             module,
             launch_template_id,
             resource_type="launch-template",
-            tags=template_tags,
-            purge_tags=purge_template_tags,
+            tags=tags,
+            purge_tags=module.params["purge_tags"],
         )
 
     module.exit_json(changed=changed, **format_module_output(client, module))
@@ -1230,8 +1571,20 @@ def main():
         ram_disk_id=dict(),
         security_group_ids=dict(type="list", elements="str"),
         security_groups=dict(type="list", elements="str"),
-        tags=dict(type="dict", aliases=["resource_tags"]),
         user_data=dict(),
+    )
+
+    argument_spec = dict(
+        state=dict(choices=["present", "absent"], default="present"),
+        template_name=dict(aliases=["name"]),
+        template_id=dict(aliases=["id"]),
+        default_version=dict(default="latest"),
+        source_version=dict(default="latest"),
+        version_description=dict(default=""),
+        iam_instance_profile=dict(),
+        tags=dict(type="dict", aliases=["resource_tags"]),
+        purge_tags=dict(type="bool", default=True),
+        versions_to_delete=dict(type="list", elements="int"),
         tag_specifications=dict(
             type="list",
             elements="dict",
@@ -1246,19 +1599,6 @@ def main():
         ),
     )
 
-    argument_spec = dict(
-        state=dict(choices=["present", "absent"], default="present"),
-        template_name=dict(aliases=["name"]),
-        template_id=dict(aliases=["id"]),
-        default_version=dict(default="latest"),
-        source_version=dict(default="latest"),
-        version_description=dict(default=""),
-        iam_instance_profile=dict(),
-        template_tags=dict(type="dict"),
-        purge_template_tags=dict(type="bool", default=True),
-        versions_to_delete=dict(type="list", elements="int"),
-    )
-
     argument_spec.update(template_options)
 
     module = AnsibleAWSModule(
@@ -1269,21 +1609,17 @@ def main():
         supports_check_mode=True,
     )
 
-    if module.params.get("tags"):
-        module.deprecate(
-            "The tags parameter has been deprecated, please use tag_specifications instead.",
-            date="2026-12-01",
-            collection_name="community.aws",
-        )
-
     state = module.params.get("state")
     client = module.client("ec2")
     launch_template, launch_template_versions = find_existing(client, module)
 
-    if state == "present":
-        ensure_present(client, module, template_options, launch_template, launch_template_versions)
-    else:
-        ensure_absent(client, module, launch_template, launch_template_versions)
+    try:
+        if state == "present":
+            ensure_present(client, module, template_options, launch_template, launch_template_versions)
+        else:
+            ensure_absent(client, module, launch_template, launch_template_versions)
+    except AnsibleEC2Error as e:
+        module.fail_json_aws_error(e)
 
 
 if __name__ == "__main__":

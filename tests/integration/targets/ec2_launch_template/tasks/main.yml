@@ -8,7 +8,6 @@
   block:
     - include_tasks: template_data.yml
     - include_tasks: tagging.yml
-    # - include_tasks: limits.yml
     - include_tasks: iam_instance_role.yml
     - include_tasks: versions.yml
     - include_tasks: deletion.yml
