@@ -3,3 +3,4 @@ minor_changes:
   - ec2_launch_template - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` and update ``RETURN`` block (https://github.com/ansible-collections/community.aws/pull/2164).
   - ec2_launch_template - Add the possibility to delete specific versions of a launch template using ``versions_to_delete`` (https://github.com/ansible-collections/community.aws/pull/2164).
   - ec2_launch_template - Add support for template tags via ``template_tags`` and ``purge_template_tags`` options (https://github.com/ansible-collections/community.aws/issues/176).
+  - ec2_launch_template - Add suboption ``throughput`` to ``block_device_mappings`` argument (https://github.com/ansible-collections/community.aws/issues/1944). 
