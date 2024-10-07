@@ -130,6 +130,12 @@ options:
           volume_type:
             description: The volume type
             type: str
+          throughput:
+            description: >
+              The throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
+              Valid Range - Minimum value of 125. Maximum value of 1000.
+            type: int
+            version_added: 8.1.0
   cpu_options:
     description:
     - Choose CPU settings for the EC2 instances that will be created with this template.
@@ -1134,6 +1140,7 @@ def main():
                         snapshot_id=dict(),
                         volume_size=dict(type="int"),
                         volume_type=dict(),
+                        throughput=dict(type="int"),
                     ),
                 ),
                 no_device=dict(),
