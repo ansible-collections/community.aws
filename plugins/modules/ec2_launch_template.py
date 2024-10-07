@@ -340,7 +340,32 @@ options:
     - A set of key-value pairs to be applied to resources when this Launch Template is used.
     - "Tag key constraints: Tag keys are case-sensitive and accept a maximum of 127 Unicode characters. May not begin with I(aws:)"
     - "Tag value constraints: Tag values are case-sensitive and accept a maximum of 255 Unicode characters."
+    - This field is deprecated and will be removed in a release after 2026-12-01, use O(tag_specifications) instead.
     aliases: ['resource_tags']
+  tag_specifications:
+    description:
+    - The tags to apply to the resources when this Launch template is used.
+    type: list
+    elements: dict
+    version_added: 8.1.0
+    suboptions:
+      resource_type:
+        description:
+          - The type of resource to tag.
+          - If the instance does not include the resource type that you specify, the instance launch fails.
+        type: str
+        default: instance
+        choices:
+          - instance
+          - volume
+          - network-interface
+          - spot-instances-request
+      tags:
+        description:
+        - A set of key-value pairs to be applied to the resource type.
+        - "Tag key constraints: Tag keys are case-sensitive and accept a maximum of 127 Unicode characters. May not begin with I(aws:)"
+        - "Tag value constraints: Tag values are case-sensitive and accept a maximum of 255 Unicode characters."
+        type: dict
   user_data:
     description: >
       The Base64-encoded user data to make available to the instance. For more information, see the Linux
@@ -394,6 +419,7 @@ options:
       - If the O(template_tags) parameter is not set then tags will not be modified.
     type: dict
     required: false
+    version_added: 8.1.0
   purge_template_tags:
     description:
       - If O(purge_template_tags=true) and O(template_tags) is set, existing tags will be purged
@@ -407,6 +433,7 @@ options:
     type: bool
     default: true
     required: false
+    version_added: 8.1.0
 extends_documentation_fragment:
 - amazon.aws.common.modules
 - amazon.aws.region.modules
@@ -450,6 +477,35 @@ EXAMPLES = r"""
       - 1
     default_version: 2
     state: absent
+
+- name: Create an ec2 launch template with specific tags
+  community.aws.ec2_launch_template:
+    name: "my_template"
+    image_id: "ami-04b762b4289fba92b"
+    instance_type: t2.micro
+    disable_api_termination: true
+    template_tags:
+      Some: tag
+      Another: tag
+
+- name: Create an ec2 launch template with different tag for volume and instance
+  community.aws.ec2_launch_template:
+    name: "my_template"
+    image_id: "ami-04b762b4289fba92b"
+    instance_type: t2.micro
+    block_device_mappings:
+      - device_name: /dev/sdb
+        ebs:
+          volume_size: 20
+          delete_on_termination: true
+          volume_type: standard
+    tag_specifications:
+      - resource_type: instance
+        tags:
+          OsType: Linux
+      - resource_type: volume
+        tags:
+          foo: bar
 """
 
 RETURN = r"""
@@ -759,9 +815,16 @@ def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, 
 def params_to_launch_data(
     template_params: Dict[str, Any], iam_instance_profile_arn: Optional[str] = None
 ) -> Dict[str, Any]:
-    if template_params.get("tags"):
-        tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
+    if template_params.get("tag_specifications"):
         template_params["tag_specifications"] = [
+            {"resource_type": ts["resource_type"], "tags": ansible_dict_to_boto3_tag_list(ts["tags"])}
+            for ts in template_params["tag_specifications"]
+        ]
+    if template_params.get("tags"):
+        if "tag_specifications" not in template_params:
+            template_params["tag_specifications"] = []
+        tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
+        template_params["tag_specifications"] += [
             {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume", "network-interface")
         ]
         del template_params["tags"]
@@ -1162,6 +1225,18 @@ def main():
         security_groups=dict(type="list", elements="str"),
         tags=dict(type="dict", aliases=["resource_tags"]),
         user_data=dict(),
+        tag_specifications=dict(
+            type="list",
+            elements="dict",
+            options=dict(
+                resource_type=dict(
+                    type="str",
+                    default="instance",
+                    choices=["instance", "volume", "network-interface", "spot-instances-request"],
+                ),
+                tags=dict(type="dict"),
+            ),
+        ),
     )
 
     argument_spec = dict(
@@ -1186,6 +1261,13 @@ def main():
         ],
         supports_check_mode=True,
     )
+
+    if module.params.get("tags"):
+        module.deprecate(
+            "The tags parameter has been deprecated, please use tag_specifications instead.",
+            date="2026-12-01",
+            collection_name="community.aws",
+        )
 
     state = module.params.get("state")
     client = module.client("ec2")
