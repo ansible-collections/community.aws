@@ -1000,26 +1000,26 @@ versions:
           elements: str
           returned: if applicable
       sample: {
-          "BlockDeviceMappings": [
+          "block_device_mappings": [
               {
-                  "DeviceName": "/dev/sdb",
-                  "Ebs": {
-                      "DeleteOnTermination": true,
-                      "Encrypted": true,
-                      "VolumeSize": 5
+                  "device_name": "/dev/sdb",
+                  "ebs": {
+                      "delete_on_termination": true,
+                      "encrypted": true,
+                      "volumeSize": 5
                   }
               }
           ],
-          "EbsOptimized": false,
-          "ImageId": "ami-0231217be14a6f3ba",
-          "InstanceType": "t2.micro",
-          "NetworkInterfaces": [
+          "ebs_optimized": false,
+          "image_id": "ami-0231217be14a6f3ba",
+          "instance_type": "t2.micro",
+          "network_interfaces": [
               {
-                  "AssociatePublicIpAddress": false,
-                  "DeviceIndex": 0,
-                  "Ipv6Addresses": [
+                  "associate_public_ip_address": false,
+                  "device_index": 0,
+                  "ipv6_addresses": [
                       {
-                          "Ipv6Address": "2001:0:130F:0:0:9C0:876A:130B"
+                          "ipv6_address": "2001:0:130F:0:0:9C0:876A:130B"
                       }
                   ]
               }
@@ -1222,19 +1222,23 @@ def find_existing(client, module: AnsibleAWSModule) -> Tuple[Optional[Dict[str, 
 def params_to_launch_data(
     template_params: Dict[str, Any], iam_instance_profile_arn: Optional[str] = None
 ) -> Dict[str, Any]:
+    tag_specifications = []
     if template_params.get("tag_specifications"):
-        template_params["tag_specifications"] = [
+        tag_specifications = [
             {"resource_type": ts["resource_type"], "tags": ansible_dict_to_boto3_tag_list(ts["tags"])}
             for ts in template_params["tag_specifications"]
         ]
     if template_params.get("tags"):
-        if "tag_specifications" not in template_params:
-            template_params["tag_specifications"] = []
         tag_list = ansible_dict_to_boto3_tag_list(template_params.get("tags"))
-        template_params["tag_specifications"] += [
+        tag_specifications += [
             {"resource_type": r_type, "tags": tag_list} for r_type in ("instance", "volume", "network-interface")
         ]
         del template_params["tags"]
+
+    # In case some tags were defined, add them to the template parameters
+    if tag_specifications:
+        template_params["tag_specifications"] = tag_specifications
+
     if iam_instance_profile_arn:
         template_params["iam_instance_profile"] = {"arn": iam_instance_profile_arn}
     for interface in template_params.get("network_interfaces") or []:
@@ -1465,7 +1469,7 @@ def ensure_present(
     version_description = module.params.get("version_description")
     iam_instance_profile = module.params.get("iam_instance_profile")
     if iam_instance_profile:
-        iam_instance_profile = determine_iam_arn_from_name(module, iam_instance_profile)
+        iam_instance_profile = determine_iam_arn_from_name(module.client("iam"), iam_instance_profile)
     launch_template_data = params_to_launch_data(
         dict((k, v) for k, v in module.params.items() if k in template_options), iam_instance_profile
     )
