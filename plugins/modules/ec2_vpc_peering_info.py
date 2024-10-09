@@ -357,10 +357,7 @@ def get_vpc_peers(client, module: AnsibleAWSModule) -> List[Dict[str, Any]]:
     if module.params.get("peer_connection_ids"):
         params["VpcPeeringConnectionIds"] = module.params.get("peer_connection_ids")
 
-    try:
-        result = describe_vpc_peering_connections(client, **params)
-    except AnsibleEC2Error as e:
-        module.fail_json_aws_error(e)
+    result = describe_vpc_peering_connections(client, **params)
 
     return normalize_boto3_result(result)
 

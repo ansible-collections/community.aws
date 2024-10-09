@@ -372,9 +372,7 @@ from typing import Tuple
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import accept_vpc_peering_connection
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import add_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_peering_connection
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_peering_connection
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_peering_connections
@@ -398,7 +396,7 @@ def wait_for_state(client, module: AnsibleAWSModule, state: str, peering_id: str
     except botocore.exceptions.WaiterError as e:
         module.fail_json_aws(e, "Failed to wait for state change")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, "Enable to describe Peerig Connection while waiting for state to change")
+        module.fail_json_aws(e, "Unable to describe Peering Connection while waiting for state to change")
 
 
 def describe_peering_connections(client, module: AnsibleAWSModule, params) -> Dict[str, Any]:
@@ -409,21 +407,18 @@ def describe_peering_connections(client, module: AnsibleAWSModule, params) -> Di
         "accepter-vpc-info.vpc-id": params["PeerVpcId"],
     }
 
-    try:
+    peering_connections = describe_vpc_peering_connections(
+        client, Filters=ansible_dict_to_boto3_filter_list(filters)
+    )
+    if peering_connections == []:
+        # Try again with the VPC/Peer relationship reversed
+        filters = {
+            "requester-vpc-info.vpc-id": params["PeerVpcId"],
+            "accepter-vpc-info.vpc-id": params["VpcId"],
+        }
         peering_connections = describe_vpc_peering_connections(
             client, Filters=ansible_dict_to_boto3_filter_list(filters)
         )
-        if peering_connections == []:
-            # Try again with the VPC/Peer relationship reversed
-            filters = {
-                "requester-vpc-info.vpc-id": params["PeerVpcId"],
-                "accepter-vpc-info.vpc-id": params["VpcId"],
-            }
-            peering_connections = describe_vpc_peering_connections(
-                client, Filters=ansible_dict_to_boto3_filter_list(filters)
-            )
-    except AnsibleEC2Error as e:
-        module.fail_json_aws_error(e)
 
     return peering_connections
 
@@ -479,14 +474,11 @@ def create_peering_connection(client, module: AnsibleAWSModule) -> Tuple[bool, D
     if module.check_mode:
         return (True, {"VpcPeeringConnectionId": ""})
 
-    try:
-        peering_connection = create_vpc_peering_connection(client, **params)
-        if module.params.get("wait"):
-            wait_for_state(client, module, "pending-acceptance", peering_connection["VpcPeeringConnectionId"])
-        changed = True
-        return (changed, peering_connection)
-    except AnsibleEC2Error as e:
-        module.fail_json_aws_error(e)
+    peering_connection = create_vpc_peering_connection(client, **params)
+    if module.params.get("wait"):
+        wait_for_state(client, module, "pending-acceptance", peering_connection["VpcPeeringConnectionId"])
+    changed = True
+    return (changed, peering_connection)
 
 
 def delete_peering_connection(client, module: AnsibleAWSModule) -> NoReturn:
@@ -520,12 +512,9 @@ def delete_peering_connection(client, module: AnsibleAWSModule) -> NoReturn:
         )
 
     if not module.check_mode:
-        try:
-            delete_vpc_peering_connection(client, peering_id)
-            if module.params.get("wait"):
-                wait_for_state(client, module, "deleted", peering_id)
-        except AnsibleEC2Error as e:
-            module.fail_json_aws_error(e)
+        delete_vpc_peering_connection(client, peering_id)
+        if module.params.get("wait"):
+            wait_for_state(client, module, "deleted", peering_id)
 
     module.exit_json(changed=True, peering_id=peering_id)
 
@@ -539,8 +528,6 @@ def get_peering_connection_by_id(client, module: AnsibleAWSModule, peering_id: s
         return result[0]
     except is_boto3_error_code("InvalidVpcPeeringConnectionId.Malformed") as e:
         module.fail_json_aws(e, msg="Malformed connection ID")
-    except AnsibleEC2Error as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Error while describing peering connection by peering_id")
 
 
 def accept_reject_peering_connection(client, module: AnsibleAWSModule, state: str) -> Tuple[bool, Dict[str, Any]]:
@@ -551,18 +538,16 @@ def accept_reject_peering_connection(client, module: AnsibleAWSModule, state: st
 
     if not (is_active(vpc_peering_connection) or is_rejected(vpc_peering_connection)):
         if not module.check_mode:
-            try:
-                if state == "accept":
-                    changed |= accept_vpc_peering_connection(client, peering_id)
-                    target_state = "active"
-                else:
-                    changed |= reject_vpc_peering_connection(client, peering_id)
-                    target_state = "rejected"
+            if state == "accept":
+                changed |= accept_vpc_peering_connection(client, peering_id)
+                target_state = "active"
+            else:
+                changed |= reject_vpc_peering_connection(client, peering_id)
+                target_state = "rejected"
 
-                if module.params.get("wait"):
-                    wait_for_state(client, module, target_state, peering_id)
-            except AnsibleEC2Error as e:
-                module.fail_json_aws_error(e)
+            if module.params.get("wait"):
+                wait_for_state(client, module, target_state, peering_id)
+
         changed = True
 
     changed |= ensure_ec2_tags(

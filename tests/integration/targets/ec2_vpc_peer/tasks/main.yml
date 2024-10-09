@@ -24,7 +24,7 @@
     check_mode: True
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - peers_info is successful
         - '"result" in peers_info'
@@ -41,7 +41,7 @@
     register: vpc_1_result
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_1_result is successful
 
@@ -56,7 +56,7 @@
     register: vpc_2_result
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_2_result is successful
 
@@ -80,7 +80,7 @@
     register: vpc_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer is changed
 
@@ -94,7 +94,7 @@
     register: vpc_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer is changed
         - vpc_peer is successful
@@ -117,7 +117,7 @@
     register: vpc_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer is not changed
 
@@ -131,7 +131,7 @@
     register: vpc_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer is not changed
         - vpc_peer is successful
@@ -148,7 +148,7 @@
     register: vpc_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer is not changed
 
@@ -162,7 +162,7 @@
     register: vpc_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer is not changed
         - vpc_peer is successful
@@ -175,7 +175,7 @@
     register: peer_info
 
   - name: Assert expected values
-    assert:
+    ansible.builtin.assert:
       that:
         - peer_info is successful
         - "'vpc_peering_connections' in peer_info"
@@ -227,7 +227,7 @@
     register: pending_vpc_peers
 
   - name: Assert expected values
-    assert:
+    ansible.builtin.assert:
       that:
         # Not guaranteed to just be us, only assert the shape
         - pending_vpc_peers is successful
@@ -273,7 +273,7 @@
     register: tag_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - tag_peer is changed
 
@@ -288,7 +288,7 @@
     register: tag_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - tag_peer is changed
         - tag_peer is successful
@@ -306,7 +306,7 @@
     register: tag_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - tag_peer is not changed
 
@@ -321,7 +321,7 @@
     register: tag_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - tag_peer is not changed
         - tag_peer is successful
@@ -334,7 +334,7 @@
     register: peer_info
 
   - name: Assert expected tags
-    assert:
+    ansible.builtin.assert:
       that:
         - peer_info is successful
         - "'tags' in peer_details"
@@ -354,7 +354,7 @@
     register: action_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - action_peer is changed
 
@@ -366,7 +366,7 @@
     register: action_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - action_peer is changed
         - action_peer is successful
@@ -381,7 +381,7 @@
     register: peer_info
 
   - name: Assert expected values
-    assert:
+    ansible.builtin.assert:
       that:
         - peer_info is successful
         - "'vpc_peering_connections' in peer_info"
@@ -440,7 +440,7 @@
     register: action_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - action_peer is not changed
 
@@ -451,7 +451,7 @@
     register: action_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - action_peer is not changed
         - action_peer is successful
@@ -466,7 +466,7 @@
     register: delete_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - delete_peer is changed
 
@@ -477,7 +477,7 @@
     register: delete_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - delete_peer is changed
         - delete_peer is successful
@@ -490,7 +490,7 @@
     register: peer_info
 
   - name: Assert expected values
-    assert:
+    ansible.builtin.assert:
       that:
         - peer_info is successful
         - "'vpc_peering_connections' in peer_info"
@@ -541,7 +541,7 @@
     register: delete_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - delete_peer is not changed
 
@@ -552,7 +552,7 @@
     register: delete_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - delete_peer is not changed
         - delete_peer is successful
@@ -567,7 +567,7 @@
     register: vpc_peer2
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - vpc_peer2 is changed
         - vpc_peer2 is successful
@@ -586,7 +586,7 @@
     register: reject_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - reject_peer is changed
         - reject_peer is successful
@@ -599,7 +599,7 @@
     register: reject_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - reject_peer is not changed
         - reject_peer is successful
@@ -613,7 +613,7 @@
     register: delete_peer
 
   - name: Assert success
-    assert:
+    ansible.builtin.assert:
       that:
         - delete_peer is not changed
         - delete_peer is successful
