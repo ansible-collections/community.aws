@@ -68,7 +68,6 @@ EXAMPLES = r"""
     vpc_id: vpc-12345678
     name: personal-testing
     type: ipsec.1
-  register: created_vgw
 
 - name: Create a new unattached VGW
   community.aws.ec2_vpc_vgw:
@@ -80,7 +79,6 @@ EXAMPLES = r"""
     tags:
       environment: production
       owner: ABC
-  register: created_vgw
 
 - name: Remove a new VGW using the name
   community.aws.ec2_vpc_vgw:
@@ -89,7 +87,6 @@ EXAMPLES = r"""
     profile: personal
     name: personal-testing
     type: ipsec.1
-  register: deleted_vgw
 
 - name: Remove a new VGW using the vpn_gateway_id
   community.aws.ec2_vpc_vgw:
@@ -97,40 +94,42 @@ EXAMPLES = r"""
     region: ap-southeast-2
     profile: personal
     vpn_gateway_id: vgw-3a9aa123
-  register: deleted_vgw
 """
 
 RETURN = r"""
 vgw:
-  description: A description of the VGW
+  description: Information about the virtual private gateway.
   returned: success
   type: dict
   contains:
     id:
-      description: The ID of the VGW.
+      description: The ID of the virtual private gateway.
       type: str
       returned: success
       example: "vgw-0123456789abcdef0"
     state:
-      description: The state of the VGW.
+      description: The current state of the virtual private gateway.
       type: str
       returned: success
       example: "available"
     tags:
-      description: A dictionary representing the tags attached to the VGW
+      description: A dictionary representing the tags attached to the virtual private gateway.
       type: dict
       returned: success
-      example: { "Name": "ansible-test-ec2-vpc-vgw" }
+      example: {
+                    "Name": "ansible-test-ec2-vpc-vgw",
+                    "Env": "Dev_Test_001"
+                }
     type:
       description: The type of VPN connection the virtual private gateway supports.
       type: str
       returned: success
       example: "ipsec.1"
     vpc_id:
-      description: The ID of the VPC to which the VGW is attached.
+      description: The ID of the VPC.
       type: str
       returned: success
-      example: vpc-123456789abcdef01
+      example: "vpc-123456789abcdef01"
 """
 
 import time
@@ -144,6 +143,11 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpcs
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_vpn_gateways
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 
@@ -211,8 +215,8 @@ def wait_for_status(client, module, vpn_gateway_id, status):
                 break
             else:
                 time.sleep(polling_increment_secs)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Failure while waiting for status update")
+        except AnsibleEC2Error as e:
+            module.fail_json_aws(e)
 
     result = response
     return status_achieved, result
@@ -229,8 +233,8 @@ def attach_vgw(client, module, vpn_gateway_id):
         response = VGWRetry.jittered_backoff(retries=5, catch_extra_error_codes=["InvalidParameterValue"])(
             client.attach_vpn_gateway
         )(VpnGatewayId=vpn_gateway_id, VpcId=params["VpcId"])
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to attach VPC")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     status_achieved, vgw = wait_for_status(client, module, [vpn_gateway_id], "attached")
     if not status_achieved:
@@ -249,8 +253,8 @@ def detach_vgw(client, module, vpn_gateway_id, vpc_id=None):
             response = client.detach_vpn_gateway(VpnGatewayId=vpn_gateway_id, VpcId=vpc_id, aws_retry=True)
         else:
             response = client.detach_vpn_gateway(VpnGatewayId=vpn_gateway_id, VpcId=params["VpcId"], aws_retry=True)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, "Failed to detach gateway")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     status_achieved, vgw = wait_for_status(client, module, [vpn_gateway_id], "detached")
     if not status_achieved:
@@ -270,7 +274,7 @@ def create_vgw(client, module):
         params["AmazonSideAsn"] = module.params.get("asn")
 
     try:
-        response = client.create_vpn_gateway(aws_retry=True, **params)
+        response = create_vpc_vpn_gateway(client, **params)
         get_waiter(client, "vpn_gateway_exists").wait(VpnGatewayIds=[response["VpnGateway"]["VpnGatewayId"]])
     except botocore.exceptions.WaiterError as e:
         module.fail_json_aws(
@@ -278,21 +282,21 @@ def create_vgw(client, module):
         )
     except is_boto3_error_code("VpnGatewayLimitExceeded") as e:
         module.fail_json_aws(e, msg="Too many VPN gateways exist in this account.")
-    except (
-        botocore.exceptions.ClientError,
-        botocore.exceptions.BotoCoreError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Failed to create gateway")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     result = response
     return result
 
 
 def delete_vgw(client, module, vpn_gateway_id):
+    params = {}
+    if vpn_gateway_id:
+        params["VpnGatewayId"] = vpn_gateway_id
     try:
-        response = client.delete_vpn_gateway(VpnGatewayId=vpn_gateway_id, aws_retry=True)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to delete gateway")
+        response = delete_vpc_vpn_gateway(client, **params)
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     # return the deleted VpnGatewayId as this is not included in the above response
     result = vpn_gateway_id
@@ -301,13 +305,14 @@ def delete_vgw(client, module, vpn_gateway_id):
 
 def find_vpc(client, module):
     params = dict()
-    params["vpc_id"] = module.params.get("vpc_id")
+    vpc_id = module.params.get("vpc_id")
 
-    if params["vpc_id"]:
+    if vpc_id:
+        params["VpcIds"] = [vpc_id]
         try:
-            response = client.describe_vpcs(VpcIds=[params["vpc_id"]], aws_retry=True)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Failed to describe VPC")
+            response = describe_vpcs(client, **params)
+        except AnsibleEC2Error as e:
+            module.fail_json_aws(e)
 
     result = response
     return result
@@ -325,9 +330,10 @@ def find_vgw(client, module, vpn_gateway_id=None):
         if module.params.get("state") == "present":
             params["Filters"].append({"Name": "state", "Values": ["pending", "available"]})
     try:
-        response = client.describe_vpn_gateways(aws_retry=True, **params)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to describe gateway using filters")
+        response = describe_vpc_vpn_gateways(client, **params)
+        # response = client.describe_vpn_gateways(aws_retry=True, **params)
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
 
     return sorted(response["VpnGateways"], key=lambda k: k["VpnGatewayId"])
 
