@@ -148,6 +148,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_vpn_gateways
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import attach_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import detach_vpc_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 
@@ -224,15 +226,15 @@ def wait_for_status(client, module, vpn_gateway_id, status):
 
 def attach_vgw(client, module, vpn_gateway_id):
     params = dict()
-    params["VpcId"] = module.params.get("vpc_id")
+    vpc_id = module.params.get("vpc_id")
+    if vpc_id:
+        params["VpcId"] = vpc_id
+    if vpn_gateway_id:
+        params["VpnGatewayId"] = vpn_gateway_id
 
     try:
-        # Immediately after a detachment, the EC2 API sometimes will report the VpnGateways[0].State
-        # as available several seconds before actually permitting a new attachment.
-        # So we catch and retry that error.  See https://github.com/ansible/ansible/issues/53185
-        response = VGWRetry.jittered_backoff(retries=5, catch_extra_error_codes=["InvalidParameterValue"])(
-            client.attach_vpn_gateway
-        )(VpnGatewayId=vpn_gateway_id, VpcId=params["VpcId"])
+        # response = attach_vpc_vpn_gateway(client, vpn_gateway_id, params["VpcId"])
+        response = attach_vpc_vpn_gateway(client, **params)
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
@@ -248,11 +250,13 @@ def detach_vgw(client, module, vpn_gateway_id, vpc_id=None):
     params = dict()
     params["VpcId"] = module.params.get("vpc_id")
 
+    detach_params = {
+        "VpnGatewayId": vpn_gateway_id,
+        "VpcId": vpc_id if vpc_id else params["VpcId"],
+    }
+
     try:
-        if vpc_id:
-            response = client.detach_vpn_gateway(VpnGatewayId=vpn_gateway_id, VpcId=vpc_id, aws_retry=True)
-        else:
-            response = client.detach_vpn_gateway(VpnGatewayId=vpn_gateway_id, VpcId=params["VpcId"], aws_retry=True)
+        response = detach_vpc_vpn_gateway(client, **detach_params)
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
@@ -331,7 +335,6 @@ def find_vgw(client, module, vpn_gateway_id=None):
             params["Filters"].append({"Name": "state", "Values": ["pending", "available"]})
     try:
         response = describe_vpc_vpn_gateways(client, **params)
-        # response = client.describe_vpn_gateways(aws_retry=True, **params)
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
