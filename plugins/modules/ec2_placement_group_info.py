@@ -79,26 +79,23 @@ placement_groups:
 
 from typing import Any
 from typing import Dict
+from typing import List
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_placement_groups
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 
 
-def get_placement_groups_details(connection, module: AnsibleAWSModule) -> Dict[str, Any]:
-    names = module.params.get("names")
+def get_placement_groups_details(connection, names: List) -> Dict[str, Any]:
+    params = {}
     if len(names) > 0:
-        response = describe_ec2_placement_groups(
-            connection,
-            Filters=[
-                {
-                    "Name": "group-name",
-                    "Values": names,
-                }
-            ],
-        )
-    else:
-        response = describe_ec2_placement_groups(connection)
+        params["Filters"] = [
+            {
+                "Name": "group-name",
+                "Values": names,
+            }
+        ]
+    response = describe_ec2_placement_groups(connection, **params)
 
     results = []
     for placement_group in response:
@@ -124,8 +121,9 @@ def main():
     )
 
     connection = module.client("ec2")
+    names =  module.params.get("names")
 
-    placement_groups = get_placement_groups_details(connection, module)
+    placement_groups = get_placement_groups_details(connection, names)
     module.exit_json(changed=False, placement_groups=placement_groups)
 
 

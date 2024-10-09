@@ -116,16 +116,16 @@ from typing import Dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_ec2_placement_group
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_ec2_placement_group
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_placement_groups
-from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-def search_placement_group(connection, module: AnsibleAWSModule) -> Dict[str, Any]:
+
+def search_placement_group(connection, name: str) -> Dict[str, Any]:
     """
     Check if a placement group exists.
     """
-    name = module.params.get("name")
     response = describe_ec2_placement_groups(connection, Filters=[{"Name": "group-name", "Values": [name]}])
 
     if len(response) != 1:
@@ -170,26 +170,26 @@ def create_placement_group(connection, module: AnsibleAWSModule) -> None:
         params["TagSpecifications"] = boto3_tag_specifications(tags, types=["placement-group"])
     if partition_count:
         params["PartitionCount"] = partition_count
-    params["DryRun"] = module.check_mode
-
-    response = create_ec2_placement_group(connection, **params)
-    if response.get("boto3_error_code") == "DryRunOperation":
+    if module.check_mode:
         module.exit_json(
             changed=True,
             placement_group={
                 "name": name,
-                "state": "DryRun",
                 "strategy": strategy,
                 "tags": tags,
             },
+            msg="EC2 placement group would be created if not in check mode"
         )
+
+    response = create_ec2_placement_group(connection, **params)
     module.exit_json(changed=True, placement_group=get_placement_group_information(connection, name))
 
 
 def delete_placement_group(connection, module: AnsibleAWSModule) -> None:
+    if module.check_mode:
+        module.exit_json(changed=True, msg="VPC would be deleted if not in check mode")
     name = module.params.get("name")
-
-    delete_ec2_placement_group(connection, name, module.check_mode)
+    delete_ec2_placement_group(connection, name)
     module.exit_json(changed=True)
 
 
@@ -207,9 +207,10 @@ def main():
     connection = module.client("ec2")
 
     state = module.params.get("state")
+    name = module.params.get("name")
+    placement_group = search_placement_group(connection, name)
 
     if state == "present":
-        placement_group = search_placement_group(connection, module)
         if placement_group is None:
             create_placement_group(connection, module)
         else:
@@ -223,7 +224,6 @@ def main():
                 )
 
     elif state == "absent":
-        placement_group = search_placement_group(connection, module)
         if placement_group is None:
             module.exit_json(changed=False)
         else:
