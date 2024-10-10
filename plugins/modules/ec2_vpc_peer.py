@@ -407,9 +407,7 @@ def describe_peering_connections(client, module: AnsibleAWSModule, params) -> Di
         "accepter-vpc-info.vpc-id": params["PeerVpcId"],
     }
 
-    peering_connections = describe_vpc_peering_connections(
-        client, Filters=ansible_dict_to_boto3_filter_list(filters)
-    )
+    peering_connections = describe_vpc_peering_connections(client, Filters=ansible_dict_to_boto3_filter_list(filters))
     if peering_connections == []:
         # Try again with the VPC/Peer relationship reversed
         filters = {
