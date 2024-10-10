@@ -55,7 +55,7 @@
   ignore_errors: True
 
 - name: 'Create Transit Gateways'
-  ec2_transit_gateway:
+  community.aws.ec2_transit_gateway:
     state: absent
     transit_gateway_id: '{{ item.tgw_id }}'
   loop:
