@@ -2,7 +2,7 @@
 
     # ============================================================
 
-    - name: create ingress and egress rules using subnet names
+    - name: Create ingress and egress rules using subnet names
       ec2_vpc_nacl:
         vpc_id: "{{ vpc_ipv6_id }}"
         name: "{{ nacl_name }}"
@@ -18,14 +18,16 @@
           - [100, 'all', 'allow', '0.0.0.0/0', null, null, null, null]
         state: 'present'
       register: nacl
-    - assert:
+
+    - name: Assert that module returned the Network ACL id
+      assert:
         that:
           - nacl.nacl_id
 
     - set_fact:
         nacl_id: "{{ nacl.nacl_id }}"
 
-    - name: add ipv6 entries
+    - name: Add ipv6 entries
       ec2_vpc_nacl:
         vpc_id: "{{ vpc_ipv6_id }}"
         name: "{{ nacl_name }}"
@@ -45,25 +47,26 @@
         state: 'present'
       register: nacl
 
-    - assert:
+    - name: Assert that module reported change while the Network ACL remained unchanged
+      assert:
        that:
          - nacl.changed
          - nacl.nacl_id == nacl_id
 
-    - name: get network ACL facts (test that it works with ipv6 entries)
+    - name: Get network ACL facts (test that it works with ipv6 entries)
       ec2_vpc_nacl_info:
         nacl_ids:
           - "{{ nacl_id }}"
       register: nacl_facts
 
-    - name: assert the nacl has the correct attributes
+    - name: Assert the nacl has the correct attributes
       assert:
         that:
           - nacl_facts.nacls | length == 1
           - nacl_facts.nacls[0].ingress | length == 5
           - nacl_facts.nacls[0].egress | length == 2
 
-    - name: purge ingress entries
+    - name: Purge ingress entries
       ec2_vpc_nacl:
         vpc_id: "{{ vpc_ipv6_id }}"
         name: "{{ nacl_name }}"
@@ -78,12 +81,13 @@
         state: 'present'
       register: nacl
 
-    - assert:
+    - name: Assert that module reported change while the Network ACL remained unchanged
+      assert:
        that:
          - nacl.changed
          - nacl.nacl_id == nacl_id
 
-    - name: purge egress entries
+    - name: Purge egress entries
       ec2_vpc_nacl:
         vpc_id: "{{ vpc_ipv6_id }}"
         name: "{{ nacl_name }}"
@@ -96,17 +100,18 @@
         state: 'present'
       register: nacl
 
-    - assert:
+    - name: Assert that module reported change
+      assert:
         that:
           - nacl.changed
 
-    - name: get network ACL facts (test that removed entries are gone)
+    - name: Get network ACL facts (test that removed entries are gone)
       ec2_vpc_nacl_info:
         nacl_ids:
           - "{{ nacl_id }}"
       register: nacl_facts
 
-    - name: assert the nacl has the correct attributes
+    - name: Assert the nacl has the correct attributes
       assert:
         that:
           - nacl_facts.nacls | length == 1
@@ -115,10 +120,10 @@
 
   always:
 
-    - name: remove network ACL
+    - name: Remove network ACL
       ec2_vpc_nacl:
         vpc_id: "{{ vpc_ipv6_id }}"
         name: "{{ nacl_name }}"
         state: absent
       register: removed_acl
-      ignore_errors: yes
+      ignore_errors: true
