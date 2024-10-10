@@ -3,6 +3,3 @@ breaking_changes:
   - ec2_vpc_egress_igw - The module has been migrated from the ``community.aws`` collection.
     Playbooks using the Fully Qualified Collection Name for this module should be
     updated to use ``amazon.aws.ec2_vpc_egress_igw`` (https://api.github.com/repos/ansible-collections/community.aws/pulls/2169).
-  - ec2_vpc_egress_igw - The module has been migrated from the ``community.aws`` collection.
-    Playbooks using the Fully Qualified Collection Name for this module should be
-    updated to use ``amazon.aws.ec2_vpc_egress_igw`` (https://api.github.com/repos/ansible-collections/community.aws/pulls/2169).

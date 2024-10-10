@@ -519,8 +519,6 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
-    elb_classic_lb_info:
-      redirect: amazon.aws.elb_classic_lb_info
     ec2_vpc_egress_igw:
       redirect: amazon.aws.ec2_vpc_egress_igw
   module_utils:
