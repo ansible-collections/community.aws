@@ -44,8 +44,8 @@ options:
     version_added: 8.1.0
   state:
     description:
-      - C(present) to ensure resource is created.
-      - C(absent) to remove resource.
+      - V(present) to ensure resource is created.
+      - V(absent) to remove resource.
     default: present
     choices: [ "present", "absent"]
     type: str
@@ -57,11 +57,11 @@ options:
     default: true
     type: bool
   wait:
-    description: Whether to wait for status
+    description: Whether to wait for status.
     default: true
     type: bool
   wait_timeout:
-    description: number of seconds to wait for status
+    description: Number of seconds to wait for status.
     default: 300
     type: int
 
@@ -128,7 +128,7 @@ transit_gateway:
       type: str
       sample: "my test tgw"
     options:
-      description: The options attributes of the transit gateway
+      description: The options attributes of the transit gateway.
       returned: always
       type: complex
       contains:
@@ -195,7 +195,7 @@ transit_gateway:
       type: str
       sample: "pending"
     tags:
-      description: A dictionary of resource tags
+      description: A dictionary of resource tags.
       returned: always
       type: dict
       sample:
@@ -240,7 +240,7 @@ class AnsibleEc2Tgw:
         retry_decorator = AWSRetry.jittered_backoff(
             catch_extra_error_codes=["IncorrectState"],
         )
-        self._connection = module.client("ec2", retry_decorator=retry_decorator)
+        self._connection = module.client("ec2")
         self._check_mode = self._module.check_mode
 
     def process(self) -> None:
@@ -313,11 +313,11 @@ class AnsibleEc2Tgw:
         tgw = None
         tgws = []
 
-        if len(response.get("TransitGateways", [])) == 1 and tgw_id:
-            if (response["TransitGateways"][0]["State"] != "deleted") or not skip_deleted:
-                tgws.extend(response["TransitGateways"])
+        if len(response) == 1 and tgw_id:
+            if (response[0]["State"] != "deleted") or not skip_deleted:
+                tgws.extend(response)
 
-        for gateway in response.get("TransitGateways", []):
+        for gateway in response:
             if description == gateway["Description"] and gateway["State"] != "deleted":
                 tgws.append(gateway)
 

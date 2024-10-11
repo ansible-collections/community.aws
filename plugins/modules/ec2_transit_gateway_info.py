@@ -190,11 +190,8 @@ def get_transit_gateway_response(module: AnsibleAWSModule, connection) -> Dict[s
     if filters:
         params["Filters"] = filters
 
-    try:
-        result = describe_ec2_transit_gateways(connection, **params)
-        return result if result else {"TransitGateways": []}
-    except AnsibleEC2Error as e:
-        module.fail_json_aws(e)
+    result = describe_ec2_transit_gateways(connection, **params)
+    return result if result else {"TransitGateways": []}
 
 
 def extract_transit_gateway_info(transit_gateway: Dict[str, Any]) -> Dict[str, Any]:
