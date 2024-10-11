@@ -223,10 +223,10 @@ def setup_module_object() -> AnsibleAWSModule:
     Merge argument spec and create Ansible module object.
     :return: Ansible module object
     """
-    argument_spec = {
-        "transit_gateway_ids": {"type": "list", "default": [], "elements": "str", "aliases": ["transit_gateway_id"]},
-        "filters": {"type": "dict", "default": {}},
-    }
+    argument_spec = dict(
+        transit_gateway_ids=dict(type="list", default=[], elements="str", aliases=["transit_gateway_id"]),
+        filters=dict(type="dict", default={}),
+    )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,

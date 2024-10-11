@@ -234,7 +234,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 
 class AnsibleEc2Tgw:
-    def __init__(self, module: Any, results: Dict[str, Any]) -> None:
+    def __init__(self, module: AnsibleAWSModule, results: Dict[str, Any]) -> None:
         self._module = module
         self._results = results
         retry_decorator = AWSRetry.jittered_backoff(
@@ -302,13 +302,12 @@ class AnsibleEc2Tgw:
         :return: Transit gateway object.
         """
         filters = []
+        params = {}
         if tgw_id:
             filters = ansible_dict_to_boto3_filter_list({"transit-gateway-id": tgw_id})
 
-        try:
-            response = describe_ec2_transit_gateways(self._connection, Filters=filters)
-        except AnsibleEC2Error as e:
-            self._module.fail_json_aws(e)
+        params["Filters"] = filters
+        response = describe_ec2_transit_gateways(self._connection, **params)
 
         tgw = None
         tgws = []
