@@ -1,7 +1,7 @@
 # ============================================================
 
 - name: Create ingress and egress rules using subnet names
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
     subnets: "{{ subnet_names }}"
@@ -16,23 +16,24 @@
     state: 'present'
   register: nacl
 
-- set_fact:
+- name: Set helpful fact for Network ACL ID
+  ansible.builtin.set_fact:
     nacl_id: "{{ nacl.nacl_id }}"
 
 - name: Assert the network acl was created
-  assert:
+  ansible.builtin.assert:
     that:
       - nacl.changed
       - nacl.nacl_id.startswith('acl-')
 
 - name: Get network ACL facts
-  ec2_vpc_nacl_info:
+  community.aws.ec2_vpc_nacl_info:
     nacl_ids:
       - "{{ nacl_id }}"
   register: nacl_facts
 
 - name: Assert the nacl has the correct attributes
-  assert:
+  ansible.builtin.assert:
     that:
       - nacl_facts.nacls | length == 1
       - nacl_facts.nacls[0].nacl_id == nacl_id
@@ -44,7 +45,7 @@
 # ============================================================
 
 - name: Test idempotence
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
     subnets: "{{ subnet_names }}"
@@ -60,27 +61,27 @@
   register: nacl
 
 - name: Assert the network acl already existed
-  assert:
+  ansible.builtin.assert:
     that:
       - not nacl.changed
       - nacl.nacl_id == nacl_id
       - nacl.nacl_id.startswith('acl-')
 
 - name: Get network ACL facts
-  ec2_vpc_nacl_info:
+  community.aws.ec2_vpc_nacl_info:
     nacl_ids:
       - "{{ nacl.nacl_id }}"
   register: nacl_facts_idem
 
 - name: Assert the facts are the same as before
-  assert:
+  ansible.builtin.assert:
     that:
       - nacl_facts_idem == nacl_facts
 
 # ============================================================
 
 - name: Remove a subnet from the network ACL
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
     subnets:
@@ -99,20 +100,20 @@
   register: nacl
 
 - name: Assert the network ACL changed
-  assert:
+  ansible.builtin.assert:
     that:
       - nacl.changed
       - nacl.nacl_id == nacl_id
       - nacl.nacl_id.startswith('acl-')
 
 - name: Get network ACL facts
-  ec2_vpc_nacl_info:
+  community.aws.ec2_vpc_nacl_info:
     nacl_ids:
       - "{{ nacl.nacl_id }}"
   register: nacl_facts
 
 - name: Assert the nacl has the correct attributes
-  assert:
+  ansible.builtin.assert:
     that:
       - nacl_facts.nacls | length == 1
       - nacl_facts.nacls[0].nacl_id == nacl_id
@@ -124,13 +125,13 @@
 # ============================================================
 
 - name: Remove the network ACL
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: "{{ vpc_id }}"
     name: "{{ nacl_name }}"
     state: absent
   register: nacl
 
 - name: Assert nacl was removed
-  assert:
+  ansible.builtin.assert:
     that:
       - nacl.changed

@@ -109,9 +109,8 @@ from typing import Union
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_network_acls
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import is_ansible_aws_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
@@ -166,13 +165,13 @@ def list_ec2_vpc_nacls(connection, module: AnsibleAWSModule) -> None:
         params["NetworkAclIds"] = nacl_ids
 
     try:
-        snaked_nacls = [format_nacl(nacl) for nacl in describe_network_acls(connection, **params)]
-    except is_ansible_aws_error_code("InvalidNetworkAclID.NotFound"):
-        module.fail_json(msg="Unable to describe ACL. NetworkAcl does not exist")
-    except AnsibleAWSError as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg=f"Unable to describe network ACLs {nacl_ids}")
+        network_acls = describe_network_acls(connection, **params)
+        if not network_acls:
+            module.fail_json(msg="Unable to describe ACL. NetworkAcl does not exist")
+    except AnsibleEC2Error as e:
+        module.fail_json_aws_error(e)
 
-    module.exit_json(nacls=snaked_nacls)
+    module.exit_json(nacls=[format_nacl(nacl) for nacl in network_acls])
 
 
 def nacl_entry_to_list(entry: Dict[str, Any]) -> List[Union[str, int, None]]:

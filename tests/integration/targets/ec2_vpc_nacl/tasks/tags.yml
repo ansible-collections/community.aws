@@ -1,4 +1,5 @@
-- vars:
+- name: Run test from tags.yml
+  vars:
     first_tags:
       'Key with Spaces': Value with spaces
       CamelCaseKey: CamelCaseValue
@@ -31,7 +32,7 @@
   # ============================================================
 
   - name: Create a network ACL using subnet IDs
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -39,23 +40,23 @@
     register: nacl
 
   - name: Assert the network acl was created
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl.changed
         - nacl.nacl_id.startswith('acl-')
 
   - name: Store NACL ID
-    set_fact:
+    ansible.builtin.set_fact:
       nacl_id: '{{ nacl.nacl_id }}'
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl_id }}"
     register: nacl_info
 
   - name: Assert the nacl has the correct attributes
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl_info.nacls[0].nacl_id == nacl_id
         - nacl_info.nacls[0].tags == name_tags
@@ -63,7 +64,7 @@
   # ============================================================
 
   - name: Add tags (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -73,13 +74,13 @@
     check_mode: True
 
   - name: Assert would change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
   - name: Add tags
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -88,13 +89,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify the tags were added
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
@@ -102,7 +103,7 @@
         - nacl_info.nacls[0].tags == ( first_tags | combine(name_tags) )
 
   - name: Add tags - IDEMPOTENCY (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -112,13 +113,13 @@
     check_mode: True
 
   - name: Assert would not change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
   - name: Add tags - IDEMPOTENCY
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -127,13 +128,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify no change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
@@ -143,13 +144,13 @@
   # ============================================================
 
   - name: Get network ACL facts by filter
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       filters:
         "tag:Name": "{{ nacl_name }}"
     register: nacl_info
 
   - name: Assert the facts are the same as before
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl_info.nacls | length == 1
         - nacl.nacl_id == nacl_id
@@ -158,7 +159,7 @@
   # ============================================================
 
   - name: Modify tags with purge (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -168,13 +169,13 @@
     check_mode: True
 
   - name: Assert would change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
   - name: Modify tags with purge
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -183,13 +184,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify the tags were added
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
@@ -197,7 +198,7 @@
         - nacl_info.nacls[0].tags == ( second_tags | combine(name_tags) )
 
   - name: Modify tags with purge - IDEMPOTENCY (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -207,13 +208,13 @@
     check_mode: True
 
   - name: Assert would not change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
   - name: Modify tags with purge - IDEMPOTENCY
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -222,13 +223,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify no change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
@@ -238,7 +239,7 @@
   # ============================================================
 
   - name: Modify tags without purge (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -249,13 +250,13 @@
     check_mode: True
 
   - name: Assert would change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
   - name: Modify tags without purge
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -265,13 +266,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify the tags were added
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
@@ -279,7 +280,7 @@
         - nacl_info.nacls[0].tags == ( final_tags | combine(name_tags) )
 
   - name: Modify tags without purge - IDEMPOTENCY (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -290,13 +291,13 @@
     check_mode: True
 
   - name: Assert would not change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
   - name: Modify tags without purge - IDEMPOTENCY
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -306,13 +307,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify no change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
@@ -322,7 +323,7 @@
   # ============================================================
 
   - name: No change to tags without setting tags (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -331,13 +332,13 @@
     check_mode: True
 
   - name: Assert would change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
   - name: No change to tags without setting tags
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -345,13 +346,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify the tags were added
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
@@ -361,7 +362,7 @@
   # ============================================================
 
   - name: Remove non name tags (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -371,13 +372,13 @@
     check_mode: True
 
   - name: Assert would change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
 
   - name: Remove non name tags
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -386,13 +387,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify the tags were added
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is changed
         - nacl.nacl_id == nacl_id
@@ -400,7 +401,7 @@
         - nacl_info.nacls[0].tags == name_tags
 
   - name: Remove non name tags - IDEMPOTENCY (check mode)
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -410,13 +411,13 @@
     check_mode: True
 
   - name: Assert would not change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
 
   - name: Remove non name tags - IDEMPOTENCY
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       subnets: "{{ subnet_ids }}"
@@ -425,13 +426,13 @@
     register: nacl
 
   - name: Get network ACL facts
-    ec2_vpc_nacl_info:
+    community.aws.ec2_vpc_nacl_info:
       nacl_ids:
         - "{{ nacl.nacl_id }}"
     register: nacl_info
 
   - name: Verify no change
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl is not changed
         - nacl.nacl_id == nacl_id
@@ -442,13 +443,13 @@
 
   always:
   - name: Remove the network ACL
-    ec2_vpc_nacl:
+    community.aws.ec2_vpc_nacl:
       vpc_id: "{{ vpc_id }}"
       name: "{{ nacl_name }}"
       state: absent
     register: nacl
 
   - name: Assert nacl was removed
-    assert:
+    ansible.builtin.assert:
       that:
         - nacl.changed
