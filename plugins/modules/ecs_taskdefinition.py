@@ -898,6 +898,8 @@ class EcsTaskManager:
             params["placementConstraints"] = placement_constraints
         if runtime_platform:
             params["runtimePlatform"] = runtime_platform
+        if launch_type != "FARGATE":
+            params["runtimePlatform"] = {}
 
         try:
             response = self.ecs.register_task_definition(aws_retry=True, **params)
