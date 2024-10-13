@@ -425,7 +425,7 @@ def update_tags(client, stream_name, tags, check_mode=False):
     return success, changed, err_msg
 
 
-def stream_action(client, stream_name, shard_count=1, action="create", timeout=300, check_mode=False):
+def stream_action(client, stream_name, shard_count=1, stream_mode_details, action="create", timeout=300, check_mode=False):
     """Create or Delete an Amazon Kinesis Stream.
     Args:
         client (botocore.client.EC2): Boto3 client.
@@ -443,7 +443,8 @@ def stream_action(client, stream_name, shard_count=1, action="create", timeout=3
         >>> client = boto3.client('kinesis')
         >>> stream_name = 'test-stream'
         >>> shard_count = 20
-        >>> stream_action(client, stream_name, shard_count, action='create')
+        >>> stream_mode_details = {'StreamMode': 'ON_DEMAND'}
+        >>> stream_action(client, stream_name, shard_count, stream_mode_details, action='create')
 
     Returns:
         List (bool, str)
@@ -455,6 +456,7 @@ def stream_action(client, stream_name, shard_count=1, action="create", timeout=3
         if not check_mode:
             if action == "create":
                 params["ShardCount"] = shard_count
+                params["StreamMode"] = stream_mode_details
                 client.create_stream(**params)
                 success = True
             elif action == "delete":
@@ -761,6 +763,7 @@ def create_stream(
     client,
     stream_name,
     number_of_shards=1,
+    stream_mode_details=None,
     retention_period=None,
     tags=None,
     wait=False,
@@ -775,6 +778,8 @@ def create_stream(
     Kwargs:
         number_of_shards (int): Number of shards this stream will use.
             default=1
+        stream_mode_details (dict): The mode of the stream.
+            default={'StreamMode': 'ON_DEMAND'}
         retention_period (int): Can not be less than 24 hours
             default=None
         tags (dict): The tags you want applied.
@@ -790,8 +795,9 @@ def create_stream(
         >>> client = boto3.client('kinesis')
         >>> stream_name = 'test-stream'
         >>> number_of_shards = 10
+        >>> stream_mode_details = {'StreamMode': 'ON_DEMAND'}
         >>> tags = {'env': 'test'}
-        >>> create_stream(client, stream_name, number_of_shards, tags=tags)
+        >>> create_stream(client, stream_name, number_of_shards, stream_mode_details, tags=tags)
 
     Returns:
         Tuple (bool, bool, str, dict)
@@ -814,6 +820,7 @@ def create_stream(
             current_stream,
             stream_name,
             number_of_shards,
+            stream_mode_details,
             retention_period,
             tags,
             wait,
@@ -822,7 +829,7 @@ def create_stream(
         )
     else:
         create_success, create_msg = stream_action(
-            client, stream_name, number_of_shards, action="create", check_mode=check_mode
+            client, stream_name, number_of_shards, stream_mode_details, action="create", check_mode=check_mode
         )
         if not create_success:
             changed = True
