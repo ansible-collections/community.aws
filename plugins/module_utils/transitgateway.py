@@ -20,12 +20,12 @@ from typing import Tuple
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_attachment
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_transit_gateway_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_transit_gateway_vpc_attachment
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_subnets
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_attachments
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_transit_gateway_vpc_attachments
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_vpc_attachment
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import modify_transit_gateway_vpc_attachment
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
@@ -98,7 +98,7 @@ def find_existing_attachment(
         params["Filters"] = ansible_dict_to_boto3_filter_list(filters)
 
     try:
-        attachments = describe_vpc_attachments(client, **params)
+        attachments = describe_transit_gateway_vpc_attachments(client, **params)
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
@@ -146,7 +146,7 @@ class TransitGatewayAttachmentStateManager:
             params["TagSpecifications"] = boto3_tag_specifications(tags, types=["transit-gateway-attachment"])
 
         try:
-            response = create_vpc_attachment(self.client, **params)
+            response = create_transit_gateway_vpc_attachment(self.client, **params)
         except AnsibleEC2Error as e:
             self.module.fail_json_aws_error(e)
 
@@ -161,9 +161,8 @@ class TransitGatewayAttachmentStateManager:
             return False
 
         if not self.module.check_mode:
-            params = dict(TransitGatewayAttachmentId=self.attachment_id)
             try:
-                delete_vpc_attachment(self.client, **params)
+                delete_transit_gateway_vpc_attachment(self.client, self.attachment_id)
             except AnsibleEC2Error as e:
                 self.module.fail_json_aws_error(e)
 
@@ -400,7 +399,7 @@ class TransitGatewayVpcAttachmentManager:
 
         if not self.module.check_mode:
             try:
-                modify_vpc_attachment(self.client, **updates)
+                modify_transit_gateway_vpc_attachment(self.client, **updates)
             except AnsibleEC2Error as e:
                 self.module.fail_json_aws_error(e)
         return True
