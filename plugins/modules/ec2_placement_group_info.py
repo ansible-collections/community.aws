@@ -121,7 +121,7 @@ def main():
     )
 
     connection = module.client("ec2")
-    names =  module.params.get("names")
+    names = module.params.get("names")
 
     placement_groups = get_placement_groups_details(connection, names)
     module.exit_json(changed=False, placement_groups=placement_groups)

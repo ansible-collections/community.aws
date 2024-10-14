@@ -25,7 +25,7 @@ options:
   partition_count:
     description:
       - The number of partitions.
-      - Valid only when O(Strategy) is set to V(partition).
+      - Valid only when O(strategy) is set to V(partition).
       - Must be a value between V(1) and V(7).
     type: int
     version_added: 3.1.0
@@ -178,7 +178,7 @@ def create_placement_group(connection, module: AnsibleAWSModule) -> None:
                 "strategy": strategy,
                 "tags": tags,
             },
-            msg="EC2 placement group would be created if not in check mode"
+            msg="EC2 placement group would be created if not in check mode",
         )
 
     response = create_ec2_placement_group(connection, **params)
