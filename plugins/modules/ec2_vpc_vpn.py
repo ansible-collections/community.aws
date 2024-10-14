@@ -904,7 +904,7 @@ def main():
             options=dict(
                 TunnelInsideCidr=dict(type="str"),
                 TunnelInsideIpv6Cidr=dict(type="str"),
-                PreSharedKey=dict(type="str"),
+                PreSharedKey=dict(type="str", no_log=True),
             ),
         ),
         static_only=dict(default=False, type="bool"),

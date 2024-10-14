@@ -149,13 +149,15 @@ def test_create_filter(ansible_module, provided_filters, expected_result, expect
         (
             {"customer_gateway_id": None, "vpn_gateway_id": "vgw-123", "static_only": True},
             None,
-            "No matching connection was found. To create a new connection you must provide customer_gateway_id and one of either transit_gateway_id or vpn_gateway_id.",
+            "No matching connection was found. To create a new connection you must provide customer_gateway_id"
+            + " and one of either transit_gateway_id or vpn_gateway_id.",
         ),
         # Case 4: Both customer gateway and VPN gateway are None
         (
             {"customer_gateway_id": None, "vpn_gateway_id": None, "static_only": False},
             None,
-            "No matching connection was found. To create a new connection you must provide customer_gateway_id and one of either transit_gateway_id or vpn_gateway_id.",
+            "No matching connection was found. To create a new connection you must provide customer_gateway_id"
+            + " and one of either transit_gateway_id or vpn_gateway_id.",
         ),
         # Case 5: Optional parameters passed (e.g., static routes)
         (

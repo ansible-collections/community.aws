@@ -57,6 +57,7 @@ vpn_connections:
     description: List of one or more EC2 VPN Connections.
     type: list
     elements: dict
+    returned: always
     contains:
       category:
         description: The category of the VPN connection.
