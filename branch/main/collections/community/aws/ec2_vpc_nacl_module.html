@@ -259,7 +259,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-nacl_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>NACL id identifying a network ACL.</p>
-<p>One and only one of the <em>name</em> or <em>nacl_id</em> is required.</p>
+<p>One and only one of the <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-nacl-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> or <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-nacl-module-parameter-nacl-id"><span class="std std-ref"><span class="pre">nacl_id</span></span></a></strong></code> is required.</p>
+<p>Mutually exclusive with <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-nacl-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code>.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -267,7 +268,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Tagged name identifying a network ACL.</p>
-<p>One and only one of the <em>name</em> or <em>nacl_id</em> is required.</p>
+<p>One and only one of the <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-nacl-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> or <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-nacl-module-parameter-nacl-id"><span class="std std-ref"><span class="pre">nacl_id</span></span></a></strong></code> is required.</p>
+<p>Mutually exclusive with <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-nacl-module-parameter-nacl-id"><span class="std std-ref"><span class="pre">nacl_id</span></span></a></strong></code>.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -489,17 +491,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-nacl_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-nacl-module-return-nacl-id"><strong>nacl_id</strong></p>
 <a class="ansibleOptionLink" href="#return-nacl_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The id of the NACL (when creating or updating an ACL)</p>
+<td><div class="ansible-option-cell"><p>The id of the NACL (when creating or updating an ACL).</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;acl-123456789abcdef01&quot;</span></code></p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-task"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-nacl-module-return-task"><strong>task</strong></p>
-<a class="ansibleOptionLink" href="#return-task" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>The result of the create, or delete action.</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
 </tbody>
