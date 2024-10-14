@@ -26,31 +26,27 @@ def ansible_module():
     [
         # Case 1: Single VPN connection available
         (
-            {"VpnConnections": [{"VpnConnectionId": "vpn-123", "State": "available"}]},
+            [{"VpnConnectionId": "vpn-123", "State": "available"}],
             {"VpnConnectionId": "vpn-123", "State": "available"},
             None,
         ),
         # Case 2: Multiple valid VPN connections available (expecting an exception)
         (
-            {
-                "VpnConnections": [
-                    {"VpnConnectionId": "vpn-123", "State": "available"},
-                    {"VpnConnectionId": "vpn-456", "State": "available"},
-                ]
-            },
+            [
+                {"VpnConnectionId": "vpn-123", "State": "available"},
+                {"VpnConnectionId": "vpn-456", "State": "available"},
+            ],
             None,
             "More than one matching VPN connection was found. To modify or delete a VPN please specify vpn_connection_id or add filters.",
         ),
         # Case 3: No VPN connections available
-        ({"VpnConnections": []}, None, None),
+        ([], None, None),
         # Case 4: Multiple connections with one deleted (expecting the viable connection)
         (
-            {
-                "VpnConnections": [
-                    {"VpnConnectionId": "vpn-123", "State": "deleted"},
-                    {"VpnConnectionId": "vpn-456", "State": "available"},
-                ]
-            },
+            [
+                {"VpnConnectionId": "vpn-123", "State": "deleted"},
+                {"VpnConnectionId": "vpn-456", "State": "available"},
+            ],
             {"VpnConnectionId": "vpn-456", "State": "available"},
             None,
         ),
