@@ -9,10 +9,10 @@ module: ec2_vpc_vgw
 short_description: Create and delete AWS VPN Virtual Gateways
 version_added: 1.0.0
 description:
-  - Creates AWS VPN Virtual Gateways
-  - Deletes AWS VPN Virtual Gateways
-  - Attaches Virtual Gateways to VPCs
-  - Detaches Virtual Gateways from VPCs
+  - Creates AWS VPN Virtual Gateways.
+  - Deletes AWS VPN Virtual Gateways.
+  - Attaches Virtual Gateways to VPCs.
+  - Detaches Virtual Gateways from VPCs.
 options:
   state:
     description:
@@ -49,7 +49,7 @@ options:
     default: 320
     type: int
 notes:
-  - Support for I(purge_tags) was added in release 4.0.0.
+  - Support for O(purge_tags) was added in release 4.0.0.
 author:
   - Nick Aslanidis (@naslanidis)
 extends_documentation_fragment:
