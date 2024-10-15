@@ -12,7 +12,7 @@
 
   block:
 
-    - name: set up environment for testing.
+    - name: Set up environment for testing.
       include_tasks: env_setup.yml
 
     - name: Create a placement group 1 - check_mode
