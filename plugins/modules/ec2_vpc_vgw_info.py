@@ -160,7 +160,7 @@ def list_virtual_gateways(client, module):
 
     return [
         camel_dict_to_snake_dict(get_virtual_gateway_info(vgw), ignore_list=["ResourceTags"])
-        for vgw in all_virtual_gateways["VpnGateways"]
+        for vgw in all_virtual_gateways
     ]
 
 

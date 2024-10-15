@@ -298,7 +298,7 @@ def delete_vgw(client, module, vpn_gateway_id):
     if vpn_gateway_id:
         params["VpnGatewayId"] = vpn_gateway_id
     try:
-        response = delete_vpc_vpn_gateway(client, **params)
+        delete_vpc_vpn_gateway(client, **params)
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
@@ -338,7 +338,7 @@ def find_vgw(client, module, vpn_gateway_id=None):
     except AnsibleEC2Error as e:
         module.fail_json_aws(e)
 
-    return sorted(response["VpnGateways"], key=lambda k: k["VpnGatewayId"])
+    return sorted(response, key=lambda k: k["VpnGatewayId"])
 
 
 def ensure_vgw_present(client, module):
