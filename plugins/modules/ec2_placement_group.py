@@ -88,21 +88,40 @@ placement_group:
   returned: when state != absent
   type: dict
   contains:
+    group_arn:
+      description: Placement Group ARN.
+      type: str
+      returned: always
+      sample: "arn:aws:ec2:us-east-1:123456789012:placement-group"
+    group_id:
+      description: Placement Group Id.
+      type: str
+      returned: always
+      sample: "pg-123456789012"
     name:
-      description: PG name
+      description: Placement Group name.
       type: str
-      sample: my-cluster
+      returned: always
+      sample: "my-cluster"
+    partition_count:
+      description: Partition Count.
+      type: str
+      returned: If applicable
+      sample: "my-cluster"
     state:
-      description: PG state
+      description: Placement Groupt state.
       type: str
+      returned: If applicable
       sample: "available"
     strategy:
-      description: PG strategy
+      description: Placement Group strategy.
       type: str
+      returned: If applicable
       sample: "cluster"
     tags:
-      description: Tags associated with the placement group
+      description: Tags associated with the placement group.
       type: dict
+      returned: If applicable
       version_added: 8.1.0
       sample:
         tags:
@@ -112,6 +131,8 @@ placement_group:
 
 from typing import Any
 from typing import Dict
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_ec2_placement_group
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_ec2_placement_group
@@ -131,27 +152,19 @@ def search_placement_group(connection, name: str) -> Dict[str, Any]:
     if len(response) != 1:
         return None
     else:
-        placement_group = response[0]
-        return {
-            "name": placement_group["GroupName"],
-            "state": placement_group["State"],
-            "strategy": placement_group["Strategy"],
-            "tags": boto3_tag_list_to_ansible_dict(placement_group.get("Tags")),
-        }
+        return format_placement_group_information(response[0])
 
 
-def get_placement_group_information(connection, name: str) -> Dict[str, Any]:
+def format_placement_group_information(response: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Retrieve information about a placement group.
+    Format placement group information
     """
-    response = describe_ec2_placement_groups(connection, GroupNames=[name])
-    placement_group = response[0]
-    return {
-        "name": placement_group["GroupName"],
-        "state": placement_group["State"],
-        "strategy": placement_group["Strategy"],
-        "tags": boto3_tag_list_to_ansible_dict(placement_group.get("Tags")),
-    }
+
+    response = camel_dict_to_snake_dict(response, ignore_list=["Tags"])
+    if "tags" in response:
+        response["tags"] = boto3_tag_list_to_ansible_dict(response.get("tags", []))
+    response["name"] = response["group_name"]
+    return response
 
 
 def create_placement_group(connection, module: AnsibleAWSModule) -> None:
@@ -182,7 +195,7 @@ def create_placement_group(connection, module: AnsibleAWSModule) -> None:
         )
 
     response = create_ec2_placement_group(connection, **params)
-    module.exit_json(changed=True, placement_group=get_placement_group_information(connection, name))
+    module.exit_json(changed=True, placement_group=format_placement_group_information(response))
 
 
 def delete_placement_group(connection, module: AnsibleAWSModule) -> None:
