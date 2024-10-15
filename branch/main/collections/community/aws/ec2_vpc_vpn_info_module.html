@@ -7,7 +7,7 @@
 <meta content="2.15.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>community.aws.ec2_vpc_vpn_info module – Gather information about VPN Connections in AWS. &mdash; Ansible collections  documentation</title>
+  <title>community.aws.ec2_vpc_vpn_info module – Gather information about EC2 VPN Connections in AWS &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5707b69d" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=c5b67dd2" />
       <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
@@ -118,7 +118,7 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
-      <li class="breadcrumb-item active">community.aws.ec2_vpc_vpn_info module – Gather information about VPN Connections in AWS.</li>
+      <li class="breadcrumb-item active">community.aws.ec2_vpc_vpn_info module – Gather information about EC2 VPN Connections in AWS</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/ec2_vpc_vpn_info.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
@@ -131,8 +131,8 @@
   
            <div itemprop="articleBody">
              
-  <span class="target" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module"></span><section id="community-aws-ec2-vpc-vpn-info-module-gather-information-about-vpn-connections-in-aws">
-<h1>community.aws.ec2_vpc_vpn_info module – Gather information about VPN Connections in AWS.<a class="headerlink" href="#community-aws-ec2-vpc-vpn-info-module-gather-information-about-vpn-connections-in-aws" title="Link to this heading"></a></h1>
+  <span class="target" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module"></span><section id="community-aws-ec2-vpc-vpn-info-module-gather-information-about-ec2-vpn-connections-in-aws">
+<h1>community.aws.ec2_vpc_vpn_info module – Gather information about EC2 VPN Connections in AWS<a class="headerlink" href="#community-aws-ec2-vpc-vpn-info-module-gather-information-about-ec2-vpn-connections-in-aws" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 9.0.0-dev0).</p>
@@ -157,7 +157,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Gather information about VPN Connections in AWS.</p></li>
+<li><p>Gather information about EC2 VPN Connections in AWS.</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -325,7 +325,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="parameter-vpn_connection_ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-parameter-vpn-connection-ids"><strong>vpn_connection_ids</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vpn_connection_ids" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Get details of a specific VPN connections using vpn connection ID/IDs. This value should be provided as a list.</p>
+<td><div class="ansible-option-cell"><p>Get details of specific EC2 VPN Connection(s) using vpn connection ID/IDs. This value should be provided as a list.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
@@ -345,19 +345,19 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># # Note: These examples do not set authentication details, see the AWS Guide for details.</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about all vpn connections</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about all  EC2 VPN Connections</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn_info</span><span class="p">:</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a filtered list of vpn connections, based on tags</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a filtered list of  EC2 VPN Connections, based on tags</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
-<span class="w">      </span><span class="s">&quot;tag:Name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-connection</span>
+<span class="w">      </span><span class="s">&quot;tag:Name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;test-connection&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn_conn_info</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about vpn connections by specifying connection IDs.</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about EC2 VPN Connections by specifying connection IDs</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">vpn-gateway-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw-cbe66beb</span>
+<span class="w">      </span><span class="s">&quot;vpn-gateway-id&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;vgw-cbe66beb&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn_conn_info</span>
 </pre></div>
 </div>
@@ -374,9 +374,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vpn_connections"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections"><strong>vpn_connections</strong></p>
-<a class="ansibleOptionLink" href="#return-vpn_connections" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>List of one or more VPN Connections.</p>
+<td><div class="ansible-option-cell"><p>List of one or more EC2 VPN Connections.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
@@ -407,29 +407,147 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-vpn_connections/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options"><strong>options</strong></p>
-<a class="ansibleOptionLink" href="#return-vpn_connections/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<div class="ansibleOptionAnchor" id="return-vpn_connections/gateway_association_state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-gateway-association-state"><strong>gateway_association_state</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/gateway_association_state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The VPN connection options.</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;static_routes_only&quot;:</span> <span class="pre">false}</span></code></p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current state of the gateway association.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;associated&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options"><strong>options</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The VPN connection options.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/enable_acceleration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-enable-acceleration"><strong>enable_acceleration</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/enable_acceleration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates whether acceleration is enabled for the VPN connection.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/local_ipv4_network_cidr"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-local-ipv4-network-cidr"><strong>local_ipv4_network_cidr</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/local_ipv4_network_cidr" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IPv4 CIDR on the customer gateway (on-premises) side of the VPN connection.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;0.0.0.0/0&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/outside_ip_address_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-outside-ip-address-type"><strong>outside_ip_address_type</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/outside_ip_address_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The external IP address of the VPN tunnel.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;PublicIpv4&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/remote_ipv4_network_cidr"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-remote-ipv4-network-cidr"><strong>remote_ipv4_network_cidr</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/remote_ipv4_network_cidr" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IPv4 CIDR on the Amazon Web Services side of the VPN connection.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;0.0.0.0/0&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/static_routes_only"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-static-routes-only"><strong>static_routes_only</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/static_routes_only" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If the VPN connection only allows static routes.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">true</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_inside_ip_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-inside-ip-version"><strong>tunnel_inside_ip_version</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_inside_ip_version" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates whether the VPN tunnels process IPv4 or IPv6 traffic.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ipv4&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-options"><strong>tunnel_options</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates the VPN tunnel options.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;log_options&quot;:</span> <span class="pre">{&quot;cloud_watch_log_options&quot;:</span> <span class="pre">{&quot;log_enabled&quot;:</span> <span class="pre">false}},</span> <span class="pre">&quot;outside_ip_address&quot;:</span> <span class="pre">&quot;34.225.101.10&quot;,</span> <span class="pre">&quot;pre_shared_key&quot;:</span> <span class="pre">&quot;8n7hnjNE8zhIt4VpMOIfcrw6XnUTHLW9&quot;,</span> <span class="pre">&quot;tunnel_inside_cidr&quot;:</span> <span class="pre">&quot;169.254.31.8/30&quot;}]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_options/log_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-options-log-options"><strong>log_options</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_options/log_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Options for logging VPN tunnel activity.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_options/log_options/cloud_watch_log_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-options-log-options-cloud-watch-log-options"><strong>cloud_watch_log_options</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_options/log_options/cloud_watch_log_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Options for sending VPN tunnel logs to CloudWatch.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_options/outside_ip_address"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-options-outside-ip-address"><strong>outside_ip_address</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_options/outside_ip_address" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The external IP address of the VPN tunnel.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_options/pre_shared_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-options-pre-shared-key"><strong>pre_shared_key</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_options/pre_shared_key" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and the customer gateway.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/options/tunnel_options/tunnel_inside_cidr"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-options-tunnel-options-tunnel-inside-cidr"><strong>tunnel_inside_cidr</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/options/tunnel_options/tunnel_inside_cidr" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The range of inside IPv4 addresses for the tunnel.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vpn_connections/routes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-routes"><strong>routes</strong></p>
-<a class="ansibleOptionLink" href="#return-vpn_connections/routes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/routes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of static routes associated with the VPN connection.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vpn_connections/routes/destination_cidr_block"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-routes-destination-cidr-block"><strong>destination_cidr_block</strong></p>
 <a class="ansibleOptionLink" href="#return-vpn_connections/routes/destination_cidr_block" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The CIDR block associated with the local subnet of the customer data center.</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;10.0.0.0/16&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpn_connections/routes/source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-routes-source"><strong>source</strong></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/routes/source" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates how the routes were provided.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -437,8 +555,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#return-vpn_connections/routes/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current state of the static route.</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;available&quot;</span></code></p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -470,7 +587,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vpn_connections/vgw_telemetry"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-info-module-return-vpn-connections-vgw-telemetry"><strong>vgw_telemetry</strong></p>
-<a class="ansibleOptionLink" href="#return-vpn_connections/vgw_telemetry" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-vpn_connections/vgw_telemetry" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Information about the VPN tunnel.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
