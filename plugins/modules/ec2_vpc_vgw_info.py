@@ -156,7 +156,7 @@ def list_virtual_gateways(client, module):
     try:
         all_virtual_gateways = describe_vpc_vpn_gateways(client, **params)
     except AnsibleEC2Error as e:
-        module.fail_json_aws(e)
+        module.fail_json_aws_error(e)
 
     return [
         camel_dict_to_snake_dict(get_virtual_gateway_info(vgw), ignore_list=["ResourceTags"])
