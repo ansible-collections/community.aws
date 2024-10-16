@@ -152,7 +152,7 @@ from typing import Dict
 from typing import List
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_attachments
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_transit_gateway_vpc_attachments
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import boto3_resource_to_ansible_dict
 
@@ -209,7 +209,7 @@ def main():
         params["Filters"] = ansible_dict_to_boto3_filter_list(filters)
 
     try:
-        result = describe_vpc_attachments(client, **params)
+        result = describe_transit_gateway_vpc_attachments(client, **params)
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 

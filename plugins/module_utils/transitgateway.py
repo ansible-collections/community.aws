@@ -32,6 +32,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.transformation import a
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import boto3_resource_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+
 
 def get_states() -> List[str]:
     return [
@@ -50,7 +52,7 @@ def get_states() -> List[str]:
 
 
 def subnets_to_vpc(
-    client, module, subnets: List[str], subnet_details: Optional[List[Dict[str, Any]]] = None
+    client, module: AnsibleAWSModule, subnets: List[str], subnet_details: Optional[List[Dict[str, Any]]] = None
 ) -> Optional[str]:
     if not subnets:
         return None
@@ -73,7 +75,7 @@ def subnets_to_vpc(
 
 
 def find_existing_attachment(
-    client, module, filters: Optional[Dict[str, Any]] = None, attachment_id: Optional[str] = None
+    client, module: AnsibleAWSModule, filters: Optional[Dict[str, Any]] = None, attachment_id: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """Find an existing transit gateway attachment based on filters or attachment ID.
 
@@ -109,7 +111,7 @@ def find_existing_attachment(
 
 
 class TransitGatewayAttachmentStateManager:
-    def __init__(self, client, module, attachment_id):
+    def __init__(self, client, module: AnsibleAWSModule, attachment_id: str) -> None:
         self.client = client
         self.module = module
         self.attachment_id = attachment_id
@@ -118,11 +120,10 @@ class TransitGatewayAttachmentStateManager:
     def waiter_config(self) -> Dict[str, Any]:
         params: Dict[str, Any] = {}
 
-        if self.module.params.get("wait_timeout"):
-            delay = min(5, self.module.params.get("wait_timeout"))
-            max_attempts = self.module.params.get("wait_timeout") // delay
-            config = dict(Delay=delay, MaxAttempts=max_attempts)
-            params["WaiterConfig"] = config
+        delay = min(5, self.module.params.get("wait_timeout"))
+        max_attempts = self.module.params.get("wait_timeout") // delay
+        config = dict(Delay=delay, MaxAttempts=max_attempts)
+        params["WaiterConfig"] = config
 
         return params
 
@@ -141,7 +142,11 @@ class TransitGatewayAttachmentStateManager:
             AnsibleEC2Error: If there is an error while creating the VPC attachment,
                 it will fail the module and provide an error message.
         """
-        tags = params.pop("Tags")
+        try:
+            tags = params.pop("Tags")
+        except KeyError:
+            tags = None
+
         if tags:
             params["TagSpecifications"] = boto3_tag_specifications(tags, types=["transit-gateway-attachment"])
 
@@ -168,7 +173,7 @@ class TransitGatewayAttachmentStateManager:
 
         return True
 
-    def wait_for_state_change(self, desired_state):
+    def wait_for_state_change(self, desired_state: str) -> None:
         # Wait until attachment reaches the desired state
         params = {"TransitGatewayAttachmentIds": [self.attachment_id]}
         params.update(self.waiter_config)
@@ -176,11 +181,11 @@ class TransitGatewayAttachmentStateManager:
             waiter = get_waiter(self.client, f"transit_gateway_vpc_attachment_{desired_state}")
             waiter.wait(**params)
         except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e)
+            self.module.fail_json_aws_error(e)
 
 
 class AttachmentConfigurationManager:
-    def __init__(self, client, module, attachment_id, existing):
+    def __init__(self, client, module: AnsibleAWSModule, attachment_id: str, existing: Dict[str, Any]) -> None:
         self.client = client
         self.module = module
         self.attachment_id = attachment_id
@@ -252,10 +257,10 @@ class AttachmentConfigurationManager:
     def set_appliance_mode_support(self, value):
         return self._set_option("ApplianceModeSupport", value)
 
-    def set_transit_gateway(self, tgw_id):
+    def set_transit_gateway(self, tgw_id: str):
         return self._set_resource_value("TransitGatewayId", tgw_id)
 
-    def set_vpc(self, vpc_id):
+    def set_vpc(self, vpc_id: str):
         return self._set_resource_value("VpcId", vpc_id)
 
     def set_tags(self, tags, purge_tags):
@@ -343,7 +348,9 @@ class AttachmentConfigurationManager:
 
 
 class TransitGatewayVpcAttachmentManager:
-    def __init__(self, client, module, existing, attachment_id=None):
+    def __init__(
+        self, client, module: AnsibleAWSModule, existing: Dict[str, Any], attachment_id: Optional[str] = None
+    ) -> None:
         self.client = client
         self.module = module
         self.attachment_id = attachment_id

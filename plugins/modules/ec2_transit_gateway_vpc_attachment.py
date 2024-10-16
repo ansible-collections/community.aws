@@ -92,6 +92,7 @@ options:
         to reach the expected state.
       - Defaults to 600 seconds.
     type: int
+    default: 600
     required: false
 author:
   - Mark Chappell (@tremble)
@@ -304,7 +305,7 @@ def main():
         dns_support=dict(type="bool", required=False),
         ipv6_support=dict(type="bool", required=False),
         wait=dict(type="bool", required=False, default=True),
-        wait_timeout=dict(type="int", required=False),
+        wait_timeout=dict(type="int", default=600, required=False),
     )
 
     one_of = [
