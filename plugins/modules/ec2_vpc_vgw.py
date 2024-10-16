@@ -140,18 +140,19 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import attach_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_vpn_gateways
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpcs
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import detach_vpc_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpcs
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_vpn_gateways
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_vpn_gateway
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_vpn_gateway
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import attach_vpc_vpn_gateway
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import detach_vpc_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import wait_for_resource_state
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -204,24 +205,39 @@ def get_vgw_info(vgws):
         return vgw_info
 
 
-def wait_for_status(client, module, vpn_gateway_id, status):
+def wait_for_status(client, module, vpn_gateway_id, desired_status):
     polling_increment_secs = 15
     max_retries = module.params.get("wait_timeout") // polling_increment_secs
-    status_achieved = False
+    try:
+        wait_for_resource_state(client, module, "vpn_gateway_exists", VpnGatewayIds=vpn_gateway_id)
+        if desired_status == "attached":
+            wait_for_resource_state(
+                client,
+                module,
+                "vpn_gateway_attached",
+                VpnGatewayIds=vpn_gateway_id,
+                delay=polling_increment_secs,
+                max_attempts=max_retries,
+            )
+        elif desired_status == "detached":
+            wait_for_resource_state(
+                client,
+                module,
+                "vpn_gateway_detached",
+                VpnGatewayIds=vpn_gateway_id,
+                delay=polling_increment_secs,
+                max_attempts=max_retries,
+            )
+        else:
+            module.fail_json(msg=f"Unsupported status: {desired_status}")
 
-    for x in range(0, max_retries):
-        try:
-            response = find_vgw(client, module, vpn_gateway_id)
-            if response[0]["VpcAttachments"][0]["State"] == status:
-                status_achieved = True
-                break
-            else:
-                time.sleep(polling_increment_secs)
-        except AnsibleEC2Error as e:
-            module.fail_json_aws(e)
+        response = find_vgw(client, module, vpn_gateway_id)
+        status_achieved = response[0]["VpcAttachments"][0]["State"] == desired_status
 
-    result = response
-    return status_achieved, result
+    except AnsibleEC2Error as e:
+        module.fail_json_aws(e)
+
+    return status_achieved, response
 
 
 def attach_vgw(client, module, vpn_gateway_id):
