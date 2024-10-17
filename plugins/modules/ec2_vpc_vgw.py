@@ -148,12 +148,12 @@ from typing import Union
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import attach_vpc_vpn_gateway
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpc_vpn_gateway
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpc_vpn_gateway
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpc_vpn_gateways
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import attach_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpn_gateways
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_vpcs
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import detach_vpc_vpn_gateway
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import detach_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
@@ -250,15 +250,10 @@ def wait_for_status(
 
 
 def attach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Any:
-    params = dict()
     vpc_id = module.params.get("vpc_id")
-    if vpc_id:
-        params["VpcId"] = vpc_id
-    if vpn_gateway_id:
-        params["VpnGatewayId"] = vpn_gateway_id
 
     try:
-        response = attach_vpc_vpn_gateway(client, **params)
+        response = attach_vpn_gateway(client, vpc_id, vpn_gateway_id)
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
@@ -271,16 +266,10 @@ def attach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Any:
 
 
 def detach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str, vpc_id: Optional[str] = None) -> Any:
-    params = dict()
-    params["VpcId"] = module.params.get("vpc_id")
-
-    detach_params = {
-        "VpnGatewayId": vpn_gateway_id,
-        "VpcId": vpc_id if vpc_id else params["VpcId"],
-    }
+    vpc_id = vpc_id or module.params.get("vpc_id")
 
     try:
-        response = detach_vpc_vpn_gateway(client, **detach_params)
+        response = detach_vpn_gateway(client, vpc_id, vpn_gateway_id)
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
@@ -302,11 +291,11 @@ def create_vgw(client, module: AnsibleAWSModule) -> Any:
         params["AmazonSideAsn"] = module.params.get("asn")
 
     try:
-        response = create_vpc_vpn_gateway(client, **params)
-        get_waiter(client, "vpn_gateway_exists").wait(VpnGatewayIds=[response["VpnGateway"]["VpnGatewayId"]])
+        response = create_vpn_gateway(client, **params)
+        get_waiter(client, "vpn_gateway_exists").wait(VpnGatewayIds=[response["VpnGatewayId"]])
     except botocore.exceptions.WaiterError as e:
         module.fail_json_aws(
-            e, msg=f"Failed to wait for Vpn Gateway {response['VpnGateway']['VpnGatewayId']} to be available"
+            e, msg=f"Failed to wait for Vpn Gateway {response['VpnGatewayId']} to be available"
         )
     except is_boto3_error_code("VpnGatewayLimitExceeded") as e:
         module.fail_json_aws(e, msg="Too many VPN gateways exist in this account.")
@@ -318,11 +307,8 @@ def create_vgw(client, module: AnsibleAWSModule) -> Any:
 
 
 def delete_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Optional[str]:
-    params = {}
-    if vpn_gateway_id:
-        params["VpnGatewayId"] = vpn_gateway_id
     try:
-        delete_vpc_vpn_gateway(client, **params)
+        delete_vpn_gateway(client, vpn_gateway_id)
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
@@ -360,7 +346,7 @@ def find_vgw(
         if module.params.get("state") == "present":
             params["Filters"].append({"Name": "state", "Values": ["pending", "available"]})
     try:
-        response = describe_vpc_vpn_gateways(client, **params)
+        response = describe_vpn_gateways(client, **params)
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
@@ -435,7 +421,7 @@ def ensure_vgw_present(client, module: AnsibleAWSModule) -> Tuple[bool, Dict[str
         # create a new vgw
         new_vgw = create_vgw(client, module)
         changed = True
-        vpn_gateway_id = new_vgw["VpnGateway"]["VpnGatewayId"]
+        vpn_gateway_id = new_vgw["VpnGatewayId"]
 
         # if a vpc-id was supplied, attempt to attach it to the vgw
         if params["VpcId"]:
