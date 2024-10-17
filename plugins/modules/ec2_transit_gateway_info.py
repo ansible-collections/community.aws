@@ -191,7 +191,7 @@ def get_transit_gateway_response(module: AnsibleAWSModule, connection) -> Dict[s
         params["Filters"] = filters
 
     result = describe_ec2_transit_gateways(connection, **params)
-    return result if result else {"TransitGateways": []}
+    return result
 
 
 def extract_transit_gateway_info(transit_gateway: Dict[str, Any]) -> Dict[str, Any]:
@@ -215,7 +215,7 @@ def describe_transit_gateways(module: AnsibleAWSModule, connection) -> List[Dict
     :return: List of transit gateways
     """
     response = get_transit_gateway_response(module, connection)
-    return [extract_transit_gateway_info(tgw) for tgw in response["TransitGateways"]]
+    return [extract_transit_gateway_info(tgw) for tgw in response]
 
 
 def setup_module_object() -> AnsibleAWSModule:
