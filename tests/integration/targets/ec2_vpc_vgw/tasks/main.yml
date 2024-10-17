@@ -31,6 +31,21 @@
     # ============================================================
     - debug: msg="Running tests"
 
+    - name: create vpn gateway and attach it to vpc - check_mode
+      ec2_vpc_vgw:
+        state: present
+        vpc_id: '{{ vpc_id_1 }}'
+        name: "{{ vgw_name }}"
+      register: vgw_check_mode
+      check_mode: true
+
+    - assert:
+        that:
+          - vgw_check_mode.changed
+          - not vgw_check_mode.failed
+          - "'ec2:CreateVpnGateway' not in vgw_check_mode.resource_actions"
+          - "'ec2:AttachVpnGateway' not in vgw_check_mode.resource_actions"
+
     - name: create vpn gateway and attach it to vpc
       ec2_vpc_vgw:
         state: present
@@ -61,6 +76,22 @@
           - vgw.vgw.id == vgw_id
 
     # ============================================================
+    - name: attach vpn gateway to the other VPC - check_mode
+      ec2_vpc_vgw:
+        state: present
+        vpc_id: '{{ vpc_id_2 }}'
+        name: "{{ vgw_name }}"
+      register: vgw_check_mode
+      check_mode: true
+
+    - assert:
+        that:
+          - vgw_check_mode.changed
+          - not vgw_check_mode.failed
+          - "'ec2:CreateVpnGateway' not in vgw_check_mode.resource_actions"
+          - "'ec2:AttachVpnGateway' not in vgw_check_mode.resource_actions"
+          - "'ec2:DetachVpnGateway' not in vgw_check_mode.resource_actions"
+
     - name: attach vpn gateway to the other VPC
       ec2_vpc_vgw:
         state: present
@@ -73,6 +104,21 @@
           - vgw.changed
           - vgw.vgw.id == vgw_id
           - vgw.vgw.vpc_id == vpc_id_2
+
+    - name: attach vpn gateway to the other VPC - idempotency
+      ec2_vpc_vgw:
+        state: present
+        vpc_id: '{{ vpc_id_2 }}'
+        name: "{{ vgw_name }}"
+      register: vgw
+
+    - assert:
+        that:
+          - not vgw.changed
+          - not vgw.failed
+          - "'ec2:CreateVpnGateway' not in vgw_check_mode.resource_actions"
+          - "'ec2:AttachVpnGateway' not in vgw_check_mode.resource_actions"
+          - "'ec2:DetachVpnGateway' not in vgw_check_mode.resource_actions"
 
     # ============================================================
 
@@ -162,6 +208,18 @@
           - vgw_id in vgw_id_list
 
     # ============================================================
+    - name: detach vpn gateway - check_mode
+      ec2_vpc_vgw:
+        state: present
+        name: "{{ vgw_name }}"
+      register: vgw_check_mode
+      check_mode: true
+
+    - assert:
+        that:
+          - vgw_check_mode.changed
+          - not vgw_check_mode.failed
+          - "'ec2:DetachVpcGateway' not in vgw_check_mode.resource_actions"
 
     - name: detach vpn gateway
       ec2_vpc_vgw:
@@ -189,6 +247,19 @@
     - include_tasks: 'tags.yml'
 
     # ============================================================
+
+    - name: delete vpn gateway - check_mode
+      ec2_vpc_vgw:
+        state: absent
+        name: "{{ vgw_name }}"
+      register: vgw_check_mode
+      check_mode: true
+
+    - assert:
+        that:
+          - vgw_check_mode.changed
+          - not vgw_check_mode.failed
+          - "'ec2:DeleteVpnGateway' not in vgw_check_mode.resource_actions"
 
     - name: delete vpn gateway
       ec2_vpc_vgw:
