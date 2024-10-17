@@ -1,0 +1,2 @@
+bugfixes:
+  - aws_ssm - use ``head_bucket`` to access bucket locations in foreign aws accounts (https://github.com/ansible-collections/community.aws/pull/1987).
