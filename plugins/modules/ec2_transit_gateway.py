@@ -285,7 +285,7 @@ class AnsibleEc2Tgw:
                     sleep(polling_increment_secs)
 
             except AnsibleEC2Error as e:
-                self._module.fail_json_aws(e)
+                self._module.fail_json_aws_error(e)
 
         if not status_achieved:
             self._module.fail_json(msg="Wait time out reached, while waiting for results")
@@ -361,9 +361,9 @@ class AnsibleEc2Tgw:
         try:
             response = create_ec2_transit_gateway(self._connection, **params)
         except AnsibleEC2Error as e:
-            self._module.fail_json_aws(e)
+            self._module.fail_json_aws_error(e)
 
-        tgw_id = response["TransitGateway"]["TransitGatewayId"]
+        tgw_id = response["TransitGatewayId"]
 
         if wait:
             result = self.wait_for_status(wait_timeout=wait_timeout, tgw_id=tgw_id, status="available")
@@ -382,11 +382,10 @@ class AnsibleEc2Tgw:
         """
         wait = self._module.params.get("wait")
         wait_timeout = self._module.params.get("wait_timeout")
-        params = {"TransitGatewayId": tgw_id}
         try:
-            response = delete_ec2_transit_gateway(self._connection, **params)
+            response = delete_ec2_transit_gateway(self._connection, tgw_id)
         except AnsibleEC2Error as e:
-            self._module.fail_json_aws(e)
+            self._module.fail_json_aws_error(e)
 
         if wait:
             result = self.wait_for_status(
