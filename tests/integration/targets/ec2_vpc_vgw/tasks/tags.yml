@@ -35,18 +35,19 @@
 
   # ============================================================
 
-#  - name: (check) add tags
-#    ec2_vpc_vgw:
-#      tags: '{{ first_tags }}'
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would change
-#    assert:
-#      that:
-#        - tag_vgw is changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: add tags - check_mode
+    ec2_vpc_vgw:
+      tags: '{{ first_tags }}'
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would change
+    assert:
+      that:
+        - tag_vgw is changed
+        - tag_vgw is not failed
+        - "'ec2:CreateTags' not in tag_vgw.resource_actions"
 
   - name: add tags
     ec2_vpc_vgw:
@@ -65,19 +66,20 @@
         - tag_vgw.vgw.id == vgw_id
         - tag_vgw_info.virtual_gateways[0].vpn_gateway_id == vgw_id
         - tag_vgw_info.virtual_gateways[0].resource_tags == ( first_tags | combine(name_tags) )
+        - "'ec2:CreateTags' in tag_vgw.resource_actions"
 
-#  - name: (check) add tags - IDEMPOTENCY
-#    ec2_vpc_vgw:
-#      tags: '{{ first_tags }}'
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would not change
-#    assert:
-#      that:
-#        - tag_vgw is not changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: add tags - IDEMPOTENCY - check_mode
+    ec2_vpc_vgw:
+      tags: '{{ first_tags }}'
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would not change
+    assert:
+      that:
+        - tag_vgw is not changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: add tags - IDEMPOTENCY
     ec2_vpc_vgw:
@@ -114,18 +116,18 @@
 
   # ============================================================
 
-#  - name: (check) modify tags with purge
-#    ec2_vpc_vgw:
-#      tags: '{{ second_tags }}'
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would change
-#    assert:
-#      that:
-#        - tag_vgw is changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: modify tags with purge - check_mode
+    ec2_vpc_vgw:
+      tags: '{{ second_tags }}'
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would change
+    assert:
+      that:
+        - tag_vgw is changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: modify tags with purge
     ec2_vpc_vgw:
@@ -144,18 +146,18 @@
         - tag_vgw_info.virtual_gateways[0].vpn_gateway_id == vgw_id
         - tag_vgw_info.virtual_gateways[0].resource_tags == ( second_tags | combine(name_tags) )
 
-#  - name: (check) modify tags with purge - IDEMPOTENCY
-#    ec2_vpc_vgw:
-#      tags: '{{ second_tags }}'
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would not change
-#    assert:
-#      that:
-#        - tag_vgw is not changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: modify tags with purge - IDEMPOTENCY - check_mode
+    ec2_vpc_vgw:
+      tags: '{{ second_tags }}'
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would not change
+    assert:
+      that:
+        - tag_vgw is not changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: modify tags with purge - IDEMPOTENCY
     ec2_vpc_vgw:
@@ -176,19 +178,19 @@
 
   # ============================================================
 
-#  - name: (check) modify tags without purge
-#    ec2_vpc_vgw:
-#      tags: '{{ third_tags }}'
-#      state: 'present'
-#      purge_tags: False
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would change
-#    assert:
-#      that:
-#        - tag_vgw is changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: modify tags without purge - check_mode
+    ec2_vpc_vgw:
+      tags: '{{ third_tags }}'
+      state: 'present'
+      purge_tags: False
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would change
+    assert:
+      that:
+        - tag_vgw is changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: modify tags without purge
     ec2_vpc_vgw:
@@ -208,19 +210,19 @@
         - tag_vgw_info.virtual_gateways[0].vpn_gateway_id == vgw_id
         - tag_vgw_info.virtual_gateways[0].resource_tags == ( final_tags | combine(name_tags) )
 
-#  - name: (check) modify tags without purge - IDEMPOTENCY
-#    ec2_vpc_vgw:
-#      tags: '{{ third_tags }}'
-#      state: 'present'
-#      purge_tags: False
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would not change
-#    assert:
-#      that:
-#        - tag_vgw is not changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: modify tags without purge - IDEMPOTENCY - check_mode
+    ec2_vpc_vgw:
+      tags: '{{ third_tags }}'
+      state: 'present'
+      purge_tags: False
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would not change
+    assert:
+      that:
+        - tag_vgw is not changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: modify tags without purge - IDEMPOTENCY
     ec2_vpc_vgw:
@@ -242,17 +244,17 @@
 
   # ============================================================
 
-#  - name: (check) No change to tags without setting tags
-#    ec2_vpc_vgw:
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would change
-#    assert:
-#      that:
-#        - tag_vgw is not changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: No change to tags without setting tags - check_mode
+    ec2_vpc_vgw:
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would change
+    assert:
+      that:
+        - tag_vgw is not changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: No change to tags without setting tags
     ec2_vpc_vgw:
@@ -272,18 +274,18 @@
 
   # ============================================================
 
-#  - name: (check) remove non name tags
-#    ec2_vpc_vgw:
-#      tags: {}
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would change
-#    assert:
-#      that:
-#        - tag_vgw is changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: remove non name tags - check_mode
+    ec2_vpc_vgw:
+      tags: {}
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would change
+    assert:
+      that:
+        - tag_vgw is changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: remove non name tags
     ec2_vpc_vgw:
@@ -302,18 +304,18 @@
         - tag_vgw_info.virtual_gateways[0].vpn_gateway_id == vgw_id
         - tag_vgw_info.virtual_gateways[0].resource_tags == name_tags
 
-#  - name: (check) remove non name tags - IDEMPOTENCY
-#    ec2_vpc_vgw:
-#      tags: {}
-#      state: 'present'
-#    register: tag_vgw
-#    check_mode: True
-#
-#  - name: assert would not change
-#    assert:
-#      that:
-#        - tag_vgw is not changed
-#        - tag_vgw.vgw.id == vgw_id
+  - name: remove non name tags - IDEMPOTENCY - check_mode
+    ec2_vpc_vgw:
+      tags: {}
+      state: 'present'
+    register: tag_vgw
+    check_mode: True
+
+  - name: assert would not change
+    assert:
+      that:
+        - tag_vgw is not changed
+        - tag_vgw.vgw.id == vgw_id
 
   - name: remove non name tags - IDEMPOTENCY
     ec2_vpc_vgw:
