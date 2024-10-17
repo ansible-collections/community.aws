@@ -229,6 +229,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_t
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import wait_for_resource_state
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -258,37 +259,31 @@ class AnsibleEc2Tgw:
         """
         Wait for the Transit Gateway to reach the specified status.
         :param wait_timeout: Number of seconds to wait, until this timeout is reached.
-        :param tgw_id: The Amazon nat id.
+        :param tgw_id: The Amazon NAT ID.
         :param status: The status to wait for.
         :param skip_deleted: Ignore deleted transit gateways.
         :return: Transit gateway object.
         """
         polling_increment_secs = 5
-        wait_timeout = time() + wait_timeout
-        status_achieved = False
-        transit_gateway = {}
+        max_attempts = wait_timeout // polling_increment_secs
 
-        while wait_timeout > time():
-            try:
-                transit_gateway = self.get_matching_tgw(tgw_id=tgw_id, skip_deleted=skip_deleted)
+        waiter_method = f"transit_gateway_{status}"
 
-                if transit_gateway:
-                    if self._check_mode:
-                        transit_gateway["state"] = status
+        try:
+            wait_for_resource_state(
+                self._connection,
+                self._module,
+                waiter_method,
+                TransitGatewayIds=[tgw_id],
+                delay=polling_increment_secs,
+                max_attempts=max_attempts,
+            )
+        except AnsibleEC2Error as e:
+            self._module.fail_json_aws_error(e)
 
-                    if transit_gateway.get("state") == status:
-                        status_achieved = True
-                        break
-                    elif transit_gateway.get("state") == "failed":
-                        break
-                else:
-                    sleep(polling_increment_secs)
-
-            except AnsibleEC2Error as e:
-                self._module.fail_json_aws_error(e)
-
-        if not status_achieved:
-            self._module.fail_json(msg="Wait time out reached, while waiting for results")
+        transit_gateway = self.get_matching_tgw(tgw_id=tgw_id, skip_deleted=skip_deleted)
+        if transit_gateway is None:
+            self._module.fail_json(msg="Transit Gateway not found after waiting.")
 
         return transit_gateway
 
