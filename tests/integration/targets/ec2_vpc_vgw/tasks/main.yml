@@ -12,7 +12,7 @@
 
     # ============================================================
     - name: Create a VPC
-      community.aws.ec2_vpc_net:
+      amazon.aws.ec2_vpc_net:
         name: "{{ vpc_name }}-{{ item }}"
         state: present
         cidr_block: "{{ vpc_cidr }}"
@@ -300,7 +300,7 @@
       ignore_errors: true
 
     - name: Delete vpc
-      community.aws.ec2_vpc_net:
+      amazon.aws.ec2_vpc_net:
         name: "{{ vpc_name }}-{{ item }}"
         state: absent
         cidr_block: "{{ vpc_cidr }}"
