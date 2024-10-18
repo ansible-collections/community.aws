@@ -219,26 +219,16 @@ def wait_for_status(
     max_retries = module.params.get("wait_timeout") // polling_increment_secs
     try:
         wait_for_resource_state(client, module, "vpn_gateway_exists", VpnGatewayIds=vpn_gateway_id)
-        if desired_status == "attached":
-            wait_for_resource_state(
+        if desired_status not in ("attached", "detached"):
+              module.fail_json(msg=f"Unsupported status: {desired_status}")
+        wait_for_resource_state(
                 client,
                 module,
-                "vpn_gateway_attached",
+                f"vpn_gateway_{desired_status}",
                 VpnGatewayIds=vpn_gateway_id,
                 delay=polling_increment_secs,
                 max_attempts=max_retries,
             )
-        elif desired_status == "detached":
-            wait_for_resource_state(
-                client,
-                module,
-                "vpn_gateway_detached",
-                VpnGatewayIds=vpn_gateway_id,
-                delay=polling_increment_secs,
-                max_attempts=max_retries,
-            )
-        else:
-            module.fail_json(msg=f"Unsupported status: {desired_status}")
 
         response = find_vgw(client, module, vpn_gateway_id)
         status_achieved = response[0]["VpcAttachments"][0]["State"] == desired_status
@@ -250,6 +240,7 @@ def wait_for_status(
 
 
 def attach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Any:
+    response = None
     vpc_id = module.params.get("vpc_id")
 
     try:
@@ -261,11 +252,11 @@ def attach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Any:
     if not status_achieved:
         module.fail_json(msg="Error waiting for vpc to attach to vgw - please check the AWS console")
 
-    result = response
-    return result
+    return response
 
 
 def detach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str, vpc_id: Optional[str] = None) -> Any:
+    response = None
     vpc_id = vpc_id or module.params.get("vpc_id")
 
     try:
@@ -277,11 +268,11 @@ def detach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str, vpc_id: Op
     if not status_achieved:
         module.fail_json(msg="Error waiting for  vpc to detach from vgw - please check the AWS console")
 
-    result = response
-    return result
+    return response
 
 
 def create_vgw(client, module: AnsibleAWSModule) -> Any:
+    response = None
     params = dict()
     params["Type"] = module.params.get("type")
     tags = module.params.get("tags") or {}
@@ -300,8 +291,7 @@ def create_vgw(client, module: AnsibleAWSModule) -> Any:
     except AnsibleEC2Error as e:
         module.fail_json_aws_error(e)
 
-    result = response
-    return result
+    return response
 
 
 def delete_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Optional[str]:
@@ -316,6 +306,7 @@ def delete_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> Optiona
 
 
 def find_vpc(client, module: AnsibleAWSModule) -> Optional[Any]:
+    response = None
     params = dict()
     vpc_id = module.params.get("vpc_id")
 
@@ -326,12 +317,11 @@ def find_vpc(client, module: AnsibleAWSModule) -> Optional[Any]:
         except AnsibleEC2Error as e:
             module.fail_json_aws_error(e)
 
-    result = response
-    return result
+    return response
 
 
 def find_vgw(
-    client, module: AnsibleAWSModule, vpn_gateway_id: Optional[Union[str, List[str]]] = None
+    client, module: AnsibleAWSModule, vpn_gateway_id: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     params = dict()
     if vpn_gateway_id:
@@ -361,16 +351,16 @@ def ensure_vgw_present(client, module: AnsibleAWSModule) -> Tuple[bool, Dict[str
         "PurgeTags": module.params.get("purge_tags", False),
     }
 
-    existing_vgw = (
-        find_vgw(client, module, [params["VpnGatewayIds"]]) if params["VpnGatewayIds"] else find_vgw(client, module)
-    )
+    existing_vgw = find_vgw(client, module, module.params.get("vpn_gateway_id"))
 
     if existing_vgw:
         changed |= handle_existing_vgw(client, module, existing_vgw[0], params)
+        vgw = find_vgw(client, module, [existing_vgw[0]["VpnGatewayId"]])
     else:
-        changed |= create_new_vgw(client, module, params)
+        changed = True
+        vgw = create_new_vgw(client, module, params)
+        vgw = find_vgw(client, module)
 
-    vgw = find_vgw(client, module, [existing_vgw[0]["VpnGatewayId"]]) if existing_vgw else find_vgw(client, module)
     return changed, get_vgw_info(vgw)
 
 
@@ -417,7 +407,7 @@ def handle_existing_vgw(client, module: AnsibleAWSModule, existing_vgw: dict, pa
 
 def create_new_vgw(client, module: AnsibleAWSModule, params: dict) -> bool:
     if module.check_mode:
-        return True
+        return {}
 
     new_vgw = create_vgw(client, module)
     vpn_gateway_id = new_vgw["VpnGatewayId"]
@@ -448,7 +438,7 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
         existing_vgw_with_id = find_vgw(client, module, [params["VpnGatewayIds"]])
         if existing_vgw_with_id != [] and existing_vgw_with_id[0]["State"] != "deleted":
             if module.check_mode:
-                return True, ""
+                return True, existing_vgw_with_id[0]["VpnGatewayId"]
             existing_vgw = existing_vgw_with_id
             if existing_vgw[0]["VpcAttachments"] != [] and existing_vgw[0]["VpcAttachments"][0]["State"] == "attached":
                 if params["VpcId"]:
@@ -496,7 +486,7 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
 
                     else:
                         if module.check_mode:
-                            return True, ""
+                            return True, None
                         # detach the vpc from the vgw
                         detach_vgw(client, module, vpn_gateway_id, params["VpcId"])
 
@@ -506,7 +496,7 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
 
                 else:
                     if module.check_mode:
-                        return True, ""
+                        return True, vpn_gateway_id
                     # attempt to detach any attached vpcs
                     vpc_to_detach = existing_vgw[0]["VpcAttachments"][0]["VpcId"]
                     detach_vgw(client, module, vpn_gateway_id, vpc_to_detach)
@@ -517,7 +507,7 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
 
             else:
                 if module.check_mode:
-                    return True, ""
+                    return True, vpn_gateway_id
                 # no vpc's are attached so attempt to delete the vgw
                 deleted_vgw = delete_vgw(client, module, vpn_gateway_id)
                 changed = True
