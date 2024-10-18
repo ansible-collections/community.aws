@@ -270,8 +270,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the Transit Gateway Attachment.</p>
-<p>When <em>id</em> is not set, a search using <em>transit_gateway</em> and <em>name</em> will be performed. If multiple results are returned, the module will fail.</p>
-<p>At least one of <em>name</em>, <em>transit_gateway</em> and <em>id</em> must be provided.</p>
+<p>When <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-id"><span class="std std-ref"><span class="pre">id</span></span></a></strong></code> is not set, a search using <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-transit-gateway"><span class="std std-ref"><span class="pre">transit_gateway</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> will be performed. If multiple results are returned, the module will fail.</p>
+<p>At least one of <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code>, <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-transit-gateway"><span class="std std-ref"><span class="pre">transit_gateway</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-id"><span class="std std-ref"><span class="pre">id</span></span></a></strong></code> must be provided.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -290,10 +290,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The <code class="docutils literal notranslate"><span class="pre">Name</span></code> tag of the Transit Gateway attachment.</p>
-<p>Providing both <em>id</em> and <em>name</em> will set the <code class="docutils literal notranslate"><span class="pre">Name</span></code> tag on an existing attachment the matching <em>id</em>.</p>
-<p>Setting the <code class="docutils literal notranslate"><span class="pre">Name</span></code> tag in <em>tags</em> will also result in the <code class="docutils literal notranslate"><span class="pre">Name</span></code> tag being updated.</p>
-<p>At least one of <em>name</em>, <em>transit_gateway</em> and <em>id</em> must be provided.</p>
+<td><div class="ansible-option-cell"><p>The <code class="ansible-value docutils literal notranslate"><span class="pre">Name</span></code> tag of the Transit Gateway attachment.</p>
+<p>Providing both <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-id"><span class="std std-ref"><span class="pre">id</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code> will set the <code class="ansible-value docutils literal notranslate"><span class="pre">Name</span></code> tag on an existing attachment the matching <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-id"><span class="std std-ref"><span class="pre">id</span></span></a></strong></code>.</p>
+<p>Setting the <code class="ansible-value docutils literal notranslate"><span class="pre">Name</span></code> tag in <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-tags"><span class="std std-ref"><span class="pre">tags</span></span></a></strong></code> will also result in the <code class="ansible-value docutils literal notranslate"><span class="pre">Name</span></code> tag being updated.</p>
+<p>At least one of <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code>, <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-transit-gateway"><span class="std std-ref"><span class="pre">transit_gateway</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-id"><span class="std std-ref"><span class="pre">id</span></span></a></strong></code> must be provided.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -312,7 +312,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="parameter-purge_subnets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-purge-subnets"><strong>purge_subnets</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_subnets" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>If <em>purge_subnets=true</em>, existing subnets will be removed from the attachment as necessary to match exactly what is defined by <em>subnets</em>.</p>
+<td><div class="ansible-option-cell"><p>If <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-purge-subnets"><span class="std std-ref"><span class="pre">purge_subnets=true</span></span></a></code>, existing subnets will be removed from the attachment as necessary to match exactly what is defined by <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-subnets"><span class="std std-ref"><span class="pre">subnets</span></span></a></strong></code>.</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
@@ -421,9 +421,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the Transit Gateway that the attachment belongs to.</p>
-<p>When creating a new attachment, <em>transit_gateway</em> must be provided.</p>
-<p>At least one of <em>name</em>, <em>transit_gateway</em> and <em>id</em> must be provided.</p>
-<p><em>transit_gateway</em> is an immutable setting and can not be updated on an existing attachment.</p>
+<p>When creating a new attachment, <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-transit-gateway"><span class="std std-ref"><span class="pre">transit_gateway</span></span></a></strong></code> must be provided.</p>
+<p>At least one of <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-name"><span class="std std-ref"><span class="pre">name</span></span></a></strong></code>, <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-transit-gateway"><span class="std std-ref"><span class="pre">transit_gateway</span></span></a></strong></code> and <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-id"><span class="std std-ref"><span class="pre">id</span></span></a></strong></code> must be provided.</p>
+<p><code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-parameter-transit-gateway"><span class="std std-ref"><span class="pre">transit_gateway</span></span></a></strong></code> is an immutable setting and can not be updated on an existing attachment.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -457,6 +457,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </div></td>
 <td><div class="ansible-option-cell"><p>Maximum time, in seconds, to wait for the Transit Gateway attachment to reach the expected state.</p>
 <p>Defaults to 600 seconds.</p>
+<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">600</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -474,36 +475,36 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a Transit Gateway attachment</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
-<span class="w">    </span><span class="nt">transit_gateway</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;tgw-123456789abcdef01&#39;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AnsibleTest-1</span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a Transit Gateway attachment</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;present&quot;</span>
+<span class="w">    </span><span class="nt">transit_gateway</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tgw-123456789abcdef01&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AnsibleTest-1&quot;</span>
 <span class="w">    </span><span class="nt">subnets</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-00000000000000000</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-11111111111111111</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-22222222222222222</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-00000000000000000&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-11111111111111111&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-22222222222222222&quot;</span>
 <span class="w">    </span><span class="nt">ipv6_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">purge_subnets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">dns_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">appliance_mode_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">TestTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">changed data in Test Tag</span>
+<span class="w">      </span><span class="nt">TestTag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;changed</span><span class="nv"> </span><span class="s">data</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">Test</span><span class="nv"> </span><span class="s">Tag&quot;</span>
 
-<span class="c1"># Set sub options on a Transit Gateway attachment</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;tgw-attach-0c0c5fd0b0f01d1c9&#39;</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AnsibleTest-1</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set sub options on a Transit Gateway attachment</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;present&quot;</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tgw-attach-0c0c5fd0b0f01d1c9&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AnsibleTest-1&quot;</span>
 <span class="w">    </span><span class="nt">ipv6_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">purge_subnets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">    </span><span class="nt">dns_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">    </span><span class="nt">appliance_mode_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="c1"># Delete the transit gateway</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;tgw-attach-0c0c5fd0b0f01d1c9&#39;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete the transit gateway</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;absent&quot;</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tgw-attach-0c0c5fd0b0f01d1c9&quot;</span>
 </pre></div>
 </div>
 </section>
@@ -518,16 +519,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments"><strong>transit_gateway_attachments</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+<div class="ansibleOptionAnchor" id="return-attachments"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments"><strong>attachments</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The attributes of the Transit Gateway attachments.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/creation_time"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-creation-time"><strong>creation_time</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/creation_time" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<div class="ansibleOptionAnchor" id="return-attachments/creation_time"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-creation-time"><strong>creation_time</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/creation_time" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An ISO 8601 date time stamp of when the attachment was created.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
@@ -535,16 +536,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-options"><strong>options</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<div class="ansibleOptionAnchor" id="return-attachments/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-options"><strong>options</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Additional VPC attachment options.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/options/appliance_mode_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-options-appliance-mode-support"><strong>appliance_mode_support</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/options/appliance_mode_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<div class="ansibleOptionAnchor" id="return-attachments/options/appliance_mode_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-options-appliance-mode-support"><strong>appliance_mode_support</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/options/appliance_mode_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates whether appliance mode support is enabled.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
@@ -552,8 +553,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/options/dns_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-options-dns-support"><strong>dns_support</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/options/dns_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<div class="ansibleOptionAnchor" id="return-attachments/options/dns_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-options-dns-support"><strong>dns_support</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/options/dns_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates whether DNS support is enabled.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
@@ -561,74 +562,83 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/options/ipv6_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-options-ipv6-support"><strong>ipv6_support</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/options/ipv6_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<div class="ansibleOptionAnchor" id="return-attachments/options/ipv6_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-options-ipv6-support"><strong>ipv6_support</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/options/ipv6_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates whether IPv6 support is disabled.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;disable&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-state"><strong>state</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/options/security_group_referencing_support"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-options-security-group-referencing-support"><strong>security_group_referencing_support</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/options/security_group_referencing_support" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicated weather security group referencing support is disabled.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;enable&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of the attachment.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;deleting&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/subnet_ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-subnet-ids"><strong>subnet_ids</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/subnet_ids" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/subnet_ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-subnet-ids"><strong>subnet_ids</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/subnet_ids" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IDs of the subnets in use by the attachment.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;subnet-0123456789abcdef0&quot;,</span> <span class="pre">&quot;subnet-11111111111111111&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-tags"><strong>tags</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary representing the resource tags.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/transit_gateway_attachment_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-transit-gateway-attachment-id"><strong>transit_gateway_attachment_id</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/transit_gateway_attachment_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/transit_gateway_attachment_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-transit-gateway-attachment-id"><strong>transit_gateway_attachment_id</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/transit_gateway_attachment_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the attachment.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;tgw-attach-0c0c5fd0b0f01d1c9&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/transit_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-transit-gateway-id"><strong>transit_gateway_id</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/transit_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/transit_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-transit-gateway-id"><strong>transit_gateway_id</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/transit_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the transit gateway that the attachment is connected to.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;tgw-0123456789abcdef0&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-vpc-id"><strong>vpc_id</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/vpc_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-vpc-id"><strong>vpc_id</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/vpc_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the VPC that the attachment is connected to.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;vpc-0123456789abcdef0&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-transit_gateway_attachments/vpc_owner_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-transit-gateway-attachments-vpc-owner-id"><strong>vpc_owner_id</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway_attachments/vpc_owner_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-attachments/vpc_owner_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-vpc-attachment-module-return-attachments-vpc-owner-id"><strong>vpc_owner_id</strong></p>
+<a class="ansibleOptionLink" href="#return-attachments/vpc_owner_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the account that the VPC belongs to.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;123456789012&quot;</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;1234567890122&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -637,6 +647,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <h3>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Mark Chappell (&#64;tremble)</p></li>
+<li><p>Alina Buzachis (&#64;alinabuzachis)</p></li>
 </ul>
 </section>
 <section id="collection-links">
