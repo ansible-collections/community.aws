@@ -22,7 +22,7 @@
       loop: [1, 2]
 
     - name: Use set fact for vpc ids
-      set_fact:
+      ansible.builtin.set_fact:
         vpc_id_1: '{{ vpc_result.results.0.vpc.id }}'
         vpc_id_2: '{{ vpc_result.results.1.vpc.id }}'
 
@@ -51,7 +51,7 @@
       register: vgw
 
     - name: Use set fact for vgw ids
-      set_fact:
+      ansible.builtin.set_fact:
         vgw_id: '{{ vgw.vgw.id }}'
 
     - name: Assert result - vgw creation
@@ -125,7 +125,7 @@
     # ============================================================
 
     - name: Get VPC VGW facts by ID (CHECK)
-      ec2_vpc_vgw_info:
+      community.aws.ec2_vpc_vgw_info:
         vpn_gateway_ids: ['{{ vgw_id }}']
       register: vgw_info
       check_mode: True
@@ -161,7 +161,7 @@
           - attach_2_description in vgw_details.vpc_attachments
 
     - name: Get VPC VGW facts by Tag
-      ec2_vpc_vgw_info:
+      community.aws.ec2_vpc_vgw_info:
         filters:
           "tag:Name": "{{ vgw_name }}"
       register: vgw_info
@@ -199,7 +199,7 @@
     # ============================================================
 
     - name: Get all VGWs
-      ec2_vpc_vgw_info:
+      community.aws.ec2_vpc_vgw_info:
       register: vgw_info
 
     - name: Verify test VGW is in the results
