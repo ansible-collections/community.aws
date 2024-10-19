@@ -16,8 +16,8 @@ description:
 options:
   state:
     description:
-      - C(present) to ensure resource is created.
-      - C(absent) to remove resource.
+      - V(present) to ensure resource is created.
+      - V(absent) to remove resource.
     default: present
     choices: [ "present", "absent"]
     type: str
@@ -433,7 +433,7 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
 
     # check if a gateway matching our module args already exists
     if params["VpnGatewayIds"]:
-        existing_vgw_with_id = find_vgw(client, module, [params["VpnGatewayIds"]])
+        existing_vgw_with_id = find_vgw(client, module, [module.params.get("vpn_gateway_id")])
         if existing_vgw_with_id != [] and existing_vgw_with_id[0]["State"] != "deleted":
             if module.check_mode:
                 return True, existing_vgw_with_id[0]["VpnGatewayId"]
@@ -453,8 +453,8 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
 
                 else:
                     # attempt to detach any attached vpcs
-                    vpc_to_detach = existing_vgw[0]["VpcAttachments"][0]["VpcId"]
-                    detach_vgw(client, module, params["VpnGatewayIds"], vpc_to_detach)
+                    for vpc in existing_vgw[0]["VpcAttachments"]:
+                        detach_vgw(client, module, vpn_gateway_id, vpc["VpcId"])
                     deleted_vgw = delete_vgw(client, module, params["VpnGatewayIds"])
                     changed = True
 
@@ -537,7 +537,7 @@ def main():
     )
     state = module.params.get("state").lower()
 
-    client = module.client("ec2", retry_decorator=VGWRetry.jittered_backoff(retries=10))
+    client = module.client("ec2")
 
     if state == "present":
         (changed, results) = ensure_vgw_present(client, module)
