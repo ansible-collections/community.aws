@@ -213,8 +213,6 @@ transit_gateway:
       sample: "tgw-3a9aa123"
 """
 
-from time import sleep
-from time import time
 from typing import Any
 from typing import Dict
 from typing import Optional
