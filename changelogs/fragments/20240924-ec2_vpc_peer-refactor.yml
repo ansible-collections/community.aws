@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - ec2_vpc_peer - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` (https://github.com/ansible-collections/community.aws/pull/2153).
+  - ec2_vpc_peering_info - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` (https://github.com/ansible-collections/community.aws/pull/2153).
