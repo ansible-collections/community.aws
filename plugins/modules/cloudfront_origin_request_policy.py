@@ -79,7 +79,7 @@ options:
     description:
       - The URL query strings from viewer requests to include in origin requests.
       - For more information see the CloudFront documentation at
-        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html)
+        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyQueryStringsConfig.html).
     required: false
     type: dict
     suboptions:
