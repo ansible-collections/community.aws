@@ -282,7 +282,7 @@ cache_policy:
                 - An object that determines whether any HTTP headers (and if so, which headers) are included
                   in the cache key and in requests that CloudFront sends to the origin.
                 - For more information see the CloudFront documentation at
-                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyHeadersConfig.html)
+                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyHeadersConfig.html).
               type: dict
               contains:
                 header_behavior:
