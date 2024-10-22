@@ -324,7 +324,7 @@ cache_policy:
                   - An object that determines whether any URL query strings in viewer requests (and if so, which query strings)
                     are included in the cache key and in requests that CloudFront sends to the origin.
                   - For more information see the CloudFront documentation at
-                    U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyQueryStringsConfig.html)
+                    U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyQueryStringsConfig.html).
               type: dict
               contains:
                 query_string_behavior:
