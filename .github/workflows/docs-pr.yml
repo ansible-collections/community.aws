@@ -16,6 +16,7 @@ jobs:
     uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-pr.yml@main
     with:
       init-lenient: false
+      ansible-ref: devel
       init-fail-on-error: true
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
       intersphinx-links: |
@@ -31,6 +32,7 @@ jobs:
     uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-pr.yml@main
     with:
       init-lenient: true
+      ansible-ref: devel
       init-fail-on-error: false
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
       intersphinx-links: |
