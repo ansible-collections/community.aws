@@ -71,7 +71,7 @@ options:
       cookies:
         description:
           - Contains a list of cookie names.
-          - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html)
+          - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CookieNames.html).
         type: list
         elements: str
         required: false
