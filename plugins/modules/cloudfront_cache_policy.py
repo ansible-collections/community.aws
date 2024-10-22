@@ -264,7 +264,7 @@ cache_policy:
             - The HTTP headers, cookies, and URL query strings to include in the cache key.
               The values included in the cache key are also included in requests that CloudFront sends to the origin.
             - For more information see the CloudFront documentation at
-              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html)
+              U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ParametersInCacheKeyAndForwardedToOrigin.html).
           type: dict
           contains:
             enable_accept_encoding_gzip:
