@@ -1,0 +1,2 @@
+minor_changes:
+- elb_classic_lb_info - Refactor elb_classic_lb_info module (https://github.com/ansible-collections/community.aws/pull/2139).
