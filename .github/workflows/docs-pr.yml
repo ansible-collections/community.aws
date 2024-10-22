@@ -20,7 +20,7 @@ jobs:
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
       intersphinx-links: |
         amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
-        ansible_devel:https://docs.ansible.com/ansible-core/devel/
+        ansible_stable:https://docs.ansible.com/ansible-core/2.17/
       artifact-name: ${{ github.event.repository.name }}_validate_docs_${{ github.event.pull_request.head.sha }}
 
 
@@ -35,7 +35,7 @@ jobs:
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
       intersphinx-links: |
         amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
-        ansible_devel:https://docs.ansible.com/ansible-core/devel/
+        ansible_stable:https://docs.ansible.com/ansible-core/2.17/
 
   comment:
     permissions:
