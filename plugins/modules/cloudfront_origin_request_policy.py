@@ -14,7 +14,7 @@ short_description: Create, update and delete origin request policies to be used 
 description:
   - Create, update and delete origin request policies to be used in a Cloudfront distribution's cache behavior
     for determining the values that CloudFront includes in requests that it sends to the origin.
-  - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront/client/create_origin_request_policy.html)
+  - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront/client/create_origin_request_policy.html).
 
 author:
   - Zac Lovoy (@zwlovoy)
