@@ -147,7 +147,7 @@ EXAMPLES = r"""
 
 RETURN = r"""
 origin_request_policy:
-  description: The policy's information
+  description: The policy's information.
   returned: success
   type: complex
   contains:
