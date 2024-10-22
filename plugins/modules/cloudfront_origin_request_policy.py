@@ -39,7 +39,7 @@ options:
     description:
       - The HTTP headers to include in origin requests. These can include headers from viewer requests and additional headers added by CloudFront.
       - For more information see the CloudFront documentation at
-        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html)
+        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyHeadersConfig.html).
     type: dict
     required: false
     suboptions:
