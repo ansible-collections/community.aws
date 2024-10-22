@@ -156,7 +156,6 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import attach_vpn_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_vpn_gateway
@@ -253,7 +252,7 @@ def attach_vgw_to_vpc(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> 
     response = None
     vpc_id = module.params.get("vpc_id")
     response = attach_vpn_gateway(client, vpc_id, vpn_gateway_id)
-    status_achieved, _ = wait_for_status(client, module, vpn_gateway_id, "attached")
+    status_achieved, vgw = wait_for_status(client, module, vpn_gateway_id, "attached")
 
     if not status_achieved:
         module.fail_json(msg="Error waiting for VPC to attach to VGW - please check the AWS console")
@@ -425,6 +424,7 @@ def ensure_vgw_absent(client, module: AnsibleAWSModule) -> Tuple[bool, Optional[
     params["Type"] = module.params.get("type")
     params["Tags"] = module.params.get("tags")
     params["VpnGatewayIds"] = module.params.get("vpn_gateway_id")
+    vpn_gateway_id = module.params.get("vpn_gateway_id")
 
     # check if a gateway matching our module args already exists
     if params["VpnGatewayIds"]:
