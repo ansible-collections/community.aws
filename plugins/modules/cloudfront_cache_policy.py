@@ -6,7 +6,7 @@
 
 DOCUMENTATION = r"""
 ---
-version_added: 7.2.0
+version_added: 9.0.0
 module: cloudfront_cache_policy
 
 short_description: Create, update and delete cache policies to be used in a Cloudfront distribution's cache behavior
