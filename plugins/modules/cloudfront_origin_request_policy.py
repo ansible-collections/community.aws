@@ -91,7 +91,7 @@ options:
       query_strings:
         description:
           - Contains the specific query strings in viewer requests that either are or are not included in requests that CloudFront sends to the origin.
-          - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html)
+          - For more information see the CloudFront documentation at U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_QueryStringNames.html).
         type: list
         elements: str
         required: false
