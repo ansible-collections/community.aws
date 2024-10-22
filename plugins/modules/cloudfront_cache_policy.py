@@ -209,7 +209,7 @@ EXAMPLES = r"""
 
 RETURN = r"""
 cache_policy:
-  description: The policy's information
+  description: The policy's information.
   returned: success
   type: complex
   contains:
