@@ -11,7 +11,7 @@
   block:
 
     - name: Generate unique value for testing
-      set_fact:
+      ansible.builtin.set_fact:
         tgw_description: "{{ resource_prefix }}-tgw"
 
     - name: Test create transit gateway without tags - check_mode
@@ -181,7 +181,7 @@
           - result.changed == False
 
     - name: Generate unique value for testing
-      set_fact:
+      ansible.builtin.set_fact:
        tgw_description_multicast: "{{ resource_prefix }}-tgw-multicast"
 
     - name: Test create transit gateway with multicast enabled - check_mode

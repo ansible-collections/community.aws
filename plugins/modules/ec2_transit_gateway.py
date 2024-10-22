@@ -267,17 +267,14 @@ class AnsibleEc2Tgw:
 
         waiter_method = f"transit_gateway_{status}"
 
-        try:
-            wait_for_resource_state(
-                self._connection,
-                self._module,
-                waiter_method,
-                TransitGatewayIds=[tgw_id],
-                delay=polling_increment_secs,
-                max_attempts=max_attempts,
-            )
-        except AnsibleEC2Error as e:
-            self._module.fail_json_aws_error(e)
+        wait_for_resource_state(
+            self._connection,
+            self._module,
+            waiter_method,
+            TransitGatewayIds=[tgw_id],
+            delay=polling_increment_secs,
+            max_attempts=max_attempts,
+        )
 
         transit_gateway = self.get_matching_tgw(tgw_id=tgw_id, skip_deleted=skip_deleted)
         if transit_gateway is None:
@@ -375,10 +372,8 @@ class AnsibleEc2Tgw:
         """
         wait = self._module.params.get("wait")
         wait_timeout = self._module.params.get("wait_timeout")
-        try:
-            response = delete_ec2_transit_gateway(self._connection, tgw_id)
-        except AnsibleEC2Error as e:
-            self._module.fail_json_aws_error(e)
+
+        delete_ec2_transit_gateway(self._connection, tgw_id)
 
         if wait:
             result = self.wait_for_status(
@@ -407,13 +402,10 @@ class AnsibleEc2Tgw:
                 self._results["transit_gateway_id"] = None
                 return self._results
 
-            try:
-                if not description:
-                    self._module.fail_json(msg="Failed to create Transit Gateway: description argument required")
-                tgw = self.create_tgw(description)
-                self._results["changed"] = True
-            except AnsibleEC2Error as e:
-                self._module.fail_json_aws(e, msg="Unable to create Transit Gateway")
+            if not description:
+                self._module.fail_json(msg="Failed to create Transit Gateway: description argument required")
+            tgw = self.create_tgw(description)
+            self._results["changed"] = True
 
         self._results["changed"] |= ensure_ec2_tags(
             self._connection,
@@ -442,14 +434,11 @@ class AnsibleEc2Tgw:
                 self._results["changed"] = True
                 return self._results
 
-            try:
-                tgw = self.delete_tgw(tgw_id=tgw["transit_gateway_id"])
-                self._results["changed"] = True
-                self._results["transit_gateway"] = self.get_matching_tgw(
-                    tgw_id=tgw["transit_gateway_id"], skip_deleted=False
-                )
-            except AnsibleEC2Error as e:
-                self._module.fail_json_aws(e, msg="Unable to delete Transit Gateway")
+            tgw = self.delete_tgw(tgw_id=tgw["transit_gateway_id"])
+            self._results["changed"] = True
+            self._results["transit_gateway"] = self.get_matching_tgw(
+                tgw_id=tgw["transit_gateway_id"], skip_deleted=False
+            )
 
         return self._results
 
