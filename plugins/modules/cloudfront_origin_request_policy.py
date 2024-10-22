@@ -59,7 +59,7 @@ options:
     description:
       - The cookies from viewer requests to include in origin requests.
       - For more information see the CloudFront documentation at
-        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html)
+        U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_OriginRequestPolicyCookiesConfig.html).
     type: dict
     required: false
     suboptions:
