@@ -21,10 +21,11 @@ jobs:
     with:
       init-lenient: true
       init-fail-on-error: true
+      ansible-ref: devel
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
       intersphinx-links: |
         amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
-        ansible_stable:https://docs.ansible.com/ansible-core/2.17/
+        ansible_devel:https://docs.ansible.com/ansible-core/devel/
 
   publish-docs-gh-pages:
     # use to prevent running on forks
