@@ -92,7 +92,7 @@ virtual_gateways:
       tags:
         description:
           - A list of dictionaries representing the tags attached to the virtual private gateway.
-          - Represents the same details as RV(resource_tags).
+          - Represents the same details as RV(virtual_gateways.resource_tags).
         type: list
         elements: dict
         returned: success
@@ -110,7 +110,7 @@ virtual_gateways:
       resource_tags:
         description:
           - A dictionary representing the tags attached to the VGW.
-          - Represents the same details as RV(tags).
+          - Represents the same details as RV(virtual_gateways.tags).
         type: dict
         returned: success
         example: {

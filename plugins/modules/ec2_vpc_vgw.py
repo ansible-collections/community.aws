@@ -96,13 +96,13 @@ EXAMPLES = r"""
     vpn_gateway_id: vgw-3a9aa123
 
 - name: Detach vpn gateway from VPC
-    community.aws.ec2_vpc_vgw:
+  community.aws.ec2_vpc_vgw:
     state: present
     name: "{{ vgw_name }}"
     register: vgw
 
 - name: Delete vpn gateway
-    community.aws.ec2_vpc_vgw:
+  community.aws.ec2_vpc_vgw:
     state: absent
     vpn_gateway_id: '{{ vgw.vgw.id | default(vgw_id) }}'
     ignore_errors: true
@@ -222,9 +222,7 @@ def format_vgw_info(vgw: Dict) -> Optional[Dict[str, Any]]:
     return vgw_info
 
 
-def wait_for_status(
-    client, module: AnsibleAWSModule, vpn_gateway_id: str, desired_status: str
-) -> Tuple[bool, Any]:
+def wait_for_status(client, module: AnsibleAWSModule, vpn_gateway_id: str, desired_status: str) -> Tuple[bool, Any]:
     polling_increment_secs = 15
     max_retries = module.params.get("wait_timeout") // polling_increment_secs
     try:
@@ -260,7 +258,6 @@ def attach_vgw_to_vpc(client, module: AnsibleAWSModule, vpn_gateway_id: str) -> 
     if not status_achieved:
         module.fail_json(msg="Error waiting for VPC to attach to VGW - please check the AWS console")
 
-
     return response
 
 
@@ -271,7 +268,6 @@ def detach_vgw(client, module: AnsibleAWSModule, vpn_gateway_id: str, vpc_id: Op
     vpc_id = vpc_id or module.params.get("vpc_id")
 
     response = detach_vpn_gateway(client, vpc_id, vpn_gateway_id)
-
 
     status_achieved, vgw = wait_for_status(client, module, vpn_gateway_id, "detached")
     if not status_achieved:
