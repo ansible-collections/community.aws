@@ -303,7 +303,7 @@ cache_policy:
                 - An object that determines whether any cookies in viewer requests (and if so, which cookies)
                   are included in the cache key and in requests that CloudFront sends to the origin.
                 - For more information see the CloudFront documentation at
-                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyCookiesConfig.html)
+                  U(https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CachePolicyCookiesConfig.html).
               type: dict
               contains:
                 cookie_behavior:
