@@ -325,7 +325,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="parameter-vpn_gateway_ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-parameter-vpn-gateway-ids"><strong>vpn_gateway_ids</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vpn_gateway_ids" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Get details of a specific Virtual Gateway ID.</p>
+<td><div class="ansible-option-cell"><p>One or more virtual private gateway IDs.</p>
 </div></td>
 </tr>
 </tbody>
@@ -343,13 +343,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># # Note: These examples do not set authentication details, see the AWS Guide for details.</span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about all virtual gateways for an account or profile</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-southeast-2</span>
-<span class="w">    </span><span class="nt">profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw_info</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a filtered list of Virtual Gateways</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw_info</span><span class="p">:</span>
@@ -357,14 +355,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <span class="w">    </span><span class="nt">profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
 <span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
 <span class="w">      </span><span class="s">&quot;tag:Name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;main-virt-gateway&quot;</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw_info</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a specific virtual gateway by VpnGatewayIds</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-southeast-2</span>
 <span class="w">    </span><span class="nt">profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
 <span class="w">    </span><span class="nt">vpn_gateway_ids</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw-c432f6a7</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw_info</span>
 </pre></div>
 </div>
 </section>
@@ -382,7 +378,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-virtual_gateways"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways"><strong>virtual_gateways</strong></p>
 <a class="ansibleOptionLink" href="#return-virtual_gateways" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The virtual gateways for the account.</p>
+<td><div class="ansible-option-cell"><p>Information about one or more virtual private gateways.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
@@ -391,16 +387,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#return-virtual_gateways/resource_tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary representing the tags attached to the VGW.</p>
-<p>Represents the same details as <em>tags</em>.</p>
+<p>Represents the same details as <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-tags"><span class="std std-ref"><span class="pre">virtual_gateways.tags</span></span></a></code>.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;MyKey&quot;:</span> <span class="pre">&quot;MyValue&quot;}</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Env&quot;:</span> <span class="pre">&quot;Dev_Test_01&quot;,</span> <span class="pre">&quot;MyKey&quot;:</span> <span class="pre">&quot;MyValue&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-virtual_gateways/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#return-virtual_gateways/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current state of the VGW.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Informtion about the current state of the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;available&quot;</span></code></p>
 </div></td>
@@ -409,8 +405,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-virtual_gateways/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-virtual_gateways/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of dictionaries representing the tags attached to the VGW.</p>
-<p>Represents the same details as <em>resource_tags</em>.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of dictionaries representing the tags attached to the virtual private gateway.</p>
+<p>Represents the same details as <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-resource-tags"><span class="std std-ref"><span class="pre">virtual_gateways.resource_tags</span></span></a></code>.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
@@ -436,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-virtual_gateways/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#return-virtual_gateways/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of VPN connection the VGW supports.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Information about type of VPN connection the virtual private gateway supports.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ipsec.1&quot;</span></code></p>
 </div></td>
@@ -445,7 +441,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-virtual_gateways/vpc_attachments"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-vpc-attachments"><strong>vpc_attachments</strong></p>
 <a class="ansibleOptionLink" href="#return-virtual_gateways/vpc_attachments" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A description of the attachment of VPCs to the VGW.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Information about the VPCs attached to the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
@@ -471,7 +467,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-virtual_gateways/vpn_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-info-module-return-virtual-gateways-vpn-gateway-id"><strong>vpn_gateway_id</strong></p>
 <a class="ansibleOptionLink" href="#return-virtual_gateways/vpn_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the VGW.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;vgw-0123456789abcdef0&quot;</span></code></p>
 </div></td>

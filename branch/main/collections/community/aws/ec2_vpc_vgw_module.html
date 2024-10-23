@@ -157,10 +157,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Creates AWS VPN Virtual Gateways</p></li>
-<li><p>Deletes AWS VPN Virtual Gateways</p></li>
-<li><p>Attaches Virtual Gateways to VPCs</p></li>
-<li><p>Detaches Virtual Gateways from VPCs</p></li>
+<li><p>Creates AWS VPN Virtual Gateways.</p></li>
+<li><p>Deletes AWS VPN Virtual Gateways.</p></li>
+<li><p>Attaches Virtual Gateways to VPCs.</p></li>
+<li><p>Detaches Virtual Gateways from VPCs.</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -335,8 +335,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">present</span></code> to ensure resource is created.</p>
-<p><code class="docutils literal notranslate"><span class="pre">absent</span></code> to remove resource.</p>
+<td><div class="ansible-option-cell"><p><code class="ansible-value docutils literal notranslate"><span class="pre">present</span></code> to ensure resource is created.</p>
+<p><code class="ansible-value docutils literal notranslate"><span class="pre">absent</span></code> to remove resource.</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;present&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -408,7 +408,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>Support for <em>purge_tags</em> was added in release 4.0.0.</p></li>
+<li><p>Support for <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-vgw-module-parameter-purge-tags"><span class="std std-ref"><span class="pre">purge_tags</span></span></a></strong></code> was added in release 4.0.0.</p></li>
 <li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’. For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
 <li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
@@ -424,7 +424,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-12345678</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">personal-testing</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ipsec.1</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">created_vgw</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a new unattached VGW</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw</span><span class="p">:</span>
@@ -436,7 +435,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
 <span class="w">      </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ABC</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">created_vgw</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Remove a new VGW using the name</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw</span><span class="p">:</span>
@@ -445,7 +443,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <span class="w">    </span><span class="nt">profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">personal</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">personal-testing</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ipsec.1</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deleted_vgw</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Remove a new VGW using the vpn_gateway_id</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw</span><span class="p">:</span>
@@ -453,7 +450,18 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-southeast-2</span>
 <span class="w">    </span><span class="nt">profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">personal</span>
 <span class="w">    </span><span class="nt">vpn_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw-3a9aa123</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deleted_vgw</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Detach vpn gateway from VPC</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">vgw_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete vpn gateway</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vgw</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">vpn_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;</span><span class="cp">{{</span> <span class="nv">vgw.vgw.id</span> <span class="o">|</span> <span class="nf">default</span><span class="o">(</span><span class="nv">vgw_id</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&#39;</span>
+<span class="w">    </span><span class="nt">ignore_errors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
 </section>
@@ -471,7 +479,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-vgw"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-module-return-vgw"><strong>vgw</strong></p>
 <a class="ansibleOptionLink" href="#return-vgw" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>A description of the VGW</p>
+<td><div class="ansible-option-cell"><p>Information about the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 </div></td>
 </tr>
@@ -479,7 +487,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-vgw/id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-module-return-vgw-id"><strong>id</strong></p>
 <a class="ansibleOptionLink" href="#return-vgw/id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the VGW.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;vgw-0123456789abcdef0&quot;</span></code></p>
 </div></td>
@@ -488,7 +496,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-vgw/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-module-return-vgw-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#return-vgw/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of the VGW.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current state of the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;available&quot;</span></code></p>
 </div></td>
@@ -497,9 +505,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-vgw/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-module-return-vgw-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-vgw/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary representing the tags attached to the VGW</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary representing the tags attached to the virtual private gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Name&quot;:</span> <span class="pre">&quot;ansible-test-ec2-vpc-vgw&quot;}</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Env&quot;:</span> <span class="pre">&quot;Dev_Test_001&quot;,</span> <span class="pre">&quot;Name&quot;:</span> <span class="pre">&quot;ansible-test-ec2-vpc-vgw&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -515,7 +523,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="ansibleOptionAnchor" id="return-vgw/vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vgw-module-return-vgw-vpc-id"><strong>vpc_id</strong></p>
 <a class="ansibleOptionLink" href="#return-vgw/vpc_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the VPC to which the VGW is attached.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the VPC.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;vpc-123456789abcdef01&quot;</span></code></p>
 </div></td>
