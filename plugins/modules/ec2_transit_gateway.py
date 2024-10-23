@@ -114,7 +114,7 @@ EXAMPLES = r"""
 RETURN = r"""
 transit_gateway:
   description: The attributes of the transit gateway.
-  type: complex
+  type: dict
   returned: I(state=present)
   contains:
     creation_time:
@@ -130,7 +130,7 @@ transit_gateway:
     options:
       description: The options attributes of the transit gateway.
       returned: always
-      type: complex
+      type: dict
       contains:
         amazon_side_asn:
           description:
@@ -219,7 +219,6 @@ from typing import Optional
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import create_ec2_transit_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import delete_ec2_transit_gateway
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import describe_ec2_transit_gateways
@@ -348,10 +347,7 @@ class AnsibleEc2Tgw:
 
         params = {"Description": description, "Options": options}
 
-        try:
-            response = create_ec2_transit_gateway(self._connection, **params)
-        except AnsibleEC2Error as e:
-            self._module.fail_json_aws_error(e)
+        response = create_ec2_transit_gateway(self._connection, **params)
 
         tgw_id = response["TransitGatewayId"]
 
