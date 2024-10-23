@@ -104,7 +104,6 @@ action_groups:
     - ec2_scaling_policy
     - ec2_snapshot_copy
     - ec2_transit_gateway
-    - ec2_transit_gateway_info
     - ec2_transit_gateway_vpc_attachment
     - ec2_transit_gateway_vpc_attachment_info
     - ec2_win_password
@@ -537,6 +536,8 @@ plugin_routing:
       redirect: amazon.aws.autoscaling_instance_refresh
     autoscaling_instance_refresh_info:
       redirect: amazon.aws.autoscaling_instance_refresh_info
+    ec2_transit_gateway_info:
+      redirect: amazon.aws.ec2_transit_gateway_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
