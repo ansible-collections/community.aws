@@ -1,0 +1,2 @@
+bugfixes:
+  - opensearch - Remove CurrentState parameter from the domain config (https://github.com/ansible-collections/community.aws/pull/2162).
