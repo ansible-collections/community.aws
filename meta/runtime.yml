@@ -533,6 +533,10 @@ plugin_routing:
       redirect: amazon.aws.ec2_placement_group_info
     ec2_launch_template:
       redirect: amazon.aws.ec2_launch_template
+    ec2_vpc_vgw:
+      redirect: amazon.aws.ec2_vpc_vgw
+    ec2_vpc_vgw_info:
+      redirect: amazon.aws.ec2_vpc_vgw_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
