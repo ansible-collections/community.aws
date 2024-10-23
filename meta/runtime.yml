@@ -110,10 +110,6 @@ action_groups:
     - ec2_placement_group_info
     - ec2_scaling_policy
     - ec2_snapshot_copy
-    - ec2_transit_gateway
-    - ec2_transit_gateway_info
-    - ec2_transit_gateway_vpc_attachment
-    - ec2_transit_gateway_vpc_attachment_info
     - ec2_vpc_egress_igw
     - ec2_vpc_nacl
     - ec2_vpc_nacl_info
@@ -520,6 +516,14 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
+    ec2_transit_gateway:
+      redirect: amazon.aws.ec2_transit_gateway
+    ec2_transit_gateway_info:
+      redirect: amazon.aws.ec2_transit_gateway_info
+    ec2_transit_gateway_vpc_attachment:
+      redirect: amazon.aws.ec2_transit_gateway_vpc_attachment
+    ec2_transit_gateway_vpc_attachment_info:
+      redirect: amazon.aws.ec2_transit_gateway_vpc_attachment_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
