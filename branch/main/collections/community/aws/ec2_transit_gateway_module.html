@@ -22,7 +22,7 @@
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="community.aws.ec2_transit_gateway_info module – Gather information about ec2 transit gateways in AWS" href="ec2_transit_gateway_info_module.html" />
+    <link rel="next" title="community.aws.ec2_transit_gateway_info module – Retrieve information about EC2 Transit Gateways in AWS" href="ec2_transit_gateway_info_module.html" />
     <link rel="prev" title="community.aws.ec2_snapshot_copy module – Copies an EC2 snapshot and returns the new Snapshot ID" href="ec2_snapshot_copy_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
@@ -396,8 +396,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">present</span></code> to ensure resource is created.</p>
-<p><code class="docutils literal notranslate"><span class="pre">absent</span></code> to remove resource.</p>
+<td><div class="ansible-option-cell"><p><code class="ansible-value docutils literal notranslate"><span class="pre">present</span></code> to ensure resource is created.</p>
+<p><code class="ansible-value docutils literal notranslate"><span class="pre">absent</span></code> to remove resource.</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">&quot;present&quot;</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -451,7 +451,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Whether to wait for status</p>
+<td><div class="ansible-option-cell"><p>Whether to wait for status.</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
@@ -463,7 +463,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>number of seconds to wait for status</p>
+<td><div class="ansible-option-cell"><p>Number of seconds to wait for status.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">300</span></code></p>
 </div></td>
 </tr>
@@ -531,7 +531,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-transit_gateway"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-module-return-transit-gateway"><strong>transit_gateway</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-transit_gateway" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The attributes of the transit gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> <em>state=present</em></p>
@@ -557,9 +557,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-transit_gateway/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-module-return-transit-gateway-options"><strong>options</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateway/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-transit_gateway/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The options attributes of the transit gateway</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The options attributes of the transit gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
@@ -667,7 +667,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="return-transit_gateway/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-module-return-transit-gateway-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-transit_gateway/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary of resource tags</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary of resource tags.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;tags&quot;:</span> <span class="pre">{&quot;Name&quot;:</span> <span class="pre">&quot;nonprod_tgw&quot;}}</span></code></p>
 </div></td>
@@ -716,7 +716,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="ec2_snapshot_copy_module.html" class="btn btn-neutral float-left" title="community.aws.ec2_snapshot_copy module – Copies an EC2 snapshot and returns the new Snapshot ID" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ec2_transit_gateway_info_module.html" class="btn btn-neutral float-right" title="community.aws.ec2_transit_gateway_info module – Gather information about ec2 transit gateways in AWS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ec2_transit_gateway_info_module.html" class="btn btn-neutral float-right" title="community.aws.ec2_transit_gateway_info module – Retrieve information about EC2 Transit Gateways in AWS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

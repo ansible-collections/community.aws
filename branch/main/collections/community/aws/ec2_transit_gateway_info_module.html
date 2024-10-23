@@ -7,7 +7,7 @@
 <meta content="2.15.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>community.aws.ec2_transit_gateway_info module – Gather information about ec2 transit gateways in AWS &mdash; Ansible collections  documentation</title>
+  <title>community.aws.ec2_transit_gateway_info module – Retrieve information about EC2 Transit Gateways in AWS &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5707b69d" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=c5b67dd2" />
       <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
@@ -118,7 +118,7 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
-      <li class="breadcrumb-item active">community.aws.ec2_transit_gateway_info module – Gather information about ec2 transit gateways in AWS</li>
+      <li class="breadcrumb-item active">community.aws.ec2_transit_gateway_info module – Retrieve information about EC2 Transit Gateways in AWS</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/ec2_transit_gateway_info.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
@@ -131,8 +131,8 @@
   
            <div itemprop="articleBody">
              
-  <span class="target" id="ansible-collections-community-aws-ec2-transit-gateway-info-module"></span><section id="community-aws-ec2-transit-gateway-info-module-gather-information-about-ec2-transit-gateways-in-aws">
-<h1>community.aws.ec2_transit_gateway_info module – Gather information about ec2 transit gateways in AWS<a class="headerlink" href="#community-aws-ec2-transit-gateway-info-module-gather-information-about-ec2-transit-gateways-in-aws" title="Link to this heading"></a></h1>
+  <span class="target" id="ansible-collections-community-aws-ec2-transit-gateway-info-module"></span><section id="community-aws-ec2-transit-gateway-info-module-retrieve-information-about-ec2-transit-gateways-in-aws">
+<h1>community.aws.ec2_transit_gateway_info module – Retrieve information about EC2 Transit Gateways in AWS<a class="headerlink" href="#community-aws-ec2-transit-gateway-info-module-retrieve-information-about-ec2-transit-gateways-in-aws" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 9.0.0-dev0).</p>
@@ -157,7 +157,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Gather information about ec2 transit gateways in AWS</p></li>
+<li><p>Gather information about EC2 Transit Gateways in AWS.</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -242,7 +242,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="parameter-filters"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-info-module-parameter-filters"><strong>filters</strong></p>
 <a class="ansibleOptionLink" href="#parameter-filters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>A dict of filters to apply. Each dict item consists of a filter key and a filter value. See <a class="reference external" href="https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html">https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html</a> for filters.</p>
+<td><div class="ansible-option-cell"><p>A dictionary of filters to apply to the query. Each key-value pair represents a filter key and its corresponding value.</p>
+<p>For a complete list of available filters, refer to the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html">https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeTransitGateways.html</a>.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
@@ -314,7 +315,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <a class="ansibleOptionLink" href="#parameter-transit_gateway_ids" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: transit_gateway_id</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>A list of transit gateway IDs to gather information for.</p>
+<td><div class="ansible-option-cell"><p>A list of Transit Gateway IDs for which to gather information.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
@@ -382,9 +383,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-transit_gateways"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-info-module-return-transit-gateways"><strong>transit_gateways</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateways" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-transit_gateways" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Transit gateways that match the provided filters. Each element consists of a dict with all the information related to that transit gateway.</p>
+<td><div class="ansible-option-cell"><p>Transit gateways that match the provided filters.</p>
+<p>Each element consists of a dict with all the information related to that transit gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> on success</p>
 </div></td>
 </tr>
@@ -408,7 +410,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-transit_gateways/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-info-module-return-transit-gateways-options"><strong>options</strong></p>
-<a class="ansibleOptionLink" href="#return-transit_gateways/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<a class="ansibleOptionLink" href="#return-transit_gateways/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary of the transit gateway options.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
@@ -418,7 +420,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <div class="ansibleOptionAnchor" id="return-transit_gateways/options/amazon_side_asn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-transit-gateway-info-module-return-transit-gateways-options-amazon-side-asn"><strong>amazon_side_asn</strong></p>
 <a class="ansibleOptionLink" href="#return-transit_gateways/options/amazon_side_asn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A private Autonomous System Number (ASN) for the Amazon side of a BGP session. The range is 64512 to 65534 for 16-bit ASNs and 4200000000 to 4294967294 for 32-bit ASNs.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A private Autonomous System Number (ASN) for the Amazon ide of a BGP session.</p>
+<p>The range is 64512 to 65534 for 16-bit ASNs and 4200000000 to 4294967294 for 32-bit ASNs.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">64512</span></code></p>
 </div></td>
@@ -429,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ID of the default association route table.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when present</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;rtb-11223344&quot;</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;tgw-rtb-0fd332c911223344&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -520,7 +523,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dict of tags associated with the transit gateway.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
-<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Name&quot;:</span> <span class="pre">&quot;A</span> <span class="pre">sample</span> <span class="pre">TGW&quot;}</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Env&quot;:</span> <span class="pre">&quot;Dev&quot;,</span> <span class="pre">&quot;Name&quot;:</span> <span class="pre">&quot;A</span> <span class="pre">sample</span> <span class="pre">TGW&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
