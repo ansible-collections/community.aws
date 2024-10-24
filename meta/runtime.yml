@@ -114,8 +114,6 @@ action_groups:
     - ec2_transit_gateway_info
     - ec2_transit_gateway_vpc_attachment
     - ec2_transit_gateway_vpc_attachment_info
-    - ec2_vpc_nacl
-    - ec2_vpc_nacl_info
     - ec2_vpc_peer
     - ec2_vpc_peering_info
     - ec2_vpc_vgw
