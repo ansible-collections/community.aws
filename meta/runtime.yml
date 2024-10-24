@@ -106,8 +106,6 @@ action_groups:
     - ec2_lc_find
     - ec2_lc_info
     - ec2_metric_alarm
-    - ec2_placement_group
-    - ec2_placement_group_info
     - ec2_scaling_policy
     - ec2_snapshot_copy
     - ec2_transit_gateway
@@ -520,6 +518,10 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
+    ec2_placement_group:
+      redirect: amazon.aws.ec2_placement_group
+    ec2_placement_group_info:
+      redirect: amazon.aws.ec2_placement_group_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
