@@ -110,7 +110,6 @@ action_groups:
     - ec2_placement_group_info
     - ec2_scaling_policy
     - ec2_snapshot_copy
-    - ec2_transit_gateway
     - ec2_transit_gateway_info
     - ec2_transit_gateway_vpc_attachment
     - ec2_transit_gateway_vpc_attachment_info
