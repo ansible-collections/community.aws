@@ -72,10 +72,10 @@ options:
         version_added: 5.2.0
         description:
             - Toggle overwriting of existing capacity providers or strategy. This is needed for backwards compatibility.
-            - By default I(purge_capacity_providers=false).  In release 9.0.0 this default will be changed to I(purge_capacity_providers=true).
+            - By default I(purge_capacity_providers=true).
         required: false
         type: bool
-        default: false
+        default: true
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -237,7 +237,7 @@ def main():
         name=dict(required=True, type="str"),
         delay=dict(required=False, type="int", default=10),
         repeat=dict(required=False, type="int", default=10),
-        purge_capacity_providers=dict(required=False, type="bool", default=False),
+        purge_capacity_providers=dict(required=False, type="bool", default=True),
         capacity_providers=dict(required=False, type="list", elements="str"),
         capacity_provider_strategy=dict(
             required=False,
@@ -291,12 +291,6 @@ def main():
 
             # Unless purge_capacity_providers is true, we will not be updating the providers or strategy.
             if not purge_capacity_providers:
-                module.deprecate(
-                    "In release 9.0.0 the default value of purge_capacity_providers will change from false to true."
-                    " To maintain the existing behaviour explicitly set purge_capacity_providers=true",
-                    version="9.0.0",
-                    collection_name="community.aws",
-                )
                 cps_update_needed = False
                 requested_cp = existing_cp
                 requested_cps = existing_cps
