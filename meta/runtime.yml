@@ -10,8 +10,6 @@ action_groups:
     - api_gateway_info
     - application_autoscaling_policy
     - autoscaling_complete_lifecycle_action
-    - autoscaling_instance_refresh
-    - autoscaling_instance_refresh_info
     - autoscaling_launch_config
     - autoscaling_launch_config_find
     - autoscaling_launch_config_info
@@ -384,10 +382,10 @@ plugin_routing:
       redirect: amazon.aws.autoscaling_group_info
     ec2_asg_instance_refresh:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_instance_refresh
+      redirect: amazon.aws.autoscaling_instance_refresh
     ec2_asg_instance_refresh_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_instance_refresh_info
+      redirect: amazon.aws.autoscaling_instance_refresh_info
     ec2_asg_lifecycle_hook:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_lifecycle_hook
@@ -520,6 +518,10 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
+    autoscaling_instance_refresh:
+      redirect: amazon.aws.autoscaling_instance_refresh
+    autoscaling_instance_refresh_info:
+      redirect: amazon.aws.autoscaling_instance_refresh_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
