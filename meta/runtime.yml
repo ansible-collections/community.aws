@@ -526,6 +526,8 @@ plugin_routing:
       redirect: amazon.aws.ec2_transit_gateway_vpc_attachment_info
     elb_classic_lb_info:
       redirect: amazon.aws.elb_classic_lb_info
+    ec2_vpc_egress_igw:
+      redirect: amazon.aws.ec2_vpc_egress_igw
   module_utils:
     route53:
       redirect: amazon.aws.route53
