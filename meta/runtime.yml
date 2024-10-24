@@ -121,8 +121,6 @@ action_groups:
     - ec2_vpc_peering_info
     - ec2_vpc_vgw
     - ec2_vpc_vgw_info
-    - ec2_vpc_vpn
-    - ec2_vpc_vpn_info
     - ec2_win_password
     - ecs_attribute
     - ecs_cluster
@@ -520,6 +518,10 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
+    ec2_vpc_vpn:
+      redirect: amazon.aws.ec2_vpc_vpn
+    ec2_vpc_vpn_info:
+      redirect: amazon.aws.ec2_vpc_vpn_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
