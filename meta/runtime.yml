@@ -532,8 +532,6 @@ plugin_routing:
       redirect: amazon.aws.ec2_placement_group
     ec2_placement_group_info:
       redirect: amazon.aws.ec2_placement_group_info
-    ec2_vpc_egress_igw:
-      redirect: amazon.aws.ec2_vpc_egress_igw
   module_utils:
     route53:
       redirect: amazon.aws.route53
