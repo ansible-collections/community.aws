@@ -1,3 +1,0 @@
-minor_changes:
-  - ec2_vpc_vgw - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` and update ``RETURN`` block (https://github.com/ansible-collections/community.aws/pull/2171).
-  - ec2_vpc_vgw_info - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` and update ``RETURN`` block (https://github.com/ansible-collections/community.aws/pull/2171).

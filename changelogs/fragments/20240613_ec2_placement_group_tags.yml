@@ -1,2 +1,0 @@
-minor_changes:
-  - ec2_placement_group - Added support for creating with ``tags`` (https://github.com/ansible-collections/community.aws/pull/2081).
