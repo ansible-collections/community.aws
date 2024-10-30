@@ -4051,4 +4051,4 @@ releases:
     - refactor-ec2_vpc_vgw-modules.yml
     - refactor_ec2_placement_group.yml
     - release_summary.yml
-    release_date: '2024-10-29'
+    release_date: '2024-10-30'
