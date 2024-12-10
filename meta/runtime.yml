@@ -10,8 +10,6 @@ action_groups:
     - api_gateway_info
     - application_autoscaling_policy
     - autoscaling_complete_lifecycle_action
-    - autoscaling_instance_refresh
-    - autoscaling_instance_refresh_info
     - autoscaling_launch_config
     - autoscaling_launch_config_find
     - autoscaling_launch_config_info
@@ -96,35 +94,17 @@ action_groups:
     - ec2_ami_copy
     - ec2_asg
     - ec2_asg_info
-    - ec2_asg_instance_refresh
-    - ec2_asg_instance_refresh_info
     - ec2_asg_lifecycle_hook
     - ec2_asg_scheduled_action
     - ec2_customer_gateway
     - ec2_customer_gateway_info
     - ec2_elb
-    - ec2_launch_template
     - ec2_lc
     - ec2_lc_find
     - ec2_lc_info
     - ec2_metric_alarm
-    - ec2_placement_group
-    - ec2_placement_group_info
     - ec2_scaling_policy
     - ec2_snapshot_copy
-    - ec2_transit_gateway
-    - ec2_transit_gateway_info
-    - ec2_transit_gateway_vpc_attachment
-    - ec2_transit_gateway_vpc_attachment_info
-    - ec2_vpc_egress_igw
-    - ec2_vpc_nacl
-    - ec2_vpc_nacl_info
-    - ec2_vpc_peer
-    - ec2_vpc_peering_info
-    - ec2_vpc_vgw
-    - ec2_vpc_vgw_info
-    - ec2_vpc_vpn
-    - ec2_vpc_vpn_info
     - ec2_win_password
     - ecs_attribute
     - ecs_cluster
@@ -148,7 +128,6 @@ action_groups:
     - elasticache_subnet_group
     - elasticbeanstalk_app
     - elb_classic_lb
-    - elb_classic_lb_info
     - elb_instance
     - elb_network_lb
     - elb_target
@@ -386,10 +365,10 @@ plugin_routing:
       redirect: amazon.aws.autoscaling_group_info
     ec2_asg_instance_refresh:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_instance_refresh
+      redirect: amazon.aws.autoscaling_instance_refresh
     ec2_asg_instance_refresh_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_instance_refresh_info
+      redirect: amazon.aws.autoscaling_instance_refresh_info
     ec2_asg_lifecycle_hook:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_lifecycle_hook
@@ -522,6 +501,44 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
+    ec2_vpc_egress_igw:
+      redirect: amazon.aws.ec2_vpc_egress_igw
+    ec2_transit_gateway_vpc_attachment:
+      redirect: amazon.aws.ec2_transit_gateway_vpc_attachment
+    ec2_transit_gateway_vpc_attachment_info:
+      redirect: amazon.aws.ec2_transit_gateway_vpc_attachment_info
+    elb_classic_lb_info:
+      redirect: amazon.aws.elb_classic_lb_info
+    ec2_vpc_nacl:
+      redirect: amazon.aws.ec2_vpc_nacl
+    ec2_vpc_nacl_info:
+      redirect: amazon.aws.ec2_vpc_nacl_info
+    ec2_vpc_peer:
+      redirect: amazon.aws.ec2_vpc_peer
+    ec2_vpc_peering_info:
+      redirect: amazon.aws.ec2_vpc_peering_info
+    ec2_placement_group:
+      redirect: amazon.aws.ec2_placement_group
+    ec2_placement_group_info:
+      redirect: amazon.aws.ec2_placement_group_info
+    ec2_launch_template:
+      redirect: amazon.aws.ec2_launch_template
+    ec2_vpc_vgw:
+      redirect: amazon.aws.ec2_vpc_vgw
+    ec2_vpc_vgw_info:
+      redirect: amazon.aws.ec2_vpc_vgw_info
+    ec2_vpc_vpn:
+      redirect: amazon.aws.ec2_vpc_vpn
+    ec2_vpc_vpn_info:
+      redirect: amazon.aws.ec2_vpc_vpn_info
+    autoscaling_instance_refresh:
+      redirect: amazon.aws.autoscaling_instance_refresh
+    autoscaling_instance_refresh_info:
+      redirect: amazon.aws.autoscaling_instance_refresh_info
+    ec2_transit_gateway_info:
+      redirect: amazon.aws.ec2_transit_gateway_info
+    ec2_transit_gateway:
+      redirect: amazon.aws.ec2_transit_gateway
   module_utils:
     route53:
       redirect: amazon.aws.route53

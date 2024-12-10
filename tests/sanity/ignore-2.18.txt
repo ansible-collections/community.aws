@@ -1,2 +1,0 @@
-plugins/modules/ecs_cluster.py pylint:collection-deprecated-version
-plugins/modules/glue_connection.py pylint:collection-deprecated-version

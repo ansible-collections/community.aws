@@ -1,3 +1,0 @@
----
-minor_changes:
-  - ec2_vpc_vgw - Fix call to parent static method in class ``VGWRetry`` (https://github.com/ansible-collections/community.aws/pull/2140).

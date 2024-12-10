@@ -107,13 +107,6 @@ EXAMPLES = r"""
 """
 
 RETURN = r"""
-connection_properties:
-    description:
-        - (deprecated) A dict of key-value pairs (converted to lowercase) used as parameters for this connection.
-        - This return key has been deprecated, and will be removed in release 9.0.0.
-    returned: when state is present
-    type: dict
-    sample: {'jdbc_connection_url':'jdbc:mysql://mydb:3306/databasename','username':'x','password':'y'}
 connection_type:
     description: The type of the connection.
     returned: when state is present
@@ -332,15 +325,8 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
         glue_connection = _await_glue_connection(connection, module)
 
     if glue_connection:
-        module.deprecate(
-            (
-                "The 'connection_properties' return key is deprecated and will be replaced"
-                " by 'raw_connection_properties'. Both values are returned for now."
-            ),
-            version="9.0.0",
-            collection_name="community.aws",
-        )
         glue_connection["RawConnectionProperties"] = glue_connection["ConnectionProperties"]
+        glue_connection.pop("ConnectionProperties")
 
     module.exit_json(
         changed=changed, **camel_dict_to_snake_dict(glue_connection or {}, ignore_list=["RawConnectionProperties"])
