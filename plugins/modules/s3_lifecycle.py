@@ -59,6 +59,16 @@ options:
         and replaced with the new transition(s)
     default: true
     type: bool
+  maximum_object_size:
+    descriptionL
+      - The maximum object size to which the rule applies.
+    required: false
+    type: int
+  minimum_object_size:
+    descriptionL
+      - The minimum object size to which the rule applies.
+    required: false
+    type: int
   noncurrent_version_expiration_days:
     description:
       - The number of days after which non-current versions should be deleted.
@@ -278,6 +288,8 @@ def build_rule(client, module):
     expiration_date = parse_date(module.params.get("expiration_date"))
     expiration_days = module.params.get("expiration_days")
     expire_object_delete_marker = module.params.get("expire_object_delete_marker")
+    maximum_object_size = module.params.get("maximum_object_size")
+    minimum_object_size = module.params.get("minimum_object_size")
     noncurrent_version_expiration_days = module.params.get("noncurrent_version_expiration_days")
     noncurrent_version_transition_days = module.params.get("noncurrent_version_transition_days")
     noncurrent_version_transitions = module.params.get("noncurrent_version_transitions")
@@ -292,7 +304,15 @@ def build_rule(client, module):
     transitions = module.params.get("transitions")
     purge_transitions = module.params.get("purge_transitions")
 
-    rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
+    if maximum_object_size is not None or minimum_object_size is not None:
+        and_dict = dict(Prefix=prefix)
+        if minimum_object_size is not None:
+            and_dict["ObjectSizeGreaterThan"] = minimum_object_size
+        if maximum_object_size is not None:
+            and_dict["ObjectSizeLessThan"] = maximum_object_size
+        rule = dict(Filter=dict(And=and_dict), Status=status.title())
+    else:
+        rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
     if rule_id is not None:
         rule["ID"] = rule_id
 
@@ -363,17 +383,26 @@ def compare_and_update_configuration(client, module, current_lifecycle_rules, ru
     changed = False
     appended = False
 
+    # Helper function to deeply compare filters
+    def filters_are_equal(filter1, filter2):
+        if not filter1 or not filter2:
+            return filter1 == filter2
+        return (
+            filter1.get("Prefix", "") == filter2.get("Prefix", "")
+            and filter1.get("ObjectSizeGreaterThan") == filter2.get("ObjectSizeGreaterThan")
+            and filter1.get("ObjectSizeLessThan") == filter2.get("ObjectSizeLessThan")
+            and filter1.get("And", {}).get("Prefix", "") == filter2.get("And", {}).get("Prefix", "")
+            and filter1.get("And", {}).get("ObjectSizeGreaterThan") == filter2.get("And", {}).get("ObjectSizeGreaterThan")
+            and filter1.get("And", {}).get("ObjectSizeLessThan") == filter2.get("And", {}).get("ObjectSizeLessThan")
+        )
+    
     # If current_lifecycle_obj is not None then we have rules to compare, otherwise just add the rule
     if current_lifecycle_rules:
         # If rule ID exists, use that for comparison otherwise compare based on prefix
         for existing_rule in current_lifecycle_rules:
-            if rule.get("ID") == existing_rule.get("ID") and rule["Filter"].get("Prefix", "") != existing_rule.get(
-                "Filter", {}
-            ).get("Prefix", ""):
+            if rule.get("ID") == existing_rule.get("ID") and not filters_are_equal(rule.get("Filter", {}), existing_rule.get("Filter", {})):
                 existing_rule.pop("ID")
-            elif rule_id is None and rule["Filter"].get("Prefix", "") == existing_rule.get("Filter", {}).get(
-                "Prefix", ""
-            ):
+            elif rule_id is None and filters_are_equal(rule.get("Filter", {}), existing_rule.get("Filter", {})):
                 existing_rule.pop("ID")
             if rule.get("ID") == existing_rule.get("ID"):
                 changed_, appended_ = update_or_append_rule(
@@ -598,6 +627,8 @@ def main():
         expiration_days=dict(type="int"),
         expiration_date=dict(),
         expire_object_delete_marker=dict(type="bool"),
+        maximum_object_size=dict(type=int),
+        minimum_object_size=dict(type=int),
         noncurrent_version_expiration_days=dict(type="int"),
         noncurrent_version_keep_newer=dict(type="int"),
         noncurrent_version_storage_class=dict(default="glacier", type="str", choices=s3_storage_class),
