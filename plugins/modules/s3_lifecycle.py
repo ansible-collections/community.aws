@@ -60,12 +60,12 @@ options:
     default: true
     type: bool
   maximum_object_size:
-    descriptionL
+    description:
       - The maximum object size to which the rule applies.
     required: false
     type: int
   minimum_object_size:
-    descriptionL
+    description:
       - The minimum object size to which the rule applies.
     required: false
     type: int
@@ -281,7 +281,22 @@ def fetch_rules(client, module, name):
         module.fail_json_aws(e)
     return current_lifecycle_rules
 
-
+# Helper function to deeply compare filters
+def filters_are_equal(filter1, filter2):
+    if filter1 == filter2:
+        return True
+    if not filter1 or not filter2:
+        return False
+    # Treat empty string as equal to a filter not being set
+    return (
+        filter1.get("Prefix", "") == filter2.get("Prefix", "")
+        and filter1.get("ObjectSizeGreaterThan") == filter2.get("ObjectSizeGreaterThan")
+        and filter1.get("ObjectSizeLessThan") == filter2.get("ObjectSizeLessThan")
+        and filter1.get("And", {}).get("Prefix", "") == filter2.get("And", {}).get("Prefix", "")
+        and filter1.get("And", {}).get("ObjectSizeGreaterThan") == filter2.get("And", {}).get("ObjectSizeGreaterThan")
+        and filter1.get("And", {}).get("ObjectSizeLessThan") == filter2.get("And", {}).get("ObjectSizeLessThan")
+    )
+    
 def build_rule(client, module):
     name = module.params.get("name")
     abort_incomplete_multipart_upload_days = module.params.get("abort_incomplete_multipart_upload_days")
@@ -382,27 +397,14 @@ def compare_and_update_configuration(client, module, current_lifecycle_rules, ru
     lifecycle_configuration = dict(Rules=[])
     changed = False
     appended = False
-
-    # Helper function to deeply compare filters
-    def filters_are_equal(filter1, filter2):
-        if not filter1 or not filter2:
-            return filter1 == filter2
-        return (
-            filter1.get("Prefix", "") == filter2.get("Prefix", "")
-            and filter1.get("ObjectSizeGreaterThan") == filter2.get("ObjectSizeGreaterThan")
-            and filter1.get("ObjectSizeLessThan") == filter2.get("ObjectSizeLessThan")
-            and filter1.get("And", {}).get("Prefix", "") == filter2.get("And", {}).get("Prefix", "")
-            and filter1.get("And", {}).get("ObjectSizeGreaterThan") == filter2.get("And", {}).get("ObjectSizeGreaterThan")
-            and filter1.get("And", {}).get("ObjectSizeLessThan") == filter2.get("And", {}).get("ObjectSizeLessThan")
-        )
     
     # If current_lifecycle_obj is not None then we have rules to compare, otherwise just add the rule
     if current_lifecycle_rules:
         # If rule ID exists, use that for comparison otherwise compare based on prefix
         for existing_rule in current_lifecycle_rules:
-            if rule.get("ID") == existing_rule.get("ID") and not filters_are_equal(rule.get("Filter", {}), existing_rule.get("Filter", {})):
+            if rule.get("ID") == existing_rule.get("ID") and not filters_are_equal(rule.get("Filter"), existing_rule.get("Filter")):
                 existing_rule.pop("ID")
-            elif rule_id is None and filters_are_equal(rule.get("Filter", {}), existing_rule.get("Filter", {})):
+            elif rule_id is None and filters_are_equal(rule.get("Filter"), existing_rule.get("Filter")):
                 existing_rule.pop("ID")
             if rule.get("ID") == existing_rule.get("ID"):
                 changed_, appended_ = update_or_append_rule(
