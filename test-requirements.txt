@@ -1,17 +1,15 @@
 botocore
 boto3
 
+# coverage==4.5.4
 python-dateutil # Used by autoscaling_scheduled_action
-
-coverage==4.5.4
 placebo
 mock
 pytest
 pytest-forked
 pytest-mock
 pytest-xdist
-pytest-ansible ; python_version >= '3.7'
-git+https://github.com/ansible-community/pytest-ansible-units.git ; python_version < '3.7'
+pytest-ansible
 
 # Needed for ansible.utils.ipaddr in tests
 netaddr
