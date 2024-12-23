@@ -1,0 +1,2 @@
+minor_changes:
+  - s3_lifecycle - Support for min and max object size when applying the filter rules.
