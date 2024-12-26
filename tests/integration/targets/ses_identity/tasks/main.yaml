@@ -15,7 +15,7 @@
     block:
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-email"
           state: present
         register: result
       - name: assert changed is True
@@ -24,18 +24,18 @@
             - result.changed == True
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-email"
     always:
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-email"
           state: absent
   # ============================================================
   - name: test register domain identity
     block:
       - name: register domain identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-domain"
           state: present
         register: result
       - name: assert changed is True
@@ -44,7 +44,7 @@
             - result.changed == True
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-domain"
       - name: assert verification_attributes.verification_token is defined
         assert:
           that:
@@ -52,18 +52,18 @@
     always:
       - name: cleanup domain identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-domain"
           state: absent
   # ============================================================
   - name: test email_identity unchanged when already existing
     block:
       - name: register identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-duplicate"
           state: present
       - name: duplicate register identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-duplicate"
           state: present
         register: result
       - name: assert changed is False
@@ -72,22 +72,22 @@
             - result.changed == False
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-duplicate"
     always:
       - name: cleanup identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-duplicate"
           state: absent
   # ============================================================
   - name: test domain_identity unchanged when already existing
     block:
       - name: register identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-duplicate"
           state: present
       - name: duplicate register identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-duplicate"
           state: present
         register: result
       - name: assert changed is False
@@ -96,11 +96,11 @@
             - result.changed == False
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-duplicate"
     always:
       - name: cleanup identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-duplicate"
           state: absent
   # ============================================================
   # Test for https://github.com/ansible/ansible/issues/51531
@@ -111,7 +111,7 @@
     block:
       - name: register email identity without explicit region
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-noregion"
           state: present
           region: "{{ omit }}"
         register: result
@@ -123,18 +123,18 @@
             - result.changed == True
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-noregion"
     always:
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-noregion"
           state: absent
   # ============================================================
   - name: test register email identity check mode
     block:
       - name: register email identity check mode
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-check"
           state: present
         register: result
         check_mode: True
@@ -146,12 +146,12 @@
 
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-check"
 
     always:
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-check"
           state: absent
         register: result
 
@@ -164,7 +164,7 @@
     block:
       - name: register domain identity check mode
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-domain-check"
           state: present
         register: result
         check_mode: True
@@ -176,12 +176,12 @@
 
       - import_tasks: assert_defaults.yaml
         vars:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-domain-check"
 
     always:
       - name: cleanup domain identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-domain-check"
           state: absent
         register: result
 
@@ -192,7 +192,7 @@
   # ============================================================
   - name: remove non-existent email identity
     ses_identity:
-      identity: "{{ email_identity }}"
+      identity: "{{ email_identity }}-missing"
       state: absent
     register: result
   - name: assert changed is False
@@ -202,7 +202,7 @@
   # ============================================================
   - name: remove non-existent domain identity
     ses_identity:
-      identity: "{{ domain_identity }}"
+      identity: "{{ domain_identity }}-missing-domain"
       state: absent
     register: result
   - name: assert changed is False
@@ -214,13 +214,13 @@
     block:
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-remove-check"
           state: present
         register: result
 
       - name: remove email identity check mode
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-remove-check"
           state: absent
         register: result
         check_mode: True
@@ -232,7 +232,7 @@
     always:
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-remove-check"
           state: absent
         register: result
 
@@ -245,13 +245,13 @@
     block:
       - name: register domain identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-remove-domain-check"
           state: present
         register: result
 
       - name: remove domain identity check mode
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-remove-domain-check"
           state: absent
         register: result
         check_mode: True
@@ -263,7 +263,7 @@
     always:
       - name: cleanup domain identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-remove-domain-check"
           state: absent
         register: result
 
@@ -285,7 +285,7 @@
           - delivery
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics"
           state: present
           bounce_notifications:
             topic: "{{ topic_info.results[0].sns_arn }}"
@@ -317,7 +317,7 @@
           - delivery
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics"
           state: absent
   # ============================================================
   - name: test change notification queues after create
@@ -333,11 +333,11 @@
           - delivery
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-post"
           state: present
       - name: set notification topics
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-post"
           state: present
           bounce_notifications:
             topic: "{{ topic_info.results[0].sns_arn }}"
@@ -367,7 +367,7 @@
           - delivery
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-post"
           state: absent
   # ============================================================
   - name: test clear notification configuration
@@ -383,7 +383,7 @@
           - delivery
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-clear"
           state: present
           bounce_notifications:
             topic: "{{ topic_info.results[0].sns_arn }}"
@@ -393,7 +393,7 @@
             topic: "{{ topic_info.results[2].sns_arn }}"
       - name: Make no change to identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-clear"
           state: present
         register: result
       - name: assert no change
@@ -403,7 +403,7 @@
 
       - name: clear notification settings
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-clear"
           state: present
           bounce_notifications: {}
           complaint_notifications: {}
@@ -427,7 +427,7 @@
           - delivery
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-clear"
           state: absent
   # ============================================================
   - name: test change notification settings check mode
@@ -444,12 +444,12 @@
 
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-check"
           state: present
 
       - name: set notification settings check mode
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-check"
           state: present
           bounce_notifications:
             topic: "{{ topic_info.results[0].sns_arn }}"
@@ -482,7 +482,7 @@
 
       - name: re-register base email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-check"
           state: present
         register: result
 
@@ -509,14 +509,14 @@
 
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-topics-check"
           state: absent
   # ============================================================
   - name: test include headers on notification queues
     block:
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-headers"
           state: present
           bounce_notifications:
             include_headers: Yes
@@ -534,7 +534,7 @@
     always:
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-headers"
           state: absent
   # ============================================================
   - name: test disable feedback forwarding
@@ -549,7 +549,7 @@
           - complaint
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-feedback"
           state: present
           bounce_notifications:
             topic: "{{ topic_info.results[0].sns_arn }}"
@@ -571,14 +571,14 @@
           - complaint
       - name: cleanup email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-feedback"
           state: absent
   # ============================================================
   - name: test disable feedback forwarding fails if no topics
     block:
       - name: register identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-feedback-nt"
           state: present
           feedback_forwarding: No
         register: result
@@ -590,7 +590,7 @@
     always:
       - name: cleanup identity
         ses_identity:
-          identity: "{{ domain_identity }}"
+          identity: "{{ domain_identity }}-feedback-nt"
           state: absent
   # ============================================================
   - name: test disable feedback forwarding fails if no complaint topic
@@ -602,7 +602,7 @@
         register: topic_info
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-feedback-nb"
           state: present
           bounce_notifications:
             topic: "{{ topic_info.sns_arn }}"
@@ -620,7 +620,7 @@
           state: absent
       - name: cleanup identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-feedback-nb"
           state: absent
   # ============================================================
   - name: test disable feedback forwarding fails if no bounce topic
@@ -632,7 +632,7 @@
         register: topic_info
       - name: register email identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-feedback-nc"
           state: present
           complaint_notifications:
             topic: "{{ topic_info.sns_arn }}"
@@ -650,5 +650,5 @@
           state: absent
       - name: cleanup identity
         ses_identity:
-          identity: "{{ email_identity }}"
+          identity: "{{ email_identity }}-feedback-nc"
           state: absent

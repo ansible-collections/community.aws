@@ -4,7 +4,7 @@
 - name: 'Generate SSL Keys'
   community.crypto.openssl_privatekey:
     path: '{{ remote_tmp_dir }}/{{ item }}-key.pem'
-    size: 4096
+    size: 3072
   loop:
   - 'ca'
   - 'cert1'

@@ -4,6 +4,19 @@ The Ansible Community AWS collection includes a variety of Ansible content to he
 
 AWS related modules and plugins supported by the Ansible Cloud team are in the [amazon.aws](https://github.com/ansible-collections/amazon.aws) collection.
 
+## Communication
+
+* Join the Ansible forum:
+  * [Get Help](https://forum.ansible.com/c/help/6): get help or help others.
+  * [Posts tagged with 'aws'](https://forum.ansible.com/tag/aws): subscribe to participate in collection-related conversations.
+  * [AWS Working Group](https://forum.ansible.com/g/AWS): by joining the team you will automatically get subscribed to the posts tagged with [aws](https://forum.ansible.com/tags).
+  * [Social Spaces](https://forum.ansible.com/c/chat/4): gather and interact with fellow enthusiasts.
+  * [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide announcements including social events.
+
+* The Ansible [Bullhorn newsletter](https://docs.ansible.com/ansible/devel/community/communication.html#the-bullhorn): used to announce releases and important changes.
+
+For more information about communication, see the [Ansible communication guide](https://docs.ansible.com/ansible/devel/community/communication.html).
+
 ## Ansible version compatibility
 
 Tested with the Ansible Core >= 2.15.0 versions, and the current development version of Ansible. Ansible Core versions before 2.15.0 are not supported.
@@ -40,7 +53,7 @@ As such support for Python less than 3.8 will be removed in a release after 2024
 
 Starting with the 2.0.0 releases of amazon.aws and community.aws, it is generally the collection's policy to support the versions of `botocore` and `boto3` that were released 12 months prior to the most recent major collection release, following semantic versioning (for example, 2.0.0, 3.0.0).
 
-Version 7.0.0 of this collection supports `boto3 >= 1.26.0` and `botocore >= 1.29.0`
+Version 9.0.0 of this collection supports `boto3 >= 1.28.0` and `botocore >= 1.31.0`
 
 All support for the original AWS SDK `boto` was removed in release 4.0.0.
 
@@ -112,10 +125,6 @@ You can either call modules by their Fully Qualified Collection Name (FQCN), suc
 
 We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the [Community AWS collection repository](https://github.com/ansible-collections/community.aws).
 See [Contributing to Ansible-maintained collections](https://docs.ansible.com/ansible/devel/community/contributing_maintained_collections.html#contributing-maintained-collections) for more details.
-
-You can also join us on:
-
-- Libera.Chat IRC - the ``#ansible-aws`` [irc.libera.chat](https://libera.chat/) channel
 
 ### More information about contributing
 
