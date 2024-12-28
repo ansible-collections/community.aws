@@ -405,7 +405,9 @@ def compare_and_update_configuration(client, module, current_lifecycle_rules, ru
     if current_lifecycle_rules:
         # If rule ID exists, use that for comparison otherwise compare based on prefix
         for existing_rule in current_lifecycle_rules:
-            if rule.get("ID") == existing_rule.get("ID") and not filters_are_equal(rule.get("Filter"), existing_rule.get("Filter")):
+            if rule.get("ID") == existing_rule.get("ID") and not filters_are_equal(
+                rule.get("Filter"), existing_rule.get("Filter")
+            ):
                 existing_rule.pop("ID")
             elif rule_id is None and filters_are_equal(rule.get("Filter"), existing_rule.get("Filter")):
                 existing_rule.pop("ID")
