@@ -64,10 +64,12 @@ options:
       - The maximum object size to which the rule applies.
     required: false
     type: int
+    version_added: 9.1.0
   minimum_object_size:
     description:
       - The minimum object size to which the rule applies.
     required: false
+    version_added: 9.1.0
     type: int
   noncurrent_version_expiration_days:
     description:
@@ -281,6 +283,7 @@ def fetch_rules(client, module, name):
         module.fail_json_aws(e)
     return current_lifecycle_rules
 
+
 # Helper function to deeply compare filters
 def filters_are_equal(filter1, filter2):
     if filter1 == filter2:
@@ -296,7 +299,8 @@ def filters_are_equal(filter1, filter2):
         and filter1.get("And", {}).get("ObjectSizeGreaterThan") == filter2.get("And", {}).get("ObjectSizeGreaterThan")
         and filter1.get("And", {}).get("ObjectSizeLessThan") == filter2.get("And", {}).get("ObjectSizeLessThan")
     )
-    
+
+
 def build_rule(client, module):
     name = module.params.get("name")
     abort_incomplete_multipart_upload_days = module.params.get("abort_incomplete_multipart_upload_days")
@@ -397,7 +401,6 @@ def compare_and_update_configuration(client, module, current_lifecycle_rules, ru
     lifecycle_configuration = dict(Rules=[])
     changed = False
     appended = False
-    
     # If current_lifecycle_obj is not None then we have rules to compare, otherwise just add the rule
     if current_lifecycle_rules:
         # If rule ID exists, use that for comparison otherwise compare based on prefix

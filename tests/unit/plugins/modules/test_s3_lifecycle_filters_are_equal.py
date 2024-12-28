@@ -78,8 +78,8 @@ def test_filters_are_equal():
     }
     filter2 = {
         "And": {
-            "Prefix": "nested/", # Different key/value
-            "ObjectSizeLessThan": 150,  
+            "Prefix": "nested/",  # Different key/value
+            "ObjectSizeLessThan": 150,
         },
     }
     assert filters_are_equal(filter1, filter2) is False
