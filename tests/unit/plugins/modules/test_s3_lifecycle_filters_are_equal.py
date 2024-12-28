@@ -7,6 +7,7 @@ import pytest
 
 from ansible_collections.community.aws.plugins.modules.s3_lifecycle import filters_are_equal
 
+
 def test_filters_are_equal():
     # Test case 1: Both filters are identical
     filter1 = {
