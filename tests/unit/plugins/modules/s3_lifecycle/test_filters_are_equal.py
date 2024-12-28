@@ -3,11 +3,13 @@
 # Copyright: (c) 2023, Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-import pytest
-
 from ansible_collections.community.aws.plugins.modules.s3_lifecycle import filters_are_equal
 
-
+# @pytest.mark.parametrize(
+#      "filter1,filter2,result",
+#     []
+# )
+# def test_filters_are_equal(filter1, filter2, result):
 def test_filters_are_equal():
     # Test case 1: Both filters are identical
     filter1 = {
