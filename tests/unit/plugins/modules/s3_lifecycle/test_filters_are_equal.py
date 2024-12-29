@@ -39,7 +39,7 @@ from ansible_collections.community.aws.plugins.modules.s3_lifecycle import filte
 )
 def test_filters_are_equal_simple(filter1, filter2, result):
     assert filters_are_equal(filter1, filter2) is result
-    assert filters_are_equal(filter2, filter1) is result
+    assert filters_are_equal(filter2, filter1) is result  # pylint: disable=arguments-out-of-order
 
 
 # Could be merged with the ones above, but naming will give a better idea of what's wrong
@@ -116,4 +116,4 @@ def test_filters_are_equal_simple(filter1, filter2, result):
 )
 def test_filters_are_equal_and(filter1, filter2, result):
     assert filters_are_equal(filter1, filter2) is result
-    assert filters_are_equal(filter2, filter1) is result
+    assert filters_are_equal(filter2, filter1) is result  # pylint: disable=arguments-out-of-order
