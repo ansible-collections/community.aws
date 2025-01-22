@@ -1,0 +1,23 @@
+---
+name: Check Patchback Comment on Edit
+
+on:
+  issue_comment:
+    types:
+      - edited
+
+jobs:
+  check_patchback_comment:
+    if: ${{
+      github.event.issue.pull_request.merged_at &&
+      github.event.comment.user.login == 'patchback[bot]' &&
+      contains(github.event.comment.body, '💔 cherry-picking failed')
+      }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add Label for Backport Failure
+        run: |
+          gh pr edit ${{ github.event.issue.number }} -R ${{ github.repository }} --add-label 'backport_failed'
+        env:
+          GH_TOKEN: ${{ github.token }}
