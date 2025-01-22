@@ -10,16 +10,6 @@ from ansible.module_utils._text import to_bytes
 from ansible.module_utils.common._collections_compat import MutableMapping
 from ansible.module_utils.six import string_types
 
-# Magic...  Incorrectly identified by pylint as unused
-# isort: off
-# pylint: disable=unused-import
-
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import fixture_maybe_sleep
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import fixture_placeboify
-
-# pylint: enable=unused-import
-# isort: on
-
 
 @pytest.fixture
 def patch_ansible_module(request, mocker):
