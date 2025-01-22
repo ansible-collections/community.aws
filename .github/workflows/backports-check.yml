@@ -8,10 +8,11 @@ on:
 
 jobs:
   check_patchback_comment:
-    if: >
-      ${{ github.event.pull_request.merged }} == true &&
-      github.event.comment.user.login == 'patchback' &&
+    if: ${{
+      github.event.issue.pull_request.merged_at &&
+      github.event.comment.user.login == 'patchback[bot]' &&
       contains(github.event.comment.body, '💔 cherry-picking failed')
+      }}
     runs-on: ubuntu-latest
 
     steps:
