@@ -25,16 +25,6 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
-# Magic...  Incorrectly identified by pylint as unused
-# isort: off
-# pylint: disable=unused-import
-
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import fixture_maybe_sleep
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import fixture_placeboify
-
-# pylint: enable=unused-import
-# isort: on
-
 from ansible_collections.community.aws.plugins.modules import data_pipeline
 
 if not HAS_BOTO3:
