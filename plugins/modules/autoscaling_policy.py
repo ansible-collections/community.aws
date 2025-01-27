@@ -494,10 +494,10 @@ def create_scaling_policy(connection, module):
         changed = True
     else:
         policy = policies[0]
-        for key in params:
+        for key, old_value in params.items():
             if params[key] != policy.get(key):
                 changed = True
-                before[key] = params[key]
+                before[key] = old_value
                 after[key] = policy.get(key)
 
     if changed:

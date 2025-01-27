@@ -756,8 +756,8 @@ def _global_index_changes(current_table):
     index_changes = list()
 
     # TODO (future) it would be nice to add support for deleting an index
-    for name in global_index_map:
-        idx = dict(_generate_index(global_index_map[name], include_throughput=include_throughput))
+    for name, current_value in global_index_map.items():
+        idx = dict(_generate_index(current_value, include_throughput=include_throughput))
         if name not in current_global_index_map:
             index_changes.append(dict(Create=idx))
         else:
@@ -765,7 +765,7 @@ def _global_index_changes(current_table):
             # TODO (future) it would be nice to throw a deprecation here
             # rather than dropping other changes on the floor
             _current = current_global_index_map[name]
-            _new = global_index_map[name]
+            _new = current_value
 
             if include_throughput:
                 change = dict(_throughput_changes(_current, _new))
@@ -943,7 +943,7 @@ def create_table():
         AttributeDefinitions=attributes,
         KeySchema=key_schema,
         Tags=tags,
-        BillingMode=billing_mode
+        BillingMode=billing_mode,
         # TODO (future)
         # StreamSpecification,
         # SSESpecification,

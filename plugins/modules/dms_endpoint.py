@@ -520,12 +520,12 @@ def compare_params(param_described):
     param_described.pop("Tags", None)
     modparams.pop("Tags", None)
     changed = False
-    for paramname in modparams:
+    for param_name, param_value in modparams.items():
         if (
-            paramname == "Password"
-            or paramname in param_described
-            and param_described[paramname] == modparams[paramname]
-            or str(param_described[paramname]).lower() == modparams[paramname]
+            param_name == "Password"
+            or param_name in param_described
+            and param_described[param_name] == param_value
+            or str(param_described[param_name]).lower() == param_value
         ):
             pass
         else:
