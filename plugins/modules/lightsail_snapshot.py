@@ -166,7 +166,7 @@ def create_snapshot(module, client):
 def delete_snapshot(module, client):
     snapshot = find_instance_snapshot_info(module, client, module.params.get("snapshot_name"))
     if module.check_mode or snapshot is None:
-        changed = not (snapshot is None)
+        changed = snapshot is not None
         instance = snapshot if changed else {}
         module.exit_json(changed=changed, instance=instance)
 
