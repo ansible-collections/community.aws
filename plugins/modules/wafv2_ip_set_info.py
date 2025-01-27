@@ -98,9 +98,9 @@ def list_ip_sets(wafv2, scope, fail_json_aws, Nextmarker=None):
     return response
 
 
-def get_ip_set(wafv2, name, scope, id, fail_json_aws):
+def get_ip_set(wafv2, name, scope, set_id, fail_json_aws):
     try:
-        response = wafv2.get_ip_set(Name=name, Scope=scope, Id=id)
+        response = wafv2.get_ip_set(Name=name, Scope=scope, Id=set_id)
     except (BotoCoreError, ClientError) as e:
         fail_json_aws(e, msg="Failed to get wafv2 ip set")
     return response
@@ -124,17 +124,17 @@ def main():
     # check if ip set exist
     response = list_ip_sets(wafv2, scope, module.fail_json_aws)
 
-    id = None
+    set_id = None
 
     for item in response.get("IPSets"):
         if item.get("Name") == name:
-            id = item.get("Id")
+            set_id = item.get("Id")
             arn = item.get("ARN")
 
     retval = {}
     existing_set = None
-    if id:
-        existing_set = get_ip_set(wafv2, name, scope, id, module.fail_json_aws)
+    if set_id:
+        existing_set = get_ip_set(wafv2, name, scope, set_id, module.fail_json_aws)
         retval = camel_dict_to_snake_dict(existing_set.get("IPSet"))
         retval["tags"] = describe_wafv2_tags(wafv2, arn, module.fail_json_aws) or {}
     module.exit_json(**retval)

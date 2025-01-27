@@ -335,7 +335,7 @@ class WebACL:
         self.name = name
         self.scope = scope
         self.fail_json_aws = fail_json_aws
-        self.existing_acl, self.id, self.locktoken = self.get_web_acl()
+        self.existing_acl, self.acl_id, self.locktoken = self.get_web_acl()
 
     def update(
         self,
@@ -350,7 +350,7 @@ class WebACL:
         req_obj = {
             "Name": self.name,
             "Scope": self.scope,
-            "Id": self.id,
+            "Id": self.acl_id,
             "DefaultAction": default_action,
             "Rules": rules,
             "VisibilityConfig": {
@@ -372,12 +372,14 @@ class WebACL:
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to update wafv2 web acl.")
 
-        self.existing_acl, self.id, self.locktoken = self.get_web_acl()
+        self.existing_acl, self.acl_id, self.locktoken = self.get_web_acl()
         return self.existing_acl
 
     def remove(self):
         try:
-            response = self.wafv2.delete_web_acl(Name=self.name, Scope=self.scope, Id=self.id, LockToken=self.locktoken)
+            response = self.wafv2.delete_web_acl(
+                Name=self.name, Scope=self.scope, Id=self.acl_id, LockToken=self.locktoken
+            )
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to remove wafv2 web acl.")
         return response
@@ -388,7 +390,7 @@ class WebACL:
         return None
 
     def get_web_acl(self):
-        id = None
+        acl_id = None
         locktoken = None
         arn = None
         existing_acl = None
@@ -396,18 +398,18 @@ class WebACL:
 
         for item in response.get("WebACLs"):
             if item.get("Name") == self.name:
-                id = item.get("Id")
+                acl_id = item.get("Id")
                 locktoken = item.get("LockToken")
                 arn = item.get("ARN")
 
-        if id:
+        if acl_id:
             try:
-                existing_acl = self.wafv2.get_web_acl(Name=self.name, Scope=self.scope, Id=id)
+                existing_acl = self.wafv2.get_web_acl(Name=self.name, Scope=self.scope, Id=acl_id)
             except (BotoCoreError, ClientError) as e:
                 self.fail_json_aws(e, msg="Failed to get wafv2 web acl.")
             tags = describe_wafv2_tags(self.wafv2, arn, self.fail_json_aws)
             existing_acl["tags"] = tags
-        return existing_acl, id, locktoken
+        return existing_acl, acl_id, locktoken
 
     def list(self):
         return wafv2_list_web_acls(self.wafv2, self.scope, self.fail_json_aws)
@@ -447,7 +449,7 @@ class WebACL:
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to create wafv2 web acl.")
 
-        self.existing_acl, self.id, self.locktoken = self.get_web_acl()
+        self.existing_acl, self.acl_id, self.locktoken = self.get_web_acl()
         return self.existing_acl
 
 
@@ -544,7 +546,7 @@ def main():
                     custom_response_bodies,
                 )
             elif tags_changed:
-                retval, id, locktoken = web_acl.get_web_acl()
+                retval, acl_id, locktoken = web_acl.get_web_acl()
             else:
                 retval = web_acl.get()
 

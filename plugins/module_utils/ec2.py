@@ -55,7 +55,7 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
     # If the resource supports using "TagSpecifications" on creation we can
     TAGS_ON_CREATE = "TagSpecifications"
 
-    def __init__(self, module, id=None):
+    def __init__(self, module, resource_id=None):
         r"""
         Parameters:
             module (AnsibleAWSModule): An Ansible module.
@@ -63,7 +63,7 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
         super(BaseEc2Manager, self).__init__(module)
         self.client = self._create_client()
         self._tagging_updates = dict()
-        self.resource_id = id
+        self.resource_id = resource_id
 
         # Name parameter is unique (by region) and can not be modified.
         if self.resource_id:
@@ -97,22 +97,22 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
         return paginator.paginate(**params).build_full_result()
 
     @Boto3Mixin.aws_error_handler("list tags on resource")
-    def _describe_tags(self, id=None):
-        if not id:
-            id = self.resource_id
-        filters = ansible_dict_to_boto3_filter_list({"resource-id": id})
+    def _describe_tags(self, resource_id=None):
+        if not resource_id:
+            resource_id = self.resource_id
+        filters = ansible_dict_to_boto3_filter_list({"resource-id": resource_id})
         tags = self._paginated_describe_tags(Filters=filters)
         return tags
 
-    def _get_tags(self, id=None):
-        if id is None:
-            id = self.resource_id
+    def _get_tags(self, resource_id=None):
+        if resource_id is None:
+            resource_id = self.resource_id
         # If the Tags are available from the resource, then use them
         if self.TAGS_ON_RESOURCE:
             tags = self._preupdate_resource.get("Tags", [])
         # Otherwise we'll have to look them up
         else:
-            tags = self._describe_tags(id=id)
+            tags = self._describe_tags(resource_id=resource_id)
         return boto3_tag_list_to_ansible_dict(tags)
 
     def _do_tagging(self):
