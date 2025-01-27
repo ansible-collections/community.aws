@@ -506,8 +506,7 @@ def wait_for_status(connection, module, target_group_arn, targets, status):
             if response["TargetHealthDescriptions"][0]["TargetHealth"]["State"] == status:
                 status_achieved = True
                 break
-            else:
-                time.sleep(polling_increment_secs)
+            time.sleep(polling_increment_secs)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't describe target health")
 

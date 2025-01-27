@@ -169,8 +169,7 @@ class CloudfrontResponseHeadersPolicyService(object):
                     # as the list_ request does not contain the Etag (which we need), we need to do another get_ request here
                     matching_policy = self.client.get_response_headers_policy(Id=policy["ResponseHeadersPolicy"]["Id"])
                     break
-                else:
-                    matching_policy = None
+                matching_policy = None
 
             return matching_policy
         except (ClientError, BotoCoreError) as e:

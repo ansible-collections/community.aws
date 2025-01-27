@@ -298,7 +298,7 @@ def wait_for_status(client, stream_name, status, wait_timeout=300, check_mode=Fa
                 status_achieved = True
                 break
 
-            elif status != "DELETING":
+            if status != "DELETING":
                 if find_success and stream:
                     if stream.get("StreamStatus") == status:
                         status_achieved = True

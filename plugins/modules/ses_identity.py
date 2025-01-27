@@ -275,16 +275,17 @@ def get_identity_notifications(connection, module, identity, retries=0, retryDel
         # See: https://github.com/ansible/ansible/issues/36065
         if identity in notification_attributes:
             break
-        else:
-            # Paranoia check for coding errors, we only requested one identity, so if we get a different one
-            # something has gone very wrong.
-            if len(notification_attributes) != 0:
-                module.fail_json(
-                    msg="Unexpected identity found in notification attributes, expected {0} but got {1!r}.".format(
-                        identity,
-                        notification_attributes.keys(),
-                    )
+
+        # Paranoia check for coding errors, we only requested one identity, so if we get a different one
+        # something has gone very wrong.
+        if len(notification_attributes) != 0:
+            module.fail_json(
+                msg="Unexpected identity found in notification attributes, expected {0} but got {1!r}.".format(
+                    identity,
+                    notification_attributes.keys(),
                 )
+            )
+
         time.sleep(retryDelay)
     if identity not in notification_attributes:
         return None

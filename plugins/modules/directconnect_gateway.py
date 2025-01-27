@@ -135,8 +135,7 @@ def wait_for_status(client, module, gateway_id, virtual_gateway_id, status):
                 if response["directConnectGatewayAssociations"][0]["associationState"] == status:
                     status_achieved = True
                     break
-                else:
-                    time.sleep(polling_increment_secs)
+                time.sleep(polling_increment_secs)
             else:
                 status_achieved = True
                 break
