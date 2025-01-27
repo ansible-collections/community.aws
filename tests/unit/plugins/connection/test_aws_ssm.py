@@ -12,10 +12,64 @@ from ansible.plugins.loader import connection_loader
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 if not HAS_BOTO3:
-    pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
+    pytestmark = pytest.mark.skip(
+        "test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
 
 
 class TestConnectionBaseClass:
+    @patch("boto3.client")
+    def test_initialize_ssm_client(self, mock_boto_client):
+        """Test _initialize_ssm_client method."""
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock the get_option method
+        conn.get_option = MagicMock()
+        conn.get_option.side_effect = ["us-east-1", "default"]
+
+        # Call the _initialize_ssm_client method
+        conn._initialize_ssm_client()
+
+        # Assert boto3 client was initialized correctly
+        mock_boto_client.assert_called_with(
+            "ssm", region_name="us-east-1", profile_name="default"
+        )
+
+    @patch("boto3.client")
+    def test_initialize_s3_client(self, mock_boto_client):
+        """Test _initialize_s3_client method."""
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock the get_option method
+        conn.get_option = MagicMock()
+        conn.get_option.side_effect = [
+            "bucket_name",
+            "us-east-1",
+            "default",
+            None,
+            None,
+        ]
+
+        # Mock the S3 client to return a valid endpoint
+        mock_s3_client = MagicMock()
+        mock_s3_client.meta.endpoint_url = "https://mock-bucket-endpoint"
+        mock_s3_client.meta.region_name = "us-east-1"
+        mock_s3_client.head_bucket.return_value = {
+            "ResponseMetadata": {"HTTPHeaders": {"x-amz-bucket-region": "us-east-1"}}
+        }
+        mock_boto_client.return_value = mock_s3_client
+
+        # Call the _initialize_s3_client method
+        conn._initialize_s3_client()
+
+        # Assert S3 client was initialized correctly
+        mock_boto_client.assert_any_call(
+            "s3", region_name="us-east-1", profile_name="default"
+        )
+
     @patch("os.path.exists")
     @patch("subprocess.Popen")
     @patch("select.poll")
@@ -48,7 +102,8 @@ class TestConnectionBaseClass:
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
-        r_choice.side_effect = ["a", "a", "a", "a", "a", "b", "b", "b", "b", "b"]
+        r_choice.side_effect = ["a", "a", "a",
+                                "a", "a", "b", "b", "b", "b", "b"]
         conn.MARK_LENGTH = 5
         conn._session = MagicMock()
         conn._session.stdin.write = MagicMock()
@@ -67,7 +122,8 @@ class TestConnectionBaseClass:
         conn._session.stdout.readline = MagicMock()
         conn._post_process = MagicMock()
         conn._post_process.return_value = "test"
-        conn._session.stdout.readline.side_effect = iter(["aaaaa\n", "Hi\n", "0\n", "bbbbb\n"])
+        conn._session.stdout.readline.side_effect = iter(
+            ["aaaaa\n", "Hi\n", "0\n", "bbbbb\n"])
         conn.get_option = MagicMock()
         conn.get_option.return_value = 1
         returncode = "a"
