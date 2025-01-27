@@ -206,11 +206,10 @@ class SGWInformationManager(object):
 
         self.module.exit_json(gateways=gateways)
 
-    """
-    List all storage gateways for the AWS endpoint.
-    """
-
     def list_gateways(self):
+        """
+        List all storage gateways for the AWS endpoint.
+        """
         try:
             paginator = self.client.get_paginator("list_gateways")
             response = paginator.paginate(
@@ -228,13 +227,12 @@ class SGWInformationManager(object):
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Couldn't list storage gateways")
 
-    """
-    Read file share objects from AWS API response.
-    Drop the gateway_arn attribute from response, as it will be duplicate with parent object.
-    """
-
     @staticmethod
     def _read_gateway_fileshare_response(fileshares, aws_reponse):
+        """
+        Read file share objects from AWS API response.
+        Drop the gateway_arn attribute from response, as it will be duplicate with parent object.
+        """
         for share in aws_reponse["FileShareInfoList"]:
             share_obj = camel_dict_to_snake_dict(share)
             if "gateway_arn" in share_obj:
@@ -243,11 +241,10 @@ class SGWInformationManager(object):
 
         return aws_reponse["NextMarker"] if "NextMarker" in aws_reponse else None
 
-    """
-    List file shares attached to AWS storage gateway when in S3 mode.
-    """
-
     def list_gateway_file_shares(self, gateway):
+        """
+        List file shares attached to AWS storage gateway when in S3 mode.
+        """
         try:
             response = self.client.list_file_shares(GatewayARN=gateway["gateway_arn"], Limit=100)
 
@@ -261,11 +258,10 @@ class SGWInformationManager(object):
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Couldn't list gateway file shares")
 
-    """
-    List storage gateway local disks
-    """
-
     def list_local_disks(self, gateway):
+        """
+        List storage gateway local disks
+        """
         try:
             gateway["local_disks"] = [
                 camel_dict_to_snake_dict(disk)
@@ -274,13 +270,12 @@ class SGWInformationManager(object):
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Couldn't list storage gateway local disks")
 
-    """
-    Read tape objects from AWS API response.
-    Drop the gateway_arn attribute from response, as it will be duplicate with parent object.
-    """
-
     @staticmethod
     def _read_gateway_tape_response(tapes, aws_response):
+        """
+        Read tape objects from AWS API response.
+        Drop the gateway_arn attribute from response, as it will be duplicate with parent object.
+        """
         for tape in aws_response["TapeInfos"]:
             tape_obj = camel_dict_to_snake_dict(tape)
             if "gateway_arn" in tape_obj:
@@ -289,11 +284,10 @@ class SGWInformationManager(object):
 
         return aws_response["Marker"] if "Marker" in aws_response else None
 
-    """
-    List VTL & VTS attached to AWS storage gateway in VTL mode
-    """
-
     def list_gateway_vtl(self, gateway):
+        """
+        List VTL & VTS attached to AWS storage gateway in VTL mode
+        """
         try:
             response = self.client.list_tapes(Limit=100)
 
@@ -307,11 +301,10 @@ class SGWInformationManager(object):
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Couldn't list storage gateway tapes")
 
-    """
-    List volumes attached to AWS storage gateway in CACHED or STORAGE mode
-    """
-
     def list_gateway_volumes(self, gateway):
+        """
+        List volumes attached to AWS storage gateway in CACHED or STORAGE mode
+        """
         try:
             paginator = self.client.get_paginator("list_volumes")
             response = paginator.paginate(
