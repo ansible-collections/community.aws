@@ -163,17 +163,14 @@ class CloudfrontResponseHeadersPolicyService(object):
     def find_response_headers_policy(self, name):
         try:
             policies = self.client.list_response_headers_policies()["ResponseHeadersPolicyList"]["Items"]
-
             for policy in policies:
                 if policy["ResponseHeadersPolicy"]["ResponseHeadersPolicyConfig"]["Name"] == name:
                     # as the list_ request does not contain the Etag (which we need), we need to do another get_ request here
-                    matching_policy = self.client.get_response_headers_policy(Id=policy["ResponseHeadersPolicy"]["Id"])
-                    break
-                matching_policy = None
+                    return self.client.get_response_headers_policy(Id=policy["ResponseHeadersPolicy"]["Id"])
 
-            return matching_policy
         except (ClientError, BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error fetching policy information")
+        return None
 
     def create_response_header_policy(self, name, comment, cors_config, security_headers_config, custom_headers_config):
         cors_config = snake_dict_to_camel_dict(cors_config, capitalize_first=True)
