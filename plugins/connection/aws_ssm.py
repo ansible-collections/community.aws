@@ -17,9 +17,11 @@ from ansible.errors import AnsibleError
 from ansible.errors import AnsibleConnectionFailure
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from functools import wraps
+from typing import Optional, Tuple
 import time
 import subprocess
 import string
+
 import select
 import re
 import random
@@ -27,6 +29,7 @@ import pty
 import json
 import getpass
 import os
+
 DOCUMENTATION = r"""
 name: aws_ssm
 author:
@@ -345,11 +348,12 @@ def _ssm_retry(func):
                 pause = min(pause, 30)
 
                 if isinstance(e, AnsibleConnectionFailure):
-                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), pausing for {
-                        pause} seconds"
+                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), " f"pausing for {pause} seconds"
                 else:
-                    msg = f"ssm_retry: attempt: {attempt}, caught exception({e}) from cmd ({
-                        cmd_summary}), pausing for {pause} seconds"
+                    msg = (
+                        f"ssm_retry: attempt: {attempt}, caught exception({e})"
+                        f"from cmd ({cmd_summary}),pausing for {pause} seconds"
+                    )
 
                 self._vv(msg)
 
@@ -438,10 +442,9 @@ class Connection(ConnectionBase):
         # Initialize S3 client
         self._initialize_s3_client(profile_name)
 
-        def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
-            """
+    def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
+        """
         Initializes the SSM client used to manage sessions.
-
         Args:
             region_name (Optional[str]): AWS region for the SSM client.
             profile_name (str): AWS profile name for authentication.
@@ -449,6 +452,7 @@ class Connection(ConnectionBase):
         Returns:
             None
         """
+
         self._vvvv("SETUP BOTO3 CLIENTS: SSM")
         self._client = self._get_boto_client(
             "ssm",
@@ -456,8 +460,8 @@ class Connection(ConnectionBase):
             profile_name=profile_name,
         )
 
-        def _initialize_s3_client(self, profile_name: str) -> None:
-            """
+    def _initialize_s3_client(self, profile_name: str) -> None:
+        """
         Initializes the S3 client used for accessing S3 buckets.
 
         Args:
@@ -466,6 +470,7 @@ class Connection(ConnectionBase):
         Returns:
             None
         """
+
         s3_endpoint_url, s3_region_name = self._get_bucket_endpoint()
         self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
         self._s3_client = self._get_boto_client(
@@ -515,8 +520,7 @@ class Connection(ConnectionBase):
         head_bucket = tmp_s3_client.head_bucket(
             Bucket=(self.get_option("bucket_name")),
         )
-        bucket_region = head_bucket.get("ResponseMetadata", {}).get(
-            "HTTPHeaders", {}).get("x-amz-bucket-region", None)
+        bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
         if bucket_region is None:
             bucket_region = "us-east-1"
 
@@ -524,8 +528,7 @@ class Connection(ConnectionBase):
             return self.get_option("bucket_endpoint_url"), bucket_region
 
         # Create another client for the region the bucket lives in, so we can nab the endpoint URL
-        self._vvvv(
-            f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
+        self._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
         s3_bucket_client = self._get_boto_client(
             "s3",
             region_name=bucket_region,
@@ -552,8 +555,7 @@ class Connection(ConnectionBase):
 
         executable = self.get_option("plugin")
         if not os.path.exists(to_bytes(executable, errors="surrogate_or_strict")):
-            raise AnsibleError(
-                f"failed to find the executable specified {executable}.")
+            raise AnsibleError(f"failed to find the executable specified {executable}.")
 
         self._init_clients()
 
@@ -612,14 +614,12 @@ class Connection(ConnectionBase):
 
         session = self._session
 
-        mark_begin = "".join([random.choice(string.ascii_letters)
-                             for i in xrange(self.MARK_LENGTH)])
+        mark_begin = "".join([random.choice(string.ascii_letters) for i in xrange(self.MARK_LENGTH)])
         if self.is_windows:
             mark_start = mark_begin + " $LASTEXITCODE"
         else:
             mark_start = mark_begin
-        mark_end = "".join([random.choice(string.ascii_letters)
-                           for i in xrange(self.MARK_LENGTH)])
+        mark_end = "".join([random.choice(string.ascii_letters) for i in xrange(self.MARK_LENGTH)])
 
         # Wrap command in markers accordingly for the shell used
         cmd = self._wrap_command(cmd, sudoable, mark_start, mark_end)
@@ -639,8 +639,7 @@ class Connection(ConnectionBase):
             if remaining < 1:
                 self._timeout = True
                 self._vvvv(f"EXEC timeout stdout: \n{to_text(stdout)}")
-                raise AnsibleConnectionFailure(
-                    f"SSM exec_command timeout on host: {self.instance_id}")
+                raise AnsibleConnectionFailure(f"SSM exec_command timeout on host: {self.instance_id}")
             if self._poll_stdout.poll(1000):
                 line = self._filter_ansi(self._stdout.readline())
                 self._vvvv(f"EXEC stdout line: \n{to_text(line)}")
@@ -682,18 +681,15 @@ class Connection(ConnectionBase):
 
         startup_complete = False
         disable_echo_complete = None
-        disable_echo_cmd = to_bytes(
-            "stty -echo\n", errors="surrogate_or_strict")
+        disable_echo_cmd = to_bytes("stty -echo\n", errors="surrogate_or_strict")
 
         disable_prompt_complete = None
-        end_mark = "".join([random.choice(string.ascii_letters)
-                           for i in xrange(self.MARK_LENGTH)])
+        end_mark = "".join([random.choice(string.ascii_letters) for i in xrange(self.MARK_LENGTH)])
         disable_prompt_cmd = to_bytes(
             "PS1='' ; bind 'set enable-bracketed-paste off'; printf '\\n%s\\n' '" + end_mark + "'\n",
             errors="surrogate_or_strict",
         )
-        disable_prompt_reply = re.compile(
-            r"\r\r\n" + re.escape(end_mark) + r"\r\r\n", re.MULTILINE)
+        disable_prompt_reply = re.compile(r"\r\r\n" + re.escape(end_mark) + r"\r\r\n", re.MULTILINE)
 
         stdout = ""
         # Custom command execution for when we're waiting for startup
@@ -703,8 +699,7 @@ class Connection(ConnectionBase):
             if remaining < 1:
                 self._timeout = True
                 self._vvvv(f"PRE timeout stdout: \n{to_bytes(stdout)}")
-                raise AnsibleConnectionFailure(
-                    f"SSM start_session timeout on host: {self.instance_id}")
+                raise AnsibleConnectionFailure(f"SSM start_session timeout on host: {self.instance_id}")
             if self._poll_stdout.poll(1000):
                 stdout += to_text(self._stdout.read(1024))
                 self._vvvv(f"PRE stdout line: \n{to_bytes(stdout)}")
@@ -742,8 +737,7 @@ class Connection(ConnectionBase):
                     disable_prompt_complete = True
 
         if not disable_prompt_complete:
-            raise AnsibleConnectionFailure(
-                f"SSM process closed during _prepare_terminal on host: {self.instance_id}")
+            raise AnsibleConnectionFailure(f"SSM process closed during _prepare_terminal on host: {self.instance_id}")
         self._vvvv("PRE Terminal configured")
 
     def _wrap_command(self, cmd, sudoable, mark_start, mark_end):
@@ -861,8 +855,7 @@ class Connection(ConnectionBase):
             endpoint_url=endpoint_url,
             config=Config(
                 signature_version="s3v4",
-                s3={"addressing_style": self.get_option(
-                    "s3_addressing_style")},
+                s3={"addressing_style": self.get_option("s3_addressing_style")},
             ),
         )
         return client
@@ -877,24 +870,20 @@ class Connection(ConnectionBase):
             return put_args, put_headers
 
         put_args["ServerSideEncryption"] = self.get_option("bucket_sse_mode")
-        put_headers["x-amz-server-side-encryption"] = self.get_option(
-            "bucket_sse_mode")
+        put_headers["x-amz-server-side-encryption"] = self.get_option("bucket_sse_mode")
         if self.get_option("bucket_sse_mode") == "aws:kms" and self.get_option("bucket_sse_kms_key_id"):
             put_args["SSEKMSKeyId"] = self.get_option("bucket_sse_kms_key_id")
-            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option(
-                "bucket_sse_kms_key_id")
+            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option("bucket_sse_kms_key_id")
         return put_args, put_headers
 
     def _generate_commands(self, bucket_name, s3_path, in_path, out_path):
         put_args, put_headers = self._generate_encryption_settings()
 
-        put_url = self._get_url("put_object", bucket_name,
-                                s3_path, "PUT", extra_args=put_args)
+        put_url = self._get_url("put_object", bucket_name, s3_path, "PUT", extra_args=put_args)
         get_url = self._get_url("get_object", bucket_name, s3_path, "GET")
 
         if self.is_windows:
-            put_command_headers = "; ".join(
-                [f"'{h}' = '{v}'" for h, v in put_headers.items()])
+            put_command_headers = "; ".join([f"'{h}' = '{v}'" for h, v in put_headers.items()])
             put_commands = [
                 (
                     "Invoke-WebRequest -Method PUT "
@@ -913,8 +902,7 @@ class Connection(ConnectionBase):
                 ),
             ]  # fmt: skip
         else:
-            put_command_headers = " ".join(
-                [f"-H '{h}: {v}'" for h, v in put_headers.items()])
+            put_command_headers = " ".join([f"-H '{h}: {v}'" for h, v in put_headers.items()])
             put_commands = [
                 (
                     "curl --request PUT "
@@ -945,13 +933,11 @@ class Connection(ConnectionBase):
     def _exec_transport_commands(self, in_path, out_path, commands):
         stdout_combined, stderr_combined = "", ""
         for command in commands:
-            (returncode, stdout, stderr) = self.exec_command(
-                command, in_data=None, sudoable=False)
+            (returncode, stdout, stderr) = self.exec_command(command, in_data=None, sudoable=False)
 
             # Check the return code
             if returncode != 0:
-                raise AnsibleError(f"failed to transfer file to {in_path} {
-                                   out_path}:\n{stdout}\n{stderr}")
+                raise AnsibleError(f"failed to transfer file to {in_path}" f"{out_path}:\n{stdout}\n{stderr}")
 
             stdout_combined += stdout
             stderr_combined += stderr
@@ -976,16 +962,13 @@ class Connection(ConnectionBase):
 
         try:
             if ssm_action == "get":
-                (returncode, stdout, stderr) = self._exec_transport_commands(
-                    in_path, out_path, put_commands)
+                (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, put_commands)
                 with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
                     client.download_fileobj(bucket_name, s3_path, data)
             else:
                 with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
-                    client.upload_fileobj(
-                        data, bucket_name, s3_path, ExtraArgs=put_args)
-                (returncode, stdout, stderr) = self._exec_transport_commands(
-                    in_path, out_path, get_commands)
+                    client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
+                (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, get_commands)
             return (returncode, stdout, stderr)
         finally:
             # Remove the files from the bucket after they've been transferred
@@ -998,8 +981,7 @@ class Connection(ConnectionBase):
 
         self._vvv(f"PUT {in_path} TO {out_path}")
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
-            raise AnsibleFileNotFound(
-                f"file or module does not exist: {in_path}")
+            raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
         return self._file_transport_command(in_path, out_path, "put")
 
