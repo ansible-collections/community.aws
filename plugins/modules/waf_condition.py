@@ -739,7 +739,7 @@ def main():
     argument_spec = dict(
         name=dict(required=True),
         type=dict(required=True, choices=["byte", "geo", "ip", "regex", "size", "sql", "xss"]),
-        filters=dict(type="list", elements="dict"),
+        filters=dict(type="list", elements="dict", options=filters_subspec),
         purge_filters=dict(type="bool", default=False),
         waf_regional=dict(type="bool", default=False),
         state=dict(default="present", choices=["present", "absent"]),
