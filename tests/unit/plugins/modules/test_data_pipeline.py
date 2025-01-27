@@ -45,8 +45,8 @@ class FailException(Exception):
     pass
 
 
-@pytest.fixture(scope="module")
-def dp_setup():
+@pytest.fixture(scope="module", name="dp_setup")
+def fixture_dp_setup():
     """
     Yield a FakeModule object, data pipeline id of a vanilla data pipeline, and data pipeline objects
 

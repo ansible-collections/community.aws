@@ -168,11 +168,11 @@ DETECT_TASK_RESULTS_DATA = [
 
 
 @pytest.mark.parametrize(
-    "input, expected",
+    "input_value, expected",
     DETECT_TASK_RESULTS_DATA,
 )
-def test_detect_task_results(input, expected):
-    assert list(detect_task_results(input)) == expected
+def test_detect_task_results(input_value, expected):
+    assert list(detect_task_results(input_value)) == expected
 
 
 DETECT_TASK_RESULTS_FAIL_DATA = [
@@ -225,13 +225,13 @@ DETECT_TASK_RESULTS_FAIL_DATA = [
 
 
 @pytest.mark.parametrize(
-    "input, expected_exc, expected_result",
+    "input_value, expected_exc, expected_result",
     DETECT_TASK_RESULTS_FAIL_DATA,
 )
-def test_detect_task_fail_results(input, expected_exc, expected_result):
+def test_detect_task_fail_results(input_value, expected_exc, expected_result):
     result = []
     with pytest.raises(ValueError) as exc:
-        for res in detect_task_results(input):
+        for res in detect_task_results(input_value):
             result.append(res)
 
     print(exc.value.args[0])

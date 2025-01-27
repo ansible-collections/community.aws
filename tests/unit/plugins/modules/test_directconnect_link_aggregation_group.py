@@ -36,8 +36,8 @@ if not HAS_BOTO3:
     )
 
 
-@pytest.fixture(scope="module")
-def dependencies():
+@pytest.fixture(scope="module", name="dependencies")
+def fixture_dependencies():
     # each LAG dict will contain the keys: module, connections, virtual_interfaces
     Dependencies = collections.namedtuple("Dependencies", ["lag_1", "lag_2"])
     lag_1 = dict()
