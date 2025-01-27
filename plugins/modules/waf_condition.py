@@ -734,7 +734,13 @@ def main():
         target_string=dict(),  # Bytes
         size=dict(type="int"),
         ip_address=dict(),
-        regex_pattern=dict(),
+        regex_pattern=dict(
+            type="dict",
+            options=dict(
+                name=dict(),
+                regex_strings=dict(type="list", elements="str"),
+            ),
+        ),
     )
     argument_spec = dict(
         name=dict(required=True),
