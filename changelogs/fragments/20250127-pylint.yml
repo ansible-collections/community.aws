@@ -1,3 +1,4 @@
 ---
 minor_changes:
   - various modules - linting fixups (https://github.com/ansible-collections/community.aws/pull/2221).
+  - dms_endpoint - improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
