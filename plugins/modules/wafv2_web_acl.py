@@ -368,7 +368,7 @@ class WebACL:
             req_obj["CustomResponseBodies"] = custom_response_bodies
 
         try:
-            response = self.wafv2.update_web_acl(**req_obj)
+            self.wafv2.update_web_acl(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to update wafv2 web acl.")
 
@@ -443,7 +443,7 @@ class WebACL:
             req_obj["Tags"] = ansible_dict_to_boto3_tag_list(tags)
 
         try:
-            response = self.wafv2.create_web_acl(**req_obj)
+            self.wafv2.create_web_acl(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to create wafv2 web acl.")
 

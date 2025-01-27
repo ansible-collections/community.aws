@@ -106,7 +106,7 @@ def resource_exists(client, module, params):
 
 def create_resource(client, module, params, result):
     try:
-        response = client.put_configuration_recorder(ConfigurationRecorder=params)
+        client.put_configuration_recorder(ConfigurationRecorder=params)
         result["changed"] = True
         result["recorder"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
         return result
@@ -119,7 +119,7 @@ def update_resource(client, module, params, result):
 
     if params != current_params["ConfigurationRecorders"][0]:
         try:
-            response = client.put_configuration_recorder(ConfigurationRecorder=params)
+            client.put_configuration_recorder(ConfigurationRecorder=params)
             result["changed"] = True
             result["recorder"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
             return result
@@ -129,7 +129,7 @@ def update_resource(client, module, params, result):
 
 def delete_resource(client, module, params, result):
     try:
-        response = client.delete_configuration_recorder(ConfigurationRecorderName=params["name"])
+        client.delete_configuration_recorder(ConfigurationRecorderName=params["name"])
         result["changed"] = True
         return result
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

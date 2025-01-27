@@ -174,7 +174,7 @@ def update_resource(client, module, params, result):
 
 def delete_resource(client, module, params, result):
     try:
-        response = client.delete_delivery_channel(DeliveryChannelName=params["name"])
+        client.delete_delivery_channel(DeliveryChannelName=params["name"])
         result["changed"] = True
         return result
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

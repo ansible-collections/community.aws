@@ -523,7 +523,7 @@ def run(ecr, params):
                 if scan_on_push != original_scan_on_push["imageScanningConfiguration"]["scanOnPush"]:
                     result["changed"] = True
                     result["repository"]["imageScanningConfiguration"]["scanOnPush"] = scan_on_push
-                    response = ecr.put_image_scanning_configuration(registry_id, name, scan_on_push)
+                    ecr.put_image_scanning_configuration(registry_id, name, scan_on_push)
 
         elif state == "absent":
             result["name"] = name

@@ -125,7 +125,7 @@ def create_or_update_bucket_cors(connection, module):
 
     if changed:
         try:
-            cors = connection.put_bucket_cors(Bucket=name, CORSConfiguration={"CORSRules": new_camel_rules})
+            connection.put_bucket_cors(Bucket=name, CORSConfiguration={"CORSRules": new_camel_rules})
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg=f"Unable to update CORS for bucket {name}")
 
@@ -137,7 +137,7 @@ def destroy_bucket_cors(connection, module):
     changed = False
 
     try:
-        cors = connection.delete_bucket_cors(Bucket=name)
+        connection.delete_bucket_cors(Bucket=name)
         changed = True
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg=f"Unable to delete CORS for bucket {name}")

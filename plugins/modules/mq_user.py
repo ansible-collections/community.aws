@@ -98,7 +98,7 @@ import secrets
 
 try:
     import botocore
-except ImportError as ex:
+except ImportError:
     # handled by AnsibleAWSModule
     pass
 
@@ -209,7 +209,7 @@ def ensure_user_present(conn, module):
             if not module.check_mode:
                 kwargs["BrokerId"] = module.params["broker_id"]
                 kwargs["Username"] = module.params["username"]
-                response = _update_user(conn, module, kwargs)
+                _update_user(conn, module, kwargs)
             #
             changed = True
     #

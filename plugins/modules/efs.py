@@ -248,7 +248,7 @@ from time import time as timestamp
 
 try:
     import botocore
-except ImportError as e:
+except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
@@ -501,7 +501,7 @@ class EFSConnection(object):
             else:
                 LifecyclePolicies = [{"TransitionToIA": "AFTER_" + transition_to_ia + "_DAYS"}]
             if current_policies.get("LifecyclePolicies") != LifecyclePolicies:
-                response = self.connection.put_lifecycle_configuration(
+                self.connection.put_lifecycle_configuration(
                     FileSystemId=fs_id,
                     LifecyclePolicies=LifecyclePolicies,
                 )

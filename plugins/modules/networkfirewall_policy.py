@@ -395,8 +395,6 @@ def main():
     manager.set_wait(module.params.get("wait", None))
     manager.set_wait_timeout(module.params.get("wait_timeout", None))
 
-    rule_order = module.params.get("stateful_rule_order")
-
     if state == "absent":
         manager.delete()
     else:
@@ -406,7 +404,7 @@ def main():
         manager.set_custom_stateless_actions(
             module.params.get("stateless_custom_actions", None),
             module.params.get("purge_stateless_custom_actions", True),
-        ),
+        )
         manager.set_stateful_rule_order(module.params.get("stateful_rule_order", None))
         manager.set_stateful_rule_groups(module.params.get("stateful_rule_groups", None))
         manager.set_stateless_rule_groups(module.params.get("stateless_rule_groups", None))

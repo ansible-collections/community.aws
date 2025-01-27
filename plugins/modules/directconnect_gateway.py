@@ -304,7 +304,6 @@ def ensure_absent(client, module):
     # then a match is considered to have been found and we will not create another dxgw.
 
     changed = False
-    result = dict()
     dx_gateway_id = module.params.get("direct_connect_gateway_id")
     existing_dxgw = find_dx_gateway(client, module, dx_gateway_id)
     if existing_dxgw is not None:
@@ -333,7 +332,6 @@ def ensure_absent(client, module):
             )
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Failed to delete gateway")
-        result = resp["directConnectGateway"]
     return changed
 
 

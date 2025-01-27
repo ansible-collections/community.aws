@@ -271,7 +271,7 @@ def deregister_target(connection, module):
         try:
             deregister_target_with_backoff(connection, target_group_arn, target)
             changed = True
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError):
             module.fail_json(msg=f"Unable to deregister target {target}")
     else:
         if current_target_reason != "Target.NotRegistered" and current_target_state != "draining":

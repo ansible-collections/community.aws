@@ -835,7 +835,7 @@ def create_or_update_target_group(connection, module):
 
                         if changed:
                             if target.get("Id"):
-                                response = connection.register_targets(
+                                connection.register_targets(
                                     TargetGroupArn=target_group["TargetGroupArn"],
                                     Targets=[{"Id": target["Id"]}],
                                     aws_retry=True,
@@ -916,7 +916,7 @@ def create_or_update_target_group(connection, module):
             else:
                 try:
                     target = module.params.get("targets")[0]
-                    response = connection.register_targets(
+                    connection.register_targets(
                         TargetGroupArn=target_group["TargetGroupArn"], Targets=[{"Id": target["Id"]}], aws_retry=True
                     )
                     changed = True

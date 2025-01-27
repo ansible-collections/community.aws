@@ -120,7 +120,6 @@ def main():
         supports_check_mode=True,
     )
 
-    state = module.params.get("state")
     name = module.params.get("name")
     scope = module.params.get("scope")
 

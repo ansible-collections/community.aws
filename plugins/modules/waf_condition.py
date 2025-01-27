@@ -694,7 +694,7 @@ class Condition(object):
             update["Updates"] = missing + extra
             func = getattr(self.client, "update_" + self.method_suffix)
             try:
-                result = run_func_with_change_token_backoff(self.client, self.module, update, func, wait=True)
+                run_func_with_change_token_backoff(self.client, self.module, update, func, wait=True)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Could not update condition")
         return changed, self.get_condition_by_id(condition_set_id)

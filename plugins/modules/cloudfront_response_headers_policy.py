@@ -166,7 +166,6 @@ class CloudfrontResponseHeadersPolicyService(object):
 
             for policy in policies:
                 if policy["ResponseHeadersPolicy"]["ResponseHeadersPolicyConfig"]["Name"] == name:
-                    policy_id = policy["ResponseHeadersPolicy"]["Id"]
                     # as the list_ request does not contain the Etag (which we need), we need to do another get_ request here
                     matching_policy = self.client.get_response_headers_policy(Id=policy["ResponseHeadersPolicy"]["Id"])
                     break
