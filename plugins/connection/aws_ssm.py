@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position
 # -*- coding: utf-8 -*-
 
 # Copyright: (c) 2018, Pat Sharkey <psharkey@cleo.com>
@@ -5,30 +6,7 @@
 
 # Based on the ssh connection plugin by Michael DeHaan
 
-from ansible.utils.display import Display
-from ansible.plugins.shell.powershell import _common_args
-from ansible.plugins.connection import ConnectionBase
-from ansible.module_utils._text import to_text
-from ansible.module_utils._text import to_bytes
-from ansible.module_utils.six.moves import xrange
-from ansible.module_utils.basic import missing_required_lib
-from ansible.errors import AnsibleFileNotFound
-from ansible.errors import AnsibleError
-from ansible.errors import AnsibleConnectionFailure
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from functools import wraps
-from typing import Optional, Tuple
-import time
-import subprocess
-import string
 
-import select
-import re
-import random
-import pty
-import json
-import getpass
-import os
 
 DOCUMENTATION = r"""
 name: aws_ssm
@@ -310,6 +288,30 @@ EXAMPLES = r"""
         state: present
 """
 
+from ansible.utils.display import Display
+from ansible.plugins.shell.powershell import _common_args
+from ansible.plugins.connection import ConnectionBase
+from ansible.module_utils._text import to_text
+from ansible.module_utils._text import to_bytes
+from ansible.module_utils.six.moves import xrange
+from ansible.module_utils.basic import missing_required_lib
+from ansible.errors import AnsibleFileNotFound
+from ansible.errors import AnsibleError
+from ansible.errors import AnsibleConnectionFailure
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
+from functools import wraps
+from typing import Optional
+import time
+import subprocess
+import string
+
+import select
+import re
+import random
+import pty
+import json
+import getpass
+import os
 
 try:
     import boto3
