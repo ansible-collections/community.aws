@@ -6,7 +6,6 @@
 # Based on the ssh connection plugin by Michael DeHaan
 
 
-
 DOCUMENTATION = r"""
 name: aws_ssm
 author:
@@ -347,7 +346,7 @@ def _ssm_retry(func):
                 pause = min(pause, 30)
 
                 if isinstance(e, AnsibleConnectionFailure):
-                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), " f"pausing for {pause} seconds"
+                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), pausing for {pause} seconds"
                 else:
                     msg = (
                         f"ssm_retry: attempt: {attempt}, caught exception({e})"
@@ -936,7 +935,7 @@ class Connection(ConnectionBase):
 
             # Check the return code
             if returncode != 0:
-                raise AnsibleError(f"failed to transfer file to {in_path}" f"{out_path}:\n{stdout}\n{stderr}")
+                raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
 
             stdout_combined += stdout
             stderr_combined += stderr
