@@ -7,7 +7,6 @@
 # Based on the ssh connection plugin by Michael DeHaan
 
 
-
 DOCUMENTATION = r"""
 name: aws_ssm
 author:

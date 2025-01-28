@@ -12,12 +12,10 @@ from ansible.plugins.loader import connection_loader
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 if not HAS_BOTO3:
-    pytestmark = pytest.mark.skip(
-        "test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
+    pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
 
 
 class TestConnectionBaseClass:
-
     def test_init_clients(self):
         pc = PlayContext()
         new_stdin = StringIO()
@@ -39,8 +37,7 @@ class TestConnectionBaseClass:
 
         conn._init_clients()
 
-        conn._initialize_ssm_client.assert_called_once_with(
-            "us-east-1", "test-profile")
+        conn._initialize_ssm_client.assert_called_once_with("us-east-1", "test-profile")
         conn._initialize_s3_client.assert_called_once_with("test-profile")
 
     @patch("boto3.client")
@@ -81,8 +78,7 @@ class TestConnectionBaseClass:
         test_profile_name = "test-profile"
 
         # Mock the _get_bucket_endpoint method to return dummy values
-        conn._get_bucket_endpoint = MagicMock(
-            return_value=("http://example.com", "us-west-2"))
+        conn._get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
 
         conn._get_boto_client = MagicMock(return_value=mock_boto3_client)
 
@@ -131,8 +127,7 @@ class TestConnectionBaseClass:
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
-        r_choice.side_effect = ["a", "a", "a",
-                                "a", "a", "b", "b", "b", "b", "b"]
+        r_choice.side_effect = ["a", "a", "a", "a", "a", "b", "b", "b", "b", "b"]
         conn.MARK_LENGTH = 5
         conn._session = MagicMock()
         conn._session.stdin.write = MagicMock()
@@ -151,8 +146,7 @@ class TestConnectionBaseClass:
         conn._session.stdout.readline = MagicMock()
         conn._post_process = MagicMock()
         conn._post_process.return_value = "test"
-        conn._session.stdout.readline.side_effect = iter(
-            ["aaaaa\n", "Hi\n", "0\n", "bbbbb\n"])
+        conn._session.stdout.readline.side_effect = iter(["aaaaa\n", "Hi\n", "0\n", "bbbbb\n"])
         conn.get_option = MagicMock()
         conn.get_option.return_value = 1
         returncode = "a"
