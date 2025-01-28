@@ -75,7 +75,7 @@ def resource_exists(client, module, params):
 
 def create_resource(client, module, params, result):
     try:
-        response = client.put_aggregation_authorization(
+        client.put_aggregation_authorization(
             AuthorizedAccountId=params["AuthorizedAccountId"],
             AuthorizedAwsRegion=params["AuthorizedAwsRegion"],
         )
@@ -97,7 +97,7 @@ def update_resource(client, module, params, result):
 
     if params != current_params:
         try:
-            response = client.put_aggregation_authorization(
+            client.put_aggregation_authorization(
                 AuthorizedAccountId=params["AuthorizedAccountId"],
                 AuthorizedAwsRegion=params["AuthorizedAwsRegion"],
             )
@@ -109,7 +109,7 @@ def update_resource(client, module, params, result):
 
 def delete_resource(client, module, params, result):
     try:
-        response = client.delete_aggregation_authorization(
+        client.delete_aggregation_authorization(
             AuthorizedAccountId=params["AuthorizedAccountId"],
             AuthorizedAwsRegion=params["AuthorizedAwsRegion"],
         )

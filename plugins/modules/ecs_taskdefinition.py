@@ -820,7 +820,7 @@ class EcsTaskManager:
         try:
             response = self.ecs.describe_task_definition(aws_retry=True, taskDefinition=task_name)
             return response["taskDefinition"]
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError):
             return None
 
     def register_task(

@@ -135,7 +135,7 @@ class IpSet:
         self.name = name
         self.scope = scope
         self.fail_json_aws = fail_json_aws
-        self.existing_set, self.id, self.locktoken, self.arn = self.get_set()
+        self.existing_set, self.set_id, self.locktoken, self.arn = self.get_set()
 
     def description(self):
         return self.existing_set.get("Description")
@@ -150,7 +150,7 @@ class IpSet:
 
     def remove(self):
         try:
-            response = self.wafv2.delete_ip_set(Name=self.name, Scope=self.scope, Id=self.id, LockToken=self.locktoken)
+            self.wafv2.delete_ip_set(Name=self.name, Scope=self.scope, Id=self.set_id, LockToken=self.locktoken)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to remove wafv2 ip set.")
         return {}
@@ -170,18 +170,18 @@ class IpSet:
             req_obj["Tags"] = ansible_dict_to_boto3_tag_list(tags)
 
         try:
-            response = self.wafv2.create_ip_set(**req_obj)
+            self.wafv2.create_ip_set(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to create wafv2 ip set.")
 
-        self.existing_set, self.id, self.locktoken, self.arn = self.get_set()
+        self.existing_set, self.set_id, self.locktoken, self.arn = self.get_set()
         return self._format_set(self.existing_set)
 
     def update(self, description, addresses):
         req_obj = {
             "Name": self.name,
             "Scope": self.scope,
-            "Id": self.id,
+            "Id": self.set_id,
             "Addresses": addresses,
             "LockToken": self.locktoken,
         }
@@ -190,33 +190,33 @@ class IpSet:
             req_obj["Description"] = description
 
         try:
-            response = self.wafv2.update_ip_set(**req_obj)
+            self.wafv2.update_ip_set(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to update wafv2 ip set.")
 
-        self.existing_set, self.id, self.locktoken, self.arn = self.get_set()
+        self.existing_set, self.set_id, self.locktoken, self.arn = self.get_set()
         return self._format_set(self.existing_set)
 
     def get_set(self):
         response = self.list()
         existing_set = None
-        id = None
+        set_id = None
         arn = None
         locktoken = None
         for item in response.get("IPSets"):
             if item.get("Name") == self.name:
-                id = item.get("Id")
+                set_id = item.get("Id")
                 locktoken = item.get("LockToken")
                 arn = item.get("ARN")
-        if id:
+        if set_id:
             try:
-                existing_set = self.wafv2.get_ip_set(Name=self.name, Scope=self.scope, Id=id).get("IPSet")
+                existing_set = self.wafv2.get_ip_set(Name=self.name, Scope=self.scope, Id=set_id).get("IPSet")
             except (BotoCoreError, ClientError) as e:
                 self.fail_json_aws(e, msg="Failed to get wafv2 ip set.")
             tags = describe_wafv2_tags(self.wafv2, arn, self.fail_json_aws)
             existing_set["tags"] = tags
 
-        return existing_set, id, locktoken, arn
+        return existing_set, set_id, locktoken, arn
 
     def list(self, Nextmarker=None):
         # there is currently no paginator for wafv2
@@ -313,7 +313,7 @@ def main():
             elif ips_updated or description_updated:
                 retval = ip_set.update(description=description, addresses=addresses)
             elif tags_updated:
-                retval, id, locktoken, arn = ip_set.get_set()
+                retval, set_id, locktoken, arn = ip_set.get_set()
         else:
             if not check_mode:
                 retval = ip_set.create(

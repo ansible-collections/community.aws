@@ -537,7 +537,7 @@ def create_launch_config(connection, module):
         )
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to get Security Group IDs")
-    except ValueError as e:
+    except ValueError:
         module.fail_json(msg="Failed to get Security Group IDs", exception=traceback.format_exc())
     user_data = module.params.get("user_data")
     user_data_path = module.params.get("user_data_path")
@@ -571,7 +571,7 @@ def create_launch_config(connection, module):
         try:
             with open(user_data_path, "r") as user_data_file:
                 user_data = user_data_file.read()
-        except IOError as e:
+        except IOError:
             module.fail_json(msg="Failed to open file for reading", exception=traceback.format_exc())
 
     if volumes:

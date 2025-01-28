@@ -242,8 +242,8 @@ def find_and_update_rule(client, module, rule_id):
                 [
                     format_for_deletion(condition)
                     for condition in existing_conditions[condition_type].values()
-                    if not all_conditions[condition_type][condition["data_id"]]["name"]
-                    in desired_conditions[condition_type]
+                    if all_conditions[condition_type][condition["data_id"]]["name"]
+                    not in desired_conditions[condition_type]
                 ]
             )
 

@@ -243,7 +243,7 @@ class RuleGroup:
             req_obj["Description"] = description
 
         try:
-            response = self.wafv2.update_rule_group(**req_obj)
+            self.wafv2.update_rule_group(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to update wafv2 rule group.")
         return self.refresh_group()
@@ -312,7 +312,7 @@ class RuleGroup:
             req_obj["Tags"] = ansible_dict_to_boto3_tag_list(tags)
 
         try:
-            response = self.wafv2.create_rule_group(**req_obj)
+            self.wafv2.create_rule_group(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to create wafv2 rule group.")
 

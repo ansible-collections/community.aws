@@ -254,7 +254,7 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
                     changed = True
                 except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     module.fail_json_aws(e, msg="Failed to update bucket website configuration")
-        except KeyError as e:
+        except KeyError:
             try:
                 bucket_website.put(
                     WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests)

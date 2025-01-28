@@ -183,18 +183,18 @@ def ec2_win_password(module):
         except IOError as e:
             # Handle bad files
             module.fail_json(msg=f"I/O error ({int(e.errno)}) opening key file: {e.strerror}")
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             # Handle issues loading key
             module.fail_json(msg="unable to parse key file")
     elif b_key_data is not None and key_file is None:
         try:
             key = load_pem_private_key(b_key_data, b_key_passphrase, default_backend())
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             module.fail_json(msg="unable to parse key data")
 
     try:
         decrypted = key.decrypt(decoded, PKCS1v15())
-    except ValueError as e:
+    except ValueError:
         decrypted = None
 
     if decrypted is None:

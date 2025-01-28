@@ -977,7 +977,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         params["RuleGroup"] = resource
 
         if not self.module.check_mode:
-            response = self._update_rule_group(**params)
+            self._update_rule_group(**params)
 
         return True
 
@@ -1349,7 +1349,7 @@ class NetworkFirewallPolicyManager(NFPolicyBoto3Mixin, NFRuleGroupBoto3Mixin, Ba
         params["FirewallPolicy"] = resource
 
         if not self.module.check_mode:
-            response = self._update_policy(**params)
+            self._update_policy(**params)
 
         return True
 

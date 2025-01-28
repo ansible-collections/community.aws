@@ -312,10 +312,7 @@ def check_dp_exists(client, dp_id):
     """
     try:
         # pipeline_description raises DataPipelineNotFound
-        if pipeline_description(client, dp_id):
-            return True
-        else:
-            return False
+        return bool(pipeline_description(client, dp_id))
     except DataPipelineNotFound:
         return False
 
@@ -331,10 +328,7 @@ def check_dp_status(client, dp_id, status):
     """
     if not isinstance(status, list):
         raise AssertionError()
-    if pipeline_field(client, dp_id, field="@pipelineState") in status:
-        return True
-    else:
-        return False
+    return bool(pipeline_field(client, dp_id, field="@pipelineState") in status)
 
 
 def pipeline_status_timeout(client, dp_id, status, timeout):

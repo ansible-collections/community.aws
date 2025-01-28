@@ -60,9 +60,9 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 from ansible_collections.community.aws.plugins.module_utils.wafv2 import wafv2_list_web_acls
 
 
-def get_web_acl(wafv2, name, scope, id, fail_json_aws):
+def get_web_acl(wafv2, name, scope, acl_id, fail_json_aws):
     try:
-        response = wafv2.get_web_acl(Name=name, Scope=scope, Id=id)
+        response = wafv2.get_web_acl(Name=name, Scope=scope, Id=acl_id)
     except (BotoCoreError, ClientError) as e:
         fail_json_aws(e, msg="Failed to get wafv2 web acl.")
     return response
@@ -98,15 +98,15 @@ def main():
     # check if web acl exists
     response = list_web_acls(wafv2, scope, module.fail_json_aws)
 
-    id = None
+    acl_id = None
     retval = {}
 
     for item in response.get("WebACLs"):
         if item.get("Name") == name:
-            id = item.get("Id")
+            acl_id = item.get("Id")
 
-    if id:
-        existing_acl = get_web_acl(wafv2, name, scope, id, module.fail_json_aws)
+    if acl_id:
+        existing_acl = get_web_acl(wafv2, name, scope, acl_id, module.fail_json_aws)
         arn = existing_acl.get("WebACL").get("ARN")
 
         retval = camel_dict_to_snake_dict(list_wafv2_resources(wafv2, arn, module.fail_json_aws))

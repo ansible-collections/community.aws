@@ -126,7 +126,6 @@ def main():
         module.fail_json_aws(e, msg="Failed to connect to AWS")
 
     result = {"changed": False}
-    state = module.params["state"]
 
     # wrap all our calls to catch the standard exceptions. We don't pass `module` in to the
     # methods so it's easier to do here.

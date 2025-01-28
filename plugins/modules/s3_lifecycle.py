@@ -302,7 +302,6 @@ def filters_are_equal(filter1, filter2):
 
 
 def build_rule(client, module):
-    name = module.params.get("name")
     abort_incomplete_multipart_upload_days = module.params.get("abort_incomplete_multipart_upload_days")
     expiration_date = parse_date(module.params.get("expiration_date"))
     expiration_days = module.params.get("expiration_days")
@@ -321,7 +320,6 @@ def build_rule(client, module):
     transition_date = parse_date(module.params.get("transition_date"))
     transition_days = module.params.get("transition_days")
     transitions = module.params.get("transitions")
-    purge_transitions = module.params.get("purge_transitions")
 
     if maximum_object_size is not None or minimum_object_size is not None:
         and_dict = dict(Prefix=prefix)

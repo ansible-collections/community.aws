@@ -298,7 +298,7 @@ def wait_for_status(client, stream_name, status, wait_timeout=300, check_mode=Fa
                 status_achieved = True
                 break
 
-            elif status != "DELETING":
+            if status != "DELETING":
                 if find_success and stream:
                     if stream.get("StreamStatus") == status:
                         status_achieved = True
@@ -412,7 +412,6 @@ def update_tags(client, stream_name, tags, check_mode=False):
         )
         if not delete_success:
             return delete_success, changed, delete_msg
-        tag_msg = "Tags removed"
 
     if tags_to_set:
         create_success, create_msg = tags_action(
@@ -958,7 +957,6 @@ def start_stream_encryption(
     success = False
     changed = False
     err_msg = ""
-    params = {"StreamName": stream_name}
 
     results = dict()
     stream_found, stream_msg, current_stream = find_stream(client, stream_name)
@@ -1033,7 +1031,6 @@ def stop_stream_encryption(
     success = False
     changed = False
     err_msg = ""
-    params = {"StreamName": stream_name}
 
     results = dict()
     stream_found, stream_msg, current_stream = find_stream(client, stream_name)

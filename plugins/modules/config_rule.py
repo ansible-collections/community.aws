@@ -165,7 +165,7 @@ def update_resource(client, module, params, result):
 
 def delete_resource(client, module, params, result):
     try:
-        response = client.delete_config_rule(
+        client.delete_config_rule(
             ConfigRuleName=params["ConfigRuleName"],
             aws_retry=True,
         )
@@ -202,7 +202,6 @@ def main():
     result = {"changed": False}
 
     name = module.params.get("name")
-    resource_type = module.params.get("resource_type")
     state = module.params.get("state")
 
     params = {}

@@ -134,10 +134,10 @@ def compare_params(module, param_described):
         param_described.pop("VpcId")
     if "SubnetGroupStatus" in param_described.keys():
         param_described.pop("SubnetGroupStatus")
-    for paramname in modparams.keys():
-        if paramname in param_described.keys() and param_described.get(paramname) == modparams[paramname]:
+    for param_name, param_value in modparams.items():
+        if param_name in param_described and param_described.get(param_name) == param_value:
             pass
-        elif paramname == "SubnetIds":
+        elif param_name == "SubnetIds":
             subnets = []
             for subnet in param_described.get("Subnets"):
                 subnets.append(subnet.get("SubnetIdentifier"))
