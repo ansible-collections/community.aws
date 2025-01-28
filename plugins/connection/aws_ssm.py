@@ -1,10 +1,10 @@
-# pylint: disable=wrong-import-position
 # -*- coding: utf-8 -*-
 
 # Copyright: (c) 2018, Pat Sharkey <psharkey@cleo.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # Based on the ssh connection plugin by Michael DeHaan
+
 
 
 DOCUMENTATION = r"""
@@ -286,18 +286,17 @@ EXAMPLES = r"""
         name: nginx
         state: present
 """
-
-from typing import Optional
-import time
-import subprocess
-import string
-import select
-import re
-import random
-import pty
-import json
-import getpass
 import os
+import getpass
+import json
+import pty
+import random
+import re
+import select
+import string
+import subprocess
+import time
+from typing import Optional
 
 try:
     import boto3
