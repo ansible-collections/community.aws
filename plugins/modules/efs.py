@@ -248,7 +248,7 @@ from time import time as timestamp
 
 try:
     import botocore
-except ImportError as e:
+except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
@@ -294,13 +294,13 @@ class EFSConnection(object):
         for item in items:
             item["Name"] = item["CreationToken"]
             item["CreationTime"] = str(item["CreationTime"])
-            """
-            In the time when MountPoint was introduced there was a need to add a suffix of network path before one could use it
-            AWS updated it and now there is no need to add a suffix. MountPoint is left for back-compatibility purpose
-            And new FilesystemAddress variable is introduced for direct use with other modules (e.g. mount)
-            AWS documentation is available here:
-            https://docs.aws.amazon.com/efs/latest/ug/gs-step-three-connect-to-ec2-instance.html
-            """
+
+            # In the time when MountPoint was introduced there was a need to add a suffix of network path before one could use it
+            # AWS updated it and now there is no need to add a suffix. MountPoint is left for back-compatibility purpose
+            # And new FilesystemAddress variable is introduced for direct use with other modules (e.g. mount)
+            # AWS documentation is available here:
+            # https://docs.aws.amazon.com/efs/latest/ug/gs-step-three-connect-to-ec2-instance.html
+
             item["MountPoint"] = f".{item['FileSystemId']}.efs.{self.region}.amazonaws.com:/"
             item["FilesystemAddress"] = f"{item['FileSystemId']}.efs.{self.region}.amazonaws.com:/"
             if "Timestamp" in item["SizeInBytes"]:
@@ -501,7 +501,7 @@ class EFSConnection(object):
             else:
                 LifecyclePolicies = [{"TransitionToIA": "AFTER_" + transition_to_ia + "_DAYS"}]
             if current_policies.get("LifecyclePolicies") != LifecyclePolicies:
-                response = self.connection.put_lifecycle_configuration(
+                self.connection.put_lifecycle_configuration(
                     FileSystemId=fs_id,
                     LifecyclePolicies=LifecyclePolicies,
                 )
@@ -663,8 +663,7 @@ def iterate_all(attr, map_method, **kwargs):
                 sleep(wait)
                 wait = wait * 2
                 continue
-            else:
-                raise
+            raise
 
 
 def targets_equal(keys, a, b):

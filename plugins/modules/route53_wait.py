@@ -144,9 +144,9 @@ def main():
 
     changed_results = []
     try:
-        for id, result in detect_task_results(result_in):
+        for description, result in detect_task_results(result_in):
             if result.get("wait_id"):
-                changed_results.append((id, result["wait_id"]))
+                changed_results.append((description, result["wait_id"]))
     except ValueError as exc:
         module.fail_json(
             msg=f"The value passed as result does not seem to be a registered route53 result: {to_native(exc)}"

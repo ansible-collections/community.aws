@@ -296,8 +296,6 @@ def main():
 
     connection = module.client("autoscaling")
 
-    changed = False
-
     if state == "present":
         create_lifecycle_hook(connection, module)
     elif state == "absent":

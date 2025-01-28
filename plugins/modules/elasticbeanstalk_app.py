@@ -111,7 +111,6 @@ def list_apps(ebs, app_name, module):
 
 
 def check_app(ebs, app, module):
-    app_name = module.params["app_name"]
     description = module.params["description"]
     state = module.params["state"]
     terminate_by_force = module.params["terminate_by_force"]
@@ -173,7 +172,7 @@ def main():
     if state == "present":
         if app is None:
             try:
-                create_app = ebs.create_application(**filter_empty(ApplicationName=app_name, Description=description))
+                ebs.create_application(**filter_empty(ApplicationName=app_name, Description=description))
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg="Could not create application")
 

@@ -332,7 +332,7 @@ class BaseResourceManager(Boto3Mixin):
 
         if not self.module.check_mode:
             self._do_update_resource()
-            response = self._wait_for_update()
+            self._wait_for_update()
             self.updated_resource = self.get_resource()
         else:  # (CHECK_MODE)
             self.updated_resource = self._normalize_resource(self._generate_updated_resource())

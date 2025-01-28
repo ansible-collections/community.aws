@@ -385,11 +385,8 @@ def manage_state(module, batch_client):
     changed = False
     current_state = "absent"
     state = module.params["state"]
-    job_definition_name = module.params["job_definition_name"]
     action_taken = "none"
     response = None
-
-    check_mode = module.check_mode
 
     # check if the job definition exists
     current_job_definition = get_current_job_definition(module, batch_client)

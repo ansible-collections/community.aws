@@ -297,10 +297,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 # Merge the results of the scalable target creation and policy deletion/creation
 # There's no risk in overriding values since mutual keys have the same values in our case
 def merge_results(scalable_target_result, policy_result):
-    if scalable_target_result["changed"] or policy_result["changed"]:
-        changed = True
-    else:
-        changed = False
+    changed = bool(scalable_target_result["changed"] or policy_result["changed"])
 
     merged_response = scalable_target_result["response"].copy()
     merged_response.update(policy_result["response"])

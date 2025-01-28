@@ -247,7 +247,7 @@ def delete_server_certificate(current_cert):
     name = module.params.get("name")
 
     try:
-        result = client.delete_server_certificate(
+        client.delete_server_certificate(
             aws_retry=True,
             ServerCertificateName=name,
         )
@@ -340,10 +340,8 @@ def main():
 
     state = module.params.get("state")
     name = module.params.get("name")
-    path = module.params.get("path")
     new_name = module.params.get("new_name")
     new_path = module.params.get("new_path")
-    dup_ok = module.params.get("dup_ok")
 
     current_cert = get_server_certificate(name)
 

@@ -462,7 +462,7 @@ def update_tags(client, queue_url, module):
 
     try:
         existing_tags = client.list_queue_tags(QueueUrl=queue_url, aws_retry=True)["Tags"]
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError, KeyError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError, KeyError):
         existing_tags = {}
 
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags, purge_tags=purge_tags)

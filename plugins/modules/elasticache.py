@@ -143,7 +143,6 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 
 class ElastiCacheManager:
-
     """Handles elasticache creation and destruction"""
 
     EXIST_STATUSES = ["available", "creating", "rebooting", "modifying"]

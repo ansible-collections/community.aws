@@ -1769,12 +1769,12 @@ class CloudFrontValidationManager(object):
         origins,
         default_origin_domain_name,
         default_origin_path,
-        create_distribution,
+        create,
         purge_origins=False,
     ):
         try:
             if origins is None:
-                if default_origin_domain_name is None and not create_distribution:
+                if default_origin_domain_name is None and not create:
                     if purge_origins:
                         return None
                     else:
@@ -1784,7 +1784,7 @@ class CloudFrontValidationManager(object):
                 else:
                     origins = []
             self.validate_is_list(origins, "origins")
-            if not origins and default_origin_domain_name is None and create_distribution:
+            if not origins and default_origin_domain_name is None and create:
                 self.module.fail_json(
                     msg="Both origins[] and default_origin_domain_name have not been specified. Please specify at least one."
                 )

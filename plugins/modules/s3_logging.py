@@ -168,7 +168,6 @@ def enable_bucket_logging(connection, module):
 
 def disable_bucket_logging(connection, module):
     bucket_name = module.params.get("name")
-    changed = False
 
     try:
         bucket_logging = connection.get_bucket_logging(aws_retry=True, Bucket=bucket_name)
@@ -182,7 +181,7 @@ def disable_bucket_logging(connection, module):
         module.exit_json(changed=True)
 
     try:
-        response = AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidTargetBucketForLogging"])(
+        AWSRetry.jittered_backoff(catch_extra_error_codes=["InvalidTargetBucketForLogging"])(
             connection.put_bucket_logging
         )(Bucket=bucket_name, BucketLoggingStatus={})
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:

@@ -204,11 +204,11 @@ class EcsServiceManager:
         return service
 
 
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    """ https://stackoverflow.com/a/312464 """
-    for i in range(0, len(l), n):
-        yield l[i:i + n]  # fmt: skip
+def chunks(services, chunk_size):
+    """Yield successive chunk_size-sized chunks from services.
+    https://stackoverflow.com/a/312464"""
+    for i in range(0, len(services), chunk_size):
+        yield services[i:i + chunk_size]  # fmt: skip
 
 
 def main():
