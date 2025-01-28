@@ -358,7 +358,7 @@ def disassociate_vis(client, lag_id, virtual_interfaces):
     for vi in virtual_interfaces:
         delete_virtual_interface(client, vi["virtualInterfaceId"])
         try:
-            response = client.delete_virtual_interface(virtualInterfaceId=vi["virtualInterfaceId"])
+            client.delete_virtual_interface(virtualInterfaceId=vi["virtualInterfaceId"])
         except botocore.exceptions.ClientError as e:
             raise DirectConnectError(
                 msg=f"Could not delete virtual interface {vi} to delete link aggregation group {lag_id}.",

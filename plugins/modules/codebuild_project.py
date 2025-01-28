@@ -378,14 +378,12 @@ def do_update_project(client, params, formatted_params, found_project):
 
 
 def create_or_update_project(client, params):
-    resp = {}
     name = params["name"]
     # clean up params
     formatted_params = snake_dict_to_camel_dict(dict((k, v) for k, v in params.items() if v is not None))
 
     # Check if project with that name already exists and if so update existing:
     found = describe_project(client=client, name=name)
-    changed = False
 
     if "name" not in found:
         return do_create_project(client, params, formatted_params)
@@ -394,8 +392,6 @@ def create_or_update_project(client, params):
 
 
 def update_project(client, params):
-    name = params["name"]
-
     try:
         resp = client.update_project(**params)
         return resp

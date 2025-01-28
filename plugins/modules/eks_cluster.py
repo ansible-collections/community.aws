@@ -218,7 +218,7 @@ def ensure_present(client, module):
         if module.params["tags"]:
             params["tags"] = module.params["tags"]
         cluster = client.create_cluster(**params)["cluster"]
-    except botocore.exceptions.EndpointConnectionError as e:
+    except botocore.exceptions.EndpointConnectionError:
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg=f"Couldn't create cluster {name}")
@@ -241,7 +241,7 @@ def ensure_absent(client, module):
     if not module.check_mode:
         try:
             client.delete_cluster(name=module.params["name"])
-        except botocore.exceptions.EndpointConnectionError as e:
+        except botocore.exceptions.EndpointConnectionError:
             module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg=f"Couldn't delete cluster {name}")
@@ -258,7 +258,7 @@ def get_cluster(client, module):
         return client.describe_cluster(name=name)["cluster"]
     except is_boto3_error_code("ResourceNotFoundException"):
         return None
-    except botocore.exceptions.EndpointConnectionError as e:  # pylint: disable=duplicate-except
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (
         botocore.exceptions.BotoCoreError,

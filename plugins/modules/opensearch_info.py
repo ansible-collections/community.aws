@@ -478,7 +478,7 @@ def domain_info(client, module):
         try:
             current_domain_tags = client.list_tags(ARN=domain_arn, aws_retry=True)["TagList"]
             domain["Tags"] = boto3_tag_list_to_ansible_dict(current_domain_tags)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError):
             # This could potentially happen if a domain is deleted between the time
             # its domain status was queried and the tags were queried.
             domain["Tags"] = {}

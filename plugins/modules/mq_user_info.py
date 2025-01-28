@@ -82,7 +82,7 @@ users:
 
 try:
     import botocore
-except ImportError as ex:
+except ImportError:
     # handled by AnsibleAWSModule
     pass
 

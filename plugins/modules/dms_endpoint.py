@@ -516,21 +516,17 @@ def compare_params(param_described):
     """
     param_described = dict(param_described)
     modparams = create_module_params()
-    # modify can't update tags
-    param_described.pop("Tags", None)
-    modparams.pop("Tags", None)
-    changed = False
-    for paramname in modparams:
-        if (
-            paramname == "Password"
-            or paramname in param_described
-            and param_described[paramname] == modparams[paramname]
-            or str(param_described[paramname]).lower() == modparams[paramname]
-        ):
-            pass
-        else:
-            changed = True
-    return changed
+
+    # Note: this currently isn't as relaxed for the nested settings, (eg. S3Settings)
+    for param_name, param_value in modparams.items():
+        # modify can't update tags or password
+        if param_name in ["Tags", "Password"]:
+            continue
+        if param_name not in param_described:
+            return True
+        if param_described[param_name] != param_value and str(param_described[param_name]).lower() != param_value:
+            return True
+    return False
 
 
 def modify_dms_endpoint(connection, endpoint):

@@ -174,12 +174,12 @@ def check_valid_modification(module, values, modifiable_params):
         str_to_type = {"integer": int, "string": string_types}
         expected_type = str_to_type[modifiable_params[parameter][1]]
         if not isinstance(new_value, expected_type):
-            if expected_type == str:
+            if expected_type is str:
                 if isinstance(new_value, bool):
                     values[parameter] = "yes" if new_value else "no"
                 else:
                     values[parameter] = to_text(new_value)
-            elif expected_type == int:
+            elif expected_type is int:
                 if isinstance(new_value, bool):
                     values[parameter] = 1 if new_value else 0
                 else:
@@ -284,7 +284,7 @@ def get_info(conn, name):
     try:
         data = conn.describe_cache_parameters(CacheParameterGroupName=name)
         return data
-    except botocore.exceptions.ClientError as e:
+    except botocore.exceptions.ClientError:
         return False
 
 

@@ -323,9 +323,6 @@ def _fill_kwargs(module, apply_defaults=True, ignore_create_params=False):
 def __list_needs_change(current, desired):
     if len(current) != len(desired):
         return True
-    # equal length:
-    c_sorted = sorted(current)
-    d_sorted = sorted(desired)
     for index, value in enumerate(current):
         if value != desired[index]:
             return True
