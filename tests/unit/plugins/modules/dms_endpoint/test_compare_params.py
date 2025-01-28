@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 from ansible_collections.community.aws.plugins.modules.dms_endpoint import compare_params
 
+
 @pytest.mark.parametrize(
     "described_params,created_params,expected_result",
     [
