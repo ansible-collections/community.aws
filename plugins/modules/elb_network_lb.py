@@ -108,6 +108,14 @@ options:
       - This parameter is mutually exclusive with I(subnet_mappings).
     type: list
     elements: str
+  security_groups:
+    version_added: 7.3.0
+    description:
+      - A list of the names or IDs of the security groups to assign to the load balancer.
+      - Required if I(state=present).
+      - If C([]), the VPC's default security group will be used.
+    type: list
+    elements: str
   scheme:
     description:
       - Internet-facing or internal load balancer. An ELB scheme can not be modified after creation.
@@ -320,6 +328,11 @@ load_balancer:
             returned: when state is present
             type: str
             sample: internal
+        security_groups:
+            description: The IDs of the security groups for the load balancer.
+            returned: when state is present
+            type: list
+            sample: ['sg-0011223344']
         state:
             description: The state of the load balancer.
             returned: when state is present
@@ -447,28 +460,137 @@ def create_or_update_elb(elb_obj):
 
 
 def delete_elb(elb_obj):
-    if elb_obj.elb:
-        elb_obj.delete()
+  if elb_obj.elb:
+    elb_obj.delete()
 
     elb_obj.module.exit_json(changed=elb_obj.changed)
 
+# creating class to allow for security groups with load balancer
 
+
+class NetworkLoadBalancerWithSecurityGroups(NetworkLoadBalancer):
+  def __init__(self, connection, connection_ec2, module):
+    """
+
+    :param connection: boto3 connection
+    :param module: Ansible module
+  """
+    super().__init__(connection, connection_ec2, module)
+
+    self.connection_ec2 = connection_ec2
+
+    # Ansible module parameters specific to NLBs
+    # self.type = "network"
+    # self.cross_zone_load_balancing = module.params.get("cross_zone_load_balancing")
+
+    # if self.elb is not None and self.elb["Type"] != "network":
+    #     self.module.fail_json(
+    #         msg="The load balancer type you are trying to manage is not network. Try elb_application_lb module instead.",
+    #     )
+
+    if module.params.get("security_groups") is not None:
+      try:
+          self.security_groups = AWSRetry.jittered_backoff()(get_ec2_security_group_ids_from_names)(
+              module.params.get("security_groups"), self.connection_ec2, boto3=True
+          )
+      except ValueError as e:
+        self.module.fail_json(msg=str(e), exception=traceback.format_exc())
+      except (BotoCoreError, ClientError) as e:
+        self.module.fail_json_aws(e)
+    else:
+      self.security_groups = module.params.get("security_groups")
+
+  def _elb_create_params(self):
+    params = super()._elb_create_params()
+
+    if self.security_groups is not None:
+      params["SecurityGroups"] = self.security_groups
+
+    # params["Scheme"] = self.scheme
+
+    return params
+
+  def modify_elb_attributes(self):
+      """
+      Update Network ELB attributes if required
+
+      :return:
+      """
+
+      update_attributes = []
+
+      if (
+          self.cross_zone_load_balancing is not None
+          and str(self.cross_zone_load_balancing).lower() != self.elb_attributes["load_balancing_cross_zone_enabled"]
+      ):
+          update_attributes.append(
+              {"Key": "load_balancing.cross_zone.enabled", "Value": str(self.cross_zone_load_balancing).lower()}
+          )
+      if (
+          self.deletion_protection is not None
+          and str(self.deletion_protection).lower() != self.elb_attributes["deletion_protection_enabled"]
+      ):
+          update_attributes.append(
+              {"Key": "deletion_protection.enabled", "Value": str(self.deletion_protection).lower()}
+          )
+
+      if update_attributes:
+          try:
+              AWSRetry.jittered_backoff()(self.connection.modify_load_balancer_attributes)(
+                  LoadBalancerArn=self.elb["LoadBalancerArn"], Attributes=update_attributes
+              )
+              self.changed = True
+          except (BotoCoreError, ClientError) as e:
+              # Something went wrong setting attributes. If this ELB was created during this task, delete it to leave a consistent state
+              if self.new_load_balancer:
+                  AWSRetry.jittered_backoff()(self.connection.delete_load_balancer)(
+                      LoadBalancerArn=self.elb["LoadBalancerArn"]
+                  )
+              self.module.fail_json_aws(e)
+
+  def compare_security_groups(self):
+      """
+      Compare user security groups with current ELB security groups
+
+      :return: bool True if they match otherwise False
+      """
+
+      if set(self.elb["SecurityGroups"]) != set(self.security_groups):
+          return False
+      else:
+          return True
+
+  def modify_security_groups(self):
+      """
+      Modify elb security groups to match module parameters
+      :return:
+      """
+
+      try:
+          AWSRetry.jittered_backoff()(self.connection.set_security_groups)(
+              LoadBalancerArn=self.elb["LoadBalancerArn"], SecurityGroups=self.security_groups
+          )
+      except (BotoCoreError, ClientError) as e:
+          self.module.fail_json_aws(e)
+
+      self.changed = True
+      
 def main():
-    argument_spec = dict(
-        cross_zone_load_balancing=dict(type="bool"),
-        deletion_protection=dict(type="bool"),
-        listeners=dict(
-            type="list",
-            elements="dict",
-            options=dict(
-                Protocol=dict(type="str", required=True),
-                Port=dict(type="int", required=True),
-                SslPolicy=dict(type="str"),
-                Certificates=dict(type="list", elements="dict"),
-                DefaultActions=dict(type="list", required=True, elements="dict"),
-                AlpnPolicy=dict(
-                    type="str",
-                    choices=["HTTP1Only", "HTTP2Only", "HTTP2Optional", "HTTP2Preferred", "None"],
+  argument_spec = dict(
+    cross_zone_load_balancing=dict(type="bool"),
+    deletion_protection=dict(type="bool"),
+    listeners=dict(
+      type="list",
+      elements="dict",
+      options=dict(
+        Protocol=dict(type="str", required=True),
+        Port=dict(type="int", required=True),
+        SslPolicy=dict(type="str"),
+        Certificates=dict(type="list", elements="dict"),
+        DefaultActions=dict(type="list", required=True, elements="dict"),
+        AlpnPolicy=dict(
+          type="str",
+          choices=["HTTP1Only", "HTTP2Only", "HTTP2Optional", "HTTP2Preferred", "None"],
                 ),
             ),
         ),
@@ -485,37 +607,38 @@ def main():
         ip_address_type=dict(type="str", choices=["ipv4", "dualstack"]),
     )
 
-    required_if = [
-        ["state", "present", ["subnets", "subnet_mappings"], True],
+  required_if = [
+      ["state", "present", ["subnets", "subnet_mappings"], True],
     ]
 
-    module = AnsibleAWSModule(
-        argument_spec=argument_spec,
-        required_if=required_if,
-        mutually_exclusive=[["subnets", "subnet_mappings"]],
+  module = AnsibleAWSModule(
+      argument_spec=argument_spec,
+      required_if=required_if,
+      mutually_exclusive=[["subnets", "subnet_mappings"]],
     )
 
     # Check for subnets or subnet_mappings if state is present
-    state = module.params.get("state")
+  state = module.params.get("state")
 
-    # Quick check of listeners parameters
-    listeners = module.params.get("listeners")
-    if listeners is not None:
-        for listener in listeners:
-            for key in listener.keys():
-                protocols_list = ["TCP", "TLS", "UDP", "TCP_UDP"]
-                if key == "Protocol" and listener[key] not in protocols_list:
-                    module.fail_json(msg="'Protocol' must be either " + ", ".join(protocols_list))
+      # Quick check of listeners parameters
+  listeners = module.params.get("listeners")
+  if listeners is not None:
+    for listener in listeners:
+      for key in listener.keys():
+        protocols_list = ["TCP", "TLS", "UDP", "TCP_UDP"]
+        if key == "Protocol" and listener[key] not in protocols_list:
+          module.fail_json(msg="'Protocol' must be either " + ", ".join(protocols_list))
 
-    connection = module.client("elbv2")
-    connection_ec2 = module.client("ec2")
+  connection = module.client("elbv2")
+  connection_ec2 = module.client("ec2")
 
-    elb = NetworkLoadBalancer(connection, connection_ec2, module)
+    # elb = NetworkLoadBalancer(connection, connection_ec2, module)
+  elb = NetworkLoadBalancerWithSecurityGroups(connection, connection_ec2, module)
 
-    if state == "present":
-        create_or_update_elb(elb)
-    else:
-        delete_elb(elb)
+  if state == "present":
+    create_or_update_elb(elb)
+  else:
+    delete_elb(elb)
 
 
 if __name__ == "__main__":
