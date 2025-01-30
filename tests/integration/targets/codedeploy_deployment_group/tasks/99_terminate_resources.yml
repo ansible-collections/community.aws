@@ -1,0 +1,15 @@
+- name: Delete a application - Server
+  codedeploy_application:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    state: absent
+
+- name: Delete a application - Lambda
+  codedeploy_application:
+    application_name: "{{ codedeploy_application_lambda.application.application_name }}"
+    state: absent
+
+- name: Delete IAM role needed for CodeDeploy deploy
+  iam_role:
+    name: "{{ codedeploy_service_role_name }}"
+    state: absent
+  ignore_errors: true
