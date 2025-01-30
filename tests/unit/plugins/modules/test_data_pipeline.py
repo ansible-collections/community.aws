@@ -29,8 +29,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 # isort: off
 # pylint: disable=unused-import
 
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify
+from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import fixture_maybe_sleep
+from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import fixture_placeboify
 
 # pylint: enable=unused-import
 # isort: on
