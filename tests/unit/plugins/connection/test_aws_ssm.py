@@ -16,6 +16,85 @@ if not HAS_BOTO3:
 
 
 class TestConnectionBaseClass:
+    def test_init_clients(self):
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock get_option to return expected region and profile
+        def mock_get_option(key):
+            options = {
+                "profile": "test-profile",
+                "region": "us-east-1",
+            }
+            return options.get(key, None)
+
+        conn.get_option = MagicMock(side_effect=mock_get_option)
+
+        # Mock the _initialize_ssm_client and _initialize_s3_client methods
+        conn._initialize_ssm_client = MagicMock()
+        conn._initialize_s3_client = MagicMock()
+
+        conn._init_clients()
+
+        conn._initialize_ssm_client.assert_called_once_with("us-east-1", "test-profile")
+        conn._initialize_s3_client.assert_called_once_with("test-profile")
+
+    @patch("boto3.client")
+    def test_initialize_ssm_client(self, mock_boto3_client):
+        """
+        Test for the _initialize_ssm_client method to ensure the SSM client is initialized correctly.
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        test_region_name = "us-west-2"
+        test_profile_name = "test-profile"
+
+        # Mock the _get_boto_client method to return a mock client
+        conn._get_boto_client = MagicMock(return_value=mock_boto3_client)
+
+        conn._initialize_ssm_client(test_region_name, test_profile_name)
+
+        conn._get_boto_client.assert_called_once_with(
+            "ssm",
+            region_name=test_region_name,
+            profile_name=test_profile_name,
+        )
+
+        assert conn._client is mock_boto3_client
+
+    @patch("boto3.client")
+    def test_initialize_s3_client(self, mock_boto3_client):
+        """
+        Test for the _initialize_s3_client method to ensure the S3 client is initialized correctly.
+        """
+
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        test_profile_name = "test-profile"
+
+        # Mock the _get_bucket_endpoint method to return dummy values
+        conn._get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
+
+        conn._get_boto_client = MagicMock(return_value=mock_boto3_client)
+
+        conn._initialize_s3_client(test_profile_name)
+
+        conn._get_bucket_endpoint.assert_called_once()
+
+        conn._get_boto_client.assert_called_once_with(
+            "s3",
+            region_name="us-west-2",
+            endpoint_url="http://example.com",
+            profile_name=test_profile_name,
+        )
+
+        assert conn._s3_client is mock_boto3_client
+
     @patch("os.path.exists")
     @patch("subprocess.Popen")
     @patch("select.poll")
