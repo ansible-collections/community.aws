@@ -313,7 +313,6 @@ from ansible.errors import AnsibleFileNotFound
 from ansible.module_utils._text import to_bytes
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import missing_required_lib
-from ansible.module_utils.six.moves import xrange
 from ansible.plugins.connection import ConnectionBase
 from ansible.plugins.shell.powershell import _common_args
 from ansible.utils.display import Display
@@ -644,7 +643,7 @@ class Connection(ConnectionBase):
         if self._polling_obj is None:
             self._polling_obj = select.poll()
             self._polling_obj.register(self._stdout, select.POLLIN)
-        return self._polling_obj.poll(timeout)
+        return bool(self._polling_obj.poll(timeout))
 
     def poll(self, label: str, cmd: str) -> NoReturn:
         """Poll session to retrieve content from stdout.
@@ -677,6 +676,7 @@ class Connection(ConnectionBase):
         stdout = ""
         win_line = ""
         begin = False
+        returncode = None
         for poll_result in self.poll("EXEC", cmd):
             if not poll_result:
                 continue
@@ -712,12 +712,12 @@ class Connection(ConnectionBase):
 
         self._vvv(f"EXEC: {to_text(cmd)}")
 
-        mark_begin = "".join([random.choice(string.ascii_letters) for i in xrange(self.MARK_LENGTH)])
+        mark_begin = "".join([random.choice(string.ascii_letters) for i in range(self.MARK_LENGTH)])
         if self.is_windows:
             mark_start = mark_begin + " $LASTEXITCODE"
         else:
             mark_start = mark_begin
-        mark_end = "".join([random.choice(string.ascii_letters) for i in xrange(self.MARK_LENGTH)])
+        mark_end = "".join([random.choice(string.ascii_letters) for i in range(self.MARK_LENGTH)])
 
         # Wrap command in markers accordingly for the shell used
         cmd = self._wrap_command(cmd, mark_start, mark_end)
@@ -745,7 +745,7 @@ class Connection(ConnectionBase):
         disable_echo_cmd = to_bytes("stty -echo\n", errors="surrogate_or_strict")
 
         disable_prompt_complete = None
-        end_mark = "".join([random.choice(string.ascii_letters) for i in xrange(self.MARK_LENGTH)])
+        end_mark = "".join([random.choice(string.ascii_letters) for i in range(self.MARK_LENGTH)])
         disable_prompt_cmd = to_bytes(
             "PS1='' ; bind 'set enable-bracketed-paste off'; printf '\\n%s\\n' '" + end_mark + "'\n",
             errors="surrogate_or_strict",
