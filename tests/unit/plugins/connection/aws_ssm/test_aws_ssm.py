@@ -10,6 +10,7 @@ from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
+
 from ansible_collections.community.aws.plugins.connection.aws_ssm import Connection
 
 if not HAS_BOTO3:
@@ -267,4 +268,3 @@ class TestConnectionBaseClass:
         assert test_a != test_b
         assert len(test_a) == Connection.MARK_LENGTH
         assert len(test_b) == Connection.MARK_LENGTH
-        
