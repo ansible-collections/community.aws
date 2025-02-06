@@ -377,7 +377,7 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]  # fmt: skip
 
-    
+ 
 def filter_ansi(line: str, is_windows: bool) -> str:
     """Remove any ANSI terminal control codes.
 

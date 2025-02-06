@@ -267,3 +267,4 @@ class TestConnectionBaseClass:
         assert test_a != test_b
         assert len(test_a) == Connection.MARK_LENGTH
         assert len(test_b) == Connection.MARK_LENGTH
+        
