@@ -1,8 +1,11 @@
 ---
 - block:
     - name: Create custom SSM document
-      command: "aws ssm create-document --content file://{{ role_path }}/files/ssm-document.json --name {{ ssm_document_name }} --document-type Session"
-      environment: "{{ connection_env }}"
+      community.aws.ssm_document:
+        state: present
+        document_type: Session
+        content_path: "{{ role_path }}/files/ssm-document.json"
+        name: "{{ ssm_document_name }}"
   always:
     - name: Create SSM vars_to_delete.yml
       template:
