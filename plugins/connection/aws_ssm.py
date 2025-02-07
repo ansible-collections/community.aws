@@ -316,7 +316,6 @@ EXAMPLES = r"""
     - name: Execute script from remote host
       ansible.builtin.shell:
         cmd: '/tmp/date.sh'
-
 """
 import getpass
 import json
