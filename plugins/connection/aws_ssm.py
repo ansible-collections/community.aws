@@ -288,6 +288,7 @@ EXAMPLES = r"""
 ---
 # Execution: ansible-playbook play.yaml -i ssm_inventory.ini
 # =====================================================
+# ssm_inventory.ini
 # [all]
 # linux ansible_aws_ssm_instance_id=i-01234567829abcdef ansible_aws_ssm_region=us-east-1
 
