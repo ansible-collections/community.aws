@@ -704,7 +704,7 @@ class Connection(ConnectionBase):
         # see https://github.com/pylint-dev/pylint/issues/8909)
         return (returncode, stdout, self._flush_stderr(self._session))  # pylint: disable=unreachable
 
-    def generate_mark() -> str:
+    def generate_mark(self) -> str:
         """Generates a random string of characters to delimit SSM CLI commands"""
         mark = "".join([random.choice(string.ascii_letters) for i in range(Connection.MARK_LENGTH)])
         return mark
