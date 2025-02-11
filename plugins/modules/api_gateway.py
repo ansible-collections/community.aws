@@ -165,6 +165,16 @@ EXAMPLES = r"""
       automation: ansible
     lookup: tags
     state: absent
+
+- name: Update API Gateway tags with purge_tags
+  community.aws.api_gateway:
+    api_id: "abc123def456"
+    name: "my-api"
+    state: present
+    purge_tags: true
+    tags:
+      Environment: Production
+      Project: WebServices
 """
 
 RETURN = r"""
