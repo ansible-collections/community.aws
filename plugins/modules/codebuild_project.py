@@ -180,6 +180,22 @@ EXAMPLES = r"""
     encryption_key: "arn:aws:kms:us-east-1:123123:alias/aws/s3"
     region: us-east-1
     state: present
+
+- community.aws.codebuild_project:
+    name: CodeBuild_project_build_with_timeout
+    description: "Simple build with no artifacts"
+    timeout_in_minutes: 30
+    service_role: "arn:aws:iam::123456789:role/codebuild-role"
+    source:
+      type: GITHUB
+      location: "https://github.com/myorg/myapp.git"
+    artifacts:
+      type: NO_ARTIFACTS    
+    environment:
+      type: LINUX_CONTAINER
+      compute_type: BUILD_GENERAL1_SMALL
+      image: "aws/codebuild/standard:5.0"
+    state: present
 """
 
 RETURN = r"""
