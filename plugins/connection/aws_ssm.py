@@ -609,7 +609,7 @@ class Connection(ConnectionBase):
         return self._instance_id
 
     @instance_id.setter
-    def instance_id(self, instance_id: str) -> NoReturn:
+    def instance_id(self, instance_id: str) -> None:
         self._instance_id = instance_id
 
     def start_session(self):
@@ -766,7 +766,7 @@ class Connection(ConnectionBase):
 
         return self.exec_communicate(cmd, mark_start, mark_begin, mark_end)
 
-    def _ensure_ssm_session_has_started(self) -> NoReturn:
+    def _ensure_ssm_session_has_started(self) -> None:
         """Ensure the SSM session has started on the host. We poll stdout
         until we match the following string 'Starting session with SessionId'
         """
@@ -780,7 +780,7 @@ class Connection(ConnectionBase):
                     self._vvvv("START SSM SESSION startup output received")
                     break
 
-    def _disable_prompt_command(self) -> NoReturn:
+    def _disable_prompt_command(self) -> None:
         """Disable prompt command from the host"""
         end_mark = "".join([random.choice(string.ascii_letters) for i in range(self.MARK_LENGTH)])
         disable_prompt_cmd = to_bytes(
@@ -801,7 +801,7 @@ class Connection(ConnectionBase):
                 if disable_prompt_reply.search(stdout):
                     break
 
-    def _disable_echo_command(self) -> NoReturn:
+    def _disable_echo_command(self) -> None:
         """Disable echo command from the host"""
         disable_echo_cmd = to_bytes("stty -echo\n", errors="surrogate_or_strict")
 
@@ -818,7 +818,7 @@ class Connection(ConnectionBase):
                 if match != -1:
                     break
 
-    def _prepare_terminal(self) -> NoReturn:
+    def _prepare_terminal(self) -> None:
         """perform any one-time terminal settings"""
         # No Windows setup for now
         if self.is_windows:
