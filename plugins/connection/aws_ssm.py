@@ -451,6 +451,47 @@ class CommandResult(TypedDict):
     stdout_combined: str
     stderr_combined: str
 
+class S3ClientManager:
+    def __init__(self, connection):
+        self.connection = connection
+
+    def get_bucket_endpoint(self):
+        """
+        Fetches the correct S3 endpoint and region for use with our bucket.
+        If we don't explicitly set the endpoint then some commands will use the global
+        endpoint and fail
+        (new AWS regions and new buckets in a region other than the one we're running in)
+        """
+
+        region_name = self.get_option("region") or "us-east-1"
+        profile_name = self.get_option("profile") or ""
+        self._vvvv("_get_bucket_endpoint: S3 (global)")
+        tmp_s3_client = self._get_boto_client(
+            "s3",
+            region_name=region_name,
+            profile_name=profile_name,
+        )
+        # Fetch the location of the bucket so we can open a client against the 'right' endpoint
+        # This /should/ always work
+        head_bucket = tmp_s3_client.head_bucket(
+            Bucket=(self.get_option("bucket_name")),
+        )
+        bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
+        if bucket_region is None:
+            bucket_region = "us-east-1"
+
+        if self.get_option("bucket_endpoint_url"):
+            return self.get_option("bucket_endpoint_url"), bucket_region
+
+        # Create another client for the region the bucket lives in, so we can nab the endpoint URL
+        self._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
+        s3_bucket_client = self._get_boto_client(
+            "s3",
+            region_name=bucket_region,
+            profile_name=profile_name,
+        )
+
+        return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
 
 class Connection(ConnectionBase):
     """AWS SSM based connections"""
@@ -520,6 +561,9 @@ class Connection(ConnectionBase):
         # Initialize S3 client
         self._initialize_s3_client(profile_name)
 
+        # Initialize S3ClientManager
+        self.s3_manager = S3ClientManager(self._s3_client)
+
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
         Initializes the SSM client used to manage sessions.
@@ -578,42 +622,7 @@ class Connection(ConnectionBase):
         self._display(display.vvvv, message)
 
     def _get_bucket_endpoint(self):
-        """
-        Fetches the correct S3 endpoint and region for use with our bucket.
-        If we don't explicitly set the endpoint then some commands will use the global
-        endpoint and fail
-        (new AWS regions and new buckets in a region other than the one we're running in)
-        """
-
-        region_name = self.get_option("region") or "us-east-1"
-        profile_name = self.get_option("profile") or ""
-        self._vvvv("_get_bucket_endpoint: S3 (global)")
-        tmp_s3_client = self._get_boto_client(
-            "s3",
-            region_name=region_name,
-            profile_name=profile_name,
-        )
-        # Fetch the location of the bucket so we can open a client against the 'right' endpoint
-        # This /should/ always work
-        head_bucket = tmp_s3_client.head_bucket(
-            Bucket=(self.get_option("bucket_name")),
-        )
-        bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
-        if bucket_region is None:
-            bucket_region = "us-east-1"
-
-        if self.get_option("bucket_endpoint_url"):
-            return self.get_option("bucket_endpoint_url"), bucket_region
-
-        # Create another client for the region the bucket lives in, so we can nab the endpoint URL
-        self._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
-        s3_bucket_client = self._get_boto_client(
-            "s3",
-            region_name=bucket_region,
-            profile_name=profile_name,
-        )
-
-        return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
+        return self.s3_manager.get_bucket_endpoint(self)
 
     def reset(self):
         """start a fresh ssm session"""
