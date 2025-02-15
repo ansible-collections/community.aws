@@ -332,6 +332,8 @@ import select
 import string
 import subprocess
 import time
+from dataclasses import dataclass
+from typing import Dict
 from typing import NoReturn
 from typing import Optional
 from typing import Tuple
@@ -437,6 +439,20 @@ def filter_ansi(line: str, is_windows: bool) -> str:
             line = line[:-1]
 
     return line
+
+
+@dataclass
+class Command:
+    command: str
+    method: str  # 'get' or 'put'
+    headers: Dict[str, str]
+
+
+@dataclass
+class CommandResult:
+    returncode: int
+    stdout_combined: str
+    stderr_combined: str
 
 
 class Connection(ConnectionBase):
