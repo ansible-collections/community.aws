@@ -1082,10 +1082,19 @@ class Connection(ConnectionBase):
 
         return commands, put_args
 
-    def _exec_transport_commands(self, in_path, out_path, commands):
+    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[Command]) -> CommandResult:
+        """
+        Execute the provided transport commands.
+
+        :param in_path: The input path.
+        :param out_path: The output path.
+        :param commands: A list of command dictionaries containing the command string and metadata.
+
+        :returns: A CommandResult object containing the return code, stdout, and stderr in a tuple.
+        """
         stdout_combined, stderr_combined = "", ""
         for command in commands:
-            (returncode, stdout, stderr) = self.exec_command(command, in_data=None, sudoable=False)
+            (returncode, stdout, stderr) = self.exec_command(command["command"], in_data=None, sudoable=False)
 
             # Check the return code
             if returncode != 0:
@@ -1094,7 +1103,7 @@ class Connection(ConnectionBase):
             stdout_combined += stdout
             stderr_combined += stderr
 
-        return (returncode, stdout_combined, stderr_combined)
+        return CommandResult(returncode, stdout_combined, stderr_combined)
 
     @_ssm_retry
     def _file_transport_command(self, in_path, out_path, ssm_action):
