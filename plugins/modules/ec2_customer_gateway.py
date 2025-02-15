@@ -69,6 +69,15 @@ EXAMPLES = r"""
     state: absent
     region: us-east-1
   register: cgw
+
+- name: Configure AWS Customer Gateway
+  community.aws.ec2_customer_gateway:
+    name: Corp-office
+    ip_address: "203.0.113.1"
+    bgp_asn: 65000
+    routing: "dynamic"
+    region: "us-west-2"
+    state: present  
 """
 
 RETURN = r"""
