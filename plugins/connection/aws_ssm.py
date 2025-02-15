@@ -1106,31 +1106,51 @@ class Connection(ConnectionBase):
         return CommandResult(returncode, stdout_combined, stderr_combined)
 
     @_ssm_retry
-    def _file_transport_command(self, in_path, out_path, ssm_action):
-        """transfer a file to/from host using an intermediate S3 bucket"""
+    def _file_transport_command(
+        self,
+        in_path: str,
+        out_path: str,
+        ssm_action: str,
+    ) -> CommandResult:
+        """
+        Transfer file(s) to/from host using an intermediate S3 bucket and then delete the file(s).
+
+        :param in_path: The input path.
+        :param out_path: The output path.
+        :param ssm_action: The SSM action to perform ("get" or "put").
+
+        :returns: A CommandResult object containing the return code, stdout, and stderr in a tuple.
+        """
 
         bucket_name = self.get_option("bucket_name")
         s3_path = self._escape_path(f"{self.instance_id}/{out_path}")
-
-        get_commands, put_commands, put_args = self._generate_commands(
-            bucket_name,
-            s3_path,
-            in_path,
-            out_path,
-        )
 
         client = self._s3_client
 
         try:
             if ssm_action == "get":
+                put_commands, _ = self._generate_commands(
+                    bucket_name,
+                    s3_path,
+                    in_path,
+                    out_path,
+                )
+                put_commands = [cmd["command"] for cmd in put_commands if cmd.get("method") == "put"]
                 (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, put_commands)
                 with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
                     client.download_fileobj(bucket_name, s3_path, data)
             else:
+                get_commands, put_args = self._generate_commands(
+                    bucket_name,
+                    s3_path,
+                    in_path,
+                    out_path,
+                )
+                get_commands = [cmd["command"] for cmd in get_commands if cmd.get("method") == "get"]
                 with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
                     client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
                 (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, get_commands)
-            return (returncode, stdout, stderr)
+            return CommandResult(returncode, stdout, stderr)
         finally:
             # Remove the files from the bucket after they've been transferred
             client.delete_object(Bucket=bucket_name, Key=s3_path)
