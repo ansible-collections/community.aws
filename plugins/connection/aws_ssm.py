@@ -334,6 +334,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from typing import Dict
+from typing import List
 from typing import NoReturn
 from typing import Optional
 from typing import Tuple
@@ -990,15 +991,45 @@ class Connection(ConnectionBase):
             put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option("bucket_sse_kms_key_id")
         return put_args, put_headers
 
-    def _generate_commands(self, bucket_name, s3_path, in_path, out_path):
+    def _generate_commands(
+        self,
+        bucket_name: str,
+        s3_path: str,
+        in_path: str,
+        out_path: str,
+    ) -> Tuple[List[Command], Optional[Dict]]:
+        """
+        Generate commands for the specified bucket, S3 path, input path, and output path.
+
+        :param bucket_name: The name of the S3 bucket used for file transfers.
+        :param s3_path: The S3 path to the file to be sent.
+        :param in_path: Input path
+        :param out_path: Output path
+        :param method: The request method to use for the command (can be "get" or "put").
+
+        :returns: List of Command dictionaries containing the command string and metadata.
+        """
         put_args, put_headers = self._generate_encryption_settings()
+        commands = []
 
         put_url = self._get_url("put_object", bucket_name, s3_path, "PUT", extra_args=put_args)
         get_url = self._get_url("get_object", bucket_name, s3_path, "GET")
 
         if self.is_windows:
             put_command_headers = "; ".join([f"'{h}' = '{v}'" for h, v in put_headers.items()])
-            put_commands = [
+            commands.append({
+                "command":
+                (
+                    "Invoke-WebRequest "
+                    f"'{get_url}' "
+                    f"-OutFile '{out_path}'"
+                ),
+                # The "method" key indicates to _file_transport_command which commands are get_commands
+                "method": "get",
+                "headers": {},
+            })  # fmt: skip
+            commands.append({
+                "command":
                 (
                     "Invoke-WebRequest -Method PUT "
                     # @{'key' = 'value'; 'key2' = 'value2'}
@@ -1007,42 +1038,49 @@ class Connection(ConnectionBase):
                     f"-Uri '{put_url}' "
                     f"-UseBasicParsing"
                 ),
-            ]  # fmt: skip
-            get_commands = [
-                (
-                    "Invoke-WebRequest "
-                    f"'{get_url}' "
-                    f"-OutFile '{out_path}'"
-                ),
-            ]  # fmt: skip
+                # The "method" key indicates to _file_transport_command which commands are put_commands
+                "method": "put",
+                "headers": put_headers
+            })  # fmt: skip
         else:
             put_command_headers = " ".join([f"-H '{h}: {v}'" for h, v in put_headers.items()])
-            put_commands = [
+            commands.append({
+                "command":
+                (
+                    "curl "
+                    f"-o '{out_path}' "
+                    f"'{get_url}'"
+                ),
+                # The "method" key indicates to _file_transport_command which commands are get_commands
+                "method": "get",
+                "headers": {},
+            })  # fmt: skip
+            # Due to https://github.com/curl/curl/issues/183 earlier
+            # versions of curl did not create the output file, when the
+            # response was empty. Although this issue was fixed in 2015,
+            # some actively maintained operating systems still use older
+            # versions of it (e.g. CentOS 7)
+            commands.append({
+                "command":
+                (
+                    "touch "
+                    f"'{out_path}'"
+                ),
+            })  # fmt: skip
+            commands.append({
+                "command":
                 (
                     "curl --request PUT "
                     f"{put_command_headers} "
                     f"--upload-file '{in_path}' "
                     f"'{put_url}'"
                 ),
-            ]  # fmt: skip
-            get_commands = [
-                (
-                    "curl "
-                    f"-o '{out_path}' "
-                    f"'{get_url}'"
-                ),
-                # Due to https://github.com/curl/curl/issues/183 earlier
-                # versions of curl did not create the output file, when the
-                # response was empty. Although this issue was fixed in 2015,
-                # some actively maintained operating systems still use older
-                # versions of it (e.g. CentOS 7)
-                (
-                    "touch "
-                    f"'{out_path}'"
-                )
-            ]  # fmt: skip
+                # The "method" key indicates to _file_transport_command which commands are put_commands
+                "method": "put",
+                "headers": put_headers
+            })  # fmt: skip
 
-        return get_commands, put_commands, put_args
+        return commands, put_args
 
     def _exec_transport_commands(self, in_path, out_path, commands):
         stdout_combined, stderr_combined = "", ""
