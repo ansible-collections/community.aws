@@ -1,5 +1,6 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+import sys
 from io import StringIO
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -268,3 +269,72 @@ class TestConnectionBaseClass:
         assert test_a != test_b
         assert len(test_a) == Connection.MARK_LENGTH
         assert len(test_b) == Connection.MARK_LENGTH
+
+    @pytest.mark.skipif(sys.platform == "win", reason="This test is only for non-Windows systems")
+    def test_generate_commands_non_windows(self):
+        """Testing command generation on non-Windows systems"""
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+        conn.get_option = MagicMock()
+
+        mock_s3_client = MagicMock()
+        mock_s3_client.generate_presigned_url.return_value = "https://test-url"
+        conn._s3_client = mock_s3_client
+
+        test_command_generation = conn._generate_commands(
+            "test_bucket",
+            "test/s3/path",
+            "test/in/path",
+            "test/out/path",
+        )
+
+        # Ensure data types of command object are as expected
+        assert isinstance(test_command_generation, tuple)
+        assert isinstance(test_command_generation[0], list)
+        assert isinstance(test_command_generation[0][0], dict)
+
+        # Three command dictionaries are generated for non-Windows systems
+        assert len(test_command_generation[0]) == 3
+
+        # Check contents of command dictionaries
+        assert "command" in test_command_generation[0][0]
+        assert "method" in test_command_generation[0][2]
+        assert "headers" in test_command_generation[0][2]
+        assert "curl --request PUT -H" in test_command_generation[0][2]["command"]
+        assert test_command_generation[0][2]["method"] == "put"
+
+    @patch("ansible_collections.community.aws.plugins.connection.aws_ssm.Connection.is_windows")
+    def test_generate_commands_windows(self, mock_is_windows):
+        """Testing command generation on Windows systems"""
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        mock_is_windows.return_value = True
+
+        mock_s3_client = MagicMock()
+        mock_s3_client.generate_presigned_url.return_value = "https://test-url"
+        conn._s3_client = mock_s3_client
+
+        test_command_generation = conn._generate_commands(
+            "test_bucket",
+            "test/s3/path",
+            "test/in/path",
+            "test/out/path",
+        )
+
+        # Ensure data types of command object are as expected
+        assert isinstance(test_command_generation, tuple)
+        assert isinstance(test_command_generation[0], list)
+        assert isinstance(test_command_generation[0][0], dict)
+
+        # Two command dictionaries are generated for Windows
+        assert len(test_command_generation[0]) == 2
+
+        # Check contents of command dictionaries
+        assert "command" in test_command_generation[0][0]
+        assert "method" in test_command_generation[0][1]
+        assert "headers" in test_command_generation[0][1]
+        assert "Invoke-WebRequest" in test_command_generation[0][1]["command"]
+        assert test_command_generation[0][1]["method"] == "put"
