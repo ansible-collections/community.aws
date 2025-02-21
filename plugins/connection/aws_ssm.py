@@ -1017,6 +1017,7 @@ class Connection(ConnectionBase):
 
         :returns: List of Command dictionaries containing the command string and metadata.
         """
+
         put_args, put_headers = self._generate_encryption_settings()
         commands = []
 
@@ -1100,6 +1101,7 @@ class Connection(ConnectionBase):
 
         :returns: A CommandResult object containing the return code, stdout, and stderr in a tuple.
         """
+
         stdout_combined, stderr_combined = "", ""
         for command in commands:
             (returncode, stdout, stderr) = self.exec_command(command["command"], in_data=None, sudoable=False)
