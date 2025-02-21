@@ -1129,7 +1129,7 @@ class Connection(ConnectionBase):
 
         try:
             if ssm_action == "get":
-                put_commands, _ = self._generate_commands(
+                put_commands, put_args = self._generate_commands(
                     bucket_name,
                     s3_path,
                     in_path,
