@@ -2,6 +2,13 @@
 # Created by https://www.gitignore.io/api/git,linux,pydev,python,windows,pycharm+all,jupyternotebook,vim,webstorm,emacs,dotenv
 # Edit at https://www.gitignore.io/?templates=git,linux,pydev,python,windows,pycharm+all,jupyternotebook,vim,webstorm,emacs,dotenv
 tests/integration/inventory
+tests/integration/targets/connection_aws_ssm_*/boto3_config
+tests/integration/targets/connection_aws_ssm_*/iam_role_vars_to_delete.yml
+tests/integration/targets/connection_aws_ssm_*/instance_vars_to_delete.yml
+tests/integration/targets/connection_aws_ssm_*/s3_vars_to_delete.yml
+tests/integration/targets/connection_aws_ssm_*/ssm_inventory
+tests/integration/targets/connection_aws_ssm_*/ssm_vars_to_delete.yml
+
 ### dotenv ###
 .env
 
