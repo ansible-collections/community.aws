@@ -443,17 +443,6 @@ def filter_ansi(line: str, is_windows: bool) -> str:
 
 
 @dataclass
-class Command:
-    """
-    Custom dataclass for the generated command dictionaries.
-    """
-
-    command: str
-    method: str  # 'get' or 'put'
-    headers: Dict[str, str]
-
-
-@dataclass
 class CommandResult:
     """
     Custom dataclass for the executed command results.
@@ -1005,7 +994,7 @@ class Connection(ConnectionBase):
         s3_path: str,
         in_path: str,
         out_path: str,
-    ) -> Tuple[List[Command], Optional[Dict]]:
+    ) -> Tuple[List[Dict], dict]:
         """
         Generate commands for the specified bucket, S3 path, input path, and output path.
 
@@ -1015,7 +1004,7 @@ class Connection(ConnectionBase):
         :param out_path: Output path
         :param method: The request method to use for the command (can be "get" or "put").
 
-        :returns: List of Command dictionaries containing the command string and metadata.
+        :returns: A tuple containing a list of command dictionaries along with any ``put_args`` dictionaries.
         """
 
         put_args, put_headers = self._generate_encryption_settings()
@@ -1049,7 +1038,7 @@ class Connection(ConnectionBase):
                 ),
                 # The "method" key indicates to _file_transport_command which commands are put_commands
                 "method": "put",
-                "headers": put_headers
+                "headers": put_headers,
             })  # fmt: skip
         else:
             put_command_headers = " ".join([f"-H '{h}: {v}'" for h, v in put_headers.items()])
@@ -1075,6 +1064,8 @@ class Connection(ConnectionBase):
                     "touch "
                     f"'{out_path}'"
                 ),
+                "method": "get",
+                "headers": {},
             })  # fmt: skip
             commands.append({
                 "command":
@@ -1086,12 +1077,12 @@ class Connection(ConnectionBase):
                 ),
                 # The "method" key indicates to _file_transport_command which commands are put_commands
                 "method": "put",
-                "headers": put_headers
+                "headers": put_headers,
             })  # fmt: skip
 
         return commands, put_args
 
-    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[Command]) -> CommandResult:
+    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[dict]) -> Tuple[int, str, str]:
         """
         Execute the provided transport commands.
 
@@ -1104,7 +1095,10 @@ class Connection(ConnectionBase):
 
         stdout_combined, stderr_combined = "", ""
         for command in commands:
-            (returncode, stdout, stderr) = self.exec_command(command["command"], in_data=None, sudoable=False)
+            result = self.exec_command(command["command"], in_data=None, sudoable=False)
+
+            returncode = result[0]
+            stdout, stderr = result[1], result[2]
 
             # Check the return code
             if returncode != 0:
@@ -1121,7 +1115,7 @@ class Connection(ConnectionBase):
         in_path: str,
         out_path: str,
         ssm_action: str,
-    ) -> CommandResult:
+    ) -> Tuple[int, str, str]:
         """
         Transfer file(s) to/from host using an intermediate S3 bucket and then delete the file(s).
 
@@ -1137,26 +1131,21 @@ class Connection(ConnectionBase):
 
         client = self._s3_client
 
+        commands, put_args = self._generate_commands(
+            bucket_name,
+            s3_path,
+            in_path,
+            out_path,
+        )
+
         try:
             if ssm_action == "get":
-                put_commands, put_args = self._generate_commands(
-                    bucket_name,
-                    s3_path,
-                    in_path,
-                    out_path,
-                )
-                put_commands = [cmd["command"] for cmd in put_commands if cmd.get("method") == "put"]
+                put_commands = [cmd for cmd in commands if cmd.get("method") == "put"]
                 (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, put_commands)
                 with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
                     client.download_fileobj(bucket_name, s3_path, data)
             else:
-                get_commands, put_args = self._generate_commands(
-                    bucket_name,
-                    s3_path,
-                    in_path,
-                    out_path,
-                )
-                get_commands = [cmd["command"] for cmd in get_commands if cmd.get("method") == "get"]
+                get_commands = [cmd for cmd in commands if cmd.get("method") == "get"]
                 with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
                     client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
                 (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, get_commands)
