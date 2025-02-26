@@ -466,7 +466,7 @@ class S3ClientManager:
         region_name = self.get_option("region") or "us-east-1"
         profile_name = self.get_option("profile") or ""
         self._vvvv("_get_bucket_endpoint: S3 (global)")
-        tmp_s3_client = self._get_boto_client(
+        tmp_s3_client = self.get_boto_client(
             "s3",
             region_name=region_name,
             profile_name=profile_name,
@@ -485,13 +485,40 @@ class S3ClientManager:
 
         # Create another client for the region the bucket lives in, so we can nab the endpoint URL
         self._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
-        s3_bucket_client = self._get_boto_client(
+        s3_bucket_client = self.get_boto_client(
             "s3",
             region_name=bucket_region,
             profile_name=profile_name,
         )
 
         return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
+
+    def get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
+        """Gets a boto3 client based on the STS token"""
+
+        aws_access_key_id = self.get_option("access_key_id")
+        aws_secret_access_key = self.get_option("secret_access_key")
+        aws_session_token = self.get_option("session_token")
+
+        session_args = dict(
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
+            region_name=region_name,
+        )
+        if profile_name:
+            session_args["profile_name"] = profile_name
+        session = boto3.session.Session(**session_args)
+
+        client = session.client(
+            service,
+            endpoint_url=endpoint_url,
+            config=Config(
+                signature_version="s3v4",
+                s3={"addressing_style": self.get_option("s3_addressing_style")},
+            ),
+        )
+        return client
 
 class Connection(ConnectionBase):
     """AWS SSM based connections"""
@@ -955,30 +982,8 @@ class Connection(ConnectionBase):
 
     def _get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
         """Gets a boto3 client based on the STS token"""
+        return self.s3_manager.get_boto_client(service, region_name, profile_name, endpoint_url)
 
-        aws_access_key_id = self.get_option("access_key_id")
-        aws_secret_access_key = self.get_option("secret_access_key")
-        aws_session_token = self.get_option("session_token")
-
-        session_args = dict(
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            aws_session_token=aws_session_token,
-            region_name=region_name,
-        )
-        if profile_name:
-            session_args["profile_name"] = profile_name
-        session = boto3.session.Session(**session_args)
-
-        client = session.client(
-            service,
-            endpoint_url=endpoint_url,
-            config=Config(
-                signature_version="s3v4",
-                s3={"addressing_style": self.get_option("s3_addressing_style")},
-            ),
-        )
-        return client
 
     def _escape_path(self, path):
         return path.replace("\\", "/")
