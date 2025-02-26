@@ -1082,7 +1082,7 @@ class Connection(ConnectionBase):
 
         return commands, put_args
 
-    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[dict]) -> Tuple[int, str, str]:
+    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[dict]) -> CommandResult:
         """
         Execute the provided transport commands.
 
@@ -1090,15 +1090,12 @@ class Connection(ConnectionBase):
         :param out_path: The output path.
         :param commands: A list of command dictionaries containing the command string and metadata.
 
-        :returns: A CommandResult object containing the return code, stdout, and stderr in a tuple.
+        :returns: A tuple containing the return code, stdout, and stderr.
         """
 
         stdout_combined, stderr_combined = "", ""
         for command in commands:
-            result = self.exec_command(command["command"], in_data=None, sudoable=False)
-
-            returncode = result[0]
-            stdout, stderr = result[1], result[2]
+            (returncode, stdout, stderr) = self.exec_command(command["command"], in_data=None, sudoable=False)
 
             # Check the return code
             if returncode != 0:
@@ -1107,7 +1104,7 @@ class Connection(ConnectionBase):
             stdout_combined += stdout
             stderr_combined += stderr
 
-        return CommandResult(returncode, stdout_combined, stderr_combined)
+        return (returncode, stdout_combined, stderr_combined)
 
     @_ssm_retry
     def _file_transport_command(
@@ -1115,7 +1112,7 @@ class Connection(ConnectionBase):
         in_path: str,
         out_path: str,
         ssm_action: str,
-    ) -> Tuple[int, str, str]:
+    ) -> CommandResult:
         """
         Transfer file(s) to/from host using an intermediate S3 bucket and then delete the file(s).
 
@@ -1123,7 +1120,7 @@ class Connection(ConnectionBase):
         :param out_path: The output path.
         :param ssm_action: The SSM action to perform ("get" or "put").
 
-        :returns: A CommandResult object containing the return code, stdout, and stderr in a tuple.
+        :returns: The command's return code, stdout, and stderr in a tuple.
         """
 
         bucket_name = self.get_option("bucket_name")
@@ -1141,15 +1138,15 @@ class Connection(ConnectionBase):
         try:
             if ssm_action == "get":
                 put_commands = [cmd for cmd in commands if cmd.get("method") == "put"]
-                (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, put_commands)
+                result = self._exec_transport_commands(in_path, out_path, put_commands)
                 with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
                     client.download_fileobj(bucket_name, s3_path, data)
             else:
                 get_commands = [cmd for cmd in commands if cmd.get("method") == "get"]
                 with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
                     client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-                (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, get_commands)
-            return CommandResult(returncode, stdout, stderr)
+                result = self._exec_transport_commands(in_path, out_path, get_commands)
+            return result
         finally:
             # Remove the files from the bucket after they've been transferred
             client.delete_object(Bucket=bucket_name, Key=s3_path)
