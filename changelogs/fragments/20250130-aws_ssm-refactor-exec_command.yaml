@@ -1,3 +1,0 @@
----
-minor_changes:
-  - aws_ssm -  Refactor exec_command Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).

@@ -1,2 +1,0 @@
-minor_changes:
-  - ssm - add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
