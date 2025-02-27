@@ -529,6 +529,19 @@ class S3ClientManager:
             params.update(extra_args)
         return client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
 
+    def generate_encryption_settings(self):
+        put_args = {}
+        put_headers = {}
+        if not self.get_option("bucket_sse_mode"):
+            return put_args, put_headers
+
+        put_args["ServerSideEncryption"] = self.get_option("bucket_sse_mode")
+        put_headers["x-amz-server-side-encryption"] = self.get_option("bucket_sse_mode")
+        if self.get_option("bucket_sse_mode") == "aws:kms" and self.get_option("bucket_sse_kms_key_id"):
+            put_args["SSEKMSKeyId"] = self.get_option("bucket_sse_kms_key_id")
+            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option("bucket_sse_kms_key_id")
+        return put_args, put_headers
+
 class Connection(ConnectionBase):
     """AWS SSM based connections"""
 
@@ -658,7 +671,7 @@ class Connection(ConnectionBase):
         self._display(display.vvvv, message)
 
     def _get_bucket_endpoint(self):
-        return self.s3_manager.get_bucket_endpoint(self)
+        return self.s3_manager.get_bucket_endpoint()
 
     def reset(self):
         """start a fresh ssm session"""
@@ -993,17 +1006,7 @@ class Connection(ConnectionBase):
         return path.replace("\\", "/")
 
     def _generate_encryption_settings(self):
-        put_args = {}
-        put_headers = {}
-        if not self.get_option("bucket_sse_mode"):
-            return put_args, put_headers
-
-        put_args["ServerSideEncryption"] = self.get_option("bucket_sse_mode")
-        put_headers["x-amz-server-side-encryption"] = self.get_option("bucket_sse_mode")
-        if self.get_option("bucket_sse_mode") == "aws:kms" and self.get_option("bucket_sse_kms_key_id"):
-            put_args["SSEKMSKeyId"] = self.get_option("bucket_sse_kms_key_id")
-            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option("bucket_sse_kms_key_id")
-        return put_args, put_headers
+        return self.s3_manager.generate_encryption_settings()
 
     def _generate_commands(
         self,
