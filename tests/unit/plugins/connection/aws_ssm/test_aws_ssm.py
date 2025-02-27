@@ -1,6 +1,5 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-import sys
 from io import StringIO
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -285,11 +284,11 @@ class TestConnectionBaseClass:
         conn._s3_client = mock_s3_client
 
         test_command_generation = conn._generate_commands(
-                "test_bucket",
-                "test/s3/path",
-                "test/in/path",
-                "test/out/path",
-            )
+            "test_bucket",
+            "test/s3/path",
+            "test/in/path",
+            "test/out/path",
+        )
 
         # Check contents of generated command dictionaries
         if is_windows:
