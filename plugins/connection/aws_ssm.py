@@ -332,12 +332,12 @@ import select
 import string
 import subprocess
 import time
-from dataclasses import dataclass
 from typing import Dict
 from typing import List
 from typing import NoReturn
 from typing import Optional
 from typing import Tuple
+from typing import TypedDict
 
 try:
     import boto3
@@ -442,10 +442,9 @@ def filter_ansi(line: str, is_windows: bool) -> str:
     return line
 
 
-@dataclass
-class CommandResult:
+class CommandResult(TypedDict):
     """
-    Custom dataclass for the executed command results.
+    A dictionary that contains the executed command results.
     """
 
     returncode: int
