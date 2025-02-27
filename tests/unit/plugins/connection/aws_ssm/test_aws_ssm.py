@@ -14,7 +14,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 from ansible_collections.community.aws.plugins.connection.aws_ssm import Connection
 from ansible_collections.community.aws.plugins.connection.aws_ssm import S3ClientManager
 
-
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
 
