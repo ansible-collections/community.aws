@@ -12,6 +12,8 @@ from ansible.plugins.loader import connection_loader
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 from ansible_collections.community.aws.plugins.connection.aws_ssm import Connection
+from ansible_collections.community.aws.plugins.connection.aws_ssm import S3ClientManager
+
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
@@ -82,20 +84,21 @@ class TestConnectionBaseClass:
         # Mock the _get_bucket_endpoint method to return dummy values
         conn._get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
 
-        conn._get_boto_client = MagicMock(return_value=mock_boto3_client)
+        conn.s3_manager = S3ClientManager(conn)
+        conn.s3_manager.get_boto_client = MagicMock(return_value=mock_boto3_client)
 
         conn._initialize_s3_client(test_profile_name)
 
         conn._get_bucket_endpoint.assert_called_once()
 
-        conn._get_boto_client.assert_called_once_with(
+        conn.s3_manager.get_boto_client.assert_called_once_with(
             "s3",
             region_name="us-west-2",
             endpoint_url="http://example.com",
             profile_name=test_profile_name,
         )
 
-        assert conn._s3_client is mock_boto3_client
+        assert conn.s3_manager._s3_client is mock_boto3_client
 
     @patch("os.path.exists")
     @patch("subprocess.Popen")
