@@ -4085,4 +4085,4 @@ releases:
     - 2096-refactor-random-helper-function.yml
     - 2205-support-minmax-s3lifecycle.yml
     - refactor_ssm_init_client.yml
-    release_date: '2025-02-27'
+    release_date: '2025-03-04'
