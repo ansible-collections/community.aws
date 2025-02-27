@@ -458,6 +458,17 @@ class S3ClientManager:
         self.connection = connection
         self._s3_client = None
 
+    def initialize_s3_client(self, region_name: str, endpoint_url: str, profile_name: str) -> None:
+        """
+        Create the S3 client inside the manager.
+        """
+        self._s3_client = self.get_boto_client(
+            "s3",
+            region_name=region_name,
+            endpoint_url=endpoint_url,
+            profile_name=profile_name,
+        )
+
     def get_bucket_endpoint(self) -> Tuple[str, str]:
         """
         Fetches the correct S3 endpoint and region for use with our bucket.
@@ -644,14 +655,13 @@ class Connection(ConnectionBase):
         Returns:
             None
         """
-
         s3_endpoint_url, s3_region_name = self._get_bucket_endpoint()
         self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
-        self._s3_client = self._get_boto_client(
-            "s3",
+
+        self.s3_manager.initialize_s3_client(
             region_name=s3_region_name,
             endpoint_url=s3_endpoint_url,
-            profile_name=profile_name,
+            profile_name=profile_name
         )
 
     def _display(self, f: Any, message: str) -> None:
