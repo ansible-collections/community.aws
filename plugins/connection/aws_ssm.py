@@ -520,6 +520,15 @@ class S3ClientManager:
         )
         return client
 
+    def get_url(self, client_method, bucket_name, out_path, http_method, extra_args=None):
+        """Generate URL for get_object / put_object"""
+
+        client = self._s3_client
+        params = {"Bucket": bucket_name, "Key": out_path}
+        if extra_args is not None:
+            params.update(extra_args)
+        return client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
+
 class Connection(ConnectionBase):
     """AWS SSM based connections"""
 
@@ -973,12 +982,7 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method, extra_args=None):
         """Generate URL for get_object / put_object"""
-
-        client = self._s3_client
-        params = {"Bucket": bucket_name, "Key": out_path}
-        if extra_args is not None:
-            params.update(extra_args)
-        return client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
+        return self.s3_manager.get_url(client_method, bucket_name, out_path, http_method, extra_args)
 
     def _get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
         """Gets a boto3 client based on the STS token"""
