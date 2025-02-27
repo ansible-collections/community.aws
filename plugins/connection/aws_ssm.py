@@ -338,6 +338,8 @@ from typing import NoReturn
 from typing import Optional
 from typing import Tuple
 from typing import TypedDict
+from typing import Any
+from typing import Iterator
 
 try:
     import boto3
@@ -363,7 +365,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 display = Display()
 
 
-def _ssm_retry(func):
+def _ssm_retry(func: Any) -> Any:
     """
     Decorator to retry in the case of a connection failure
     Will retry if:
@@ -374,7 +376,7 @@ def _ssm_retry(func):
     """
 
     @wraps(func)
-    def wrapped(self, *args, **kwargs):
+    def wrapped(self, *args: Any, **kwargs: Any) -> Any:
         remaining_tries = int(self.get_option("reconnection_retries")) + 1
         cmd_summary = f"{args[0]}..."
         for attempt in range(remaining_tries):
@@ -413,7 +415,7 @@ def _ssm_retry(func):
     return wrapped
 
 
-def chunks(lst, n):
+def chunks(lst: List, n: int) -> Iterator[List[Any]]:
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), n):
         yield lst[i:i + n]  # fmt: skip
@@ -452,10 +454,10 @@ class CommandResult(TypedDict):
     stderr_combined: str
 
 class S3ClientManager:
-    def __init__(self, connection):
+    def __init__(self, connection) -> None:
         self.connection = connection
 
-    def get_bucket_endpoint(self):
+    def get_bucket_endpoint(self) -> Tuple[str, str]:
         """
         Fetches the correct S3 endpoint and region for use with our bucket.
         If we don't explicitly set the endpoint then some commands will use the global
@@ -493,7 +495,7 @@ class S3ClientManager:
 
         return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
 
-    def get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
+    def get_boto_client(self, service: str, region_name: Optional[str] = None, profile_name: Optional[str] = None, endpoint_url: Optional[str] = None) -> Any:
         """Gets a boto3 client based on the STS token"""
 
         aws_access_key_id = self.get_option("access_key_id")
@@ -520,7 +522,7 @@ class S3ClientManager:
         )
         return client
 
-    def get_url(self, client_method, bucket_name, out_path, http_method, extra_args=None):
+    def get_url(self, client_method: str, bucket_name: str, out_path: str, http_method: str, extra_args: Optional[Dict[str, Any]] = None) -> str:
         """Generate URL for get_object / put_object"""
 
         client = self._s3_client
@@ -529,7 +531,8 @@ class S3ClientManager:
             params.update(extra_args)
         return client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
 
-    def generate_encryption_settings(self):
+    def generate_encryption_settings(self) -> Tuple[Dict, Dict]:
+        """Generate Encryption Settings"""
         put_args = {}
         put_headers = {}
         if not self.get_option("bucket_sse_mode"):
@@ -541,6 +544,7 @@ class S3ClientManager:
             put_args["SSEKMSKeyId"] = self.get_option("bucket_sse_kms_key_id")
             put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option("bucket_sse_kms_key_id")
         return put_args, put_headers
+
 
 class Connection(ConnectionBase):
     """AWS SSM based connections"""
@@ -561,7 +565,7 @@ class Connection(ConnectionBase):
     _timeout = False
     MARK_LENGTH = 26
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         if not HAS_BOTO3:
@@ -582,10 +586,10 @@ class Connection(ConnectionBase):
             self._shell_type = "powershell"
             self.is_windows = True
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()
 
-    def _connect(self):
+    def _connect(self) -> Any:
         """connect to the host via ssm"""
 
         self._play_context.remote_user = getpass.getuser()
@@ -651,29 +655,29 @@ class Connection(ConnectionBase):
             profile_name=profile_name,
         )
 
-    def _display(self, f, message):
+    def _display(self, f: Any, message: str) -> None:
         if self.host:
             host_args = {"host": self.host}
         else:
             host_args = {}
         f(to_text(message), **host_args)
 
-    def _v(self, message):
+    def _v(self, message: str) -> None:
         self._display(display.v, message)
 
-    def _vv(self, message):
+    def _vv(self, message: str) -> None:
         self._display(display.vv, message)
 
-    def _vvv(self, message):
+    def _vvv(self, message: str) -> None:
         self._display(display.vvv, message)
 
-    def _vvvv(self, message):
+    def _vvvv(self, message: str) -> None:
         self._display(display.vvvv, message)
 
-    def _get_bucket_endpoint(self):
+    def _get_bucket_endpoint(self) -> Tuple[str, str]:
         return self.s3_manager.get_bucket_endpoint()
 
-    def reset(self):
+    def reset(self) -> Any:
         """start a fresh ssm session"""
         self._vvvv("reset called on ssm connection")
         self.close()
@@ -943,7 +947,7 @@ class Connection(ConnectionBase):
         self._vvvv(f"_wrap_command: \n'{to_text(cmd)}'")
         return cmd
 
-    def _post_process(self, stdout, mark_begin):
+    def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:
         """extract command status and strip unwanted lines"""
 
         if not self.is_windows:
@@ -977,7 +981,7 @@ class Connection(ConnectionBase):
 
         return (returncode, stdout)
 
-    def _flush_stderr(self, session_process):
+    def _flush_stderr(self, session_process) -> str:
         """read and return stderr with minimal blocking"""
 
         poll_stderr = select.poll()
@@ -993,19 +997,18 @@ class Connection(ConnectionBase):
 
         return stderr
 
-    def _get_url(self, client_method, bucket_name, out_path, http_method, extra_args=None):
+    def _get_url(self, client_method: str, bucket_name: str, out_path: str, http_method: str, extra_args: Optional[Dict[str, Any]] = None) -> str:
         """Generate URL for get_object / put_object"""
         return self.s3_manager.get_url(client_method, bucket_name, out_path, http_method, extra_args)
 
-    def _get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
+    def _get_boto_client(self, service: str, region_name: Optional[str] = None, profile_name: Optional[str] = None, endpoint_url: Optional[str] = None):
         """Gets a boto3 client based on the STS token"""
         return self.s3_manager.get_boto_client(service, region_name, profile_name, endpoint_url)
 
-
-    def _escape_path(self, path):
+    def _escape_path(self, path: str) -> str:
         return path.replace("\\", "/")
 
-    def _generate_encryption_settings(self):
+    def _generate_encryption_settings(self) -> Tuple[Dict, Dict]:
         return self.s3_manager.generate_encryption_settings()
 
     def _generate_commands(
@@ -1171,7 +1174,7 @@ class Connection(ConnectionBase):
             # Remove the files from the bucket after they've been transferred
             client.delete_object(Bucket=bucket_name, Key=s3_path)
 
-    def put_file(self, in_path, out_path):
+    def put_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
         """transfer a file from local to remote"""
 
         super().put_file(in_path, out_path)
@@ -1182,7 +1185,7 @@ class Connection(ConnectionBase):
 
         return self._file_transport_command(in_path, out_path, "put")
 
-    def fetch_file(self, in_path, out_path):
+    def fetch_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
         """fetch a file from remote to local"""
 
         super().fetch_file(in_path, out_path)
@@ -1190,7 +1193,7 @@ class Connection(ConnectionBase):
         self._vvv(f"FETCH {in_path} TO {out_path}")
         return self._file_transport_command(in_path, out_path, "get")
 
-    def close(self):
+    def close(self) -> None:
         """terminate the connection"""
         if self._session_id:
             self._vvv(f"CLOSING SSM CONNECTION TO: {self.instance_id}")
