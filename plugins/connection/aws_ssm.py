@@ -456,6 +456,7 @@ class CommandResult(TypedDict):
 class S3ClientManager:
     def __init__(self, connection) -> None:
         self.connection = connection
+        self._s3_client = None
 
     def get_bucket_endpoint(self) -> Tuple[str, str]:
         """
@@ -591,7 +592,6 @@ class Connection(ConnectionBase):
 
     def _connect(self) -> Any:
         """connect to the host via ssm"""
-
         self._play_context.remote_user = getpass.getuser()
 
         if not self._session_id:
@@ -603,19 +603,18 @@ class Connection(ConnectionBase):
         Initializes required AWS clients (SSM and S3).
         Delegates client initialization to specialized methods.
         """
-
         self._vvvv("INITIALIZE BOTO3 CLIENTS")
         profile_name = self.get_option("profile") or ""
         region_name = self.get_option("region")
 
-        # Initialize SSM client
-        self._initialize_ssm_client(region_name, profile_name)
+        # Initialize S3ClientManager
+        self.s3_manager = S3ClientManager(self)
 
         # Initialize S3 client
         self._initialize_s3_client(profile_name)
 
-        # Initialize S3ClientManager
-        self.s3_manager = S3ClientManager(self)
+        # Initialize SSM client
+        self._initialize_ssm_client(region_name, profile_name)
 
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
