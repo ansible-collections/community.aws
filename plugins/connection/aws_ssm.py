@@ -615,7 +615,7 @@ class Connection(ConnectionBase):
         self._initialize_s3_client(profile_name)
 
         # Initialize S3ClientManager
-        self.s3_manager = S3ClientManager(self._s3_client)
+        self.s3_manager = S3ClientManager(self)
 
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
