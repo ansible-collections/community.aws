@@ -466,9 +466,9 @@ class S3ClientManager:
         (new AWS regions and new buckets in a region other than the one we're running in)
         """
 
-        region_name = self.get_option("region") or "us-east-1"
-        profile_name = self.get_option("profile") or ""
-        self._vvvv("_get_bucket_endpoint: S3 (global)")
+        region_name = self.connection.get_option("region") or "us-east-1"
+        profile_name = self.connection.get_option("profile") or ""
+        self.connection._vvvv("_get_bucket_endpoint: S3 (global)")
         tmp_s3_client = self.get_boto_client(
             "s3",
             region_name=region_name,
@@ -477,17 +477,17 @@ class S3ClientManager:
         # Fetch the location of the bucket so we can open a client against the 'right' endpoint
         # This /should/ always work
         head_bucket = tmp_s3_client.head_bucket(
-            Bucket=(self.get_option("bucket_name")),
+            Bucket=(self.connection.get_option("bucket_name")),
         )
         bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
         if bucket_region is None:
             bucket_region = "us-east-1"
 
-        if self.get_option("bucket_endpoint_url"):
-            return self.get_option("bucket_endpoint_url"), bucket_region
+        if self.connection.get_option("bucket_endpoint_url"):
+            return self.connection.get_option("bucket_endpoint_url"), bucket_region
 
         # Create another client for the region the bucket lives in, so we can nab the endpoint URL
-        self._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
+        self.connection._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
         s3_bucket_client = self.get_boto_client(
             "s3",
             region_name=bucket_region,
@@ -499,9 +499,9 @@ class S3ClientManager:
     def get_boto_client(self, service: str, region_name: Optional[str] = None, profile_name: Optional[str] = None, endpoint_url: Optional[str] = None) -> Any:
         """Gets a boto3 client based on the STS token"""
 
-        aws_access_key_id = self.get_option("access_key_id")
-        aws_secret_access_key = self.get_option("secret_access_key")
-        aws_session_token = self.get_option("session_token")
+        aws_access_key_id = self.connection.get_option("access_key_id")
+        aws_secret_access_key = self.connection.get_option("secret_access_key")
+        aws_session_token = self.connection.get_option("session_token")
 
         session_args = dict(
             aws_access_key_id=aws_access_key_id,
@@ -518,7 +518,7 @@ class S3ClientManager:
             endpoint_url=endpoint_url,
             config=Config(
                 signature_version="s3v4",
-                s3={"addressing_style": self.get_option("s3_addressing_style")},
+                s3={"addressing_style": self.connection.get_option("s3_addressing_style")},
             ),
         )
         return client
@@ -536,14 +536,14 @@ class S3ClientManager:
         """Generate Encryption Settings"""
         put_args = {}
         put_headers = {}
-        if not self.get_option("bucket_sse_mode"):
+        if not self.connection.get_option("bucket_sse_mode"):
             return put_args, put_headers
 
-        put_args["ServerSideEncryption"] = self.get_option("bucket_sse_mode")
-        put_headers["x-amz-server-side-encryption"] = self.get_option("bucket_sse_mode")
-        if self.get_option("bucket_sse_mode") == "aws:kms" and self.get_option("bucket_sse_kms_key_id"):
-            put_args["SSEKMSKeyId"] = self.get_option("bucket_sse_kms_key_id")
-            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.get_option("bucket_sse_kms_key_id")
+        put_args["ServerSideEncryption"] = self.connection.get_option("bucket_sse_mode")
+        put_headers["x-amz-server-side-encryption"] = self.connection.get_option("bucket_sse_mode")
+        if self.connection.get_option("bucket_sse_mode") == "aws:kms" and self.connection.get_option("bucket_sse_kms_key_id"):
+            put_args["SSEKMSKeyId"] = self.connection.get_option("bucket_sse_kms_key_id")
+            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.connection.get_option("bucket_sse_kms_key_id")
         return put_args, put_headers
 
 
