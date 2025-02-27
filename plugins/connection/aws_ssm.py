@@ -623,6 +623,7 @@ class Connection(ConnectionBase):
 
         # Initialize S3 client
         self._initialize_s3_client(profile_name)
+        self._s3_client = self.s3_manager._s3_client
 
         # Initialize SSM client
         self._initialize_ssm_client(region_name, profile_name)
