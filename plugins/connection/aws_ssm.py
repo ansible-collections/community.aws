@@ -333,6 +333,9 @@ import string
 import subprocess
 import time
 from typing import Dict
+from typing import Any
+from typing import Dict
+from typing import Iterator
 from typing import List
 from typing import NoReturn
 from typing import Optional
@@ -507,7 +510,13 @@ class S3ClientManager:
 
         return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
 
-    def get_boto_client(self, service: str, region_name: Optional[str] = None, profile_name: Optional[str] = None, endpoint_url: Optional[str] = None) -> Any:
+    def get_boto_client(
+        self,
+        service: str,
+        region_name: Optional[str] = None,
+        profile_name: Optional[str] = None,
+        endpoint_url: Optional[str] = None,
+    ) -> Any:
         """Gets a boto3 client based on the STS token"""
 
         aws_access_key_id = self.connection.get_option("access_key_id")
@@ -534,7 +543,14 @@ class S3ClientManager:
         )
         return client
 
-    def get_url(self, client_method: str, bucket_name: str, out_path: str, http_method: str, extra_args: Optional[Dict[str, Any]] = None) -> str:
+    def get_url(
+        self,
+        client_method: str,
+        bucket_name: str,
+        out_path: str,
+        http_method: str,
+        extra_args: Optional[Dict[str, Any]] = None,
+    ) -> str:
         """Generate URL for get_object / put_object"""
 
         client = self._s3_client
@@ -552,9 +568,13 @@ class S3ClientManager:
 
         put_args["ServerSideEncryption"] = self.connection.get_option("bucket_sse_mode")
         put_headers["x-amz-server-side-encryption"] = self.connection.get_option("bucket_sse_mode")
-        if self.connection.get_option("bucket_sse_mode") == "aws:kms" and self.connection.get_option("bucket_sse_kms_key_id"):
+        if self.connection.get_option("bucket_sse_mode") == "aws:kms" and self.connection.get_option(
+            "bucket_sse_kms_key_id"
+        ):
             put_args["SSEKMSKeyId"] = self.connection.get_option("bucket_sse_kms_key_id")
-            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.connection.get_option("bucket_sse_kms_key_id")
+            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.connection.get_option(
+                "bucket_sse_kms_key_id"
+            )
         return put_args, put_headers
 
 
@@ -660,9 +680,7 @@ class Connection(ConnectionBase):
         self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
 
         self.s3_manager.initialize_s3_client(
-            region_name=s3_region_name,
-            endpoint_url=s3_endpoint_url,
-            profile_name=profile_name
+            region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name
         )
 
     def _display(self, f: Any, message: str) -> None:
@@ -1007,11 +1025,24 @@ class Connection(ConnectionBase):
 
         return stderr
 
-    def _get_url(self, client_method: str, bucket_name: str, out_path: str, http_method: str, extra_args: Optional[Dict[str, Any]] = None) -> str:
+    def _get_url(
+        self,
+        client_method: str,
+        bucket_name: str,
+        out_path: str,
+        http_method: str,
+        extra_args: Optional[Dict[str, Any]] = None,
+    ) -> str:
         """Generate URL for get_object / put_object"""
         return self.s3_manager.get_url(client_method, bucket_name, out_path, http_method, extra_args)
 
-    def _get_boto_client(self, service: str, region_name: Optional[str] = None, profile_name: Optional[str] = None, endpoint_url: Optional[str] = None):
+    def _get_boto_client(
+        self,
+        service: str,
+        region_name: Optional[str] = None,
+        profile_name: Optional[str] = None,
+        endpoint_url: Optional[str] = None,
+    ):
         """Gets a boto3 client based on the STS token"""
         return self.s3_manager.get_boto_client(service, region_name, profile_name, endpoint_url)
 
