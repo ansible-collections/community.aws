@@ -291,17 +291,16 @@ class TestConnectionBaseClass:
         )
 
         # Check contents of generated command dictionaries
+        assert "command" in test_command_generation[0][0]
+        assert "method" in test_command_generation[0][0]
+        assert "headers" in test_command_generation[0][0]
+
         if is_windows:
-            assert "command" in test_command_generation[0][0]
-            assert "method" in test_command_generation[0][1]
-            assert "headers" in test_command_generation[0][1]
             assert "Invoke-WebRequest" in test_command_generation[0][1]["command"]
             assert test_command_generation[0][1]["method"] == "put"
             # Two command dictionaries are generated for Windows
             assert len(test_command_generation[0]) == 2
         else:
-            assert "method" in test_command_generation[0][2]
-            assert "headers" in test_command_generation[0][2]
             assert "curl --request PUT -H" in test_command_generation[0][2]["command"]
             assert test_command_generation[0][2]["method"] == "put"
             # Three command dictionaries are generated on non-Windows systems
