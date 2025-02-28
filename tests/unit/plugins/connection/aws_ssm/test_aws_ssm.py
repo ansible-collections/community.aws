@@ -403,3 +403,41 @@ class TestS3ClientManager:
             "put_object", Params=expected_params, ExpiresIn=3600, HttpMethod="PUT"
         )
         assert result == "http://test-url-extra"
+
+
+    def test_generate_encryption_settings(self):
+        """
+        Test generate_encryption_settings()
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock get_option to return expected values
+        def mock_get_option(key):
+            options = {
+                "profile": "test-profile",
+                "region": "us-east-1",
+                "bucket_sse_mode": "aws:kms",
+                "bucket_sse_kms_key_id": "my-kms-key-id",
+            }
+            return options.get(key, None)
+
+        conn.get_option = MagicMock(side_effect=mock_get_option)
+
+        s3_manager = S3ClientManager(connection=conn)
+        put_args, put_headers = s3_manager.generate_encryption_settings()
+
+        expected_put_args = {
+            "ServerSideEncryption": "aws:kms",
+            "SSEKMSKeyId": "my-kms-key-id"
+        }
+        expected_put_headers = {
+            "x-amz-server-side-encryption": "aws:kms",
+            "x-amz-server-side-encryption-aws-kms-key-id": "my-kms-key-id"
+        }
+
+        assert put_args == expected_put_args
+        assert put_headers == expected_put_headers
+        conn.get_option.assert_any_call("bucket_sse_mode")
+        conn.get_option.assert_any_call("bucket_sse_kms_key_id")
