@@ -1,2 +1,0 @@
-minor_changes:
-  - aws_ssm -  Refactor _init_clients Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2223).

@@ -1,4 +1,0 @@
----
-minor_changes:
-  - connection/aws_ssm - Add the possibility to define ``aws_ssm_plugin`` variable via environment variable and by default use the version found on the $PATH
-    rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
