@@ -1,3 +1,0 @@
----
-minor_changes:
-  - waf_condition - adds missing options validation to filters (https://github.com/ansible-collections/community.aws/pull/2220).
