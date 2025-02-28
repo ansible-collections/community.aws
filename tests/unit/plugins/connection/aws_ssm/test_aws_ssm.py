@@ -344,3 +344,62 @@ class TestS3ClientManager:
 
         assert s3_client_manager._s3_client is not None
         assert s3_client_manager._s3_client == "mocked_s3_client"
+
+    def test_get_url_no_extra_args(self):
+        """
+        Test get_url() without extra_args
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        s3_manager = S3ClientManager(connection=conn)
+        mock_s3_client = MagicMock()
+        s3_manager._s3_client = mock_s3_client
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/generate_presigned_url.html
+        mock_s3_client.generate_presigned_url.return_value = "http://test-url-extra"
+
+        result = s3_manager.get_url(
+            client_method="put_object",
+            bucket_name="test_bucket",
+            out_path="test/path",
+            http_method="PUT",
+        )
+
+        expected_params = {"Bucket": "test_bucket", "Key": "test/path"}
+
+        mock_s3_client.generate_presigned_url.assert_called_once_with(
+            "put_object", Params=expected_params, ExpiresIn=3600, HttpMethod="PUT"
+        )
+        assert result == "http://test-url-extra"
+
+    def test_get_url_extra_args(self):
+        """
+        Test get_url() with extra_args
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        s3_manager = S3ClientManager(connection=conn)
+        mock_s3_client = MagicMock()
+        s3_manager._s3_client = mock_s3_client
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/generate_presigned_url.html
+        mock_s3_client.generate_presigned_url.return_value = "http://test-url-extra"
+        extra_args = {"ACL": "public-read", "ContentType": "text/plain"}
+
+        result = s3_manager.get_url(
+            client_method="put_object",
+            bucket_name="test_bucket",
+            out_path="test/path",
+            http_method="PUT",
+            extra_args=extra_args
+        )
+
+        expected_params = {"Bucket": "test_bucket", "Key": "test/path"}
+        expected_params.update(extra_args)
+
+        mock_s3_client.generate_presigned_url.assert_called_once_with(
+            "put_object", Params=expected_params, ExpiresIn=3600, HttpMethod="PUT"
+        )
+        assert result == "http://test-url-extra"
