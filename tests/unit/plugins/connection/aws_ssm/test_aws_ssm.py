@@ -270,3 +270,36 @@ class TestConnectionBaseClass:
         assert test_a != test_b
         assert len(test_a) == Connection.MARK_LENGTH
         assert len(test_b) == Connection.MARK_LENGTH
+
+class TestS3ClientManager:
+    """
+    Tests for the S3ClientManager class
+    """
+    @patch("ansible_collections.community.aws.plugins.connection.aws_ssm.S3ClientManager.get_boto_client", return_value="mocked_s3_client")
+    def test_initialize_s3_client(self, mock_get_boto_client):
+        """
+        Test initialize_s3_client()
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        s3_client_manager = S3ClientManager(connection=conn)
+
+        s3_client_manager.initialize_s3_client(
+            region_name="us-east-2",
+            endpoint_url="https://mock-endpoint",
+            profile_name="test-profile"
+        )
+
+        assert mock_get_boto_client.call_count == 1
+
+        mock_get_boto_client.assert_called_once_with(
+            "s3",
+            region_name="us-east-2",
+            endpoint_url="https://mock-endpoint",
+            profile_name="test-profile",
+        )
+
+        assert s3_client_manager._s3_client is not None
+        assert s3_client_manager._s3_client == "mocked_s3_client"
