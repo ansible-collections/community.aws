@@ -4,6 +4,26 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v8.1.0
+======
+
+Release Summary
+---------------
+
+This minor release brings several new features and bug fixes.
+
+Minor Changes
+-------------
+
+- ec2_placement_group - Added support for creating with ``tags`` (https://github.com/ansible-collections/community.aws/pull/2081).
+- ec2_transit_gateway - Support for enable multicast on Transit Gateway (https://github.com/ansible-collections/community.aws/pull/2063).
+- ec2_vpc_vgw - Fix call to parent static method in class ``VGWRetry`` (https://github.com/ansible-collections/community.aws/pull/2140).
+
+Bugfixes
+--------
+
+- ecs_taskdefinition - avoid throttling exceptions on task definitions with a large number of revisions by using the retry mechanism (https://github.com/ansible-collections/community.aws/issues/2123).
+
 v8.0.0
 ======
 
