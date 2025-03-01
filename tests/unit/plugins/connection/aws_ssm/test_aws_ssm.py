@@ -12,6 +12,7 @@ from ansible.plugins.loader import connection_loader
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 from ansible_collections.community.aws.plugins.connection.aws_ssm import Connection
+from ansible_collections.community.aws.plugins.connection.aws_ssm import S3ClientManager
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
@@ -82,20 +83,21 @@ class TestConnectionBaseClass:
         # Mock the _get_bucket_endpoint method to return dummy values
         conn._get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
 
-        conn._get_boto_client = MagicMock(return_value=mock_boto3_client)
+        conn.s3_manager = S3ClientManager(conn)
+        conn.s3_manager.get_boto_client = MagicMock(return_value=mock_boto3_client)
 
         conn._initialize_s3_client(test_profile_name)
 
         conn._get_bucket_endpoint.assert_called_once()
 
-        conn._get_boto_client.assert_called_once_with(
+        conn.s3_manager.get_boto_client.assert_called_once_with(
             "s3",
             region_name="us-west-2",
             endpoint_url="http://example.com",
             profile_name=test_profile_name,
         )
 
-        assert conn._s3_client is mock_boto3_client
+        assert conn.s3_manager._s3_client is mock_boto3_client
 
     @patch("os.path.exists")
     @patch("subprocess.Popen")
@@ -268,3 +270,198 @@ class TestConnectionBaseClass:
         assert test_a != test_b
         assert len(test_a) == Connection.MARK_LENGTH
         assert len(test_b) == Connection.MARK_LENGTH
+
+
+class TestS3ClientManager:
+    """
+    Tests for the S3ClientManager class
+    """
+
+    @patch(
+        "ansible_collections.community.aws.plugins.connection.aws_ssm.S3ClientManager.get_boto_client",
+        return_value="mocked_s3_client",
+    )
+    def test_initialize_s3_client(self, mock_get_boto_client):
+        """
+        Test initialize_s3_client()
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        s3_client_manager = S3ClientManager(connection=conn)
+
+        s3_client_manager.initialize_s3_client(
+            region_name="us-east-2", endpoint_url="https://mock-endpoint", profile_name="test-profile"
+        )
+
+        assert mock_get_boto_client.call_count == 1
+
+        mock_get_boto_client.assert_called_once_with(
+            "s3",
+            region_name="us-east-2",
+            endpoint_url="https://mock-endpoint",
+            profile_name="test-profile",
+        )
+
+        assert s3_client_manager._s3_client is not None
+        assert s3_client_manager._s3_client == "mocked_s3_client"
+
+    def test_get_bucket_endpoint(self):
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock get_option to return expected values
+        def mock_get_option(key):
+            options = {
+                "region": "us-east-2",
+                "profile": "test-profile",
+                "bucket_name": "my-bucket",
+                "bucket_endpoint_url": None,
+            }
+            return options.get(key)
+
+        conn.get_option = MagicMock(side_effect=mock_get_option)
+
+        s3_manager = S3ClientManager(connection=conn)
+
+        mock_tmp_client = MagicMock()
+        mock_tmp_client.head_bucket.return_value = {
+            "ResponseMetadata": {"HTTPHeaders": {"x-amz-bucket-region": "us-east-2"}}
+        }
+
+        mock_region_client = MagicMock()
+        mock_region_client.meta.endpoint_url = "https://s3.us-east-2.amazonaws.com"
+        mock_region_client.meta.region_name = "us-east-2"
+
+        s3_manager.get_boto_client = MagicMock(side_effect=[mock_tmp_client, mock_region_client])
+
+        endpoint, region = s3_manager.get_bucket_endpoint()
+
+        assert endpoint == "https://s3.us-east-2.amazonaws.com"
+        assert region == "us-east-2"
+
+    @patch("boto3.session.Session")
+    def test_get_boto_client(self, mock_session_cls):
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock get_option to return expected values
+        def mock_get_option(key):
+            options = {
+                "access_key_id": "dummy_key",
+                "secret_access_key": "dummy_secret",
+                "session_token": "dummy_token",
+                "s3_addressing_style": "path",
+            }
+            return options.get(key, None)
+
+        conn.get_option = MagicMock(side_effect=mock_get_option)
+
+        s3_manager = S3ClientManager(connection=conn)
+
+        mock_session = MagicMock()
+        mock_client = "mock_client"
+        mock_session.client.return_value = mock_client
+        mock_session_cls.return_value = mock_session
+
+        client = s3_manager.get_boto_client(
+            service="s3", region_name="us-east-2", profile_name="test-profile", endpoint_url="http://example.com"
+        )
+
+        assert client == mock_client
+
+    def test_get_url_no_extra_args(self):
+        """
+        Test get_url() without extra_args
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        s3_manager = S3ClientManager(connection=conn)
+        mock_s3_client = MagicMock()
+        s3_manager._s3_client = mock_s3_client
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/generate_presigned_url.html
+        mock_s3_client.generate_presigned_url.return_value = "http://test-url-extra"
+
+        result = s3_manager.get_url(
+            client_method="put_object",
+            bucket_name="test_bucket",
+            out_path="test/path",
+            http_method="PUT",
+        )
+
+        expected_params = {"Bucket": "test_bucket", "Key": "test/path"}
+
+        mock_s3_client.generate_presigned_url.assert_called_once_with(
+            "put_object", Params=expected_params, ExpiresIn=3600, HttpMethod="PUT"
+        )
+        assert result == "http://test-url-extra"
+
+    def test_get_url_extra_args(self):
+        """
+        Test get_url() with extra_args
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        s3_manager = S3ClientManager(connection=conn)
+        mock_s3_client = MagicMock()
+        s3_manager._s3_client = mock_s3_client
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/generate_presigned_url.html
+        mock_s3_client.generate_presigned_url.return_value = "http://test-url-extra"
+        extra_args = {"ACL": "public-read", "ContentType": "text/plain"}
+
+        result = s3_manager.get_url(
+            client_method="put_object",
+            bucket_name="test_bucket",
+            out_path="test/path",
+            http_method="PUT",
+            extra_args=extra_args,
+        )
+
+        expected_params = {"Bucket": "test_bucket", "Key": "test/path"}
+        expected_params.update(extra_args)
+
+        mock_s3_client.generate_presigned_url.assert_called_once_with(
+            "put_object", Params=expected_params, ExpiresIn=3600, HttpMethod="PUT"
+        )
+        assert result == "http://test-url-extra"
+
+    def test_generate_encryption_settings(self):
+        """
+        Test generate_encryption_settings()
+        """
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock get_option to return expected values
+        def mock_get_option(key):
+            options = {
+                "profile": "test-profile",
+                "region": "us-east-1",
+                "bucket_sse_mode": "aws:kms",
+                "bucket_sse_kms_key_id": "my-kms-key-id",
+            }
+            return options.get(key, None)
+
+        conn.get_option = MagicMock(side_effect=mock_get_option)
+
+        s3_manager = S3ClientManager(connection=conn)
+        put_args, put_headers = s3_manager.generate_encryption_settings()
+
+        expected_put_args = {"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": "my-kms-key-id"}
+        expected_put_headers = {
+            "x-amz-server-side-encryption": "aws:kms",
+            "x-amz-server-side-encryption-aws-kms-key-id": "my-kms-key-id",
+        }
+
+        assert put_args == expected_put_args
+        assert put_headers == expected_put_headers
+        conn.get_option.assert_any_call("bucket_sse_mode")
+        conn.get_option.assert_any_call("bucket_sse_kms_key_id")
