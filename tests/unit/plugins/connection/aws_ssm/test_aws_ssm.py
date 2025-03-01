@@ -441,3 +441,37 @@ class TestS3ClientManager:
         assert put_headers == expected_put_headers
         conn.get_option.assert_any_call("bucket_sse_mode")
         conn.get_option.assert_any_call("bucket_sse_kms_key_id")
+
+    @patch("boto3.session.Session")
+    def test_get_boto_client(self, mock_session_cls):
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        # Mock get_option to return dummy credentials and settings.
+        def mock_get_option(key):
+            options = {
+                "access_key_id": "dummy_key",
+                "secret_access_key": "dummy_secret",
+                "session_token": "dummy_token",
+                "s3_addressing_style": "path",
+            }
+            return options.get(key, None)
+
+        conn.get_option = MagicMock(side_effect=mock_get_option)
+
+        s3_manager = S3ClientManager(connection=conn)
+
+        mock_session = MagicMock()
+        mock_client = "mock_client"
+        mock_session.client.return_value = mock_client
+        mock_session_cls.return_value = mock_session
+
+        client = s3_manager.get_boto_client(
+            service="s3",
+            region_name="us-east-2",
+            profile_name="test-profile",
+            endpoint_url="http://example.com"
+        )
+
+        assert client == mock_client
