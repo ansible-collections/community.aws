@@ -332,7 +332,6 @@ import select
 import string
 import subprocess
 import time
-from typing import Dict
 from typing import Any
 from typing import Dict
 from typing import Iterator
@@ -341,8 +340,6 @@ from typing import NoReturn
 from typing import Optional
 from typing import Tuple
 from typing import TypedDict
-from typing import Any
-from typing import Iterator
 
 try:
     import boto3
@@ -455,6 +452,7 @@ class CommandResult(TypedDict):
     returncode: int
     stdout_combined: str
     stderr_combined: str
+
 
 class S3ClientManager:
     def __init__(self, connection) -> None:
