@@ -280,11 +280,15 @@ class TestConnectionBaseClass:
         conn.get_option = MagicMock()
 
         conn.is_windows = is_windows
-        conn.s3_manager = S3ClientManager(conn)
 
-        mock_s3_client = MagicMock()
-        mock_s3_client.generate_presigned_url.return_value = "https://test-url"
-        conn.s3_manager._s3_client = mock_s3_client
+        mock_s3_manager = MagicMock(spec=S3ClientManager)
+
+        mock_s3_manager.get_url.return_value = "https://test-url"
+        mock_s3_manager.generate_encryption_settings.return_value = (
+            {"ServerSideEncryption": "aws:kms"},
+            {"x-amz-server-side-encryption": "aws:kms"},
+        )
+        conn.s3_manager = mock_s3_manager
 
         test_command_generation = conn._generate_commands(
             "test_bucket",
@@ -304,7 +308,11 @@ class TestConnectionBaseClass:
             # Two command dictionaries are generated for Windows
             assert len(test_command_generation[0]) == 2
         else:
-            assert "curl --request PUT -H" in test_command_generation[0][2]["command"]
+            put_cmd = test_command_generation[0][2]["command"]
+            assert "curl --request PUT" in put_cmd
+            assert "-H 'x-amz-server-side-encryption: aws:kms'" in put_cmd
+            assert "--upload-file 'test/in/path'" in put_cmd
+            assert "'https://test-url'" in put_cmd
             assert test_command_generation[0][2]["method"] == "put"
             # Three command dictionaries are generated on non-Windows systems
             assert len(test_command_generation[0]) == 3
