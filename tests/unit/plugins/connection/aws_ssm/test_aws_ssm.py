@@ -12,7 +12,7 @@ from ansible.plugins.loader import connection_loader
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 from ansible_collections.community.aws.plugins.connection.aws_ssm import Connection
-from ansible_collections.community.aws.plugins.connection.aws_ssm import S3ClientManager
+from ansible_collections.community.aws.plugins.module_utils.s3clientmanager import S3ClientManager
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
@@ -280,10 +280,11 @@ class TestConnectionBaseClass:
         conn.get_option = MagicMock()
 
         conn.is_windows = is_windows
+        conn.s3_manager = S3ClientManager(conn)
 
         mock_s3_client = MagicMock()
         mock_s3_client.generate_presigned_url.return_value = "https://test-url"
-        conn._s3_client = mock_s3_client
+        conn.s3_manager._s3_client = mock_s3_client
 
         test_command_generation = conn._generate_commands(
             "test_bucket",
@@ -312,6 +313,7 @@ class TestConnectionBaseClass:
         assert isinstance(test_command_generation, tuple)
         assert isinstance(test_command_generation[0], list)
         assert isinstance(test_command_generation[0][0], dict)
+
 
 class TestS3ClientManager:
     """
