@@ -3875,6 +3875,27 @@ releases:
     - python37.yml
     - workflow-requirements.yml
     release_date: '2024-05-20'
+  8.1.0:
+    changes:
+      bugfixes:
+      - ecs_taskdefinition - Avoid throttling exceptions on task definitions with
+        a large number of revisions by using the retry mechanism (https://github.com/ansible-collections/community.aws/issues/2123).
+      minor_changes:
+      - ec2_placement_group - Added support for creating with ``tags`` (https://github.com/ansible-collections/community.aws/pull/2081).
+      - ec2_transit_gateway - Support for enabling multicast on Transit Gateway (https://github.com/ansible-collections/community.aws/pull/2063).
+      - ec2_vpc_vgw - Fix call to parent static method in class ``VGWRetry`` (https://github.com/ansible-collections/community.aws/pull/2140).
+      release_summary: This minor release brings several new features and bug fixes.
+    fragments:
+    - 20240423-msk_cluster-disable-tests.yml
+    - 20240613_ec2_placement_group_tags.yml
+    - 20240909-ec2_vpc_vgw-fix-super-exception.yaml
+    - 20240919-fix_sanity.yml
+    - 20240924-create-ignore-2.19.yml
+    - 2063-add-multicast-support.yml
+    - 2124-add-retry-to-ecs_taskdefinition.yml
+    - 2142-elb_network_lb-update-tests-to-use-valid-cert.yml
+    - release_summary.yml
+    release_date: '2025-03-04'
   9.0.0:
     changes:
       breaking_changes:
