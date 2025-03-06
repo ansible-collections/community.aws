@@ -547,7 +547,7 @@ class Connection(ConnectionBase):
         Returns:
             None
         """
-        s3_endpoint_url, s3_region_name = self._get_bucket_endpoint()
+        s3_endpoint_url, s3_region_name = self.s3_manager.get_bucket_endpoint()
         self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
 
         self.s3_manager.initialize_client(
@@ -572,9 +572,6 @@ class Connection(ConnectionBase):
 
     def _vvvv(self, message: str) -> None:
         self._display(display.vvvv, message)
-
-    def _get_bucket_endpoint(self) -> Tuple[str, str]:
-        return self.s3_manager.get_bucket_endpoint()
 
     def reset(self) -> Any:
         """start a fresh ssm session"""

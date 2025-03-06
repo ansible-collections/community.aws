@@ -80,15 +80,17 @@ class TestConnectionBaseClass:
 
         test_profile_name = "test-profile"
 
-        # Mock the _get_bucket_endpoint method to return dummy values
-        conn._get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
-
         conn.s3_manager = S3ClientManager(conn)
+
+        # Mock the _get_bucket_endpoint method to return dummy values
+        mock_get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
+        conn.s3_manager.get_bucket_endpoint = mock_get_bucket_endpoint
+
         conn.s3_manager.get_boto_client = MagicMock(return_value=mock_boto3_client)
 
         conn._initialize_s3_client(test_profile_name)
 
-        conn._get_bucket_endpoint.assert_called_once()
+        conn.s3_manager.get_bucket_endpoint.assert_called_once()
 
         conn.s3_manager.get_boto_client.assert_called_once_with(
             "s3",
