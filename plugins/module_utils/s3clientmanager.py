@@ -28,7 +28,8 @@ class S3ClientManager:
         """
         Fetches the correct S3 endpoint and region for use with our bucket.
         If we don't explicitly set the endpoint then some commands will use the global
-        endpoint and fail.
+        endpoint and fail
+        (new AWS regions and new buckets in a region other than the one we're running in)
         """
         region_name = self.connection.get_option("region") or "us-east-1"
         profile_name = self.connection.get_option("profile") or ""
@@ -37,6 +38,8 @@ class S3ClientManager:
             region_name=region_name,
             profile_name=profile_name,
         )
+        # Fetch the location of the bucket so we can open a client against the 'right' endpoint
+        # This /should/ always work
         head_bucket = tmp_s3_client.head_bucket(
             Bucket=(self.connection.get_option("bucket_name")),
         )
@@ -47,6 +50,7 @@ class S3ClientManager:
         if self.connection.get_option("bucket_endpoint_url"):
             return self.connection.get_option("bucket_endpoint_url"), bucket_region
 
+        # Create another client for the region the bucket lives in, so we can nab the endpoint URL
         self.connection._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
         s3_bucket_client = self.get_s3_client(
             region_name=bucket_region,
