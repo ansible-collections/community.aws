@@ -19,10 +19,14 @@ if not HAS_BOTO3:
 
 
 class TestConnectionBaseClass:
-    @patch("ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_bucket_endpoint",
-        return_value=("fake-s3-endpoint", "fake-region"))
-    @patch("ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_s3_client",
-        return_value=MagicMock())
+    @patch(
+        "ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_bucket_endpoint",
+        return_value=("fake-s3-endpoint", "fake-region"),
+    )
+    @patch(
+        "ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_s3_client",
+        return_value=MagicMock(),
+    )
     def test_init_clients(self, mock_get_s3_client, mock_get_bucket_endpoint):
         pc = PlayContext()
         new_stdin = StringIO()

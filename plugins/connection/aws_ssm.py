@@ -521,9 +521,10 @@ class Connection(ConnectionBase):
         # Initialize S3 client
         s3_endpoint_url, s3_region_name = self.s3_manager.get_bucket_endpoint()
         self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
-        self.s3_manager.initialize_client(region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name)
+        self.s3_manager.initialize_client(
+            region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name
+        )
         self._s3_client = self.s3_manager._s3_client
-
 
         # Initialize SSM client
         self._initialize_ssm_client(region_name, profile_name)
