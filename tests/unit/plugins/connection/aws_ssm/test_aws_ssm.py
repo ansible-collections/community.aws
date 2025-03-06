@@ -332,9 +332,9 @@ class TestS3ClientManager:
         "ansible_collections.community.aws.plugins.connection.aws_ssm.S3ClientManager.get_boto_client",
         return_value="mocked_s3_client",
     )
-    def test_initialize_s3_client(self, mock_get_boto_client):
+    def test_initialize_client(self, mock_get_boto_client):
         """
-        Test initialize_s3_client()
+        Test initialize_client()
         """
         pc = PlayContext()
         new_stdin = StringIO()
@@ -342,7 +342,7 @@ class TestS3ClientManager:
 
         s3_client_manager = S3ClientManager(connection=conn)
 
-        s3_client_manager.initialize_s3_client(
+        s3_client_manager.initialize_client(
             region_name="us-east-2", endpoint_url="https://mock-endpoint", profile_name="test-profile"
         )
 

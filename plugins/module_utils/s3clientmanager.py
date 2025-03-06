@@ -14,7 +14,7 @@ class S3ClientManager:
         self.connection = connection
         self._s3_client = None
 
-    def initialize_s3_client(self, region_name: str, endpoint_url: str, profile_name: str) -> None:
+    def initialize_client(self, region_name: str, endpoint_url: str, profile_name: str) -> None:
         """
         Create the S3 client inside the manager.
         """
