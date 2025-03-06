@@ -1,2 +1,2 @@
 minor_changes:
-  - efs - Add support for ``elastic`` parameter as a ``throughput_mode`` to ``efs`` module (https://github.com/ansible-collections/community.aws/pull/2263).
+  - efs - adds support for ``elastic`` parameter as a ``throughput_mode`` to ``efs`` module (https://github.com/ansible-collections/community.aws/pull/2263).
