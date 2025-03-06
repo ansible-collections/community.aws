@@ -342,6 +342,12 @@ from typing import Optional
 from typing import Tuple
 from typing import TypedDict
 
+try:
+    import boto3
+    from botocore.client import Config
+except ImportError:
+    pass
+
 from ansible.errors import AnsibleConnectionFailure
 from ansible.errors import AnsibleError
 from ansible.errors import AnsibleFileNotFound
@@ -904,15 +910,32 @@ class Connection(ConnectionBase):
         """Generate URL for get_object / put_object"""
         return self.s3_manager.get_url(client_method, bucket_name, out_path, http_method, extra_args)
 
-    def _get_boto_client(
-        self,
-        service: str,
-        region_name: Optional[str] = None,
-        profile_name: Optional[str] = None,
-        endpoint_url: Optional[str] = None,
-    ):
+    def _get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
         """Gets a boto3 client based on the STS token"""
-        return self.s3_manager.get_boto_client(service, region_name, profile_name, endpoint_url)
+
+        aws_access_key_id = self.get_option("access_key_id")
+        aws_secret_access_key = self.get_option("secret_access_key")
+        aws_session_token = self.get_option("session_token")
+
+        session_args = dict(
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
+            region_name=region_name,
+        )
+        if profile_name:
+            session_args["profile_name"] = profile_name
+        session = boto3.session.Session(**session_args)
+
+        client = session.client(
+            service,
+            endpoint_url=endpoint_url,
+            config=Config(
+                signature_version="s3v4",
+                s3={"addressing_style": self.get_option("s3_addressing_style")},
+            ),
+        )
+        return client
 
     def _escape_path(self, path: str) -> str:
         return path.replace("\\", "/")

@@ -18,8 +18,7 @@ class S3ClientManager:
         """
         Create the S3 client inside the manager.
         """
-        self._s3_client = self.get_boto_client(
-            "s3",
+        self._s3_client = self.get_s3_client(
             region_name=region_name,
             endpoint_url=endpoint_url,
             profile_name=profile_name,
@@ -34,8 +33,7 @@ class S3ClientManager:
         region_name = self.connection.get_option("region") or "us-east-1"
         profile_name = self.connection.get_option("profile") or ""
         self.connection._vvvv("_get_bucket_endpoint: S3 (global)")
-        tmp_s3_client = self.get_boto_client(
-            "s3",
+        tmp_s3_client = self.get_s3_client(
             region_name=region_name,
             profile_name=profile_name,
         )
@@ -50,46 +48,41 @@ class S3ClientManager:
             return self.connection.get_option("bucket_endpoint_url"), bucket_region
 
         self.connection._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
-        s3_bucket_client = self.get_boto_client(
-            "s3",
+        s3_bucket_client = self.get_s3_client(
             region_name=bucket_region,
             profile_name=profile_name,
         )
 
         return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
 
-    def get_boto_client(
+    def get_s3_client(
         self,
-        service: str,
         region_name: Optional[str] = None,
         profile_name: Optional[str] = None,
         endpoint_url: Optional[str] = None,
     ) -> Any:
-        """Gets a boto3 client based on the STS token"""
-
-        aws_access_key_id = self.connection.get_option("access_key_id")
-        aws_secret_access_key = self.connection.get_option("secret_access_key")
-        aws_session_token = self.connection.get_option("session_token")
+        """Creates and returns a boto3 "s3" client"""
 
         session_args = dict(
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            aws_session_token=aws_session_token,
+            aws_access_key_id=self.connection.get_option("access_key_id"),
+            aws_secret_access_key=self.connection.get_option("secret_access_key"),
+            aws_session_token=self.connection.get_option("session_token"),
             region_name=region_name,
         )
         if profile_name:
             session_args["profile_name"] = profile_name
+
         session = boto3.session.Session(**session_args)
 
-        client = session.client(
-            service,
+        s3_client = session.client(
+            "s3",
             endpoint_url=endpoint_url,
             config=Config(
                 signature_version="s3v4",
                 s3={"addressing_style": self.connection.get_option("s3_addressing_style")},
             ),
         )
-        return client
+        return s3_client
 
     def get_url(
         self,
@@ -104,7 +97,9 @@ class S3ClientManager:
         params = {"Bucket": bucket_name, "Key": out_path}
         if extra_args is not None:
             params.update(extra_args)
-        return self._s3_client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
+        return self._s3_client.generate_presigned_url(
+            client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method
+        )
 
     def generate_encryption_settings(self) -> Tuple[Dict, Dict]:
         """Generate Encryption Settings"""

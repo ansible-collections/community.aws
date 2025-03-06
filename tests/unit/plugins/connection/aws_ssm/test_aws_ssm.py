@@ -86,14 +86,13 @@ class TestConnectionBaseClass:
         mock_get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
         conn.s3_manager.get_bucket_endpoint = mock_get_bucket_endpoint
 
-        conn.s3_manager.get_boto_client = MagicMock(return_value=mock_boto3_client)
+        conn.s3_manager.get_s3_client = MagicMock(return_value=mock_boto3_client)
 
         conn._initialize_s3_client(test_profile_name)
 
         conn.s3_manager.get_bucket_endpoint.assert_called_once()
 
-        conn.s3_manager.get_boto_client.assert_called_once_with(
-            "s3",
+        conn.s3_manager.get_s3_client.assert_called_once_with(
             region_name="us-west-2",
             endpoint_url="http://example.com",
             profile_name=test_profile_name,
@@ -331,10 +330,10 @@ class TestS3ClientManager:
     """
 
     @patch(
-        "ansible_collections.community.aws.plugins.connection.aws_ssm.S3ClientManager.get_boto_client",
+        "ansible_collections.community.aws.plugins.connection.aws_ssm.S3ClientManager.get_s3_client",
         return_value="mocked_s3_client",
     )
-    def test_initialize_client(self, mock_get_boto_client):
+    def test_initialize_client(self, mock_get_s3_client):
         """
         Test initialize_client()
         """
@@ -348,10 +347,9 @@ class TestS3ClientManager:
             region_name="us-east-2", endpoint_url="https://mock-endpoint", profile_name="test-profile"
         )
 
-        assert mock_get_boto_client.call_count == 1
+        assert mock_get_s3_client.call_count == 1
 
-        mock_get_boto_client.assert_called_once_with(
-            "s3",
+        mock_get_s3_client.assert_called_once_with(
             region_name="us-east-2",
             endpoint_url="https://mock-endpoint",
             profile_name="test-profile",
@@ -388,7 +386,7 @@ class TestS3ClientManager:
         mock_region_client.meta.endpoint_url = "https://s3.us-east-2.amazonaws.com"
         mock_region_client.meta.region_name = "us-east-2"
 
-        s3_manager.get_boto_client = MagicMock(side_effect=[mock_tmp_client, mock_region_client])
+        s3_manager.get_s3_client = MagicMock(side_effect=[mock_tmp_client, mock_region_client])
 
         endpoint, region = s3_manager.get_bucket_endpoint()
 
@@ -396,7 +394,7 @@ class TestS3ClientManager:
         assert region == "us-east-2"
 
     @patch("boto3.session.Session")
-    def test_get_boto_client(self, mock_session_cls):
+    def test_get_s3_client(self, mock_session_cls):
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
@@ -420,8 +418,8 @@ class TestS3ClientManager:
         mock_session.client.return_value = mock_client
         mock_session_cls.return_value = mock_session
 
-        client = s3_manager.get_boto_client(
-            service="s3", region_name="us-east-2", profile_name="test-profile", endpoint_url="http://example.com"
+        client = s3_manager.get_s3_client(
+            region_name="us-east-2", profile_name="test-profile", endpoint_url="http://example.com"
         )
 
         assert client == mock_client
