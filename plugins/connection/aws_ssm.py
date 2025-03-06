@@ -550,7 +550,7 @@ class Connection(ConnectionBase):
         s3_endpoint_url, s3_region_name = self._get_bucket_endpoint()
         self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
 
-        self.s3_manager.initialize_s3_client(
+        self.s3_manager.initialize_client(
             region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name
         )
 
