@@ -101,11 +101,10 @@ class S3ClientManager:
     ) -> str:
         """Generate URL for get_object / put_object"""
 
-        client = self._s3_client
         params = {"Bucket": bucket_name, "Key": out_path}
         if extra_args is not None:
             params.update(extra_args)
-        return client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
+        return self._s3_client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
 
     def generate_encryption_settings(self) -> Tuple[Dict, Dict]:
         """Generate Encryption Settings"""
