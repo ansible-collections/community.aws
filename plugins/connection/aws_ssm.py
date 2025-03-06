@@ -519,8 +519,11 @@ class Connection(ConnectionBase):
         self.s3_manager = S3ClientManager(self)
 
         # Initialize S3 client
-        self._initialize_s3_client(profile_name)
+        s3_endpoint_url, s3_region_name = self.s3_manager.get_bucket_endpoint()
+        self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
+        self.s3_manager.initialize_client(region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name)
         self._s3_client = self.s3_manager._s3_client
+
 
         # Initialize SSM client
         self._initialize_ssm_client(region_name, profile_name)
@@ -541,23 +544,6 @@ class Connection(ConnectionBase):
             "ssm",
             region_name=region_name,
             profile_name=profile_name,
-        )
-
-    def _initialize_s3_client(self, profile_name: str) -> None:
-        """
-        Initializes the S3 client used for accessing S3 buckets.
-
-        Args:
-            profile_name (str): AWS profile name for authentication.
-
-        Returns:
-            None
-        """
-        s3_endpoint_url, s3_region_name = self.s3_manager.get_bucket_endpoint()
-        self._vvvv(f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
-
-        self.s3_manager.initialize_client(
-            region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name
         )
 
     def _display(self, f: Any, message: str) -> None:
@@ -899,17 +885,6 @@ class Connection(ConnectionBase):
 
         return stderr
 
-    def _get_url(
-        self,
-        client_method: str,
-        bucket_name: str,
-        out_path: str,
-        http_method: str,
-        extra_args: Optional[Dict[str, Any]] = None,
-    ) -> str:
-        """Generate URL for get_object / put_object"""
-        return self.s3_manager.get_url(client_method, bucket_name, out_path, http_method, extra_args)
-
     def _get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
         """Gets a boto3 client based on the STS token"""
 
@@ -940,9 +915,6 @@ class Connection(ConnectionBase):
     def _escape_path(self, path: str) -> str:
         return path.replace("\\", "/")
 
-    def _generate_encryption_settings(self) -> Tuple[Dict, Dict]:
-        return self.s3_manager.generate_encryption_settings()
-
     def _generate_commands(
         self,
         bucket_name: str,
@@ -962,11 +934,11 @@ class Connection(ConnectionBase):
         :returns: A tuple containing a list of command dictionaries along with any ``put_args`` dictionaries.
         """
 
-        put_args, put_headers = self._generate_encryption_settings()
+        put_args, put_headers = self.s3_manager.generate_encryption_settings()
         commands = []
 
-        put_url = self._get_url("put_object", bucket_name, s3_path, "PUT", extra_args=put_args)
-        get_url = self._get_url("get_object", bucket_name, s3_path, "GET")
+        put_url = self.s3_manager.get_url("put_object", bucket_name, s3_path, "PUT", extra_args=put_args)
+        get_url = self.s3_manager.get_url("get_object", bucket_name, s3_path, "GET")
 
         if self.is_windows:
             put_command_headers = "; ".join([f"'{h}' = '{v}'" for h, v in put_headers.items()])
