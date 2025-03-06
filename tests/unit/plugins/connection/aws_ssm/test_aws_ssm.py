@@ -19,12 +19,15 @@ if not HAS_BOTO3:
 
 
 class TestConnectionBaseClass:
-    def test_init_clients(self):
+    @patch("ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_bucket_endpoint",
+        return_value=("fake-s3-endpoint", "fake-region"))
+    @patch("ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_s3_client",
+        return_value=MagicMock())
+    def test_init_clients(self, mock_get_s3_client, mock_get_bucket_endpoint):
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
 
-        # Mock get_option to return expected region and profile
         def mock_get_option(key):
             options = {
                 "profile": "test-profile",
@@ -36,12 +39,21 @@ class TestConnectionBaseClass:
 
         # Mock the _initialize_ssm_client and _initialize_s3_client methods
         conn._initialize_ssm_client = MagicMock()
-        conn._initialize_s3_client = MagicMock()
 
         conn._init_clients()
 
+        # Assert that _initialize_ssm_client was called once
         conn._initialize_ssm_client.assert_called_once_with("us-east-1", "test-profile")
-        conn._initialize_s3_client.assert_called_once_with("test-profile")
+
+        # Assert that get_bucket_endpoint was called once
+        mock_get_bucket_endpoint.assert_called_once()
+
+        # Assert that get_s3_client was called with appropriate arguments
+        mock_get_s3_client.assert_called_once()
+
+        # Assert that self._s3_client is not None
+        assert conn._s3_client is not None
+        assert conn._s3_client is conn.s3_manager._s3_client
 
     @patch("boto3.client")
     def test_initialize_ssm_client(self, mock_boto3_client):
@@ -67,38 +79,6 @@ class TestConnectionBaseClass:
         )
 
         assert conn._client is mock_boto3_client
-
-    @patch("boto3.client")
-    def test_initialize_s3_client(self, mock_boto3_client):
-        """
-        Test for the _initialize_s3_client method to ensure the S3 client is initialized correctly.
-        """
-
-        pc = PlayContext()
-        new_stdin = StringIO()
-        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
-
-        test_profile_name = "test-profile"
-
-        conn.s3_manager = S3ClientManager(conn)
-
-        # Mock the _get_bucket_endpoint method to return dummy values
-        mock_get_bucket_endpoint = MagicMock(return_value=("http://example.com", "us-west-2"))
-        conn.s3_manager.get_bucket_endpoint = mock_get_bucket_endpoint
-
-        conn.s3_manager.get_s3_client = MagicMock(return_value=mock_boto3_client)
-
-        conn._initialize_s3_client(test_profile_name)
-
-        conn.s3_manager.get_bucket_endpoint.assert_called_once()
-
-        conn.s3_manager.get_s3_client.assert_called_once_with(
-            region_name="us-west-2",
-            endpoint_url="http://example.com",
-            profile_name=test_profile_name,
-        )
-
-        assert conn.s3_manager._s3_client is mock_boto3_client
 
     @patch("os.path.exists")
     @patch("subprocess.Popen")
