@@ -582,14 +582,14 @@ class Connection(ConnectionBase):
         else:
             host_args = {}
 
-        if level == 1:
-            display.v(to_text(message), **host_args)
-        elif level == 2:
-            display.vv(to_text(message), **host_args)
-        elif level == 3:
-            display.vvv(to_text(message), **host_args)
-        elif level == 4:
-            display.vvvv(to_text(message), **host_args)
+        verbosity_level = {
+            1: display.v,
+            2: display.vv,
+            3: display.vvv,
+            4: display.vvvv
+        }
+
+        verbosity_level[level](to_text(message), **host_args)
 
     def _get_bucket_endpoint(self):
         """
