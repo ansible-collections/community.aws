@@ -383,7 +383,7 @@ def _ssm_retry(func: Any) -> Any:
         for attempt in range(remaining_tries):
             try:
                 return_tuple = func(self, *args, **kwargs)
-                self._vvvv(f"ssm_retry: (success) {to_text(return_tuple)}")
+                self.verbosity_display(4, f"ssm_retry: (success) {to_text(return_tuple)}")
                 break
 
             except (AnsibleConnectionFailure, Exception) as e:
@@ -400,7 +400,7 @@ def _ssm_retry(func: Any) -> Any:
                         f"from cmd ({cmd_summary}),pausing for {pause} seconds"
                     )
 
-                self._vv(msg)
+                self.verbosity_display(2, msg)
 
                 time.sleep(pause)
 
@@ -511,7 +511,8 @@ class Connection(ConnectionBase):
         Initializes required AWS clients (SSM and S3).
         Delegates client initialization to specialized methods.
         """
-        self._vvvv("INITIALIZE BOTO3 CLIENTS")
+
+        self.verbosity_display(4, "INITIALIZE BOTO3 CLIENTS")
         profile_name = self.get_option("profile") or ""
         region_name = self.get_option("region")
 
@@ -540,35 +541,97 @@ class Connection(ConnectionBase):
             None
         """
 
-        self._vvvv("SETUP BOTO3 CLIENTS: SSM")
+        self.verbosity_display(4, "SETUP BOTO3 CLIENTS: SSM")
         self._client = self._get_boto_client(
             "ssm",
             region_name=region_name,
             profile_name=profile_name,
         )
 
-    def _display(self, f: Any, message: str) -> None:
+    def _initialize_s3_client(self, profile_name: str) -> None:
+        """
+        Initializes the S3 client used for accessing S3 buckets.
+
+        Args:
+            profile_name (str): AWS profile name for authentication.
+
+        Returns:
+            None
+        """
+
+        s3_endpoint_url, s3_region_name = self._get_bucket_endpoint()
+        self.verbosity_display(4, f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
+        self._s3_client = self._get_boto_client(
+            "s3",
+            region_name=s3_region_name,
+            endpoint_url=s3_endpoint_url,
+            profile_name=profile_name,
+        )
+
+    def verbosity_display(self, level: int, message: str) -> None:
+        """
+        Displays the given message depending on the verbosity level.
+
+        :param message: The message to display.
+        :param display_level: The verbosity level (1-4, default value of 1).
+
+        :return: None
+        """
         if self.host:
             host_args = {"host": self.host}
         else:
             host_args = {}
-        f(to_text(message), **host_args)
 
-    def _v(self, message: str) -> None:
-        self._display(display.v, message)
+        if level == 1:
+            display.v(to_text(message), **host_args)
+        elif level == 2:
+            display.vv(to_text(message), **host_args)
+        elif level == 3:
+            display.vvv(to_text(message), **host_args)
+        elif level == 4:
+            display.vvvv(to_text(message), **host_args)
 
-    def _vv(self, message: str) -> None:
-        self._display(display.vv, message)
+    def _get_bucket_endpoint(self):
+        """
+        Fetches the correct S3 endpoint and region for use with our bucket.
+        If we don't explicitly set the endpoint then some commands will use the global
+        endpoint and fail
+        (new AWS regions and new buckets in a region other than the one we're running in)
+        """
 
-    def _vvv(self, message: str) -> None:
-        self._display(display.vvv, message)
+        region_name = self.get_option("region") or "us-east-1"
+        profile_name = self.get_option("profile") or ""
+        self.verbosity_display(4, "_get_bucket_endpoint: S3 (global)")
+        tmp_s3_client = self._get_boto_client(
+            "s3",
+            region_name=region_name,
+            profile_name=profile_name,
+        )
+        # Fetch the location of the bucket so we can open a client against the 'right' endpoint
+        # This /should/ always work
+        head_bucket = tmp_s3_client.head_bucket(
+            Bucket=(self.get_option("bucket_name")),
+        )
+        bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
+        if bucket_region is None:
+            bucket_region = "us-east-1"
 
-    def _vvvv(self, message: str) -> None:
-        self._display(display.vvvv, message)
+        if self.get_option("bucket_endpoint_url"):
+            return self.get_option("bucket_endpoint_url"), bucket_region
 
-    def reset(self) -> Any:
+        # Create another client for the region the bucket lives in, so we can nab the endpoint URL
+        self.verbosity_display(4, f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
+        s3_bucket_client = self._get_boto_client(
+            "s3",
+            region_name=bucket_region,
+            profile_name=profile_name,
+        )
+
+        return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
+
+    def reset(self):
         """start a fresh ssm session"""
-        self._vvvv("reset called on ssm connection")
+        self.verbosity_display(4, "reset called on ssm connection")
         self.close()
         return self.start_session()
 
@@ -601,13 +664,13 @@ class Connection(ConnectionBase):
     def start_session(self):
         """start ssm session"""
 
-        self._vvv(f"ESTABLISH SSM CONNECTION TO: {self.instance_id}")
+        self.verbosity_display(3, f"ESTABLISH SSM CONNECTION TO: {self.instance_id}")
 
         executable = self.get_executable()
 
         self._init_clients()
 
-        self._vvvv(f"START SSM SESSION: {self.instance_id}")
+        self.verbosity_display(4, f"START SSM SESSION: {self.instance_id}")
         start_session_args = dict(Target=self.instance_id, Parameters={})
         document_name = self.get_option("ssm_document")
         if document_name is not None:
@@ -627,7 +690,7 @@ class Connection(ConnectionBase):
             self._client.meta.endpoint_url,
         ]
 
-        self._vvvv(f"SSM COMMAND: {to_text(cmd)}")
+        self.verbosity_display(4, f"SSM COMMAND: {to_text(cmd)}")
 
         stdout_r, stdout_w = pty.openpty()
         self._session = subprocess.Popen(
@@ -645,7 +708,7 @@ class Connection(ConnectionBase):
         # For non-windows Hosts: Ensure the session has started, and disable command echo and prompt.
         self._prepare_terminal()
 
-        self._vvvv(f"SSM CONNECTION ID: {self._session_id}")  # pylint: disable=unreachable
+        self.verbosity_display(4, f"SSM CONNECTION ID: {self._session_id}")  # pylint: disable=unreachable
 
         return self._session
 
@@ -671,7 +734,7 @@ class Connection(ConnectionBase):
         timeout = self.get_option("ssm_timeout")
         while self._session.poll() is None:
             remaining = start + timeout - round(time.time())
-            self._vvvv(f"{label} remaining: {remaining} second(s)")
+            self.verbosity_display(4, f"{label} remaining: {remaining} second(s)")
             if remaining < 0:
                 self._has_timeout = True
                 raise AnsibleConnectionFailure(f"{label} command '{cmd}' timeout on host: {self.instance_id}")
@@ -697,7 +760,7 @@ class Connection(ConnectionBase):
                 continue
 
             line = filter_ansi(self._stdout.readline(), self.is_windows)
-            self._vvvv(f"EXEC stdout line: \n{line}")
+            self.verbosity_display(4, f"EXEC stdout line: \n{line}")
 
             if not begin and self.is_windows:
                 win_line = win_line + line
@@ -710,9 +773,9 @@ class Connection(ConnectionBase):
                 continue
             if begin:
                 if mark_end in line:
-                    self._vvvv(f"POST_PROCESS: \n{to_text(stdout)}")
+                    self.verbosity_display(4, f"POST_PROCESS: \n{to_text(stdout)}")
                     returncode, stdout = self._post_process(stdout, mark_begin)
-                    self._vvvv(f"POST_PROCESSED: \n{to_text(stdout)}")
+                    self.verbosity_display(4, f"POST_PROCESSED: \n{to_text(stdout)}")
                     break
                 stdout = stdout + line
 
@@ -731,7 +794,7 @@ class Connection(ConnectionBase):
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
 
-        self._vvv(f"EXEC: {to_text(cmd)}")
+        self.verbosity_display(3, f"EXEC: {to_text(cmd)}")
 
         mark_begin = self.generate_mark()
         if self.is_windows:
@@ -758,10 +821,10 @@ class Connection(ConnectionBase):
         for poll_result in self.poll("START SSM SESSION", "start_session"):
             if poll_result:
                 stdout += to_text(self._stdout.read(1024))
-                self._vvvv(f"START SSM SESSION stdout line: \n{to_bytes(stdout)}")
+                self.verbosity_display(4, f"START SSM SESSION stdout line: \n{to_bytes(stdout)}")
                 match = str(stdout).find("Starting session with SessionId")
                 if match != -1:
-                    self._vvvv("START SSM SESSION startup output received")
+                    self.verbosity_display(4, "START SSM SESSION startup output received")
                     break
 
     def _disable_prompt_command(self) -> None:
@@ -774,14 +837,14 @@ class Connection(ConnectionBase):
         disable_prompt_reply = re.compile(r"\r\r\n" + re.escape(end_mark) + r"\r\r\n", re.MULTILINE)
 
         # Send command
-        self._vvvv(f"DISABLE PROMPT Disabling Prompt: \n{disable_prompt_cmd}")
+        self.verbosity_display(4, f"DISABLE PROMPT Disabling Prompt: \n{disable_prompt_cmd}")
         self._session.stdin.write(disable_prompt_cmd)
 
         stdout = ""
         for poll_result in self.poll("DISABLE PROMPT", disable_prompt_cmd):
             if poll_result:
                 stdout += to_text(self._stdout.read(1024))
-                self._vvvv(f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
+                self.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
                 if disable_prompt_reply.search(stdout):
                     break
 
@@ -790,14 +853,14 @@ class Connection(ConnectionBase):
         disable_echo_cmd = to_bytes("stty -echo\n", errors="surrogate_or_strict")
 
         # Send command
-        self._vvvv(f"DISABLE ECHO Disabling Prompt: \n{disable_echo_cmd}")
+        self.verbosity_display(4, f"DISABLE ECHO Disabling Prompt: \n{disable_echo_cmd}")
         self._session.stdin.write(disable_echo_cmd)
 
         stdout = ""
         for poll_result in self.poll("DISABLE ECHO", disable_echo_cmd):
             if poll_result:
                 stdout += to_text(self._stdout.read(1024))
-                self._vvvv(f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
+                self.verbosity_display(4, f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
                 match = str(stdout).find("stty -echo")
                 if match != -1:
                     break
@@ -817,7 +880,7 @@ class Connection(ConnectionBase):
         # Disable prompt command
         self._disable_prompt_command()  # pylint: disable=unreachable
 
-        self._vvvv("PRE Terminal configured")  # pylint: disable=unreachable
+        self.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
 
     def _wrap_command(self, cmd: str, mark_start: str, mark_end: str) -> str:
         """Wrap command so stdout and status can be extracted"""
@@ -833,7 +896,7 @@ class Connection(ConnectionBase):
                 f"printf '\\n%s\\n%s\\n' \"$?\" '{mark_end}';\n"
             )  # fmt: skip
 
-        self._vvvv(f"_wrap_command: \n'{to_text(cmd)}'")
+        self.verbosity_display(4, f"_wrap_command: \n'{to_text(cmd)}'")
         return cmd
 
     def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:
@@ -881,7 +944,7 @@ class Connection(ConnectionBase):
             if not poll_stderr.poll(1):
                 break
             line = session_process.stderr.readline()
-            self._vvvv(f"stderr line: {to_text(line)}")
+            self.verbosity_display(4, f"stderr line: {to_text(line)}")
             stderr = stderr + line
 
         return stderr
@@ -1084,7 +1147,7 @@ class Connection(ConnectionBase):
 
         super().put_file(in_path, out_path)
 
-        self._vvv(f"PUT {in_path} TO {out_path}")
+        self.verbosity_display(3, f"PUT {in_path} TO {out_path}")
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
@@ -1095,19 +1158,19 @@ class Connection(ConnectionBase):
 
         super().fetch_file(in_path, out_path)
 
-        self._vvv(f"FETCH {in_path} TO {out_path}")
+        self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
         return self._file_transport_command(in_path, out_path, "get")
 
     def close(self) -> None:
         """terminate the connection"""
         if self._session_id:
-            self._vvv(f"CLOSING SSM CONNECTION TO: {self.instance_id}")
+            self.verbosity_display(3, f"CLOSING SSM CONNECTION TO: {self.instance_id}")
             if self._has_timeout:
                 self._session.terminate()
             else:
                 cmd = b"\nexit\n"
                 self._session.communicate(cmd)
 
-            self._vvvv(f"TERMINATE SSM SESSION: {self._session_id}")
+            self.verbosity_display(4, f"TERMINATE SSM SESSION: {self._session_id}")
             self._client.terminate_session(SessionId=self._session_id)
             self._session_id = ""
