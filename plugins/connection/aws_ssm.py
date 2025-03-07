@@ -582,12 +582,7 @@ class Connection(ConnectionBase):
         else:
             host_args = {}
 
-        verbosity_level = {
-            1: display.v,
-            2: display.vv,
-            3: display.vvv,
-            4: display.vvvv
-        }
+        verbosity_level = {1: display.v, 2: display.vv, 3: display.vvv, 4: display.vvvv}
 
         verbosity_level[level](to_text(message), **host_args)
 
