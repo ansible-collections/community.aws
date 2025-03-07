@@ -12,7 +12,7 @@ from ansible.plugins.loader import connection_loader
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 from ansible_collections.community.aws.plugins.connection.aws_ssm import Connection
-from ansible_collections.community.aws.plugins.module_utils.s3clientmanager import S3ClientManager
+from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
@@ -20,11 +20,11 @@ if not HAS_BOTO3:
 
 class TestConnectionBaseClass:
     @patch(
-        "ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_bucket_endpoint",
+        "ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager.S3ClientManager.get_bucket_endpoint",
         return_value=("fake-s3-endpoint", "fake-region"),
     )
     @patch(
-        "ansible_collections.community.aws.plugins.module_utils.s3clientmanager.S3ClientManager.get_s3_client",
+        "ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager.S3ClientManager.get_s3_client",
         return_value=MagicMock(),
     )
     def test_init_clients(self, mock_get_s3_client, mock_get_bucket_endpoint):

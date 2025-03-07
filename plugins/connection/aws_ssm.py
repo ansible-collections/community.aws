@@ -361,7 +361,7 @@ from ansible.utils.display import Display
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
-from ansible_collections.community.aws.plugins.module_utils.s3clientmanager import S3ClientManager
+from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 
 display = Display()
 
