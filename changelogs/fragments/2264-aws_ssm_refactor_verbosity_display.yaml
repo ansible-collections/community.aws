@@ -1,0 +1,2 @@
+minor_changes:
+  - aws_ssm - Refactor display/verbosity-related methods in aws_ssm to simplify the code and avoid repetition (https://github.com/ansible-collections/community.aws/pull/2264).
