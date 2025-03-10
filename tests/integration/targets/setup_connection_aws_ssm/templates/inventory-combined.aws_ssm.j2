@@ -31,7 +31,12 @@ ansible_connection=community.aws.aws_ssm
 ansible_aws_ssm_plugin=/usr/local/sessionmanagerplugin/bin/session-manager-plugin
 ansible_python_interpreter={{ os_python_path | default('/usr/bin/python3') }}
 local_tmp=/tmp/ansible-local-{{ tiny_prefix }}
+{% if use_s3_bucket | default(True) %}
 ansible_aws_ssm_bucket_name={{ s3_bucket_name }}
+{% endif %}
+{% if host_port_number | default(False) %}
+ansible_aws_ssm_host_port_number={{ host_port_number }}
+{% endif %}
 {% if s3_addressing_style | default(False) %}
 ansible_aws_ssm_s3_addressing_style={{ s3_addressing_style }}
 {% endif %}

@@ -1,0 +1,7 @@
+- hosts: localhost
+  roles:
+    - role: ../setup_connection_aws_ssm
+      vars:
+        target_os: fedora
+        use_s3_bucket: false
+        host_port_number: 50547

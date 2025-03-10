@@ -86,6 +86,29 @@ options:
     vars:
     - name: ansible_aws_ssm_bucket_endpoint_url
     version_added: 5.3.0
+  host_port_number:
+    description:
+    - The Port number of the server on the instance when using Port Forwarding Using AWS System Manager Session Manager
+      to transfer files from/to local host to/from remote host.
+    - The port V(80) is used if not provided.
+    - The C(nc) command should be installed in the remote host to use this option.
+    - This is not supported for Windows hosts for now.
+    type: integer
+    default: 80
+    vars:
+    - name: ansible_aws_ssm_host_port_number
+    version_added: 10.0.0
+  local_port_number:
+    description:
+    - Port number on local machine to forward traffic to when using Port Forwarding Using AWS System Manager Session Manager
+      to transfer files from/to local host to/from remote host.
+    - An open port is chosen at run-time if not provided.
+    - The C(nc) command should be installed in the remote host to use this option.
+    - This is not supported for Windows hosts for now.
+    type: integer
+    vars:
+    - name: ansible_aws_ssm_local_port_number
+    version_added: 10.0.0
   plugin:
     description:
     - This defines the location of the session-manager-plugin binary.
@@ -360,6 +383,7 @@ from ansible.plugins.shell.powershell import _common_args
 from ansible.utils.display import Display
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
+from ansible_collections.community.aws.plugins.plugin_utils.ssm_file_transfer import PortForwardingFileTransferManager
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 
@@ -472,6 +496,7 @@ class Connection(ConnectionBase):
     _stdout = None
     _session_id = ""
     _timeout = False
+    _filetransfer_mgr = None
     MARK_LENGTH = 26
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -516,19 +541,39 @@ class Connection(ConnectionBase):
         profile_name = self.get_option("profile") or ""
         region_name = self.get_option("region")
 
-        # Initialize S3ClientManager
-        self.s3_manager = S3ClientManager(self)
-
-        # Initialize S3 client
-        s3_endpoint_url, s3_region_name = self.s3_manager.get_bucket_endpoint()
-        self.verbosity_display(4, f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
-        self.s3_manager.initialize_client(
-            region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name
-        )
-        self._s3_client = self.s3_manager._s3_client
-
         # Initialize SSM client
         self._initialize_ssm_client(region_name, profile_name)
+        if self._use_bucket():
+            # Initialize S3ClientManager
+            self.s3_manager = S3ClientManager(self)
+
+            # Initialize S3 client
+            s3_endpoint_url, s3_region_name = self.s3_manager.get_bucket_endpoint()
+            self.verbosity_display(4, f"SETUP BOTO3 CLIENTS: S3 {s3_endpoint_url}")
+            self.s3_manager.initialize_client(
+                region_name=s3_region_name, endpoint_url=s3_endpoint_url, profile_name=profile_name
+            )
+            self._s3_client = self.s3_manager._s3_client
+        else:
+            self._initialize_file_transfer_manager()
+
+    def _initialize_file_transfer_manager(self) -> None:
+        ssm_timeout = self.get_option("ssm_timeout")
+        region_name = self.get_option("region")
+        profile_name = self.get_option("profile") or ""
+        host_port = self.get_option("host_port_number")
+        local_port = self.get_option("local_port_number")
+        self._filetransfer_mgr = PortForwardingFileTransferManager(
+            self.host,
+            ssm_client=self._client,
+            instance_id=self.instance_id,
+            executable=self.get_executable(),
+            ssm_timeout=ssm_timeout,
+            region_name=region_name,
+            profile_name=profile_name,
+            host_port=host_port,
+            local_port=local_port,
+        )
 
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
@@ -573,6 +618,10 @@ class Connection(ConnectionBase):
         self.verbosity_display(4, "reset called on ssm connection")
         self.close()
         return self.start_session()
+
+    def _use_bucket(self) -> bool:
+        """return true if the file transfer is performed using s3 bucket"""
+        return self.is_windows or self.get_option("bucket_name")
 
     @property
     def instance_id(self) -> str:
@@ -1090,7 +1139,10 @@ class Connection(ConnectionBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        return self._file_transport_command(in_path, out_path, "put")
+        if self._use_bucket():
+            return self._file_transport_command(in_path, out_path, "put")
+        else:
+            return self._filetransfer_mgr.put_file(in_path, out_path)
 
     def fetch_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
         """fetch a file from remote to local"""
@@ -1098,7 +1150,10 @@ class Connection(ConnectionBase):
         super().fetch_file(in_path, out_path)
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
-        return self._file_transport_command(in_path, out_path, "get")
+        if self._use_bucket():
+            return self._file_transport_command(in_path, out_path, "get")
+        else:
+            return self._filetransfer_mgr.fetch_file(in_path, out_path)
 
     def close(self) -> None:
         """terminate the connection"""
