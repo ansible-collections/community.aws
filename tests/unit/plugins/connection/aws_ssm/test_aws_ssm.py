@@ -503,26 +503,27 @@ class TestS3ClientManager:
         conn.get_option.assert_any_call("bucket_sse_kms_key_id")
 
 
-def test_verbosity_diplay():
+@pytest.mark.parametrize(
+    "message,level,method",
+    [
+        ("test message 1", 1, "v"),
+        ("test message 2", 2, "vv"),
+        ("test message 3", 3, "vvv"),
+        ("test message 4", 4, "vvvv"),
+    ],
+)
+def test_verbosity_diplay(message, level, method):
     """Testing verbosity levels"""
     play_context = MagicMock()
     play_context.shell = "sh"
     conn = Connection(play_context)
     conn.host = "test-host"  # Test with host set
 
-    test_cases = [
-        {"message": "test message 1", "level": 1, "method": "v"},
-        {"message": "test message 2", "level": 2, "method": "vv"},
-        {"message": "test message 3", "level": 3, "method": "vvv"},
-        {"message": "test message 4", "level": 4, "method": "vvvv"},
-    ]
-
     with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
-        for test in test_cases:
-            conn.verbosity_display(test["level"], test["message"])
-            # Verify the correct display method was called with expected args
-            mock_method = getattr(mock_display, test["method"])
-            mock_method.assert_called_once_with(test["message"], host="test-host")
+        conn.verbosity_display(level, message)
+        # Verify the correct display method was called with expected args
+        mock_method = getattr(mock_display, method)
+        mock_method.assert_called_once_with(message, host="test-host")
 
         # Test without host set
         conn.host = None
