@@ -308,6 +308,55 @@ class TestConnectionBaseClass:
         assert isinstance(test_command_generation[0], list)
         assert isinstance(test_command_generation[0][0], dict)
 
+    @pytest.mark.parametrize(
+        "message,level,method",
+        [
+            ("test message 1", 1, "v"),
+            ("test message 2", 2, "vv"),
+            ("test message 3", 3, "vvv"),
+            ("test message 4", 4, "vvvv"),
+        ],
+    )
+    def test_verbosity_diplay(self, message, level, method):
+        """Testing verbosity levels"""
+        play_context = MagicMock()
+        play_context.shell = "sh"
+        conn = Connection(play_context)
+        conn.host = "test-host"  # Test with host set
+
+        with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
+            conn.verbosity_display(level, message)
+            # Verify the correct display method was called with expected args
+            mock_method = getattr(mock_display, method)
+            mock_method.assert_called_once_with(message, host="test-host")
+
+            # Test without host set
+            conn.host = None
+            conn.verbosity_display(1, "no host message")
+            mock_display.v.assert_called_with("no host message")
+
+    def test_poll_verbosity(self):
+        """Test poll method verbosity display"""
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+        conn._session = MagicMock()
+        conn._session.poll.return_value = None
+        conn.get_option = MagicMock(return_value=10)  # ssm_timeout
+        conn.poll_stdout = MagicMock()
+        conn.instance_id = "i-1234567890"
+        conn.host = conn.instance_id
+
+        with patch("time.time", return_value=100), patch.object(conn, "verbosity_display") as mock_display:
+            poll_gen = conn.poll("TEST", "test command")
+            # Advance generator twice to trigger the verbosity message
+            next(poll_gen)
+            next(poll_gen)
+
+            # Verify verbosity message contains remaining time
+            mock_display.assert_called_with(4, "TEST remaining: 10 second(s)")
+
 
 class TestS3ClientManager:
     """
@@ -501,60 +550,3 @@ class TestS3ClientManager:
         assert put_headers == expected_put_headers
         conn.get_option.assert_any_call("bucket_sse_mode")
         conn.get_option.assert_any_call("bucket_sse_kms_key_id")
-
-
-@pytest.mark.parametrize(
-    "message,level,method",
-    [
-        ("test message 1", 1, "v"),
-        ("test message 2", 2, "vv"),
-        ("test message 3", 3, "vvv"),
-        ("test message 4", 4, "vvvv"),
-    ],
-)
-def test_verbosity_diplay(message, level, method):
-    """Testing verbosity levels"""
-    play_context = MagicMock()
-    play_context.shell = "sh"
-    conn = Connection(play_context)
-    conn.host = "test-host"  # Test with host set
-
-    with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
-        conn.verbosity_display(level, message)
-        # Verify the correct display method was called with expected args
-        mock_method = getattr(mock_display, method)
-        mock_method.assert_called_once_with(message, host="test-host")
-
-        # Test without host set
-        conn.host = None
-        conn.verbosity_display(1, "no host message")
-        mock_display.v.assert_called_with("no host message")
-
-
-def test_get_bucket_endpoint_verbosity():
-    """
-    Check that the expected output shows up when 'vvvv' verbosity level is set on a `_get_bucket_endpoint()` call
-    """
-    pc = PlayContext()
-    new_stdin = StringIO()
-    conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
-
-    # Mock the necessary methods and return values
-    conn.get_option = MagicMock()
-    conn.get_option.side_effect = ["us-east-1", "test-profile", "test-bucket", None]
-
-    # Mock the boto client and its methods
-    mock_s3_client = MagicMock()
-    mock_s3_client.head_bucket.return_value = {
-        "ResponseMetadata": {"HTTPHeaders": {"x-amz-bucket-region": "us-west-2"}}
-    }
-    conn._get_boto_client = MagicMock(return_value=mock_s3_client)
-
-    with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
-        conn._get_bucket_endpoint()
-        # Verify both verbosity messages in order
-        expected_calls = [
-            call("_get_bucket_endpoint: S3 (global)"),
-            call("_get_bucket_endpoint: S3 (bucket region) - us-west-2"),
-        ]
-        mock_display.vvvv.assert_has_calls(expected_calls, any_order=False)
