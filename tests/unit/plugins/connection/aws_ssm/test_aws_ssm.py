@@ -2,6 +2,7 @@
 
 from io import StringIO
 from unittest.mock import MagicMock
+from unittest.mock import call
 from unittest.mock import patch
 
 import pytest
@@ -258,7 +259,7 @@ class TestConnectionBaseClass:
 
     @pytest.mark.parametrize("is_windows", [False, True])
     def test_generate_commands(self, is_windows):
-        """Testing command generation on Windows systems"""
+        """Testing command generation on both Windows and non-Windows systems"""
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
@@ -500,3 +501,59 @@ class TestS3ClientManager:
         assert put_headers == expected_put_headers
         conn.get_option.assert_any_call("bucket_sse_mode")
         conn.get_option.assert_any_call("bucket_sse_kms_key_id")
+
+
+def test_verbosity_diplay():
+    """Testing verbosity levels"""
+    play_context = MagicMock()
+    play_context.shell = "sh"
+    conn = Connection(play_context)
+    conn.host = "test-host"  # Test with host set
+
+    test_cases = [
+        {"message": "test message 1", "level": 1, "method": "v"},
+        {"message": "test message 2", "level": 2, "method": "vv"},
+        {"message": "test message 3", "level": 3, "method": "vvv"},
+        {"message": "test message 4", "level": 4, "method": "vvvv"},
+    ]
+
+    with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
+        for test in test_cases:
+            conn.verbosity_display(test["level"], test["message"])
+            # Verify the correct display method was called with expected args
+            mock_method = getattr(mock_display, test["method"])
+            mock_method.assert_called_once_with(test["message"], host="test-host")
+
+        # Test without host set
+        conn.host = None
+        conn.verbosity_display(1, "no host message")
+        mock_display.v.assert_called_with("no host message")
+
+
+def test_get_bucket_endpoint_verbosity():
+    """
+    Check that the expected output shows up when 'vvvv' verbosity level is set on a `_get_bucket_endpoint()` call
+    """
+    pc = PlayContext()
+    new_stdin = StringIO()
+    conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+
+    # Mock the necessary methods and return values
+    conn.get_option = MagicMock()
+    conn.get_option.side_effect = ["us-east-1", "test-profile", "test-bucket", None]
+
+    # Mock the boto client and its methods
+    mock_s3_client = MagicMock()
+    mock_s3_client.head_bucket.return_value = {
+        "ResponseMetadata": {"HTTPHeaders": {"x-amz-bucket-region": "us-west-2"}}
+    }
+    conn._get_boto_client = MagicMock(return_value=mock_s3_client)
+
+    with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
+        conn._get_bucket_endpoint()
+        # Verify both verbosity messages in order
+        expected_calls = [
+            call("_get_bucket_endpoint: S3 (global)"),
+            call("_get_bucket_endpoint: S3 (bucket region) - us-west-2"),
+        ]
+        mock_display.vvvv.assert_has_calls(expected_calls, any_order=False)
