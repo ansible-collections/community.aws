@@ -1,0 +1,45 @@
+- name: Deploy web server on ec2 instance using SSM
+  hosts: aws_ssm
+  gather_facts: true
+
+  vars:
+    server_content: |
+      Enable SysAdmin Demo:
+      Ansible Profiling with Callback Plugin
+      Custom Web Page
+
+  tasks:
+    - name: Install httpd package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+      become: true
+
+    - name: Start and enable httpd service
+      ansible.builtin.service:
+        name: httpd
+        enabled: true
+        state: started
+      become: true
+
+    - name: Create a custom index.html file
+      ansible.builtin.copy:
+        dest: /var/www/html/index.html
+        content: "{{ server_content }}"
+      become: true
+
+    - name: Ping Web server
+      ansible.builtin.get_url:
+        url: "http://localhost:80"
+        dest: /tmp/server.txt
+
+    - name: Fetch file from remote host
+      ansible.builtin.fetch:
+        src: "/tmp/server.txt"
+        dest: "/tmp/ansible_ssm_server.txt"
+        flat: true
+
+    - name: Validate server content
+      ansible.builtin.assert:
+        that:
+          - lookup('file', '/tmp/ansible_ssm_server.txt', rstrip=false) == server_content
