@@ -304,6 +304,22 @@
           - efs_result is not changed
 
     # ============================================================
+    - name: Update Efs to use elastic throughput_mode
+      community.aws.efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+          Name: "{{ efs_name }}-test-tag"
+          Purpose: file-storage
+        throughput_mode: 'elastic'
+      register: efs_result
+
+    - assert:
+        that:
+          - efs_result is changed
+          - efs_result.efs.throughput_mode == "elastic"
+
+    # ============================================================
     - name: Query unknown EFS by tag
       efs_info:
         tags:
