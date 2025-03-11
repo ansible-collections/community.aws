@@ -1,0 +1,95 @@
+---
+- module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+    # ============================================================
+    - name: Create a application (CHECK MODE)
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app"
+        compute_platform: Lambda
+        state: present
+      register: output
+      check_mode: yes
+    - assert:
+        that:
+          - output is changed
+
+    - name: Create a application
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app"
+        compute_platform: Lambda
+        state: present
+      register: output
+    - assert:
+        that:
+          - output is changed
+          - output.application.application_name == '{{ resource_prefix }}_app'
+
+    - name: Update application name (CHECK MODE)
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app"
+        new_application_name: "{{ resource_prefix }}_app2"
+        state: present
+      register: output
+      check_mode: yes
+    - assert:
+        that:
+          - output is changed
+
+    - name: Update application name
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app"
+        new_application_name: "{{ resource_prefix }}_app2"
+        state: present
+      register: output
+    - assert:
+        that:
+          - output is changed
+          - output.application.application_name == '{{ resource_prefix }}_app2'
+
+    # ============================================================
+
+    - name: Delete a application (CHECK MODE)
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app2"
+        state: absent
+      register: output
+      check_mode: yes
+    - assert:
+        that:
+          - output is changed
+
+    - name: Delete a application
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app2"
+        state: absent
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: Delete a non-existent application
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app2"
+        state: absent
+      register: output
+    - assert:
+        that:
+          - output is not changed
+
+  always:
+    - name: Delete a application
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app"
+        state: absent
+      ignore_errors: yes
+    
+    - name: Delete a application_2
+      codedeploy_application:
+        application_name: "{{ resource_prefix }}_app2"
+        state: absent
+      ignore_errors: yes
