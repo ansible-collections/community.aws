@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
+from ansible.errors import AnsibleError
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 
@@ -333,6 +334,10 @@ class TestConnectionBaseClass:
             conn.host = None
             conn.verbosity_display(1, "no host message")
             mock_display.v.assert_called_with("no host message")
+
+            # Test exception is raised when verbosity level is not an accepted value
+            with pytest.raises(AnsibleError):
+                conn.verbosity_display("invalid value", "test message")
 
     def test_poll_verbosity(self):
         """Test poll method verbosity display"""

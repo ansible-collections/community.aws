@@ -553,7 +553,7 @@ class Connection(ConnectionBase):
         Displays the given message depending on the verbosity level.
 
         :param message: The message to display.
-        :param display_level: The verbosity level (1-4, default value of 1).
+        :param display_level: The verbosity level (1-4).
 
         :return: None
         """
@@ -564,6 +564,8 @@ class Connection(ConnectionBase):
 
         verbosity_level = {1: display.v, 2: display.vv, 3: display.vvv, 4: display.vvvv}
 
+        if level not in verbosity_level.keys():
+            raise AnsibleError(f"Invalid verbosity level: {level}")
         verbosity_level[level](to_text(message), **host_args)
 
     def reset(self) -> Any:
