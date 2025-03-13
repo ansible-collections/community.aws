@@ -38,7 +38,7 @@ class S3ClientManager:
         """
         region_name = self.connection.get_option("region") or "us-east-1"
         profile_name = self.connection.get_option("profile") or ""
-        self.connection._vvvv("_get_bucket_endpoint: S3 (global)")
+        self.connection.verbosity_display(4, "_get_bucket_endpoint: S3 (global)")
         tmp_s3_client = self.get_s3_client(
             region_name=region_name,
             profile_name=profile_name,
@@ -56,7 +56,7 @@ class S3ClientManager:
             return self.connection.get_option("bucket_endpoint_url"), bucket_region
 
         # Create another client for the region the bucket lives in, so we can nab the endpoint URL
-        self.connection._vvvv(f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
+        self.connection.verbosity_display(4, f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
         s3_bucket_client = self.get_s3_client(
             region_name=bucket_region,
             profile_name=profile_name,
