@@ -6,7 +6,7 @@
 
 DOCUMENTATION = r"""
 ---
-module: s3_bucket
+module: ssm_document
 version_added: 9.1.0
 short_description: Manage SSM document
 description:
