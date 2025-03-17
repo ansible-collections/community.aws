@@ -1,0 +1,3 @@
+---
+trivial:
+  - integration tests - validate integration tests with ``ansible-core 2.19`` (data tagging).
