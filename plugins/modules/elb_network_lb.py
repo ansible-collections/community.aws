@@ -190,6 +190,22 @@ EXAMPLES = r"""
             TargetGroupName: mytargetgroup # Required. The name of the target group
     state: present
 
+- name: Create NLB for S3 bucket in us-east-1
+  community.aws.elb_network_lb:
+    name: simple-s3-nlb
+    region: us-east-1
+    endpoint_url: "http://my-static-123456-bucket.s3-website-us-east-1.amazonaws.com"
+    state: present
+    subnets:
+      - subnet-12345678
+      - subnet-87654321
+    listeners:
+      - Protocol: TCP
+        Port: 80
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: s3-static-tg    
+
 - name: Remove an ELB
   community.aws.elb_network_lb:
     name: myelb
