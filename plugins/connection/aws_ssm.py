@@ -896,13 +896,14 @@ class Connection(ConnectionBase):
         aws_session_token = self.get_option("session_token")
 
         session_args = dict(
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            aws_session_token=aws_session_token,
             region_name=region_name,
         )
         if profile_name:
             session_args["profile_name"] = profile_name
+        else:
+            session_args["aws_access_key_id"] = aws_access_key_id
+            session_args["aws_secret_access_key"] = aws_secret_access_key
+            session_args["aws_session_token"] = aws_session_token
         session = boto3.session.Session(**session_args)
 
         client = session.client(
