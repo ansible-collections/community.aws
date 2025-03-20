@@ -1,0 +1,25 @@
+{
+    "schemaVersion": "2.2",
+    "description": "Sample document to display a message",
+    "parameters": {
+        "Message": {
+            "type": "String",
+            "description": "message to display",
+            "default": "Ansible is super"
+        },
+        "Users": {
+            "type": "String",
+            "description": "users",
+            "default": "partners"
+        }
+    },
+    "mainSteps": [
+      {
+        "action": "aws:runPowerShellScript",
+        "name": "example",
+        "inputs": {
+          "runCommand": ["Write-Output {{Message}} for {{Users}}"]
+        }
+      }
+    ]
+}
