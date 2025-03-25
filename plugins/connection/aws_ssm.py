@@ -462,7 +462,7 @@ class TerminalManager:
         self.disable_echo_command()  # pylint: disable=unreachable
 
         # Disable prompt command
-        self.connection._disable_prompt_command()  # pylint: disable=unreachable
+        self.disable_prompt_command()  # pylint: disable=unreachable
 
         self.connection.connection.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
 
@@ -498,6 +498,27 @@ class TerminalManager:
                 self.connection.verbosity_display(4, f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
                 match = str(stdout).find("stty -echo")
                 if match != -1:
+                    break
+
+    def disable_prompt_command(self) -> None:
+        """Disable prompt command from the host"""
+        end_mark = "".join([random.choice(string.ascii_letters) for i in range(self.connection.MARK_LENGTH)])
+        disable_prompt_cmd = to_bytes(
+            "PS1='' ; bind 'set enable-bracketed-paste off'; printf '\\n%s\\n' '" + end_mark + "'\n",
+            errors="surrogate_or_strict",
+        )
+        disable_prompt_reply = re.compile(r"\r\r\n" + re.escape(end_mark) + r"\r\r\n", re.MULTILINE)
+
+        # Send command
+        self.connection.verbosity_display(4, f"DISABLE PROMPT Disabling Prompt: \n{disable_prompt_cmd}")
+        self.connection._session.stdin.write(disable_prompt_cmd)
+
+        stdout = ""
+        for poll_result in self.connection.poll("DISABLE PROMPT", disable_prompt_cmd):
+            if poll_result:
+                stdout += to_text(self.connection._stdout.read(1024))
+                self.connection.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
+                if disable_prompt_reply.search(stdout):
                     break
 
 
@@ -821,27 +842,6 @@ class Connection(ConnectionBase):
                 match = str(stdout).find("Starting session with SessionId")
                 if match != -1:
                     self.verbosity_display(4, "START SSM SESSION startup output received")
-                    break
-
-    def _disable_prompt_command(self) -> None:
-        """Disable prompt command from the host"""
-        end_mark = "".join([random.choice(string.ascii_letters) for i in range(self.MARK_LENGTH)])
-        disable_prompt_cmd = to_bytes(
-            "PS1='' ; bind 'set enable-bracketed-paste off'; printf '\\n%s\\n' '" + end_mark + "'\n",
-            errors="surrogate_or_strict",
-        )
-        disable_prompt_reply = re.compile(r"\r\r\n" + re.escape(end_mark) + r"\r\r\n", re.MULTILINE)
-
-        # Send command
-        self.verbosity_display(4, f"DISABLE PROMPT Disabling Prompt: \n{disable_prompt_cmd}")
-        self._session.stdin.write(disable_prompt_cmd)
-
-        stdout = ""
-        for poll_result in self.poll("DISABLE PROMPT", disable_prompt_cmd):
-            if poll_result:
-                stdout += to_text(self._stdout.read(1024))
-                self.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
-                if disable_prompt_reply.search(stdout):
                     break
 
     def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:

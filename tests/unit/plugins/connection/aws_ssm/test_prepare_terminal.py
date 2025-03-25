@@ -106,6 +106,9 @@ def test_disable_prompt_command(m_to_text, m_to_bytes, m_random, connection_aws_
     connection_aws_ssm.poll = MagicMock()
     connection_aws_ssm.poll.side_effect = poll_mock
 
+    if not hasattr(connection_aws_ssm, "terminal_manager"):
+        connection_aws_ssm.terminal_manager = TerminalManager(connection_aws_ssm)
+
     m_random.choice = MagicMock()
     m_random.choice.side_effect = lambda x: "a"
 
@@ -120,8 +123,8 @@ def test_disable_prompt_command(m_to_text, m_to_bytes, m_random, connection_aws_
 
     if timeout_failure:
         with pytest.raises(TimeoutError):
-            connection_aws_ssm._disable_prompt_command()
+            connection_aws_ssm.terminal_manager.disable_prompt_command()
     else:
-        connection_aws_ssm._disable_prompt_command()
+        connection_aws_ssm.terminal_manager.disable_prompt_command()
 
     connection_aws_ssm._session.stdin.write.assert_called_once_with(prompt_cmd)
