@@ -456,7 +456,7 @@ class TerminalManager:
             return
 
         # Ensure SSM Session has started
-        self.connection._ensure_ssm_session_has_started()
+        self.ensure_ssm_session_has_started()
 
         # Disable echo command
         self.disable_echo_command()  # pylint: disable=unreachable
@@ -519,6 +519,20 @@ class TerminalManager:
                 stdout += to_text(self.connection._stdout.read(1024))
                 self.connection.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
                 if disable_prompt_reply.search(stdout):
+                    break
+
+    def ensure_ssm_session_has_started(self) -> None:
+        """Ensure the SSM session has started on the host. We poll stdout
+        until we match the following string 'Starting session with SessionId'
+        """
+        stdout = ""
+        for poll_result in self.connection.poll("START SSM SESSION", "start_session"):
+            if poll_result:
+                stdout += to_text(self.connection._stdout.read(1024))
+                self.connection.verbosity_display(4, f"START SSM SESSION stdout line: \n{to_bytes(stdout)}")
+                match = str(stdout).find("Starting session with SessionId")
+                if match != -1:
+                    self.connection.verbosity_display(4, "START SSM SESSION startup output received")
                     break
 
 
@@ -829,20 +843,6 @@ class Connection(ConnectionBase):
             self._session.stdin.write(to_bytes(chunk, errors="surrogate_or_strict"))
 
         return self.exec_communicate(cmd, mark_start, mark_begin, mark_end)
-
-    def _ensure_ssm_session_has_started(self) -> None:
-        """Ensure the SSM session has started on the host. We poll stdout
-        until we match the following string 'Starting session with SessionId'
-        """
-        stdout = ""
-        for poll_result in self.poll("START SSM SESSION", "start_session"):
-            if poll_result:
-                stdout += to_text(self._stdout.read(1024))
-                self.verbosity_display(4, f"START SSM SESSION stdout line: \n{to_bytes(stdout)}")
-                match = str(stdout).find("Starting session with SessionId")
-                if match != -1:
-                    self.verbosity_display(4, "START SSM SESSION startup output received")
-                    break
 
     def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:
         """extract command status and strip unwanted lines"""

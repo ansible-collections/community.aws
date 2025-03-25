@@ -49,15 +49,18 @@ def test_ensure_ssm_session_has_started(m_to_text, m_to_bytes, connection_aws_ss
 
     connection_aws_ssm._stdout.read.side_effect = stdout_lines
 
+    if not hasattr(connection_aws_ssm, "terminal_manager"):
+        connection_aws_ssm.terminal_manager = TerminalManager(connection_aws_ssm)
+
     poll_mock.results = [True for i in range(len(stdout_lines))]
     connection_aws_ssm.poll = MagicMock()
     connection_aws_ssm.poll.side_effect = poll_mock
 
     if timeout_failure:
         with pytest.raises(TimeoutError):
-            connection_aws_ssm._ensure_ssm_session_has_started()
+            connection_aws_ssm.terminal_manager.ensure_ssm_session_has_started()
     else:
-        connection_aws_ssm._ensure_ssm_session_has_started()
+        connection_aws_ssm.terminal_manager.ensure_ssm_session_has_started()
 
 
 @pytest.mark.parametrize(
