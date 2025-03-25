@@ -459,7 +459,7 @@ class TerminalManager:
         self.connection._ensure_ssm_session_has_started()
 
         # Disable echo command
-        self.connection._disable_echo_command()  # pylint: disable=unreachable
+        self.disable_echo_command()  # pylint: disable=unreachable
 
         # Disable prompt command
         self.connection._disable_prompt_command()  # pylint: disable=unreachable
@@ -482,6 +482,23 @@ class TerminalManager:
 
         self.connection.verbosity_display(4, f"wrap_command: \n'{to_text(cmd)}'")
         return cmd
+
+    def disable_echo_command(self) -> None:
+        """Disable echo command from the host"""
+        disable_echo_cmd = to_bytes("stty -echo\n", errors="surrogate_or_strict")
+
+        # Send command
+        self.connection.verbosity_display(4, f"DISABLE ECHO Disabling Prompt: \n{disable_echo_cmd}")
+        self.connection._session.stdin.write(disable_echo_cmd)
+
+        stdout = ""
+        for poll_result in self.connection.poll("DISABLE ECHO", disable_echo_cmd):
+            if poll_result:
+                stdout += to_text(self.connection._stdout.read(1024))
+                self.connection.verbosity_display(4, f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
+                match = str(stdout).find("stty -echo")
+                if match != -1:
+                    break
 
 
 class CommandResult(TypedDict):
@@ -825,23 +842,6 @@ class Connection(ConnectionBase):
                 stdout += to_text(self._stdout.read(1024))
                 self.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
                 if disable_prompt_reply.search(stdout):
-                    break
-
-    def _disable_echo_command(self) -> None:
-        """Disable echo command from the host"""
-        disable_echo_cmd = to_bytes("stty -echo\n", errors="surrogate_or_strict")
-
-        # Send command
-        self.verbosity_display(4, f"DISABLE ECHO Disabling Prompt: \n{disable_echo_cmd}")
-        self._session.stdin.write(disable_echo_cmd)
-
-        stdout = ""
-        for poll_result in self.poll("DISABLE ECHO", disable_echo_cmd):
-            if poll_result:
-                stdout += to_text(self._stdout.read(1024))
-                self.verbosity_display(4, f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
-                match = str(stdout).find("stty -echo")
-                if match != -1:
                     break
 
     def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:

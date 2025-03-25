@@ -16,6 +16,8 @@ import pytest
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
+from ansible_collections.community.aws.plugins.connection.aws_ssm import TerminalManager
+
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_poll.py requires the python modules 'boto3' and 'botocore'")
 
@@ -80,11 +82,14 @@ def test_disable_echo_command(m_to_text, m_to_bytes, connection_aws_ssm, stdout_
     connection_aws_ssm.poll = MagicMock()
     connection_aws_ssm.poll.side_effect = poll_mock
 
+    if not hasattr(connection_aws_ssm, "terminal_manager"):
+        connection_aws_ssm.terminal_manager = TerminalManager(connection_aws_ssm)
+
     if timeout_failure:
         with pytest.raises(TimeoutError):
-            connection_aws_ssm._disable_echo_command()
+            connection_aws_ssm.terminal_manager.disable_echo_command()
     else:
-        connection_aws_ssm._disable_echo_command()
+        connection_aws_ssm.terminal_manager.disable_echo_command()
 
     connection_aws_ssm._session.stdin.write.assert_called_once_with("stty -echo\n")
 
