@@ -445,6 +445,45 @@ def filter_ansi(line: str, is_windows: bool) -> str:
     return line
 
 
+class TerminalManager:
+    def __init__(self, connection):
+        self.connection = connection
+
+    def prepare_terminal(self) -> None:
+        """perform any one-time terminal settings"""
+        # No Windows setup for now
+        if self.connection.is_windows:
+            return
+
+        # Ensure SSM Session has started
+        self.connection._ensure_ssm_session_has_started()
+
+        # Disable echo command
+        self.connection._disable_echo_command()  # pylint: disable=unreachable
+
+        # Disable prompt command
+        self.connection._disable_prompt_command()  # pylint: disable=unreachable
+
+        self.connection.connection.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
+
+    def wrap_command(self, cmd: str, mark_start: str, mark_end: str) -> str:
+        """Wrap command so stdout and status can be extracted"""
+
+        if self.connection.is_windows:
+            if not cmd.startswith(" ".join(_common_args) + " -EncodedCommand"):
+                cmd = self.connection._shell._encode_script(cmd, preserve_rc=True)
+            cmd = cmd + "; echo " + mark_start + "\necho " + mark_end + "\n"
+        else:
+            cmd = (
+                f"printf '%s\\n' '{mark_start}';\n"
+                f"echo | {cmd};\n"
+                f"printf '\\n%s\\n%s\\n' \"$?\" '{mark_end}';\n"
+            )  # fmt: skip
+
+        self.connection.verbosity_display(4, f"wrap_command: \n'{to_text(cmd)}'")
+        return cmd
+
+
 class CommandResult(TypedDict):
     """
     A dictionary that contains the executed command results.
@@ -484,6 +523,7 @@ class Connection(ConnectionBase):
         self._instance_id = None
         self._polling_obj = None
         self._has_timeout = False
+        self.terminal_manager = TerminalManager(self)
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
@@ -645,7 +685,7 @@ class Connection(ConnectionBase):
         self._stdout = os.fdopen(stdout_r, "rb", 0)
 
         # For non-windows Hosts: Ensure the session has started, and disable command echo and prompt.
-        self._prepare_terminal()
+        self.terminal_manager.prepare_terminal()
 
         self.verbosity_display(4, f"SSM CONNECTION ID: {self._session_id}")  # pylint: disable=unreachable
 
@@ -743,7 +783,7 @@ class Connection(ConnectionBase):
         mark_end = self.generate_mark()
 
         # Wrap command in markers accordingly for the shell used
-        cmd = self._wrap_command(cmd, mark_start, mark_end)
+        cmd = self.terminal_manager.wrap_command(cmd, mark_start, mark_end)
 
         self._flush_stderr(self._session)
 
@@ -803,40 +843,6 @@ class Connection(ConnectionBase):
                 match = str(stdout).find("stty -echo")
                 if match != -1:
                     break
-
-    def _prepare_terminal(self) -> None:
-        """perform any one-time terminal settings"""
-        # No Windows setup for now
-        if self.is_windows:
-            return
-
-        # Ensure SSM Session has started
-        self._ensure_ssm_session_has_started()
-
-        # Disable echo command
-        self._disable_echo_command()  # pylint: disable=unreachable
-
-        # Disable prompt command
-        self._disable_prompt_command()  # pylint: disable=unreachable
-
-        self.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
-
-    def _wrap_command(self, cmd: str, mark_start: str, mark_end: str) -> str:
-        """Wrap command so stdout and status can be extracted"""
-
-        if self.is_windows:
-            if not cmd.startswith(" ".join(_common_args) + " -EncodedCommand"):
-                cmd = self._shell._encode_script(cmd, preserve_rc=True)
-            cmd = cmd + "; echo " + mark_start + "\necho " + mark_end + "\n"
-        else:
-            cmd = (
-                f"printf '%s\\n' '{mark_start}';\n"
-                f"echo | {cmd};\n"
-                f"printf '\\n%s\\n%s\\n' \"$?\" '{mark_end}';\n"
-            )  # fmt: skip
-
-        self.verbosity_display(4, f"_wrap_command: \n'{to_text(cmd)}'")
-        return cmd
 
     def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:
         """extract command status and strip unwanted lines"""
