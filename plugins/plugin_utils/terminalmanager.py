@@ -7,15 +7,9 @@ import random
 import re
 import string
 
-try:
-    import boto3
-    from botocore.client import Config
-except ImportError:
-    pass
-
+from ansible.module_utils._text import to_bytes
 from ansible.module_utils._text import to_text
 from ansible.plugins.shell.powershell import _common_args
-from ansible.module_utils._text import to_bytes
 
 
 class TerminalManager:
