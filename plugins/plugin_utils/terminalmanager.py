@@ -31,7 +31,7 @@ class TerminalManager:
         # Disable prompt command
         self.disable_prompt_command()  # pylint: disable=unreachable
 
-        self.connection.connection.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
+        self.connection.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
 
     def wrap_command(self, cmd: str, mark_start: str, mark_end: str) -> str:
         """Wrap command so stdout and status can be extracted"""
