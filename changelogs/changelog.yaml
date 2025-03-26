@@ -4086,3 +4086,21 @@ releases:
     - 2205-support-minmax-s3lifecycle.yml
     - refactor_ssm_init_client.yml
     release_date: '2025-03-04'
+  9.2.0:
+    changes:
+      minor_changes:
+      - aws_ssm - Refactor ``_exec_transport_commands``, ``_generate_commands``, and
+        ``_exec_transport_commands`` methods for improved clarity (https://github.com/ansible-collections/community.aws/pull/2248).
+      - aws_ssm - Refactor connection/aws_ssm to add new S3ClientManager class and
+        move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2255).
+      - aws_ssm - Refactor display/verbosity-related methods in aws_ssm to simplify
+        the code and avoid repetition (https://github.com/ansible-collections/community.aws/pull/2264).
+      release_summary: This release includes several improvements for the ``community.aws.aws_ssm``
+        connection plugin in preparation for its promotion to amazon.aws in the ucoming
+        major release.
+    fragments:
+    - 2248-aws_ssm-refactor-command-related-methods.yml
+    - 2255-aws_ssm-refactor-create-s3clientmanager-class.yml
+    - 2264-aws_ssm_refactor_verbosity_display.yaml
+    - release_summary.yml
+    release_date: '2025-04-01'
