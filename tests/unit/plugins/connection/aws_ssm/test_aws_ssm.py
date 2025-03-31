@@ -197,6 +197,10 @@ class TestConnectionBaseClass:
         conn._connect = MagicMock()
         conn._file_transport_command = MagicMock()
         conn._file_transport_command.return_value = (0, "stdout", "stderr")
+
+        # Mock the file transfer manager
+        conn.file_transfer_manager = MagicMock()
+
         conn.put_file("/in/file", "/out/file")
 
     def test_plugins_connection_aws_ssm_fetch_file(self):
@@ -206,28 +210,11 @@ class TestConnectionBaseClass:
         conn._connect = MagicMock()
         conn._file_transport_command = MagicMock()
         conn._file_transport_command.return_value = (0, "stdout", "stderr")
-        conn.fetch_file("/in/file", "/out/file")
 
-    @patch("subprocess.check_output")
-    @patch("boto3.client")
-    def test_plugins_connection_file_transport_command(self, boto_client, s_check_output):
-        pc = PlayContext()
-        new_stdin = StringIO()
-        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
-        conn.get_option = MagicMock()
-        conn.get_option.side_effect = ["1", "2", "3", "4", "5"]
-        conn._get_url = MagicMock()
-        conn._get_url.side_effect = ["url1", "url2"]
-        boto3 = MagicMock()
-        boto3.client("s3").return_value = MagicMock()
-        conn.get_option.return_value = 1
-        get_command = MagicMock()
-        put_command = MagicMock()
-        conn.exec_command = MagicMock()
-        conn.exec_command.return_value = (put_command, None, False)
-        conn.download_fileobj = MagicMock()
-        conn.exec_command(put_command, in_data=None, sudoable=False)
-        conn.exec_command(get_command, in_data=None, sudoable=False)
+        # Mock the file transfer manager
+        conn.file_transfer_manager = MagicMock()
+
+        conn.fetch_file("/in/file", "/out/file")
 
     @patch("subprocess.check_output")
     def test_plugins_connection_aws_ssm_close(self, s_check_output):

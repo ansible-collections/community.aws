@@ -340,7 +340,6 @@ from typing import List
 from typing import NoReturn
 from typing import Optional
 from typing import Tuple
-from typing import TypedDict
 
 try:
     import boto3
@@ -362,6 +361,10 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 from ansible_collections.community.aws.plugins.plugin_utils.terminalmanager import TerminalManager
+
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
+
 
 display = Display()
 
@@ -445,16 +448,6 @@ def filter_ansi(line: str, is_windows: bool) -> str:
     return line
 
 
-class CommandResult(TypedDict):
-    """
-    A dictionary that contains the executed command results.
-    """
-
-    returncode: int
-    stdout_combined: str
-    stderr_combined: str
-
-
 class Connection(ConnectionBase):
     """AWS SSM based connections"""
 
@@ -530,6 +523,9 @@ class Connection(ConnectionBase):
 
         # Initialize SSM client
         self._initialize_ssm_client(region_name, profile_name)
+
+        # Initialize FileTransferManager
+        self.file_transfer_manager = FileTransferManager(self)
 
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
@@ -680,7 +676,7 @@ class Connection(ConnectionBase):
                 raise AnsibleConnectionFailure(f"{label} command '{cmd}' timeout on host: {self.instance_id}")
             yield self.poll_stdout()
 
-    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> Tuple[int, str, str]:
+    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> CommandResult:
         """Interact with session.
         Read stdout between the markers until 'mark_end' is reached.
 
@@ -720,7 +716,11 @@ class Connection(ConnectionBase):
                 stdout = stdout + line
 
         # see https://github.com/pylint-dev/pylint/issues/8909)
-        return (returncode, stdout, self._flush_stderr(self._session))  # pylint: disable=unreachable
+        return {  # pylint: disable=unreachable
+            "returncode": returncode,
+            "stdout": stdout,
+            "stderr": self._flush_stderr(self._session),
+        }
 
     @staticmethod
     def generate_mark() -> str:
@@ -729,7 +729,7 @@ class Connection(ConnectionBase):
         return mark
 
     @_ssm_retry
-    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
+    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> CommandResult:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
@@ -830,9 +830,6 @@ class Connection(ConnectionBase):
         )
         return client
 
-    def _escape_path(self, path: str) -> str:
-        return path.replace("\\", "/")
-
     def _generate_commands(
         self,
         bucket_name: str,
@@ -927,76 +924,7 @@ class Connection(ConnectionBase):
 
         return commands, put_args
 
-    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[dict]) -> CommandResult:
-        """
-        Execute the provided transport commands.
-
-        :param in_path: The input path.
-        :param out_path: The output path.
-        :param commands: A list of command dictionaries containing the command string and metadata.
-
-        :returns: A tuple containing the return code, stdout, and stderr.
-        """
-
-        stdout_combined, stderr_combined = "", ""
-        for command in commands:
-            (returncode, stdout, stderr) = self.exec_command(command["command"], in_data=None, sudoable=False)
-
-            # Check the return code
-            if returncode != 0:
-                raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
-
-            stdout_combined += stdout
-            stderr_combined += stderr
-
-        return (returncode, stdout_combined, stderr_combined)
-
-    @_ssm_retry
-    def _file_transport_command(
-        self,
-        in_path: str,
-        out_path: str,
-        ssm_action: str,
-    ) -> CommandResult:
-        """
-        Transfer file(s) to/from host using an intermediate S3 bucket and then delete the file(s).
-
-        :param in_path: The input path.
-        :param out_path: The output path.
-        :param ssm_action: The SSM action to perform ("get" or "put").
-
-        :returns: The command's return code, stdout, and stderr in a tuple.
-        """
-
-        bucket_name = self.get_option("bucket_name")
-        s3_path = self._escape_path(f"{self.instance_id}/{out_path}")
-
-        client = self._s3_client
-
-        commands, put_args = self._generate_commands(
-            bucket_name,
-            s3_path,
-            in_path,
-            out_path,
-        )
-
-        try:
-            if ssm_action == "get":
-                put_commands = [cmd for cmd in commands if cmd.get("method") == "put"]
-                result = self._exec_transport_commands(in_path, out_path, put_commands)
-                with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
-                    client.download_fileobj(bucket_name, s3_path, data)
-            else:
-                get_commands = [cmd for cmd in commands if cmd.get("method") == "get"]
-                with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
-                    client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-                result = self._exec_transport_commands(in_path, out_path, get_commands)
-            return result
-        finally:
-            # Remove the files from the bucket after they've been transferred
-            client.delete_object(Bucket=bucket_name, Key=s3_path)
-
-    def put_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
+    def put_file(self, in_path: str, out_path: str) -> CommandResult:
         """transfer a file from local to remote"""
 
         super().put_file(in_path, out_path)
@@ -1005,15 +933,16 @@ class Connection(ConnectionBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        return self._file_transport_command(in_path, out_path, "put")
+        return _ssm_retry(self.file_transfer_manager._file_transport_command)(in_path, out_path, "put")
 
-    def fetch_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
+    def fetch_file(self, in_path: str, out_path: str) -> CommandResult:
         """fetch a file from remote to local"""
 
         super().fetch_file(in_path, out_path)
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
-        return self._file_transport_command(in_path, out_path, "get")
+
+        return _ssm_retry(self.file_transfer_manager._file_transport_command)(in_path, out_path, "get")
 
     def close(self) -> None:
         """terminate the connection"""
