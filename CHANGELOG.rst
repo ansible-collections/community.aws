@@ -22,16 +22,21 @@ Minor Changes
 v9.1.0
 ======
 
+Release Summary
+---------------
+
+Preparation for the promotion of the ``aws_ssm.py`` plugin (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930) is under way in this release; this effort includes the refactoring work for methods like ``exec_command`` (https://github.com/ansible-collections/community.aws/pull/2224) as well as new methods such as ``generate_mark()`` (https://github.com/ansible-collections/community.aws/pull/2235) which generates random strings for SSM CLI delimitation.
+
 Minor Changes
 -------------
 
-- aws_ssm -  Refactor _init_clients Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2223).
+- aws_ssm -  Refactor ``_init_clients`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2223).
 - aws_ssm -  Refactor ``_prepare_terminal()`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/).
 - aws_ssm -  Refactor exec_command Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
-- connection/aws_ssm - Add the possibility to define ``aws_ssm_plugin`` variable via environment variable and by default use the version found on the $PATH rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
+- aws_ssm - Add the possibility to define ``aws_ssm plugin`` variable via environment variable and by default use the version found on the $PATH rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
 - dms_endpoint - improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
 - s3_lifecycle - Support for min and max object size when applying the filter rules (https://github.com/ansible-collections/community.aws/pull/2205).
-- ssm - add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
+- aws_ssm - add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
 - various modules - linting fixups (https://github.com/ansible-collections/community.aws/pull/2221).
 - waf_condition - adds missing options validation to filters (https://github.com/ansible-collections/community.aws/pull/2220).
 
@@ -39,7 +44,7 @@ Bugfixes
 --------
 
 - aws_ssm - use ``head_bucket`` to access bucket locations in foreign aws accounts (https://github.com/ansible-collections/community.aws/pull/1987).
-- ssm - strip Powershell CLIXML from stdout (https://github.com/ansible-collections/community.aws/issues/1952).
+- aws_ssm - strip Powershell CLIXML from stdout (https://github.com/ansible-collections/community.aws/issues/1952).
 
 v9.0.0
 ======
