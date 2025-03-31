@@ -54,13 +54,11 @@ def test_connection_aws_ssm_exec_communicate(
     stderr = MagicMock()
     connection_aws_ssm.session_manager.flush_stderr.return_value = stderr
 
-    result_returncode, result_stdout, result_stderr = connection_aws_ssm.exec_communicate(
-        "ansible-test units", mark_start, mark_start, mark_end
-    )
+    result = connection_aws_ssm.exec_communicate("ansible-test units", mark_start, mark_start, mark_end)
 
-    assert result_returncode == returncode
-    assert result_stdout == expected_stdout
-    assert stderr == result_stderr
+    assert result["returncode"] == returncode
+    assert result["stdout"] == expected_stdout
+    assert stderr == result["stderr"]
 
 
 def test_connection_aws_ssm_exec_communicate_with_exception(connection_aws_ssm):

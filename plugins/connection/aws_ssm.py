@@ -333,7 +333,6 @@ from typing import Any
 from typing import Iterator
 from typing import List
 from typing import Tuple
-from typing import TypedDict
 
 from ansible.errors import AnsibleConnectionFailure
 from ansible.errors import AnsibleError
@@ -352,6 +351,10 @@ from ansible_collections.community.aws.plugins.plugin_utils.ssm.terminalmanager 
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.sessionmanager import (
     SSMSessionManager,
 )
+
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
+
 
 display = Display()
 
@@ -435,16 +438,6 @@ def filter_ansi(line: str, is_windows: bool) -> str:
     return line
 
 
-class CommandResult(TypedDict):
-    """
-    A dictionary that contains the executed command results.
-    """
-
-    returncode: int
-    stdout_combined: str
-    stderr_combined: str
-
-
 class Connection(ConnectionBase, AwsConnectionPluginBase):
     """AWS SSM based connections"""
 
@@ -471,6 +464,8 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self._instance_id = None
         self.terminal_manager = TerminalManager(self)
         self.session_manager = None
+        # Initialize FileTransferManager
+        self.file_transfer_manager = FileTransferManager(self)
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
@@ -612,7 +607,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
             # For non-windows Hosts: Ensure the session has started, and disable command echo and prompt.
             self.terminal_manager.prepare_terminal()
 
-    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> Tuple[int, str, str]:
+    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> CommandResult:
         """Interact with session.
         Read stdout between the markers until 'mark_end' is reached.
 
@@ -652,7 +647,11 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
                 stdout = stdout + line
 
         # see https://github.com/pylint-dev/pylint/issues/8909)
-        return (returncode, stdout, self.session_manager.flush_stderr())
+        return {  # pylint: disable=unreachable
+            "returncode": returncode,
+            "stdout": stdout,
+            "stderr": self.session_manager.flush_stderr(),
+        }
 
     @staticmethod
     def generate_mark() -> str:
@@ -661,7 +660,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         return mark
 
     @_ssm_retry
-    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
+    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> CommandResult:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
@@ -794,15 +793,16 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        return self._file_transport_command(in_path, out_path, "put")
+        return _ssm_retry(self.file_transfer_manager._file_transport_command)(in_path, out_path, "put")
 
-    def fetch_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
+    def fetch_file(self, in_path: str, out_path: str) -> CommandResult:
         """fetch a file from remote to local"""
 
         super().fetch_file(in_path, out_path)
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
-        return self._file_transport_command(in_path, out_path, "get")
+
+        return _ssm_retry(self.file_transfer_manager._file_transport_command)(in_path, out_path, "get")
 
     def close(self) -> None:
         """terminate the connection"""
