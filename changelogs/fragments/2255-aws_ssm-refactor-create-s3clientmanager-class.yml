@@ -1,3 +1,0 @@
----
-minor_changes:
-  - aws_ssm - Refactor connection/aws_ssm to add new S3ClientManager class and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2255).
