@@ -484,7 +484,12 @@ class Connection(ConnectionBase):
         self._instance_id = None
         self._polling_obj = None
         self._has_timeout = False
-        self.terminal_manager = TerminalManager(self)
+        self.terminal_manager = TerminalManager(
+            session=self._session,
+            stdout=self._stdout,
+            poller=self._polling_obj or select.poll(),
+            verbosity_display=self.verbosity_display,
+        )
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
