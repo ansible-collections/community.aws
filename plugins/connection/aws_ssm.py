@@ -328,7 +328,6 @@ import random
 import re
 import string
 import time
-from functools import wraps
 from typing import Any
 from typing import Iterator
 from typing import List
@@ -354,59 +353,10 @@ from ansible_collections.community.aws.plugins.plugin_utils.ssm.sessionmanager i
 
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
 
 
 display = Display()
-
-
-def _ssm_retry(func: Any) -> Any:
-    """
-    Decorator to retry in the case of a connection failure
-    Will retry if:
-    * an exception is caught
-    Will not retry if
-    * remaining_tries is <2
-    * retries limit reached
-    """
-
-    @wraps(func)
-    def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-        remaining_tries = int(self.get_option("reconnection_retries")) + 1
-        cmd_summary = f"{args[0]}..."
-        for attempt in range(remaining_tries):
-            try:
-                return_tuple = func(self, *args, **kwargs)
-                self.verbosity_display(4, f"ssm_retry: (success) {to_text(return_tuple)}")
-                break
-
-            except (AnsibleConnectionFailure, Exception) as e:
-                if attempt == remaining_tries - 1:
-                    raise
-                pause = 2**attempt - 1
-                pause = min(pause, 30)
-
-                if isinstance(e, AnsibleConnectionFailure):
-                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), pausing for {pause} seconds"
-                else:
-                    msg = (
-                        f"ssm_retry: attempt: {attempt}, caught exception({e})"
-                        f"from cmd ({cmd_summary}),pausing for {pause} seconds"
-                    )
-
-                self.verbosity_display(2, msg)
-
-                time.sleep(pause)
-
-                # Do not attempt to reuse the existing session on retries
-                # This will cause the SSM session to be completely restarted,
-                # as well as reinitializing the boto3 clients
-                self.close()
-
-                continue
-
-        return return_tuple
-
-    return wrapped
 
 
 def chunks(lst: List, n: int) -> Iterator[List[Any]]:
@@ -659,7 +609,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         mark = "".join([random.choice(string.ascii_letters) for i in range(Connection.MARK_LENGTH)])
         return mark
 
-    @_ssm_retry
+    @ssm_retry
     def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> CommandResult:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
@@ -793,7 +743,8 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        return _ssm_retry(self.file_transfer_manager._file_transport_command)(in_path, out_path, "put")
+        decorated_func = ssm_retry(self.file_transfer_manager._file_transport_command)
+        return decorated_func(self, in_path, out_path, "put")
 
     def fetch_file(self, in_path: str, out_path: str) -> CommandResult:
         """fetch a file from remote to local"""
@@ -802,7 +753,8 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
 
-        return _ssm_retry(self.file_transfer_manager._file_transport_command)(in_path, out_path, "get")
+        decorated_func = ssm_retry(self.file_transfer_manager._file_transport_command)
+        return decorated_func(self, in_path, out_path, "get")
 
     def close(self) -> None:
         """terminate the connection"""
