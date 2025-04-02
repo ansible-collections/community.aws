@@ -195,11 +195,12 @@ class TestConnectionBaseClass:
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
         conn._connect = MagicMock()
-        conn._file_transport_command = MagicMock()
-        conn._file_transport_command.return_value = (0, "stdout", "stderr")
 
+        conn.s3_manager = MagicMock()
+        conn.s3_manager.generate_encryption_settings = MagicMock(return_value=({}, {}))
         # Mock the file transfer manager
         conn.file_transfer_manager = MagicMock()
+        conn.generate_commands = MagicMock(side_effect=lambda *args, **kwargs: ("s3_path", [], {}))
 
         conn.put_file("/in/file", "/out/file")
 
@@ -207,12 +208,15 @@ class TestConnectionBaseClass:
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+        conn.reconnection_retries = "5"
         conn._connect = MagicMock()
-        conn._file_transport_command = MagicMock()
-        conn._file_transport_command.return_value = (0, "stdout", "stderr")
+
+        conn.s3_manager = MagicMock()
+        conn.s3_manager.generate_encryption_settings = MagicMock(return_value=({}, {}))
 
         # Mock the file transfer manager
         conn.file_transfer_manager = MagicMock()
+        conn.generate_commands = MagicMock(side_effect=lambda *args, **kwargs: ("s3_path", [], {}))
 
         conn.fetch_file("/in/file", "/out/file")
 
@@ -306,9 +310,9 @@ class TestConnectionBaseClass:
     )
     def test_verbosity_diplay(self, message, level, method):
         """Testing verbosity levels"""
-        play_context = MagicMock()
-        play_context.shell = "sh"
-        conn = Connection(play_context)
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
         conn.host = "test-host"  # Test with host set
 
         with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
@@ -319,8 +323,9 @@ class TestConnectionBaseClass:
 
             # Test without host set
             conn.host = None
+            mock_display.reset_mock()  # Reset the mock before the second call.
             conn.verbosity_display(1, "no host message")
-            mock_display.v.assert_called_with("no host message")
+            mock_display.v.assert_called_once_with("no host message")
 
             # Test exception is raised when verbosity level is not an accepted value
             with pytest.raises(AnsibleError):
