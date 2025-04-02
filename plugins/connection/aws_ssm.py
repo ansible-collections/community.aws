@@ -354,6 +354,7 @@ from ansible_collections.community.aws.plugins.plugin_utils.ssm.sessionmanager i
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
 
 
 display = Display()
@@ -388,6 +389,17 @@ def filter_ansi(line: str, is_windows: bool) -> str:
     return line
 
 
+def escape_path(path: str) -> str:
+    """
+    Converts a file path to a safe format by replacing backslashes with forward slashes.
+
+    :param path: The file path to escape.
+    :return: The escaped file path.
+    """
+    return path.replace("\\", "/")
+
+
+
 class Connection(ConnectionBase, AwsConnectionPluginBase):
     """AWS SSM based connections"""
 
@@ -414,8 +426,17 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self._instance_id = None
         self.terminal_manager = TerminalManager(self)
         self.session_manager = None
+        self.reconnection_retries = self.get_option("reconnection_retries")
         # Initialize FileTransferManager
-        self.file_transfer_manager = FileTransferManager(self)
+        self.file_transfer_manager = FileTransferManager(
+            bucket_name=self.get_option("bucket_name"),
+            instance_id=self._instance_id,
+            s3_client=self._s3_client,
+            reconnection_retries=self.reconnection_retries,
+            verbosity_display=self.verbosity_display,
+            close=self.close,
+            exec_command=self.exec_command,
+        )
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
@@ -743,8 +764,8 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        decorated_func = ssm_retry(self.file_transfer_manager._file_transport_command)
-        return decorated_func(self, in_path, out_path, "put")
+        s3_path, commands, put_args = self.generate_commands(in_path, out_path)
+        return self.file_transfer_manager._file_transport_command(in_path, out_path, "put", commands, put_args, s3_path)
 
     def fetch_file(self, in_path: str, out_path: str) -> CommandResult:
         """fetch a file from remote to local"""
@@ -753,8 +774,8 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
 
-        decorated_func = ssm_retry(self.file_transfer_manager._file_transport_command)
-        return decorated_func(self, in_path, out_path, "get")
+        s3_path, commands, put_args = self.generate_commands(in_path, out_path)
+        return self.file_transfer_manager._file_transport_command(in_path, out_path, "put", commands, put_args, s3_path)
 
     def close(self) -> None:
         """terminate the connection"""

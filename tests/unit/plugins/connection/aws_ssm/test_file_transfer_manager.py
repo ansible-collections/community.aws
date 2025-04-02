@@ -4,7 +4,9 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 
+from io import BytesIO
 from unittest.mock import MagicMock
+from unittest.mock import patch
 
 import pytest
 
@@ -16,20 +18,17 @@ from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermana
 
 class TestFileTransferManager:
     @pytest.fixture
-    def mock_connection(self):
-        """Creates a mock connection object."""
-        mock_conn = MagicMock()
-        mock_conn._s3_client = MagicMock()
-        mock_conn._generate_commands.return_value = ([{"command": "test-cmd", "method": "put"}], {})
-        return mock_conn
-
-    @pytest.fixture
-    def file_transfer_manager(self, mock_connection):
-        """Creates an instance of FileTransferManager with a mock connection."""
-        return FileTransferManager(mock_connection)
-
-    def test_escape_path(self):
-        assert FileTransferManager._escape_path("path\\with\\backslashes") == "path/with/backslashes"
+    def file_transfer_manager(self, connection_aws_ssm):
+        """Creates an instance of FileTransferManager"""
+        return FileTransferManager(
+            bucket_name="test_bucket",
+            instance_id=connection_aws_ssm._instance_id,
+            s3_client=connection_aws_ssm._s3_client,
+            reconnection_retries=connection_aws_ssm.reconnection_retries,
+            verbosity_display=connection_aws_ssm.verbosity_display,
+            close=MagicMock(),
+            exec_command=MagicMock(),
+        )
 
     @pytest.mark.parametrize(
         "ssm_action, handler_method, expected_output, in_path, out_path",
@@ -43,21 +42,28 @@ class TestFileTransferManager:
     def test_file_transport_command(
         self,
         file_transfer_manager,
-        mock_connection,
+        connection_aws_ssm,
         ssm_action: str,
         handler_method: str,
         expected_output: str,
         in_path: str,
         out_path: str,
     ):
-        mock_connection._s3_client.delete_object = MagicMock()
+        connection_aws_ssm._s3_client.delete_object = MagicMock()
         handler_mock = MagicMock(return_value=CommandResult(returncode=0, stdout=expected_output, stderr=""))
         setattr(file_transfer_manager, handler_method, handler_mock)
 
-        result = file_transfer_manager._file_transport_command(in_path, out_path, ssm_action)
+        result = file_transfer_manager._file_transport_command(
+            in_path,
+            out_path,
+            ssm_action,
+            commands=[{"command": "test-cmd", "method": "put"}],
+            put_args={},
+            s3_path="test_s3_path",
+        )
 
         handler_mock.assert_called_once()
-        mock_connection._s3_client.delete_object.assert_called_once()
+        connection_aws_ssm._s3_client.delete_object.assert_called_once_with(Bucket="test_bucket", Key="test_s3_path")
         assert result["returncode"] == 0
         assert result["stdout"] == expected_output
         assert result["stderr"] == ""
@@ -70,10 +76,15 @@ class TestFileTransferManager:
         ],
     )
     def test_exec_transport_commands(
-        self, file_transfer_manager, mock_connection, command_input: str, expected_returncode: int, expected_stdout: str
+        self,
+        file_transfer_manager,
+        connection_aws_ssm,
+        command_input: str,
+        expected_returncode: int,
+        expected_stdout: str,
     ):
         # Mocking exec_command for the given command input
-        mock_connection.exec_command.return_value = CommandResult(
+        file_transfer_manager.exec_command.return_value = CommandResult(
             returncode=expected_returncode,
             stdout=expected_stdout,
             stderr="" if expected_returncode == 0 else "Error message",
@@ -88,3 +99,26 @@ class TestFileTransferManager:
         else:
             with pytest.raises(AnsibleError, match=r"failed to transfer file to input.txt output.txt:\s*Error message"):
                 file_transfer_manager._exec_transport_commands("input.txt", "output.txt", commands)
+
+    def test_handle_get(self, file_transfer_manager, connection_aws_ssm):
+        connection_aws_ssm._s3_client.download_fileobj = MagicMock()
+        file_transfer_manager.exec_command.return_value = CommandResult(returncode=0, stdout="test", stderr="")
+        result = file_transfer_manager._handle_get(
+            "in_path", "out_path", [{"command": "test-cmd", "method": "put"}], "s3_path"
+        )
+        assert result["returncode"] == 0
+        connection_aws_ssm._s3_client.download_fileobj.assert_called_once()
+
+    def test_handle_put(self, file_transfer_manager, connection_aws_ssm):
+        connection_aws_ssm._s3_client.upload_fileobj = MagicMock()
+        file_transfer_manager.exec_command.return_value = CommandResult(returncode=0, stdout="test", stderr="")
+
+        mock_file_content = b"dummy content"
+        mock_file = BytesIO(mock_file_content)
+        with patch("builtins.open", return_value=mock_file) as mocked_open:
+            result = file_transfer_manager._handle_put(
+                "in_path", "out_path", [{"command": "test-cmd", "method": "get"}], "s3_path", {}
+            )
+
+        assert result["returncode"] == 0
+        connection_aws_ssm._s3_client.upload_fileobj.assert_called_once()

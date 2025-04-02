@@ -24,12 +24,14 @@ def ssm_retry(func: Any) -> Any:
 
     @wraps(func)
     def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-        remaining_tries = int(self.get_option("reconnection_retries")) + 1
+        reconnection_retries = getattr(self, "reconnection_retries")
+        remaining_tries = int(reconnection_retries) + 1
+        verbosity_d = getattr(self, "verbosity_display", None)
         cmd_summary = f"{args[0]}..."
         for attempt in range(remaining_tries):
             try:
                 return_tuple = func(self, *args, **kwargs)
-                self.verbosity_display(4, f"ssm_retry: (success) {to_text(return_tuple)}")
+                verbosity_d(4, f"ssm_retry: (success) {to_text(return_tuple)}")
                 break
 
             except (AnsibleConnectionFailure, Exception) as e:
@@ -46,14 +48,15 @@ def ssm_retry(func: Any) -> Any:
                         f"from cmd ({cmd_summary}),pausing for {pause} seconds"
                     )
 
-                self.verbosity_display(2, msg)
+                verbosity_d(2, msg)
 
                 time.sleep(pause)
 
                 # Do not attempt to reuse the existing session on retries
                 # This will cause the SSM session to be completely restarted,
                 # as well as reinitializing the boto3 clients
-                self.close()
+                if hasattr(self, "close"):
+                    self.close()
 
                 continue
 
