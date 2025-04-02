@@ -272,7 +272,7 @@ class TestS3ClientManager:
             elif method == "put":
                 m_generate_encryption_settings.assert_not_called()
                 if is_windows:
-                    assert f"Invoke-WebRequest 'https://test-url' -OutFile 'test/out/path'" == test_command_generation
+                    assert "Invoke-WebRequest 'https://test-url' -OutFile 'test/out/path'" == test_command_generation
                 else:
                     assert "curl -o 'test/out/path' 'https://test-url';touch 'test/out/path'" == test_command_generation
                 assert put_args is None
