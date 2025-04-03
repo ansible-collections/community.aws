@@ -21,10 +21,10 @@ class FileTransferManager:
 
     def __init__(
         self,
-        bucket_name,
-        instance_id,
+        bucket_name: str,
+        instance_id: str,
         s3_client,
-        reconnection_retries,
+        reconnection_retries: int,
         verbosity_display: Callable[[int, str], None],
         close: Callable[[], None],
         exec_command: Callable[[str, Optional[bool], Optional[bool]], CommandResult],

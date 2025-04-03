@@ -660,7 +660,7 @@ class Connection(ConnectionBase):
         stdout = ""
         win_line = ""
         begin = False
-        returncode = None
+        returncode = 0
         for poll_result in self.poll("EXEC", cmd):
             if not poll_result:
                 continue
