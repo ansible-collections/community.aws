@@ -644,7 +644,7 @@ class Connection(ConnectionBase):
                 raise AnsibleConnectionFailure(f"{label} command '{cmd}' timeout on host: {self.instance_id}")
             yield self.poll_stdout()
 
-    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> Tuple[int, str, str]:
+    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> CommandResult:
         """Interact with session.
         Read stdout between the markers until 'mark_end' is reached.
 
@@ -658,7 +658,7 @@ class Connection(ConnectionBase):
         stdout = ""
         win_line = ""
         begin = False
-        returncode = None
+        returncode = 0
         for poll_result in self.poll("EXEC", cmd):
             if not poll_result:
                 continue
@@ -684,7 +684,7 @@ class Connection(ConnectionBase):
                 stdout = stdout + line
 
         # see https://github.com/pylint-dev/pylint/issues/8909)
-        return (returncode, stdout, self._flush_stderr(self._session))  # pylint: disable=unreachable
+        return {"returncode": returncode, "stdout": stdout, "stderr": self._flush_stderr(self._session)}  # pylint: disable=unreachable
 
     @staticmethod
     def generate_mark() -> str:
@@ -693,7 +693,7 @@ class Connection(ConnectionBase):
         return mark
 
     @ssm_retry
-    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
+    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> CommandResult:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
@@ -808,7 +808,11 @@ class Connection(ConnectionBase):
 
         if not self.is_windows:
             # Get command return code
-            returncode = int(stdout.splitlines()[-2])
+            returncode = stdout.splitlines()[-2]
+            if returncode.isdigit():  # Handle negative numbers
+                returncode = int(returncode)
+            else:
+                returncode = -1  # Fallback if it's not a valid number
 
             # Throw away final lines
             for _x in range(0, 3):
