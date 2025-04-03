@@ -354,7 +354,6 @@ from ansible_collections.community.aws.plugins.plugin_utils.ssm.sessionmanager i
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
-from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
 
 
 display = Display()
