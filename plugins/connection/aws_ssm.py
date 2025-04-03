@@ -362,58 +362,11 @@ from ansible.utils.display import Display
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
+
 
 display = Display()
-
-
-def _ssm_retry(func: Any) -> Any:
-    """
-    Decorator to retry in the case of a connection failure
-    Will retry if:
-    * an exception is caught
-    Will not retry if
-    * remaining_tries is <2
-    * retries limit reached
-    """
-
-    @wraps(func)
-    def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-        remaining_tries = int(self.get_option("reconnection_retries")) + 1
-        cmd_summary = f"{args[0]}..."
-        for attempt in range(remaining_tries):
-            try:
-                return_tuple = func(self, *args, **kwargs)
-                self.verbosity_display(4, f"ssm_retry: (success) {to_text(return_tuple)}")
-                break
-
-            except (AnsibleConnectionFailure, Exception) as e:
-                if attempt == remaining_tries - 1:
-                    raise
-                pause = 2**attempt - 1
-                pause = min(pause, 30)
-
-                if isinstance(e, AnsibleConnectionFailure):
-                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), pausing for {pause} seconds"
-                else:
-                    msg = (
-                        f"ssm_retry: attempt: {attempt}, caught exception({e})"
-                        f"from cmd ({cmd_summary}),pausing for {pause} seconds"
-                    )
-
-                self.verbosity_display(2, msg)
-
-                time.sleep(pause)
-
-                # Do not attempt to reuse the existing session on retries
-                # This will cause the SSM session to be completely restarted,
-                # as well as reinitializing the boto3 clients
-                self.close()
-
-                continue
-
-        return return_tuple
-
-    return wrapped
 
 
 def chunks(lst: List, n: int) -> Iterator[List[Any]]:
@@ -445,14 +398,8 @@ def filter_ansi(line: str, is_windows: bool) -> str:
     return line
 
 
-class CommandResult(TypedDict):
-    """
-    A dictionary that contains the executed command results.
-    """
-
-    returncode: int
-    stdout_combined: str
-    stderr_combined: str
+def escape_path(path: str) -> str:
+    return path.replace("\\", "/")
 
 
 class Connection(ConnectionBase):
@@ -484,6 +431,7 @@ class Connection(ConnectionBase):
         self._instance_id = None
         self._polling_obj = None
         self._has_timeout = False
+        self.reconnection_retries = self.get_option("reconnection_retries")
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
@@ -529,6 +477,17 @@ class Connection(ConnectionBase):
 
         # Initialize SSM client
         self._initialize_ssm_client(region_name, profile_name)
+
+        # Initialize FileTransferManager
+        self.file_transfer_manager = FileTransferManager(
+            bucket_name=self.get_option("bucket_name"),
+            instance_id=self._instance_id,
+            s3_client=self._s3_client,
+            reconnection_retries=self.reconnection_retries,
+            verbosity_display=self.verbosity_display,
+            # close=self.close,
+            exec_command=self.exec_command,
+        )
 
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
@@ -727,7 +686,7 @@ class Connection(ConnectionBase):
         mark = "".join([random.choice(string.ascii_letters) for i in range(Connection.MARK_LENGTH)])
         return mark
 
-    @_ssm_retry
+    @ssm_retry
     def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
@@ -838,7 +797,7 @@ class Connection(ConnectionBase):
         self.verbosity_display(4, f"_wrap_command: \n'{to_text(cmd)}'")
         return cmd
 
-    def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:
+    def _post_process(self, stdout: str, mark_begin: str) -> Tuple[int, str]:
         """extract command status and strip unwanted lines"""
 
         if not self.is_windows:
@@ -914,9 +873,6 @@ class Connection(ConnectionBase):
             ),
         )
         return client
-
-    def _escape_path(self, path: str) -> str:
-        return path.replace("\\", "/")
 
     def _generate_commands(
         self,
@@ -1012,74 +968,9 @@ class Connection(ConnectionBase):
 
         return commands, put_args
 
-    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[dict]) -> CommandResult:
-        """
-        Execute the provided transport commands.
-
-        :param in_path: The input path.
-        :param out_path: The output path.
-        :param commands: A list of command dictionaries containing the command string and metadata.
-
-        :returns: A tuple containing the return code, stdout, and stderr.
-        """
-
-        stdout_combined, stderr_combined = "", ""
-        for command in commands:
-            (returncode, stdout, stderr) = self.exec_command(command["command"], in_data=None, sudoable=False)
-
-            # Check the return code
-            if returncode != 0:
-                raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
-
-            stdout_combined += stdout
-            stderr_combined += stderr
-
-        return (returncode, stdout_combined, stderr_combined)
-
-    @_ssm_retry
-    def _file_transport_command(
-        self,
-        in_path: str,
-        out_path: str,
-        ssm_action: str,
-    ) -> CommandResult:
-        """
-        Transfer file(s) to/from host using an intermediate S3 bucket and then delete the file(s).
-
-        :param in_path: The input path.
-        :param out_path: The output path.
-        :param ssm_action: The SSM action to perform ("get" or "put").
-
-        :returns: The command's return code, stdout, and stderr in a tuple.
-        """
-
-        bucket_name = self.get_option("bucket_name")
-        s3_path = self._escape_path(f"{self.instance_id}/{out_path}")
-
-        client = self._s3_client
-
-        commands, put_args = self._generate_commands(
-            bucket_name,
-            s3_path,
-            in_path,
-            out_path,
-        )
-
-        try:
-            if ssm_action == "get":
-                put_commands = [cmd for cmd in commands if cmd.get("method") == "put"]
-                result = self._exec_transport_commands(in_path, out_path, put_commands)
-                with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
-                    client.download_fileobj(bucket_name, s3_path, data)
-            else:
-                get_commands = [cmd for cmd in commands if cmd.get("method") == "get"]
-                with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
-                    client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-                result = self._exec_transport_commands(in_path, out_path, get_commands)
-            return result
-        finally:
-            # Remove the files from the bucket after they've been transferred
-            client.delete_object(Bucket=bucket_name, Key=s3_path)
+    def generate_commands(self, in_path: str, out_path: str) -> Tuple[str, List[Dict], dict]:
+        s3_path = escape_path(f"{self.instance_id}/{out_path}")
+        return (s3_path, self._generate_commands(self.get_option("bucket_name"), s3_path, in_path, out_path))
 
     def put_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
         """transfer a file from local to remote"""
@@ -1090,7 +981,9 @@ class Connection(ConnectionBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        return self._file_transport_command(in_path, out_path, "put")
+        s3_path, commands, put_args = self.generate_commands(in_path, out_path)
+        return self.file_transfer_manager._file_transport_command(in_path, out_path, "put", commands, put_args, s3_path)
+
 
     def fetch_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
         """fetch a file from remote to local"""
@@ -1098,7 +991,10 @@ class Connection(ConnectionBase):
         super().fetch_file(in_path, out_path)
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
-        return self._file_transport_command(in_path, out_path, "get")
+
+        s3_path, commands, put_args = self.generate_commands(in_path, out_path)
+        return self.file_transfer_manager._file_transport_command(in_path, out_path, "get", commands, put_args, s3_path)
+
 
     def close(self) -> None:
         """terminate the connection"""
