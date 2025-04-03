@@ -364,6 +364,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 
 
 display = Display()
@@ -399,6 +400,11 @@ def filter_ansi(line: str, is_windows: bool) -> str:
 
 
 def escape_path(path: str) -> str:
+    """
+    Converts a file path to a safe format by replacing backslashes with forward slashes.
+    :param path: The file path to escape.
+    :return: The escaped file path.
+    """
     return path.replace("\\", "/")
 
 
@@ -972,7 +978,7 @@ class Connection(ConnectionBase):
         s3_path = escape_path(f"{self.instance_id}/{out_path}")
         return (s3_path, self._generate_commands(self.get_option("bucket_name"), s3_path, in_path, out_path))
 
-    def put_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
+    def put_file(self, in_path: str, out_path: str) -> CommandResult:
         """transfer a file from local to remote"""
 
         super().put_file(in_path, out_path)
@@ -984,8 +990,7 @@ class Connection(ConnectionBase):
         s3_path, commands, put_args = self.generate_commands(in_path, out_path)
         return self.file_transfer_manager._file_transport_command(in_path, out_path, "put", commands, put_args, s3_path)
 
-
-    def fetch_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
+    def fetch_file(self, in_path: str, out_path: str) -> CommandResult:
         """fetch a file from remote to local"""
 
         super().fetch_file(in_path, out_path)
@@ -994,7 +999,6 @@ class Connection(ConnectionBase):
 
         s3_path, commands, put_args = self.generate_commands(in_path, out_path)
         return self.file_transfer_manager._file_transport_command(in_path, out_path, "get", commands, put_args, s3_path)
-
 
     def close(self) -> None:
         """terminate the connection"""

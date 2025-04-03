@@ -56,7 +56,7 @@ def ssm_retry(func: Any) -> Any:
                 # This will cause the SSM session to be completely restarted,
                 # as well as reinitializing the boto3 clients
                 if hasattr(self, "close"):
-                  self.close()
+                    self.close()
 
                 continue
 
