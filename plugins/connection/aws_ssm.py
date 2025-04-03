@@ -775,7 +775,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
 
         s3_path, commands, put_args = self.generate_commands(in_path, out_path)
-        return self.file_transfer_manager._file_transport_command(in_path, out_path, "put", commands, put_args, s3_path)
+        return self.file_transfer_manager._file_transport_command(in_path, out_path, "get", commands, put_args, s3_path)
 
     def close(self) -> None:
         """terminate the connection"""
