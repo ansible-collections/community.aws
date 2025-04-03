@@ -45,26 +45,12 @@ def poll_mock(x, y):
 def test_ensure_ssm_session_has_started(m_to_text, m_to_bytes, connection_aws_ssm, stdout_lines, timeout_failure):
     m_to_text.side_effect = str
     m_to_bytes.side_effect = str
-    connection_aws_ssm.get_option = MagicMock(return_value=10)
+    connection_aws_ssm._stdout.read = MagicMock()
 
-    mock_session = MagicMock()
-    mock_session.poll.return_value = None
-    connection_aws_ssm._session = mock_session
-
-    connection_aws_ssm._stdout = MagicMock()
     connection_aws_ssm._stdout.read.side_effect = stdout_lines
 
-    poll_mock.results = [True for i in range(len(stdout_lines))]
-    connection_aws_ssm.poll = MagicMock()
-    connection_aws_ssm.poll.side_effect = poll_mock
-
     if not hasattr(connection_aws_ssm, "terminal_manager"):
-        connection_aws_ssm.terminal_manager = TerminalManager(
-            session=connection_aws_ssm._session,
-            stdout=connection_aws_ssm._stdout,
-            poller=connection_aws_ssm.poll,
-            verbosity_display=connection_aws_ssm.verbosity_display,
-        )
+        connection_aws_ssm.terminal_manager = TerminalManager(connection_aws_ssm)
 
     poll_mock.results = [True for i in range(len(stdout_lines))]
     connection_aws_ssm.poll = MagicMock()
@@ -100,12 +86,7 @@ def test_disable_echo_command(m_to_text, m_to_bytes, connection_aws_ssm, stdout_
     connection_aws_ssm.poll.side_effect = poll_mock
 
     if not hasattr(connection_aws_ssm, "terminal_manager"):
-        connection_aws_ssm.terminal_manager = TerminalManager(
-            session=connection_aws_ssm._session,
-            stdout=connection_aws_ssm._stdout,
-            poller=connection_aws_ssm.poll,
-            verbosity_display=connection_aws_ssm.verbosity_display,
-        )
+        connection_aws_ssm.terminal_manager = TerminalManager(connection_aws_ssm)
 
     if timeout_failure:
         with pytest.raises(TimeoutError):
@@ -129,12 +110,7 @@ def test_disable_prompt_command(m_to_text, m_to_bytes, m_random, connection_aws_
     connection_aws_ssm.poll.side_effect = poll_mock
 
     if not hasattr(connection_aws_ssm, "terminal_manager"):
-        connection_aws_ssm.terminal_manager = TerminalManager(
-            session=connection_aws_ssm._session,
-            stdout=connection_aws_ssm._stdout,
-            poller=connection_aws_ssm.poll,
-            verbosity_display=connection_aws_ssm.verbosity_display,
-        )
+        connection_aws_ssm.terminal_manager = TerminalManager(connection_aws_ssm)
 
     m_random.choice = MagicMock()
     m_random.choice.side_effect = lambda x: "a"
