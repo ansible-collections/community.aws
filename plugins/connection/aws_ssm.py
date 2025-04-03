@@ -383,7 +383,7 @@ from ansible.plugins.shell.powershell import _common_args
 from ansible.utils.display import Display
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from ansible_collections.community.aws.plugins.plugin_utils.ssm_file_transfer import PortForwardingFileTransferManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.transport import PortForwardingFileTransportManager
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 
@@ -555,25 +555,21 @@ class Connection(ConnectionBase):
             )
             self._s3_client = self.s3_manager._s3_client
         else:
-            self._initialize_file_transfer_manager()
+            # Initialize file transport with port forwarding
+            self._filetransfer_mgr = PortForwardingFileTransportManager(
+                host_port_number=self.get_option("host_port_number"),
+                local_port_number=self.get_option("local_port_number"),
+                verbosity_display=self.verbosity_display,
+            )
 
-    def _initialize_file_transfer_manager(self) -> None:
-        ssm_timeout = self.get_option("ssm_timeout")
-        region_name = self.get_option("region")
-        profile_name = self.get_option("profile") or ""
-        host_port = self.get_option("host_port_number")
-        local_port = self.get_option("local_port_number")
-        self._filetransfer_mgr = PortForwardingFileTransferManager(
-            self.host,
-            ssm_client=self._client,
-            instance_id=self.instance_id,
-            executable=self.get_executable(),
-            ssm_timeout=ssm_timeout,
-            region_name=region_name,
-            profile_name=profile_name,
-            host_port=host_port,
-            local_port=local_port,
-        )
+            self._filetransfer_mgr.start_session(
+                client=self._client,
+                instance_id=self.instance_id,
+                executable=self.get_executable(),
+                region=self.get_option("region"),
+                profile=self.get_option("profile"),
+                ssm_timeout=self.get_option("ssm_timeout"),
+            )
 
     def _initialize_ssm_client(self, region_name: Optional[str], profile_name: str) -> None:
         """
