@@ -63,7 +63,7 @@ def test_ensure_ssm_session_has_started(m_to_text, m_to_bytes, connection_aws_ss
             session=connection_aws_ssm._session,
             stdout=connection_aws_ssm._stdout,
             poller=connection_aws_ssm.poll,
-            verbosity_display=connection_aws_ssm.verbosity_display
+            verbosity_display=connection_aws_ssm.verbosity_display,
         )
 
     poll_mock.results = [True for i in range(len(stdout_lines))]
@@ -104,7 +104,7 @@ def test_disable_echo_command(m_to_text, m_to_bytes, connection_aws_ssm, stdout_
             session=connection_aws_ssm._session,
             stdout=connection_aws_ssm._stdout,
             poller=connection_aws_ssm.poll,
-            verbosity_display=connection_aws_ssm.verbosity_display
+            verbosity_display=connection_aws_ssm.verbosity_display,
         )
 
     if timeout_failure:
@@ -133,7 +133,7 @@ def test_disable_prompt_command(m_to_text, m_to_bytes, m_random, connection_aws_
             session=connection_aws_ssm._session,
             stdout=connection_aws_ssm._stdout,
             poller=connection_aws_ssm.poll,
-            verbosity_display=connection_aws_ssm.verbosity_display
+            verbosity_display=connection_aws_ssm.verbosity_display,
         )
 
     m_random.choice = MagicMock()
