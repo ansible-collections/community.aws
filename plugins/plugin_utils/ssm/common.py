@@ -9,7 +9,6 @@ import pty
 import select
 import subprocess
 import time
-from functools import wraps
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -19,62 +18,6 @@ from typing import TypedDict
 from typing import Union
 
 from ansible.errors import AnsibleConnectionFailure
-from ansible.errors import AnsibleError
-from ansible.module_utils._text import to_text
-
-
-def ssm_retry(func: Any) -> Any:
-    """
-    Decorator to retry in the case of a connection failure
-    Will retry if:
-    * an exception is caught
-    Will not retry if
-    * remaining_tries is <2
-    * retries limit reached
-    """
-
-    @wraps(func)
-    def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-        for attr in ("reconnection_retries", "verbosity_display"):
-            if not hasattr(self, attr):
-                raise AnsibleError(f"Cannot decorate this function with 'ssm_retry', missing attribute '{attr}'")
-        remaining_tries = int(getattr(self, "reconnection_retries")) + 1
-        cmd_summary = f"{args[0]}..."
-        for attempt in range(remaining_tries):
-            try:
-                return_tuple = func(self, *args, **kwargs)
-                self.verbosity_display(4, f"ssm_retry: (success) {to_text(return_tuple)}")
-                break
-
-            except (AnsibleConnectionFailure, Exception) as e:
-                if attempt == remaining_tries - 1:
-                    raise
-                pause = 2**attempt - 1
-                pause = min(pause, 30)
-
-                if isinstance(e, AnsibleConnectionFailure):
-                    msg = f"ssm_retry: attempt: {attempt}, cmd ({cmd_summary}), pausing for {pause} seconds"
-                else:
-                    msg = (
-                        f"ssm_retry: attempt: {attempt}, caught exception({e})"
-                        f"from cmd ({cmd_summary}),pausing for {pause} seconds"
-                    )
-
-                self.verbosity_display(2, msg)
-
-                time.sleep(pause)
-
-                # Do not attempt to reuse the existing session on retries
-                # This will cause the SSM session to be completely restarted,
-                # as well as reinitializing the boto3 clients
-                if hasattr(self, "close"):
-                    getattr(self, "close")()
-
-                continue
-
-        return return_tuple
-
-    return wrapped
 
 
 class CommandResult(TypedDict):
@@ -98,17 +41,18 @@ class StdoutPoller:
         self._poller = poller
         self._session = session
         self._timeout = timeout
+        self._has_timeout = False
 
     def readline(self):
         return self._stdout.readline()
 
-    def has_data(self) -> bool:
-        return bool(self._poller.poll(self._timeout))
+    def has_data(self, timeout: int = 1000) -> bool:
+        return bool(self._poller.poll(timeout))
 
     def read_stdout(self, length: int = 1024) -> str:
         return self._stdout.read(length).decode("utf-8")
 
-    def stdin_write(self, value: str) -> None:
+    def stdin_write(self, value: Union[str | bytes]) -> None:
         self._session.stdin.write(value)
 
     def poll(self) -> NoReturn:
@@ -117,6 +61,7 @@ class StdoutPoller:
         while self._session.poll() is None:
             remaining = start + self._timeout - round(time.time())
             if remaining < 0:
+                self._has_timeout = True
                 raise AnsibleConnectionFailure("StdoutPoller timeout...")
             yield self.has_data()
 

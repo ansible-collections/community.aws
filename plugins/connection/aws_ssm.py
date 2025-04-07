@@ -351,16 +351,13 @@ import os
 import pty
 import random
 import re
-import select
 import string
 import subprocess
 import time
 from functools import wraps
 from typing import Any
 from typing import Dict
-from typing import Iterator
 from typing import List
-from typing import NoReturn
 from typing import Optional
 from typing import Tuple
 from typing import TypedDict
@@ -379,11 +376,11 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.process import get_bin_path
 from ansible.plugins.connection import ConnectionBase
-from ansible.plugins.shell.powershell import _common_args
 from ansible.utils.display import Display
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.transport import PortForwardingFileTransportManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.command import CommandManager
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 
@@ -440,35 +437,6 @@ def _ssm_retry(func: Any) -> Any:
     return wrapped
 
 
-def chunks(lst: List, n: int) -> Iterator[List[Any]]:
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]  # fmt: skip
-
-
-def filter_ansi(line: str, is_windows: bool) -> str:
-    """Remove any ANSI terminal control codes.
-
-    :param line: The input line.
-    :param is_windows: Whether the output is coming from a Windows host.
-    :returns: The result line.
-    """
-    line = to_text(line)
-
-    if is_windows:
-        osc_filter = re.compile(r"\x1b\][^\x07]*\x07")
-        line = osc_filter.sub("", line)
-        ansi_filter = re.compile(r"(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]")
-        line = ansi_filter.sub("", line)
-
-        # Replace or strip sequence (at terminal width)
-        line = line.replace("\r\r\n", "\n")
-        if len(line) == 201:
-            line = line[:-1]
-
-    return line
-
-
 class CommandResult(TypedDict):
     """
     A dictionary that contains the executed command results.
@@ -493,10 +461,11 @@ class Connection(ConnectionBase):
     _client = None
     _s3_client = None
     _session = None
-    _stdout = None
     _session_id = ""
     _timeout = False
     _filetransfer_mgr = None
+    _command_mgr = None
+    _instance_id = None
     MARK_LENGTH = 26
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -506,9 +475,6 @@ class Connection(ConnectionBase):
             raise AnsibleError(missing_required_lib("boto3"))
 
         self.host = self._play_context.remote_addr
-        self._instance_id = None
-        self._polling_obj = None
-        self._has_timeout = False
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
@@ -645,7 +611,7 @@ class Connection(ConnectionBase):
                     raise AnsibleError(str(e))
         return ssm_plugin_executable
 
-    def start_session(self):
+    def start_session(self) -> None:
         """start ssm session"""
 
         self.verbosity_display(3, f"ESTABLISH SSM CONNECTION TO: {self.instance_id}")
@@ -661,6 +627,7 @@ class Connection(ConnectionBase):
             start_session_args["DocumentName"] = document_name
         response = self._client.start_session(**start_session_args)
         self._session_id = response["SessionId"]
+        self.verbosity_display(4, f"SSM CONNECTION ID: {self._session_id}")
 
         region_name = self.get_option("region")
         profile_name = self.get_option("profile") or ""
@@ -687,129 +654,29 @@ class Connection(ConnectionBase):
         )
 
         os.close(stdout_w)
-        self._stdout = os.fdopen(stdout_r, "rb", 0)
+        self._command_mgr = CommandManager(
+            shell=self._shell,
+            session=self._session,
+            stdout_r=stdout_r,
+            ssm_timeout=self.get_option("ssm_timeout"),
+            verbosity_display=self.verbosity_display,
+        )
 
         # For non-windows Hosts: Ensure the session has started, and disable command echo and prompt.
         self._prepare_terminal()
-
-        self.verbosity_display(4, f"SSM CONNECTION ID: {self._session_id}")  # pylint: disable=unreachable
-
-        return self._session
-
-    def poll_stdout(self, timeout: int = 1000) -> bool:
-        """Polls the stdout file descriptor.
-
-        :param timeout: Specifies the length of time in milliseconds which the system will wait.
-        :returns: A boolean to specify the polling result
-        """
-        if self._polling_obj is None:
-            self._polling_obj = select.poll()
-            self._polling_obj.register(self._stdout, select.POLLIN)
-        return bool(self._polling_obj.poll(timeout))
-
-    def poll(self, label: str, cmd: str) -> NoReturn:
-        """Poll session to retrieve content from stdout.
-
-        :param label: A label for the display (EXEC, PRE...)
-        :param cmd: The command being executed
-        """
-        start = round(time.time())
-        yield self.poll_stdout()
-        timeout = self.get_option("ssm_timeout")
-        while self._session.poll() is None:
-            remaining = start + timeout - round(time.time())
-            self.verbosity_display(4, f"{label} remaining: {remaining} second(s)")
-            if remaining < 0:
-                self._has_timeout = True
-                raise AnsibleConnectionFailure(f"{label} command '{cmd}' timeout on host: {self.instance_id}")
-            yield self.poll_stdout()
-
-    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> Tuple[int, str, str]:
-        """Interact with session.
-        Read stdout between the markers until 'mark_end' is reached.
-
-        :param cmd: The command being executed.
-        :param mark_start: The marker which starts the output.
-        :param mark_begin: The begin marker.
-        :param mark_end: The end marker.
-        :returns: A tuple with the return code, the stdout and the stderr content.
-        """
-        # Read stdout between the markers
-        stdout = ""
-        win_line = ""
-        begin = False
-        returncode = None
-        for poll_result in self.poll("EXEC", cmd):
-            if not poll_result:
-                continue
-
-            line = filter_ansi(self._stdout.readline(), self.is_windows)
-            self.verbosity_display(4, f"EXEC stdout line: \n{line}")
-
-            if not begin and self.is_windows:
-                win_line = win_line + line
-                line = win_line
-
-            if mark_start in line:
-                begin = True
-                if not line.startswith(mark_start):
-                    stdout = ""
-                continue
-            if begin:
-                if mark_end in line:
-                    self.verbosity_display(4, f"POST_PROCESS: \n{to_text(stdout)}")
-                    returncode, stdout = self._post_process(stdout, mark_begin)
-                    self.verbosity_display(4, f"POST_PROCESSED: \n{to_text(stdout)}")
-                    break
-                stdout = stdout + line
-
-        # see https://github.com/pylint-dev/pylint/issues/8909)
-        return (returncode, stdout, self._flush_stderr(self._session))  # pylint: disable=unreachable
-
-    @staticmethod
-    def generate_mark() -> str:
-        """Generates a random string of characters to delimit SSM CLI commands"""
-        mark = "".join([random.choice(string.ascii_letters) for i in range(Connection.MARK_LENGTH)])
-        return mark
 
     @_ssm_retry
     def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
-
-        self.verbosity_display(3, f"EXEC: {to_text(cmd)}")
-
-        mark_begin = self.generate_mark()
-        if self.is_windows:
-            mark_start = mark_begin + " $LASTEXITCODE"
-        else:
-            mark_start = mark_begin
-        mark_end = self.generate_mark()
-
-        # Wrap command in markers accordingly for the shell used
-        cmd = self._wrap_command(cmd, mark_start, mark_end)
-
-        self._flush_stderr(self._session)
-
-        for chunk in chunks(cmd, 1024):
-            self._session.stdin.write(to_bytes(chunk, errors="surrogate_or_strict"))
-
-        return self.exec_communicate(cmd, mark_start, mark_begin, mark_end)
+        return self._command_mgr.exec_command(cmd, instance_id=self.instance_id, region_name=self.get_option("region") or "us-east-1")
 
     def _ensure_ssm_session_has_started(self) -> None:
         """Ensure the SSM session has started on the host. We poll stdout
         until we match the following string 'Starting session with SessionId'
         """
-        stdout = ""
-        for poll_result in self.poll("START SSM SESSION", "start_session"):
-            if poll_result:
-                stdout += to_text(self._stdout.read(1024))
-                self.verbosity_display(4, f"START SSM SESSION stdout line: \n{to_bytes(stdout)}")
-                match = str(stdout).find("Starting session with SessionId")
-                if match != -1:
-                    self.verbosity_display(4, "START SSM SESSION startup output received")
-                    break
+        self._command_mgr.poller.match_expr(expr="Starting session with SessionId")
 
     def _disable_prompt_command(self) -> None:
         """Disable prompt command from the host"""
@@ -822,15 +689,8 @@ class Connection(ConnectionBase):
 
         # Send command
         self.verbosity_display(4, f"DISABLE PROMPT Disabling Prompt: \n{disable_prompt_cmd}")
-        self._session.stdin.write(disable_prompt_cmd)
-
-        stdout = ""
-        for poll_result in self.poll("DISABLE PROMPT", disable_prompt_cmd):
-            if poll_result:
-                stdout += to_text(self._stdout.read(1024))
-                self.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
-                if disable_prompt_reply.search(stdout):
-                    break
+        self._command_mgr.poller.stdin_write(disable_prompt_cmd)
+        self._command_mgr.poller.match_expr(expr=disable_prompt_reply.search)
 
     def _disable_echo_command(self) -> None:
         """Disable echo command from the host"""
@@ -838,16 +698,8 @@ class Connection(ConnectionBase):
 
         # Send command
         self.verbosity_display(4, f"DISABLE ECHO Disabling Prompt: \n{disable_echo_cmd}")
-        self._session.stdin.write(disable_echo_cmd)
-
-        stdout = ""
-        for poll_result in self.poll("DISABLE ECHO", disable_echo_cmd):
-            if poll_result:
-                stdout += to_text(self._stdout.read(1024))
-                self.verbosity_display(4, f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
-                match = str(stdout).find("stty -echo")
-                if match != -1:
-                    break
+        self._command_mgr.poller.stdin_write(disable_echo_cmd)
+        self._command_mgr.poller.match_expr(expr="stty -echo")
 
     def _prepare_terminal(self) -> None:
         """perform any one-time terminal settings"""
@@ -865,73 +717,6 @@ class Connection(ConnectionBase):
         self._disable_prompt_command()  # pylint: disable=unreachable
 
         self.verbosity_display(4, "PRE Terminal configured")  # pylint: disable=unreachable
-
-    def _wrap_command(self, cmd: str, mark_start: str, mark_end: str) -> str:
-        """Wrap command so stdout and status can be extracted"""
-
-        if self.is_windows:
-            if not cmd.startswith(" ".join(_common_args) + " -EncodedCommand"):
-                cmd = self._shell._encode_script(cmd, preserve_rc=True)
-            cmd = cmd + "; echo " + mark_start + "\necho " + mark_end + "\n"
-        else:
-            cmd = (
-                f"printf '%s\\n' '{mark_start}';\n"
-                f"echo | {cmd};\n"
-                f"printf '\\n%s\\n%s\\n' \"$?\" '{mark_end}';\n"
-            )  # fmt: skip
-
-        self.verbosity_display(4, f"_wrap_command: \n'{to_text(cmd)}'")
-        return cmd
-
-    def _post_process(self, stdout: str, mark_begin: str) -> Tuple[str, str]:
-        """extract command status and strip unwanted lines"""
-
-        if not self.is_windows:
-            # Get command return code
-            returncode = int(stdout.splitlines()[-2])
-
-            # Throw away final lines
-            for _x in range(0, 3):
-                stdout = stdout[:stdout.rfind('\n')]  # fmt: skip
-
-            return (returncode, stdout)
-
-        # Windows is a little more complex
-        # Value of $LASTEXITCODE will be the line after the mark
-        trailer = stdout[stdout.rfind(mark_begin):]  # fmt: skip
-        last_exit_code = trailer.splitlines()[1]
-        if last_exit_code.isdigit:
-            returncode = int(last_exit_code)
-        else:
-            returncode = -1
-        # output to keep will be before the mark
-        stdout = stdout[:stdout.rfind(mark_begin)]  # fmt: skip
-
-        # If the return code contains #CLIXML (like a progress bar) remove it
-        clixml_filter = re.compile(r"#<\sCLIXML\s<Objs.*</Objs>")
-        stdout = clixml_filter.sub("", stdout)
-
-        # If it looks like JSON remove any newlines
-        if stdout.startswith("{"):
-            stdout = stdout.replace("\n", "")
-
-        return (returncode, stdout)
-
-    def _flush_stderr(self, session_process) -> str:
-        """read and return stderr with minimal blocking"""
-
-        poll_stderr = select.poll()
-        poll_stderr.register(session_process.stderr, select.POLLIN)
-        stderr = ""
-
-        while session_process.poll() is None:
-            if not poll_stderr.poll(1):
-                break
-            line = session_process.stderr.readline()
-            self.verbosity_display(4, f"stderr line: {to_text(line)}")
-            stderr = stderr + line
-
-        return stderr
 
     def _get_boto_client(self, service, region_name=None, profile_name=None, endpoint_url=None):
         """Gets a boto3 client based on the STS token"""
@@ -1155,7 +940,7 @@ class Connection(ConnectionBase):
         """terminate the connection"""
         if self._session_id:
             self.verbosity_display(3, f"CLOSING SSM CONNECTION TO: {self.instance_id}")
-            if self._has_timeout:
+            if self._command_mgr.has_timeout:
                 self._session.terminate()
             else:
                 cmd = b"\nexit\n"
