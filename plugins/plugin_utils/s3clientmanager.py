@@ -9,7 +9,6 @@ except ImportError:
     pass
 from typing import Any
 from typing import Dict
-from typing import List
 from typing import Optional
 from typing import Tuple
 
@@ -127,7 +126,7 @@ class S3ClientManager:
         out_path: str,
         is_windows: bool,
         method: str,
-    ) -> Tuple[List[Dict], dict]:
+    ) -> Tuple[str, Optional[Dict[str, str]]]:
         """
         Generate commands for the specified bucket, S3 path, input path, and output path.
 
@@ -137,7 +136,7 @@ class S3ClientManager:
         :param out_path: Output path
         :param method: The request method to use for the command (can be "get" or "put").
 
-        :returns: A tuple containing a list of command dictionaries along with any ``put_args`` dictionaries.
+        :returns: A tuple containing a shell command string and optional extra arguments for the PUT request.
         """
 
         command = None

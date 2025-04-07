@@ -796,7 +796,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
     def _exec_transport_commands(self, in_path: str, out_path: str, command: dict) -> CommandResult:
         """
-        Execute the provided transport commands.
+        Execute the provided transport command.
 
         :param in_path: The input path.
         :param out_path: The output path.
