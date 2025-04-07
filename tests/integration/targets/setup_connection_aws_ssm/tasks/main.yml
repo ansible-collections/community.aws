@@ -10,23 +10,18 @@
       session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
-
-    - name: get ARN of calling user
-      amazon.aws.aws_caller_info:
-      register: aws_caller_info
-
     - name: setup connection argments fact
       ansible.builtin.include_tasks: 'connection_args.yml'
 
     - name: Ensure IAM instance role exists
       amazon.aws.iam_role:
-        name: "ansible-test-{{tiny_prefix}}-aws-ssm-role"
-        assume_role_policy_document: "{{ lookup('file','ec2-trust-policy.json') }}"
+        name: "ansible-test-{{ tiny_prefix }}-aws-ssm-role"
+        assume_role_policy_document: "{{ lookup('file', 'ec2-trust-policy.json') }}"
         state: present
-        create_instance_profile: yes
+        create_instance_profile: true
         managed_policy:
-        - AmazonSSMManagedInstanceCore
-        wait: True
+          - AmazonSSMManagedInstanceCore
+        wait: true
       register: role_output
 
     - name: Lookup AMI configuration
@@ -40,14 +35,15 @@
           name: '{{ ami_configuration.name }}'
       register: ec2_amis
       when:
-        - ami_configuration.name | default(False)
+        - '"name" in ami_configuration'
+        - ami_configuration.name != ""
 
     - name: AMI Lookup (SSM Parameter)
-      when:
-        - ami_configuration.ssm_parameter | default(False)
-      block:
-        - ansible.builtin.set_fact:
+      ansible.builtin.set_fact:
             ssm_amis: "{{ lookup('amazon.aws.ssm_parameter', ami_configuration.ssm_parameter, **connection_args) }}"
+      when:
+        - '"ssm_parameter" in ami_configuration'
+        - ami_configuration.ssm_parameter != ""
 
     - name: Set facts with latest AMIs
       vars:
@@ -112,6 +108,7 @@
         name: "{{ s3_bucket_name }}"
         region: "{{ s3_bucket_region | default(omit)}}"
       register: s3_output
+      when: use_s3_bucket | default(True) | bool
 
     - name: setup encryption
       ansible.builtin.include_tasks: 'encryption.yml'
@@ -141,6 +138,7 @@
         src: ec2_instance_vars_to_delete.yml.j2
       ignore_errors: true
       when:
+        - instance_output is defined
         - instance_output is successful
 
     - name: Create IAM Role vars_to_delete.yml
@@ -148,19 +146,20 @@
         dest: "{{ playbook_dir }}/iam_role_vars_to_delete.yml"
         src: iam_role_vars_to_delete.yml.j2
       when:
+        - role_output is defined
         - role_output is successful
-      ignore_errors: true
 
     - name: Create S3.yml
       ansible.builtin.template:
         dest: "{{ playbook_dir }}/s3_vars_to_delete.yml"
         src: s3_vars_to_delete.yml.j2
       when:
-        - s3_output is successful
-      ignore_errors: true
+        - s3_output is defined
+        - '"name" in s3_output'
 
     - name: Create SSM vars_to_delete.yml
       ansible.builtin.template:
         dest: "{{ playbook_dir }}/ssm_vars_to_delete.yml"
         src: ssm_vars_to_delete.yml.j2
-      ignore_errors: true
+      when:
+        - use_ssm_document | default(False)

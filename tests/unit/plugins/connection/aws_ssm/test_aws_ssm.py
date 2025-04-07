@@ -44,6 +44,8 @@ class TestConnectionBaseClass:
 
         # Mock the _initialize_ssm_client and _initialize_s3_client methods
         conn._initialize_ssm_client = MagicMock()
+        conn._use_bucket = MagicMock()
+        conn._use_bucket.return_value = True
 
         conn._init_clients()
 
@@ -197,6 +199,8 @@ class TestConnectionBaseClass:
         conn._connect = MagicMock()
         conn._file_transport_command = MagicMock()
         conn._file_transport_command.return_value = (0, "stdout", "stderr")
+        conn._use_bucket = MagicMock()
+        conn._use_bucket.return_value = True
         conn.put_file("/in/file", "/out/file")
 
     def test_plugins_connection_aws_ssm_fetch_file(self):
@@ -206,6 +210,8 @@ class TestConnectionBaseClass:
         conn._connect = MagicMock()
         conn._file_transport_command = MagicMock()
         conn._file_transport_command.return_value = (0, "stdout", "stderr")
+        conn._use_bucket = MagicMock()
+        conn._use_bucket.return_value = True
         conn.fetch_file("/in/file", "/out/file")
 
     @patch("subprocess.check_output")
