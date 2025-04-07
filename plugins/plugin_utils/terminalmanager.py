@@ -39,7 +39,7 @@ class TerminalManager:
         if self.connection.is_windows:
             if not cmd.startswith(" ".join(_common_args) + " -EncodedCommand"):
                 cmd = self.connection._shell._encode_script(cmd, preserve_rc=True)
-            cmd = cmd + "; echo " + mark_start + "\necho " + mark_end + "\n"
+            cmd = f"{cmd}; echo {mark_start}\necho {mark_end}\n"
         else:
             cmd = (
                 f"printf '%s\\n' '{mark_start}';\n"
