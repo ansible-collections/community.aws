@@ -360,8 +360,8 @@ from ansible.utils.display import Display
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
-from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
-from ansible_collections.community.aws.plugins.plugin_utils.terminalmanager import TerminalManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager import S3ClientManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.terminalmanager import TerminalManager
 
 display = Display()
 
