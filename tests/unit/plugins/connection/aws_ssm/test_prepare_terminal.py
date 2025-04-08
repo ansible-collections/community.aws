@@ -34,24 +34,9 @@ def test_ensure_ssm_session_has_started(connection_aws_ssm):
     )
 
 
-<<<<<<< HEAD
-@patch("ansible_collections.community.aws.plugins.plugin_utils.terminalmanager.to_bytes")
-@patch("ansible_collections.community.aws.plugins.plugin_utils.terminalmanager.to_text")
-def test_disable_echo_command(m_to_text, m_to_bytes, connection_aws_ssm):
-=======
-@pytest.mark.parametrize(
-    "stdout_lines,timeout_failure",
-    [
-        (["stty -echo"], False),
-        (["stty ", "-echo"], False),
-        (["stty"], True),
-        (["stty ", "-ech"], True),
-    ],
-)
 @patch("ansible_collections.community.aws.plugins.plugin_utils.ssm.terminalmanager.to_bytes")
 @patch("ansible_collections.community.aws.plugins.plugin_utils.ssm.terminalmanager.to_text")
-def test_disable_echo_command(m_to_text, m_to_bytes, connection_aws_ssm, stdout_lines, timeout_failure):
->>>>>>> a30455a3 (Move the aws_ssm connection plugin's plugin_utils into a dedicated folder.)
+def test_disable_echo_command(m_to_text, m_to_bytes, connection_aws_ssm):
     m_to_text.side_effect = str
     m_to_bytes.side_effect = lambda x, **kw: str(x)
 

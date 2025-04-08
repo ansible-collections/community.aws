@@ -349,7 +349,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.base import AwsConnectionPluginBase
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager import S3ClientManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.terminalmanager import TerminalManager
-from ansible_collections.community.aws.plugins.plugin_utils.ssm.ssmsessionmanager import (
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.sessionmanager import (
     SSMSessionManager,
 )
 

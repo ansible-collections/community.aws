@@ -41,19 +41,8 @@ class TestConnectionBaseClass:
         "ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager.S3ClientManager.get_bucket_endpoint",
         return_value=("fake-s3-endpoint", "fake-region"),
     )
-<<<<<<< HEAD
     def test_init_clients(self, mock_get_bucket_endpoint, loaded_aws_ssm):
         boto_clients = {"ssm": MagicMock(), "s3": MagicMock()}
-=======
-    @patch(
-        "ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager.S3ClientManager.get_s3_client",
-        return_value=MagicMock(),
-    )
-    def test_init_clients(self, mock_get_s3_client, mock_get_bucket_endpoint):
-        pc = PlayContext()
-        new_stdin = StringIO()
-        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
->>>>>>> a30455a3 (Move the aws_ssm connection plugin's plugin_utils into a dedicated folder.)
 
         print(dir(self))
 
@@ -245,7 +234,7 @@ class TestS3ClientManager:
 
     @pytest.mark.parametrize("method", ["get", "put", "fake"])
     @pytest.mark.parametrize("is_windows", [False, True])
-    @patch("ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager.generate_encryption_settings")
+    @patch("ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager.generate_encryption_settings")
     def test_generate_host_commands(self, m_generate_encryption_settings, method, is_windows):
         """Testing command generation on both Windows and non-Windows systems"""
         s3_client_manager = self.create_object()
@@ -311,7 +300,7 @@ class TestS3ClientManager:
             ("eu-west", "eu-west-2"),
         ],
     )
-    @patch("ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager.S3ClientManager._get_s3_client")
+    @patch("ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager.S3ClientManager._get_s3_client")
     def test_get_bucket_endpoint(self, mock__get_s3_client, bucket_endpoint_url, region_name, bucket_region):
         tmp_s3_1 = MagicMock()
         tmp_s3_2 = MagicMock()
