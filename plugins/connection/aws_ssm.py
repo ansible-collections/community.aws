@@ -148,6 +148,23 @@ options:
     version_added: 5.2.0
     vars:
     - name: ansible_aws_ssm_s3_addressing_style
+  caching:
+    description:
+    - The plugin will create a daemon starting a shell session to handle all command
+      sent to the managed host.
+    type: boolean
+    default: False
+    version_added: 10.0.0
+    vars:
+    - name: ansible_aws_ssm_caching
+  caching_ttl:
+    description:
+    - The time (in seconds) the daemon will wait before exit when there is no incoming request.
+    type: int
+    default: 30
+    version_added: 10.0.0
+    vars:
+    - name: ansible_aws_ssm_caching_ttl
 """
 
 EXAMPLES = r"""
@@ -362,6 +379,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 from ansible_collections.community.aws.plugins.plugin_utils.terminalmanager import TerminalManager
+from ansible_collections.community.aws.plugins.plugin_utils.cache_client import exec_command_using_caching
 
 display = Display()
 
@@ -502,8 +520,9 @@ class Connection(ConnectionBase):
     def _connect(self) -> Any:
         """connect to the host via ssm"""
         self._play_context.remote_user = getpass.getuser()
-
-        if not self._session_id:
+        self._init_clients()
+        caching = self.get_option("caching")
+        if not caching and not self._session_id:
             self.start_session()
         return self
 
@@ -572,8 +591,9 @@ class Connection(ConnectionBase):
     def reset(self) -> Any:
         """start a fresh ssm session"""
         self.verbosity_display(4, "reset called on ssm connection")
-        self.close()
-        return self.start_session()
+        if not self.get_option("caching"):
+            self.close()
+            return self.start_session()
 
     @property
     def instance_id(self) -> str:
@@ -607,8 +627,6 @@ class Connection(ConnectionBase):
         self.verbosity_display(3, f"ESTABLISH SSM CONNECTION TO: {self.instance_id}")
 
         executable = self.get_executable()
-
-        self._init_clients()
 
         self.verbosity_display(4, f"START SSM SESSION: {self.instance_id}")
         start_session_args = dict(Target=self.instance_id, Parameters={})
@@ -733,6 +751,8 @@ class Connection(ConnectionBase):
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
+        if self.get_option("caching"):
+            return exec_command_using_caching(self, cmd)
 
         self.verbosity_display(3, f"EXEC: {to_text(cmd)}")
 

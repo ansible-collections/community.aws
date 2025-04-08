@@ -57,6 +57,10 @@ ansible_aws_ssm_session_token='{{ security_token }}'
 {% if profile_name | default(False) %}
 ansible_aws_ssm_profile={{ profile_name }}
 {% endif %}
+{% if aws_ssm_caching | default(False) %}
+ansible_aws_ssm_caching={{ aws_ssm_caching }}
+ansible_aws_ssm_caching_ttl=60
+{% endif %}
 
 # support tests that target testhost
 [testhost:children]
