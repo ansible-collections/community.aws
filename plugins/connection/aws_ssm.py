@@ -352,8 +352,8 @@ from ansible_collections.community.aws.plugins.plugin_utils.ssm.sessionmanager i
 )
 
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
-from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 
 
 display = Display()
@@ -391,7 +391,6 @@ def filter_ansi(line: str, is_windows: bool) -> str:
 def escape_path(path: str) -> str:
     """
     Converts a file path to a safe format by replacing backslashes with forward slashes.
-
     :param path: The file path to escape.
     :return: The escaped file path.
     """
@@ -577,7 +576,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
             # For non-windows Hosts: Ensure the session has started, and disable command echo and prompt.
             self.terminal_manager.prepare_terminal()
 
-    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> CommandResult:
+    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> Tuple[int, str, str]:
         """Interact with session.
         Read stdout between the markers until 'mark_end' is reached.
 
@@ -620,7 +619,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         return {  # pylint: disable=unreachable
             "returncode": returncode,
             "stdout": stdout,
-            "stderr": self.session_manager.flush_stderr(),
+            "stderr": self._flush_stderr(self._session),
         }
 
     @staticmethod
@@ -630,7 +629,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         return mark
 
     @ssm_retry
-    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> CommandResult:
+    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)

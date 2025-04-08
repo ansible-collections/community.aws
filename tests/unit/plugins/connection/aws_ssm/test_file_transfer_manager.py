@@ -84,10 +84,10 @@ class TestFileTransferManager:
         expected_stdout: str,
     ):
         # Mocking exec_command for the given command input
-        file_transfer_manager.exec_command.return_value = CommandResult(
-            returncode=expected_returncode,
-            stdout=expected_stdout,
-            stderr="" if expected_returncode == 0 else "Error message",
+        file_transfer_manager.exec_command.return_value = (
+            expected_returncode,
+            expected_stdout,
+            "" if expected_returncode == 0 else "Error message",
         )
 
         commands = [{"command": command_input}]
@@ -102,7 +102,7 @@ class TestFileTransferManager:
 
     def test_handle_get(self, file_transfer_manager, connection_aws_ssm):
         connection_aws_ssm._s3_client.download_fileobj = MagicMock()
-        file_transfer_manager.exec_command.return_value = CommandResult(returncode=0, stdout="test", stderr="")
+        file_transfer_manager.exec_command.return_value = (0, "test", "")
         result = file_transfer_manager._handle_get(
             "in_path", "out_path", [{"command": "test-cmd", "method": "put"}], "s3_path"
         )
@@ -111,7 +111,7 @@ class TestFileTransferManager:
 
     def test_handle_put(self, file_transfer_manager, connection_aws_ssm):
         connection_aws_ssm._s3_client.upload_fileobj = MagicMock()
-        file_transfer_manager.exec_command.return_value = CommandResult(returncode=0, stdout="test", stderr="")
+        file_transfer_manager.exec_command.return_value = (0, "test", "")
 
         mock_file_content = b"dummy content"
         mock_file = BytesIO(mock_file_content)
