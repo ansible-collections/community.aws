@@ -24,6 +24,7 @@ def fixture_connection_aws_ssm():
     connection = Connection()
 
     connection._instance_id = "i-0a1b2c3d4e5f"
+    connection.reconnection_retries = 5
     connection._polling_obj = None
     connection._has_timeout = False
     connection.is_windows = False
@@ -36,6 +37,7 @@ def fixture_connection_aws_ssm():
     connection._session.stdin.write = MagicMock()
     connection._stdout = MagicMock()
     connection._flush_stderr = MagicMock()
+    connection._s3_client = MagicMock()
 
     def display_msg(msg):
         print("--- AWS SSM CONNECTION --- ", msg)

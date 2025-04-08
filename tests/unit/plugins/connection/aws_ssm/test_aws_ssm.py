@@ -195,39 +195,30 @@ class TestConnectionBaseClass:
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
         conn._connect = MagicMock()
-        conn._file_transport_command = MagicMock()
-        conn._file_transport_command.return_value = (0, "stdout", "stderr")
+
+        conn.s3_manager = MagicMock()
+        conn.s3_manager.generate_encryption_settings = MagicMock(return_value=({}, {}))
+        # Mock the file transfer manager
+        conn.file_transfer_manager = MagicMock()
+        conn.generate_commands = MagicMock(side_effect=lambda *args, **kwargs: ("s3_path", [], {}))
+
         conn.put_file("/in/file", "/out/file")
 
     def test_plugins_connection_aws_ssm_fetch_file(self):
         pc = PlayContext()
         new_stdin = StringIO()
         conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
+        conn.reconnection_retries = "5"
         conn._connect = MagicMock()
-        conn._file_transport_command = MagicMock()
-        conn._file_transport_command.return_value = (0, "stdout", "stderr")
-        conn.fetch_file("/in/file", "/out/file")
 
-    @patch("subprocess.check_output")
-    @patch("boto3.client")
-    def test_plugins_connection_file_transport_command(self, boto_client, s_check_output):
-        pc = PlayContext()
-        new_stdin = StringIO()
-        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
-        conn.get_option = MagicMock()
-        conn.get_option.side_effect = ["1", "2", "3", "4", "5"]
-        conn._get_url = MagicMock()
-        conn._get_url.side_effect = ["url1", "url2"]
-        boto3 = MagicMock()
-        boto3.client("s3").return_value = MagicMock()
-        conn.get_option.return_value = 1
-        get_command = MagicMock()
-        put_command = MagicMock()
-        conn.exec_command = MagicMock()
-        conn.exec_command.return_value = (put_command, None, False)
-        conn.download_fileobj = MagicMock()
-        conn.exec_command(put_command, in_data=None, sudoable=False)
-        conn.exec_command(get_command, in_data=None, sudoable=False)
+        conn.s3_manager = MagicMock()
+        conn.s3_manager.generate_encryption_settings = MagicMock(return_value=({}, {}))
+
+        # Mock the file transfer manager
+        conn.file_transfer_manager = MagicMock()
+        conn.generate_commands = MagicMock(side_effect=lambda *args, **kwargs: ("s3_path", [], {}))
+
+        conn.fetch_file("/in/file", "/out/file")
 
     @patch("subprocess.check_output")
     def test_plugins_connection_aws_ssm_close(self, s_check_output):
@@ -319,9 +310,9 @@ class TestConnectionBaseClass:
     )
     def test_verbosity_diplay(self, message, level, method):
         """Testing verbosity levels"""
-        play_context = MagicMock()
-        play_context.shell = "sh"
-        conn = Connection(play_context)
+        pc = PlayContext()
+        new_stdin = StringIO()
+        conn = connection_loader.get("community.aws.aws_ssm", pc, new_stdin)
         conn.host = "test-host"  # Test with host set
 
         with patch("ansible_collections.community.aws.plugins.connection.aws_ssm.display") as mock_display:
@@ -332,8 +323,9 @@ class TestConnectionBaseClass:
 
             # Test without host set
             conn.host = None
+            mock_display.reset_mock()  # Reset the mock before the second call.
             conn.verbosity_display(1, "no host message")
-            mock_display.v.assert_called_with("no host message")
+            mock_display.v.assert_called_once_with("no host message")
 
             # Test exception is raised when verbosity level is not an accepted value
             with pytest.raises(AnsibleError):
