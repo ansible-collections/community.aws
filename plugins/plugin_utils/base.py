@@ -8,7 +8,7 @@ from typing import Dict
 from typing import Optional
 
 try:
-    import boto3
+    from boto3.session import Session
     from botocore.client import Config
 except ImportError:
     pass
@@ -24,7 +24,7 @@ class AwsConnectionPluginBase:
         region_name: Optional[str] = None,
         endpoint_url: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None,
-    ):
+    ) -> Any:
         """Gets a boto3 client based on the STS token"""
 
         aws_access_key_id = self.get_option("access_key_id")
@@ -40,7 +40,7 @@ class AwsConnectionPluginBase:
         profile_name = self.get_option("profile")
         if profile_name:
             session_args["profile_name"] = profile_name
-        session = boto3.session.Session(**session_args)
+        session = Session(**session_args)
         params = {}
         if endpoint_url:
             params["endpoint_url"] = endpoint_url

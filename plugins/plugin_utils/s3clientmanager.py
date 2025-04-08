@@ -128,7 +128,12 @@ class S3ClientManager:
         method: str,
     ) -> Tuple[str, Optional[Dict[str, str]]]:
         """
-        Generate commands for the specified bucket, S3 path, input path, and output path.
+        Generate commands for the specified bucket and configurations, S3 path, input path, and output path.
+        The function generates a curl/Invoke-WebRequest command to be executed on the managed node.
+        The method 'get' means the controller node wants to retrieve content from the managed node, the corresponding
+        on the managed node is a 'put' command to updload content to the S3 bucket.
+        The method 'put' means the controller node wants to upload content to the managed node, the corresponding
+        on the managed node is a 'get' command to download content to the S3 bucket.
 
         :param bucket_name: The name of the S3 bucket used for file transfers.
         :param s3_path: The S3 path to the file to be sent.
