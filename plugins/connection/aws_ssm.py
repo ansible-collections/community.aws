@@ -380,7 +380,8 @@ from ansible.utils.display import Display
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.transport import PortForwardingFileTransportManager
-from ansible_collections.community.aws.plugins.plugin_utils.ssm.command import CommandManager
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.command import CommandManager, encode_script
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.turbo_client import turbo_exec_command
 
 from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager import S3ClientManager
 
@@ -493,8 +494,8 @@ class Connection(ConnectionBase):
         """connect to the host via ssm"""
         self._play_context.remote_user = getpass.getuser()
 
-        if not self._session_id:
-            self.start_session()
+        # if not self._session_id:
+        #     self.start_session()
         return self
 
     def _init_clients(self) -> None:
@@ -655,7 +656,7 @@ class Connection(ConnectionBase):
 
         os.close(stdout_w)
         self._command_mgr = CommandManager(
-            shell=self._shell,
+            is_windows=self.is_windows,
             session=self._session,
             stdout_r=stdout_r,
             ssm_timeout=self.get_option("ssm_timeout"),
@@ -670,7 +671,11 @@ class Connection(ConnectionBase):
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
-        return self._command_mgr.exec_command(cmd, instance_id=self.instance_id, region_name=self.get_option("region") or "us-east-1")
+        encoded_cmd = encode_script(self._shell, cmd)
+        if self._command_mgr:
+            return self._command_mgr.exec_command(encoded_cmd)
+        else:
+            return turbo_exec_command(self, encoded_cmd)
 
     def _ensure_ssm_session_has_started(self) -> None:
         """Ensure the SSM session has started on the host. We poll stdout

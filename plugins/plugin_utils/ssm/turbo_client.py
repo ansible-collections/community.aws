@@ -11,7 +11,7 @@ import subprocess
 import sys
 import time
 from contextlib import contextmanager
-from typing import Callable
+from typing import Any
 from typing import Dict
 
 from ansible.errors import AnsibleRuntimeError
@@ -26,11 +26,12 @@ def create_socket_path(instance_id: str, region_name: str) -> str:
 
 
 class SSMTurboSocket(SSMDisplay):
-    def __init__(self, instance_id, region_name, ttl, verbosity_display):
-        super(SSMTurboSocket, self).__init__(verbosity_display)
-        self._socket_path = create_socket_path(instance_id, region_name)
+    def __init__(self, conn_plugin: Any):
+        super(SSMTurboSocket, self).__init__(conn_plugin.verbosity_display)
+        self._region = conn_plugin.get_option("region") or "us-east-1"
+        self._socket_path = create_socket_path(conn_plugin.instance_id, self._region)
         self.verbosity_display(4, f">>> SSM TURBO SOCKET PATH = {self._socket_path}")
-        self._ttl = ttl
+        self.conn_plugin = conn_plugin
         self._socket = None
 
     def bind(self):
@@ -47,9 +48,44 @@ class SSMTurboSocket(SSMDisplay):
                     raise
             time.sleep(0.01)
 
+    def _mask_command(self, command: str) -> str:
+        if self.conn_plugin.get_option("access_key_id"):
+            command = command.replace(self.conn_plugin.get_option("access_key_id"), "*****")
+        if self.conn_plugin.get_option("secret_access_key"):
+            command = command.replace(self.conn_plugin.get_option("secret_access_key"), "*****")
+        if self.conn_plugin.get_option("session_token"):
+            command = command.replace(self.conn_plugin.get_option("session_token"), "*****")
+        return command
+
     def start_server(self):
         env = os.environ
-        parameters = ["--fork", "--socket-path", self._socket_path, "--ttl", str(self._ttl)]
+        parameters = [
+            "--fork",
+            "--socket-path",
+            self._socket_path,
+            "--region",
+            self._region,
+            "--executable",
+            self.conn_plugin.get_executable(),
+        ]
+
+        pairing_options = {
+            "--instance-id": "instance_id",
+            "--ssm-timeout": "ssm_timeout",
+            "--reconnection-retries": "reconnection_retries",
+            "--access-key-id": "access_key_id",
+            "--secret-access-key": "secret_access_key",
+            "--session-token": "session_token",
+            "--profile": "profile",
+            "--ssm-document": "ssm_document",
+            "--is-windows": "is_windows",
+        }
+        for opt, attr in pairing_options.items():
+            if hasattr(self.conn_plugin, attr):
+                if opt_value := getattr(self.conn_plugin, attr):
+                    parameters.extend([opt, str(opt_value)])
+            elif opt_value := self.conn_plugin.get_option(attr):
+                parameters.extend([opt, str(opt_value)])
 
         command = [sys.executable]
         ansiblez_path = sys.path[0]
@@ -61,14 +97,15 @@ class SSMTurboSocket(SSMDisplay):
         # parent_dir = os.path.dirname(__file__)
         # server_path = os.path.join(parent_dir, "server.py")
         # command += [server_path]
-        self.verbosity_display(4, f">>> SSM TURBO SOCKET COMMAND = '{command + parameters}'")
+        displayed_command = self._mask_command(" ".join(command + parameters))
+        self.verbosity_display(4, f">>> SSM TURBO SOCKET COMMAND = '{displayed_command}'")
         p = subprocess.Popen(
             command + parameters,
             env=env,
             close_fds=True,
         )
-        result = p.communicate()
-        self.verbosity_display(4, f">>> SSM TURBO SOCKET COMMAND Pid = '{p.pid}' (result = {result})")
+        p.communicate()
+        self.verbosity_display(4, f">>> SSM TURBO SOCKET COMMAND Pid = '{p.pid}'")
         return p.pid
 
     def communicate(self, command, wait_sleep=0.01):
@@ -94,10 +131,8 @@ class SSMTurboSocket(SSMDisplay):
 
 
 @contextmanager
-def connect(instance_id, region_name, ttl, verbosity_display):
-    turbo_socket = SSMTurboSocket(
-        instance_id=instance_id, region_name=region_name, ttl=ttl, verbosity_display=verbosity_display
-    )
+def connect(conn_plugin: Any):
+    turbo_socket = SSMTurboSocket(conn_plugin)
     try:
         turbo_socket.bind()
         yield turbo_socket
@@ -105,6 +140,7 @@ def connect(instance_id, region_name, ttl, verbosity_display):
         turbo_socket.close()
 
 
-def turbo_exec_command(command: str, instance_id: str, region_name: str, verbosity_display: Callable, ttl=10) -> Dict:
-    with connect(instance_id, region_name, ttl=ttl, verbosity_display=verbosity_display) as turbo_socket:
-        return turbo_socket.communicate(command=command)
+def turbo_exec_command(conn_plugin: Any, encoded_cmd: str) -> Dict:
+    with connect(conn_plugin) as turbo_socket:
+        result = turbo_socket.communicate(command=encoded_cmd)
+        return result.get("returncode"), result.get("stdout"), result.get("stderr")
