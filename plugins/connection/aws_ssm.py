@@ -362,8 +362,8 @@ from ansible_collections.community.aws.plugins.plugin_utils.s3clientmanager impo
 from ansible_collections.community.aws.plugins.plugin_utils.terminalmanager import TerminalManager
 
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
-from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import ssm_retry
+from ansible_collections.community.aws.plugins.plugin_utils.ssm.common import CommandResult
 
 
 display = Display()
@@ -401,7 +401,6 @@ def filter_ansi(line: str, is_windows: bool) -> str:
 def escape_path(path: str) -> str:
     """
     Converts a file path to a safe format by replacing backslashes with forward slashes.
-
     :param path: The file path to escape.
     :return: The escaped file path.
     """
@@ -645,7 +644,7 @@ class Connection(ConnectionBase):
                 raise AnsibleConnectionFailure(f"{label} command '{cmd}' timeout on host: {self.instance_id}")
             yield self.poll_stdout()
 
-    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> CommandResult:
+    def exec_communicate(self, cmd: str, mark_start: str, mark_begin: str, mark_end: str) -> Tuple[int, str, str]:
         """Interact with session.
         Read stdout between the markers until 'mark_end' is reached.
 
@@ -659,7 +658,7 @@ class Connection(ConnectionBase):
         stdout = ""
         win_line = ""
         begin = False
-        returncode = 0
+        returncode = None
         for poll_result in self.poll("EXEC", cmd):
             if not poll_result:
                 continue
@@ -685,11 +684,7 @@ class Connection(ConnectionBase):
                 stdout = stdout + line
 
         # see https://github.com/pylint-dev/pylint/issues/8909)
-        return {  # pylint: disable=unreachable
-            "returncode": returncode,
-            "stdout": stdout,
-            "stderr": self._flush_stderr(self._session),
-        }
+        return (returncode, stdout, self._flush_stderr(self._session))  # pylint: disable=unreachable
 
     @staticmethod
     def generate_mark() -> str:
@@ -698,7 +693,7 @@ class Connection(ConnectionBase):
         return mark
 
     @ssm_retry
-    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> CommandResult:
+    def exec_command(self, cmd: str, in_data: bool = None, sudoable: bool = True) -> Tuple[int, str, str]:
         """When running a command on the SSM host, uses generate_mark to get delimiting strings"""
 
         super().exec_command(cmd, in_data=in_data, sudoable=sudoable)
@@ -891,11 +886,22 @@ class Connection(ConnectionBase):
                 "headers": put_headers,
             })  # fmt: skip
 
-        return commands, put_args
+        return (commands, put_args)
 
-    def generate_commands(self, in_path: str, out_path: str) -> Tuple[str, List[Dict], dict]:
+    def generate_commands(self, in_path: str, out_path: str) -> Tuple[str, List[Dict], Dict]:
+        """
+        Generate S3 path and associated transport commands for file transfer.
+
+        :param in_path: The local file path to transfer from.
+        :param out_path: The remote file path to transfer to (used to build the S3 key).
+        :return: A tuple containing:
+            - s3_path (str): The S3 key used for the transfer.
+            - commands (List[Dict]): A list of commands to be executed for the transfer.
+            - put_args (Dict): Additional arguments needed for a 'put' operation.
+        """
         s3_path = escape_path(f"{self.instance_id}/{out_path}")
-        return (s3_path, self._generate_commands(self.get_option("bucket_name"), s3_path, in_path, out_path))
+        commands, put_args = self._generate_commands(self.get_option("bucket_name"), s3_path, in_path, out_path)
+        return s3_path, commands, put_args
 
     def put_file(self, in_path: str, out_path: str) -> CommandResult:
         """transfer a file from local to remote"""

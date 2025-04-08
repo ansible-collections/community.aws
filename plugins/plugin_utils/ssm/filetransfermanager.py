@@ -77,7 +77,6 @@ class FileTransferManager:
         :param in_path: The local destination path for the file.
         :param out_path: The remote source path of the file.
         :param commands: The transport commands to execute.
-        :param bucket: The S3 bucket name.
         :param s3_path: The S3 path where the file is stored.
         :return: A CommandResult dictionary containing execution results.
         """
@@ -98,16 +97,16 @@ class FileTransferManager:
         :param in_path: The local source path of the file.
         :param out_path: The remote destination path for the file.
         :param commands: The transport commands to execute.
-        :param bucket: The S3 bucket name.
         :param s3_path: The S3 path where the file will be stored.
         :param put_args: Additional arguments for S3 upload.
         :return: A CommandResult dictionary containing execution results.
         """
         get_commands = [cmd for cmd in commands if cmd.get("method") == "get"]
 
-        result = self._exec_transport_commands(in_path, out_path, get_commands)
         with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
             self.s3_client.upload_fileobj(data, self.bucket_name, s3_path, ExtraArgs=put_args)
+
+        result = self._exec_transport_commands(in_path, out_path, get_commands)
 
         return result
 
@@ -122,15 +121,13 @@ class FileTransferManager:
         """
         stdout_combined, stderr_combined = "", ""
         for command in commands:
-            result = self.exec_command(command["command"], in_data=None, sudoable=False)
+            returncode, stdout, stderr = self.exec_command(command["command"], in_data=None, sudoable=False)
 
             # Check the return code
-            if result["returncode"] != 0:
-                raise AnsibleError(
-                    f"failed to transfer file to {in_path} {out_path}:\n{result['stdout']}\n{result['stderr']}"
-                )
+            if returncode != 0:
+                raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
 
-            stdout_combined += result["stdout"]
-            stderr_combined += result["stderr"]
+            stdout_combined += stdout
+            stderr_combined += stderr
 
-        return {"returncode": result["returncode"], "stdout": stdout_combined, "stderr": stderr_combined}
+        return {"returncode": returncode, "stdout": stdout_combined, "stderr": stderr_combined}
