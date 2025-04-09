@@ -34,17 +34,17 @@ Minor Changes
 - aws_ssm -  Refactor ``_prepare_terminal()`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/).
 - aws_ssm -  Refactor exec_command Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
 - aws_ssm - Add the possibility to define ``aws_ssm plugin`` variable via environment variable and by default use the version found on the $PATH rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
-- dms_endpoint - improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
+- dms_endpoint - Improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
 - s3_lifecycle - Support for min and max object size when applying the filter rules (https://github.com/ansible-collections/community.aws/pull/2205).
-- aws_ssm - add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
-- various modules - linting fixups (https://github.com/ansible-collections/community.aws/pull/2221).
-- waf_condition - adds missing options validation to filters (https://github.com/ansible-collections/community.aws/pull/2220).
+- aws_ssm - Add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
+- various modules - Linting fixups (https://github.com/ansible-collections/community.aws/pull/2221).
+- waf_condition - Add missing options validation to filters (https://github.com/ansible-collections/community.aws/pull/2220).
 
 Bugfixes
 --------
 
-- aws_ssm - use ``head_bucket`` to access bucket locations in foreign aws accounts (https://github.com/ansible-collections/community.aws/pull/1987).
-- aws_ssm - strip Powershell CLIXML from stdout (https://github.com/ansible-collections/community.aws/issues/1952).
+- aws_ssm - Use ``head_bucket`` to access bucket locations in foreign AWS accounts (https://github.com/ansible-collections/community.aws/pull/1987).
+- aws_ssm - Strip Powershell ``CLIXML`` from ``stdout`` (https://github.com/ansible-collections/community.aws/issues/1952).
 
 v9.0.0
 ======
