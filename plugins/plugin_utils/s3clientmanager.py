@@ -5,7 +5,6 @@
 
 try:
     import boto3
-    from botocore.client import Config
 except ImportError:
     pass
 from typing import Any
@@ -14,84 +13,91 @@ from typing import Optional
 from typing import Tuple
 
 
+def generate_encryption_settings(
+    bucket_sse_mode: Optional[str], bucket_sse_kms_key_id: Optional[str]
+) -> Tuple[Dict, Dict]:
+    """Generate Encryption Settings"""
+    args = {}
+    headers = {}
+    if not bucket_sse_mode:
+        return args, headers
+
+    args["ServerSideEncryption"] = bucket_sse_mode
+    headers["x-amz-server-side-encryption"] = bucket_sse_mode
+    if bucket_sse_mode == "aws:kms" and bucket_sse_kms_key_id:
+        args["SSEKMSKeyId"] = bucket_sse_kms_key_id
+        headers["x-amz-server-side-encryption-aws-kms-key-id"] = bucket_sse_kms_key_id
+    return args, headers
+
+
 class S3ClientManager:
-    def __init__(self, connection) -> None:
-        self.connection = connection
-        self._s3_client = None
+    def __init__(self, client: Any) -> None:
+        self._s3_client = client
 
-    def initialize_client(self, region_name: str, endpoint_url: str, profile_name: str) -> None:
-        """
-        Create the S3 client inside the manager.
-        """
-        self._s3_client = self.get_s3_client(
+    @property
+    def client(self) -> Any:
+        return self._s3_client
+
+    @staticmethod
+    def _get_s3_client(
+        access_key_id: Optional[str],
+        secret_key_id: Optional[str],
+        session_token: Optional[str],
+        region_name: str,
+        profile_name: Optional[str],
+    ) -> Any:
+        if not region_name:
+            region_name = "us-east-1"
+        session_args = dict(
+            aws_access_key_id=access_key_id,
+            aws_secret_access_key=secret_key_id,
+            aws_session_token=session_token,
             region_name=region_name,
-            endpoint_url=endpoint_url,
-            profile_name=profile_name,
         )
+        if profile_name:
+            session_args["profile_name"] = profile_name
+        session = boto3.session.Session(**session_args)
+        return session.client("s3")
 
-    def get_bucket_endpoint(self) -> Tuple[str, str]:
+    @staticmethod
+    def get_bucket_endpoint(
+        bucket_name: str,
+        bucket_endpoint_url: Optional[str],
+        access_key_id: Optional[str],
+        secret_key_id: Optional[str],
+        session_token: Optional[str],
+        region_name: Optional[str],
+        profile_name: Optional[str],
+    ) -> Tuple[str, str]:
         """
         Fetches the correct S3 endpoint and region for use with our bucket.
         If we don't explicitly set the endpoint then some commands will use the global
         endpoint and fail
         (new AWS regions and new buckets in a region other than the one we're running in)
         """
-        region_name = self.connection.get_option("region") or "us-east-1"
-        profile_name = self.connection.get_option("profile") or ""
-        self.connection.verbosity_display(4, "_get_bucket_endpoint: S3 (global)")
-        tmp_s3_client = self.get_s3_client(
-            region_name=region_name,
-            profile_name=profile_name,
+        if not region_name:
+            region_name = "us-east-1"
+        tmp_s3_client = S3ClientManager._get_s3_client(
+            access_key_id, secret_key_id, session_token, region_name, profile_name
         )
+
         # Fetch the location of the bucket so we can open a client against the 'right' endpoint
         # This /should/ always work
-        head_bucket = tmp_s3_client.head_bucket(
-            Bucket=(self.connection.get_option("bucket_name")),
-        )
+        head_bucket = tmp_s3_client.head_bucket(Bucket=(bucket_name))
         bucket_region = head_bucket.get("ResponseMetadata", {}).get("HTTPHeaders", {}).get("x-amz-bucket-region", None)
         if bucket_region is None:
             bucket_region = "us-east-1"
 
-        if self.connection.get_option("bucket_endpoint_url"):
-            return self.connection.get_option("bucket_endpoint_url"), bucket_region
+        if bucket_endpoint_url:
+            return bucket_endpoint_url, bucket_region
 
         # Create another client for the region the bucket lives in, so we can nab the endpoint URL
-        self.connection.verbosity_display(4, f"_get_bucket_endpoint: S3 (bucket region) - {bucket_region}")
-        s3_bucket_client = self.get_s3_client(
-            region_name=bucket_region,
-            profile_name=profile_name,
-        )
+        if bucket_region != region_name:
+            tmp_s3_client = S3ClientManager._get_s3_client(
+                access_key_id, secret_key_id, session_token, bucket_region, profile_name
+            )
 
-        return s3_bucket_client.meta.endpoint_url, s3_bucket_client.meta.region_name
-
-    def get_s3_client(
-        self,
-        region_name: Optional[str] = None,
-        profile_name: Optional[str] = None,
-        endpoint_url: Optional[str] = None,
-    ) -> Any:
-        """Creates and returns a boto3 "s3" client"""
-
-        session_args = dict(
-            aws_access_key_id=self.connection.get_option("access_key_id"),
-            aws_secret_access_key=self.connection.get_option("secret_access_key"),
-            aws_session_token=self.connection.get_option("session_token"),
-            region_name=region_name,
-        )
-        if profile_name:
-            session_args["profile_name"] = profile_name
-
-        session = boto3.session.Session(**session_args)
-
-        s3_client = session.client(
-            "s3",
-            endpoint_url=endpoint_url,
-            config=Config(
-                signature_version="s3v4",
-                s3={"addressing_style": self.connection.get_option("s3_addressing_style")},
-            ),
-        )
-        return s3_client
+        return tmp_s3_client.meta.endpoint_url, tmp_s3_client.meta.region_name
 
     def get_url(
         self,
@@ -110,20 +116,79 @@ class S3ClientManager:
             client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method
         )
 
-    def generate_encryption_settings(self) -> Tuple[Dict, Dict]:
-        """Generate Encryption Settings"""
-        put_args = {}
-        put_headers = {}
-        if not self.connection.get_option("bucket_sse_mode"):
-            return put_args, put_headers
+    def generate_host_commands(
+        self,
+        bucket_name: str,
+        bucket_sse_mode: Optional[str],
+        bucket_sse_kms_key_id: Optional[str],
+        s3_path: str,
+        in_path: str,
+        out_path: str,
+        is_windows: bool,
+        method: str,
+    ) -> Tuple[str, Optional[Dict[str, str]]]:
+        """
+        Generate commands for the specified bucket and configurations, S3 path, input path, and output path.
+        The function generates a curl/Invoke-WebRequest command to be executed on the managed node.
+        The method 'get' means the controller node wants to retrieve content from the managed node, the corresponding
+        on the managed node is a 'put' command to updload content to the S3 bucket.
+        The method 'put' means the controller node wants to upload content to the managed node, the corresponding
+        on the managed node is a 'get' command to download content to the S3 bucket.
 
-        put_args["ServerSideEncryption"] = self.connection.get_option("bucket_sse_mode")
-        put_headers["x-amz-server-side-encryption"] = self.connection.get_option("bucket_sse_mode")
-        if self.connection.get_option("bucket_sse_mode") == "aws:kms" and self.connection.get_option(
-            "bucket_sse_kms_key_id"
-        ):
-            put_args["SSEKMSKeyId"] = self.connection.get_option("bucket_sse_kms_key_id")
-            put_headers["x-amz-server-side-encryption-aws-kms-key-id"] = self.connection.get_option(
-                "bucket_sse_kms_key_id"
-            )
-        return put_args, put_headers
+        :param bucket_name: The name of the S3 bucket used for file transfers.
+        :param s3_path: The S3 path to the file to be sent.
+        :param in_path: Input path
+        :param out_path: Output path
+        :param method: The request method to use for the command (can be "get" or "put").
+
+        :returns: A tuple containing a shell command string and optional extra arguments for the PUT request.
+        """
+
+        command = None
+        url = None
+        put_args = None
+        if method == "get":
+            put_args, put_headers = generate_encryption_settings(bucket_sse_mode, bucket_sse_kms_key_id)
+            url = self.get_url("put_object", bucket_name, s3_path, "PUT", extra_args=put_args)
+            if is_windows:
+                put_command_headers = "; ".join([f"'{h}' = '{v}'" for h, v in put_headers.items()])
+                command = (
+                    "Invoke-WebRequest -Method PUT "
+                    # @{'key' = 'value'; 'key2' = 'value2'}
+                    f"-Headers @{{{put_command_headers}}} "
+                    f"-InFile '{in_path}' "
+                    f"-Uri '{url}' "
+                    f"-UseBasicParsing"
+                )  # fmt: skip
+            else:
+                # Due to https://github.com/curl/curl/issues/183 earlier
+                # versions of curl did not create the output file, when the
+                # response was empty. Although this issue was fixed in 2015,
+                # some actively maintained operating systems still use older
+                # versions of it (e.g. CentOS 7)
+                put_command_headers = " ".join([f"-H '{h}: {v}'" for h, v in put_headers.items()])
+                command = (
+                    "curl --request PUT "
+                    f"{put_command_headers} "
+                    f"--upload-file '{in_path}' "
+                    f"'{url}'"
+                )  # fmt: skip
+        elif method == "put":
+            url = self.get_url("get_object", bucket_name, s3_path, "GET")
+            if is_windows:
+                command = (
+                    "Invoke-WebRequest "
+                    f"'{url}' "
+                    f"-OutFile '{out_path}'"
+                )  # fmt: skip
+            else:
+                command = (
+                    "curl "
+                    f"-o '{out_path}' "
+                    f"'{url}'"
+                    ";"
+                    "touch "
+                    f"'{out_path}'"
+                )  # fmt: skip
+
+        return command, put_args
