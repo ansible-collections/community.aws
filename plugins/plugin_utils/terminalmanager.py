@@ -56,16 +56,9 @@ class TerminalManager:
 
         # Send command
         self.connection.verbosity_display(4, f"DISABLE ECHO Disabling Prompt: \n{disable_echo_cmd}")
-        self.connection._session.stdin.write(disable_echo_cmd)
+        self.connection.session_manager.stdin_write(disable_echo_cmd)
 
-        stdout = ""
-        for poll_result in self.connection.poll("DISABLE ECHO", disable_echo_cmd):
-            if poll_result:
-                stdout += to_text(self.connection._stdout.read(1024))
-                self.connection.verbosity_display(4, f"DISABLE ECHO stdout line: \n{to_bytes(stdout)}")
-                match = str(stdout).find("stty -echo")
-                if match != -1:
-                    break
+        self.connection.session_manager.wait_for_match(label="DISABLE ECHO", cmd=disable_echo_cmd, match="stty -echo")
 
     def disable_prompt_command(self) -> None:
         """Disable prompt command from the host"""
@@ -78,26 +71,16 @@ class TerminalManager:
 
         # Send command
         self.connection.verbosity_display(4, f"DISABLE PROMPT Disabling Prompt: \n{disable_prompt_cmd}")
-        self.connection._session.stdin.write(disable_prompt_cmd)
+        self.connection.session_manager.stdin_write(disable_prompt_cmd)
 
-        stdout = ""
-        for poll_result in self.connection.poll("DISABLE PROMPT", disable_prompt_cmd):
-            if poll_result:
-                stdout += to_text(self.connection._stdout.read(1024))
-                self.connection.verbosity_display(4, f"DISABLE PROMPT stdout line: \n{to_bytes(stdout)}")
-                if disable_prompt_reply.search(stdout):
-                    break
+        self.connection.session_manager.wait_for_match(
+            label="DISABLE PROMPT", cmd=disable_prompt_cmd, match=disable_prompt_reply.search
+        )
 
     def ensure_ssm_session_has_started(self) -> None:
         """Ensure the SSM session has started on the host. We poll stdout
         until we match the following string 'Starting session with SessionId'
         """
-        stdout = ""
-        for poll_result in self.connection.poll("START SSM SESSION", "start_session"):
-            if poll_result:
-                stdout += to_text(self.connection._stdout.read(1024))
-                self.connection.verbosity_display(4, f"START SSM SESSION stdout line: \n{to_bytes(stdout)}")
-                match = str(stdout).find("Starting session with SessionId")
-                if match != -1:
-                    self.connection.verbosity_display(4, "START SSM SESSION startup output received")
-                    break
+        self.connection.session_manager.wait_for_match(
+            label="START SSM SESSION", cmd="start_session", match="Starting session with SessionId"
+        )
