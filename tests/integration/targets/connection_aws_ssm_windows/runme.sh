@@ -23,9 +23,5 @@ set +x
 . ./aws-env-vars.sh
 set -x
 
-cd ../connection
-
 # Execute Integration tests
-INVENTORY="${PLAYBOOK_DIR}/ssm_inventory" ./test.sh \
-    -e target_hosts=aws_ssm \
-    "$@"
+ansible-playbook ./test.yml -i "${PLAYBOOK_DIR}/ssm_inventory" "$@"
