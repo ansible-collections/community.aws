@@ -328,7 +328,7 @@ import random
 import re
 import string
 import time
-from typing import Any
+from typing import Any, Dict
 from typing import Iterator
 from typing import List
 from typing import Tuple
@@ -397,7 +397,6 @@ def escape_path(path: str) -> str:
     return path.replace("\\", "/")
 
 
-
 class Connection(ConnectionBase, AwsConnectionPluginBase):
     """AWS SSM based connections"""
 
@@ -428,7 +427,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         # Initialize FileTransferManager
         self.file_transfer_manager = FileTransferManager(
             bucket_name=self.get_option("bucket_name"),
-            instance_id=self._instance_id,
+            instance_id=self.instance_id,
             s3_client=self._s3_client,
             reconnection_retries=self.reconnection_retries,
             verbosity_display=self.verbosity_display,
@@ -687,8 +686,19 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         return (returncode, stdout)
 
-    def _escape_path(self, path: str) -> str:
-        return path.replace("\\", "/")
+    def generate_commands(self, in_path: str, out_path: str) -> Tuple[str, List[Dict], Dict]:
+        """
+        Generate S3 path and associated transport commands for file transfer.
+        :param in_path: The local file path to transfer from.
+        :param out_path: The remote file path to transfer to (used to build the S3 key).
+        :return: A tuple containing:
+            - s3_path (str): The S3 key used for the transfer.
+            - commands (List[Dict]): A list of commands to be executed for the transfer.
+            - put_args (Dict): Additional arguments needed for a 'put' operation.
+        """
+        s3_path = escape_path(f"{self.instance_id}/{out_path}")
+        commands, put_args = self.s3_manager._generate_commands(self.get_option("bucket_name"), s3_path, in_path, out_path)
+        return s3_path, commands, put_args
 
     def _exec_transport_commands(self, in_path: str, out_path: str, command: dict) -> CommandResult:
         """
@@ -707,51 +717,6 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
             raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
 
         return returncode, stdout, stderr
-
-    @_ssm_retry
-    def _file_transport_command(
-        self,
-        in_path: str,
-        out_path: str,
-        ssm_action: str,
-    ) -> CommandResult:
-        """
-        Transfer file(s) to/from host using an intermediate S3 bucket and then delete the file(s).
-
-        :param in_path: The input path.
-        :param out_path: The output path.
-        :param ssm_action: The SSM action to perform ("get" or "put").
-
-        :returns: The command's return code, stdout, and stderr in a tuple.
-        """
-
-        bucket_name = self.get_option("bucket_name")
-        s3_path = self._escape_path(f"{self.instance_id}/{out_path}")
-
-        command, put_args = self.s3_manager.generate_host_commands(
-            bucket_name,
-            self.get_option("bucket_sse_mode"),
-            self.get_option("bucket_sse_kms_key_id"),
-            s3_path,
-            in_path,
-            out_path,
-            self.is_windows,
-            ssm_action,
-        )
-
-        try:
-            if ssm_action == "get":
-                result = self._exec_transport_commands(in_path, out_path, command)
-                with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
-                    self.s3_client.download_fileobj(bucket_name, s3_path, data)
-            else:
-                with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
-                    self.s3_client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-                result = self._exec_transport_commands(in_path, out_path, command)
-            return result
-        finally:
-            # Remove the files from the bucket after they've been transferred
-            self.s3_client.delete_object(Bucket=bucket_name, Key=s3_path)
 
     def put_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
         """transfer a file from local to remote"""
