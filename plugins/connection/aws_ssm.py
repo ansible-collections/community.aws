@@ -424,16 +424,6 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self.terminal_manager = TerminalManager(self)
         self.session_manager = None
         self.reconnection_retries = self.get_option("reconnection_retries")
-        # Initialize FileTransferManager
-        self.file_transfer_manager = FileTransferManager(
-            bucket_name=self.get_option("bucket_name"),
-            instance_id=self.instance_id,
-            s3_client=self._s3_client,
-            reconnection_retries=self.reconnection_retries,
-            verbosity_display=self.verbosity_display,
-            close=self.close,
-            exec_command=self.exec_command,
-        )
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
             self.delegate = None
@@ -489,6 +479,17 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         # Initialize SSM client
         if not self._client:
             self._client = self._get_boto_client("ssm", region_name=self.get_option("region"), config=config)
+
+        # Initialize FileTransferManager
+        self.file_transfer_manager = FileTransferManager(
+            bucket_name=self.get_option("bucket_name"),
+            instance_id=self.instance_id,
+            s3_client=self.s3_client,
+            reconnection_retries=self.reconnection_retries,
+            verbosity_display=self.verbosity_display,
+            close=self.close,
+            exec_command=self.exec_command,
+        )
 
     @property
     def s3_client(self) -> None:
@@ -615,11 +616,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
                 stdout = stdout + line
 
         # see https://github.com/pylint-dev/pylint/issues/8909)
-        return {  # pylint: disable=unreachable
-            "returncode": returncode,
-            "stdout": stdout,
-            "stderr": self._flush_stderr(self._session),
-        }
+        return (returncode, stdout, self.session_manager.flush_stderr())  # pylint: disable=unreachable
 
     @staticmethod
     def generate_mark() -> str:
@@ -686,18 +683,31 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         return (returncode, stdout)
 
-    def generate_commands(self, in_path: str, out_path: str) -> Tuple[str, List[Dict], Dict]:
+    def generate_commands(self, in_path: str, out_path: str, ssm_action: str) -> Tuple[str, List[Dict], Dict]:
         """
         Generate S3 path and associated transport commands for file transfer.
         :param in_path: The local file path to transfer from.
         :param out_path: The remote file path to transfer to (used to build the S3 key).
+        :param ssm_action: The SSM action to perform ("get" or "put").
         :return: A tuple containing:
             - s3_path (str): The S3 key used for the transfer.
             - commands (List[Dict]): A list of commands to be executed for the transfer.
             - put_args (Dict): Additional arguments needed for a 'put' operation.
         """
         s3_path = escape_path(f"{self.instance_id}/{out_path}")
-        commands, put_args = self.s3_manager._generate_commands(self.get_option("bucket_name"), s3_path, in_path, out_path)
+        commands = ""
+        put_args = []
+        if self.s3_manager:
+            commands, put_args = self.s3_manager.generate_host_commands(
+                self.get_option("bucket_name"),
+                self.get_option("bucket_sse_mode"),
+                self.get_option("bucket_sse_kms_key_id"),
+                s3_path,
+                in_path,
+                out_path,
+                self.is_windows,
+                ssm_action,
+            )
         return s3_path, commands, put_args
 
     def _exec_transport_commands(self, in_path: str, out_path: str, command: dict) -> CommandResult:
@@ -718,7 +728,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         return returncode, stdout, stderr
 
-    def put_file(self, in_path: str, out_path: str) -> Tuple[int, str, str]:
+    def put_file(self, in_path: str, out_path: str) -> CommandResult:
         """transfer a file from local to remote"""
 
         super().put_file(in_path, out_path)
@@ -727,7 +737,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound(f"file or module does not exist: {in_path}")
 
-        s3_path, commands, put_args = self.generate_commands(in_path, out_path)
+        s3_path, commands, put_args = self.generate_commands(in_path, out_path, "put")
         return self.file_transfer_manager._file_transport_command(in_path, out_path, "put", commands, put_args, s3_path)
 
     def fetch_file(self, in_path: str, out_path: str) -> CommandResult:
@@ -737,7 +747,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         self.verbosity_display(3, f"FETCH {in_path} TO {out_path}")
 
-        s3_path, commands, put_args = self.generate_commands(in_path, out_path)
+        s3_path, commands, put_args = self.generate_commands(in_path, out_path, "get")
         return self.file_transfer_manager._file_transport_command(in_path, out_path, "get", commands, put_args, s3_path)
 
     def close(self) -> None:

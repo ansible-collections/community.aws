@@ -120,6 +120,7 @@ class FileTransferManager:
         :return: A CommandResult dictionary containing execution results.
         """
         stdout_combined, stderr_combined = "", ""
+        returncode = None
         for command in commands:
             returncode, stdout, stderr = self.exec_command(command["command"], in_data=None, sudoable=False)
 
