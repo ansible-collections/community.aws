@@ -6,7 +6,6 @@
 from typing import Any
 from typing import Callable
 from typing import Dict
-from typing import List
 from typing import Optional
 
 from ansible.errors import AnsibleError
@@ -48,7 +47,7 @@ class FileTransferManager:
         in_path: str,
         out_path: str,
         ssm_action: str,
-        commands: List[Dict[str, Any]],
+        command: str,
         put_args: Dict[str, Any],
         s3_path: str,
     ) -> CommandResult:
@@ -58,19 +57,19 @@ class FileTransferManager:
         :param in_path: The local path of the file to be transferred.
         :param out_path: The remote path where the file should be placed.
         :param ssm_action: The action to perform, either 'get' (download) or 'put' (upload).
-        :param commands: List of commands to execute.
+        :param command: A shell command string
         :param put_args: Additional arguments for S3 upload.
         :param s3_path: The S3 path where the file is stored.
         :return: A CommandResult dictionary containing execution results.
         """
         try:
             if ssm_action == "get":
-                return self._handle_get(in_path, out_path, commands, s3_path)
-            return self._handle_put(in_path, out_path, commands, s3_path, put_args)
+                return self._handle_get(in_path, out_path, command, s3_path)
+            return self._handle_put(in_path, out_path, command, s3_path, put_args)
         finally:
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=s3_path)
 
-    def _handle_get(self, in_path: str, out_path: str, commands: List[dict], s3_path: str) -> CommandResult:
+    def _handle_get(self, in_path: str, out_path: str, command: str, s3_path: str) -> CommandResult:
         """
         Handles downloading a file from the remote host via S3.
 
@@ -80,16 +79,15 @@ class FileTransferManager:
         :param s3_path: The S3 path where the file is stored.
         :return: A CommandResult dictionary containing execution results.
         """
-        put_commands = [cmd for cmd in commands if cmd.get("method") == "put"]
 
-        result = self._exec_transport_commands(in_path, out_path, put_commands)
+        result = self._exec_transport_commands(in_path, out_path, command)
         with open(to_bytes(out_path, errors="surrogate_or_strict"), "wb") as data:
             self.s3_client.download_fileobj(self.bucket_name, s3_path, data)
 
         return result
 
     def _handle_put(
-        self, in_path: str, out_path: str, commands: List[dict], s3_path: str, put_args: Dict[str, Any]
+        self, in_path: str, out_path: str, command: str, s3_path: str, put_args: Dict[str, Any]
     ) -> CommandResult:
         """
         Handles uploading a file to the remote host via S3.
@@ -101,16 +99,15 @@ class FileTransferManager:
         :param put_args: Additional arguments for S3 upload.
         :return: A CommandResult dictionary containing execution results.
         """
-        get_commands = [cmd for cmd in commands if cmd.get("method") == "get"]
 
         with open(to_bytes(in_path, errors="surrogate_or_strict"), "rb") as data:
             self.s3_client.upload_fileobj(data, self.bucket_name, s3_path, ExtraArgs=put_args)
 
-        result = self._exec_transport_commands(in_path, out_path, get_commands)
+        result = self._exec_transport_commands(in_path, out_path, command)
 
         return result
 
-    def _exec_transport_commands(self, in_path: str, out_path: str, commands: List[dict]) -> CommandResult:
+    def _exec_transport_commands(self, in_path: str, out_path: str, command: str) -> CommandResult:
         """
         Executes the provided transport commands.
 
@@ -119,16 +116,10 @@ class FileTransferManager:
         :param commands: A list of command dictionaries containing the command string and metadata.
         :return: A CommandResult dictionary containing execution results.
         """
-        stdout_combined, stderr_combined = "", ""
-        returncode = None
-        for command in commands:
-            returncode, stdout, stderr = self.exec_command(command["command"], in_data=None, sudoable=False)
+        returncode, stdout, stderr = self.exec_command(command, in_data=None, sudoable=False)
 
-            # Check the return code
-            if returncode != 0:
-                raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
+        # Check the return code
+        if returncode != 0:
+            raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
 
-            stdout_combined += stdout
-            stderr_combined += stderr
-
-        return {"returncode": returncode, "stdout": stdout_combined, "stderr": stderr_combined}
+        return {"returncode": returncode, "stdout": stdout, "stderr": stderr}

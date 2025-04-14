@@ -62,7 +62,7 @@ class TestFileTransferManager:
             in_path,
             out_path,
             ssm_action,
-            commands=[{"command": "test-cmd", "method": "put"}],
+            "test-cmd",
             put_args={},
             s3_path="test_s3_path",
         )
