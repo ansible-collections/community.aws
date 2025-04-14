@@ -81,8 +81,9 @@
         alias: '{{ kms_key_name }}'
 
     - name: Delete SSM document
-      command: "aws ssm delete-document --name {{ ssm_document_name }}"
-      environment: "{{ connection_env }}"
+      community.aws.ssm_document:
+        state: absent
+        name: "{{ ssm_document_name }}"
       ignore_errors: true
 
     - name: Delete AWS keys environement

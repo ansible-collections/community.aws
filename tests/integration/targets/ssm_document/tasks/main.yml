@@ -1,0 +1,393 @@
+---
+- name: Test modules ssm_document and ssm_document_info
+  vars:
+    document_name: "{{ resource_prefix }}"
+    document_type: Command
+    resource_tags:
+      Test: Integration
+      ResourcePrefix: "{{ resource_prefix }}"
+    updated_tags:
+      Foo: Bar
+    files_path:
+      - "{{ role_path }}/files/ssm-custom-document.json"
+      - "{{ role_path }}/files/ssm-custom-document-2.json"
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+    - name: Create SSM document (check_mode=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        content_path: "{{ files_path[0] }}"
+        document_type: "{{ document_type }}"
+      check_mode: true
+      register: create_check
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        filters:
+          Name: "{{ document_name }}"
+      register: ssm_docs
+
+    - name: Ensure the module reported change while the document was not created
+      ansible.builtin.assert:
+        that:
+          - create_check is changed
+          - ssm_docs.documents | length == 0
+
+    # Create
+    - name: Create SSM document
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        content_path: "{{ files_path[0] }}"
+        document_type: "{{ document_type }}"
+      register: create_doc
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure the module reported and the document was created
+      ansible.builtin.assert:
+        that:
+          - create_doc is changed
+          - '"document" in create_doc'
+          - document_info.document is defined
+          - document_info.document.default_version == "1"
+          - document_info.document.document_versions | length == 1
+
+    # Create idempotency
+    - name: Create SSM document (idempotency)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        content_path: "{{ files_path[0] }}"
+        document_type: "{{ document_type }}"
+      register: create_idempotency
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure the module reported and the document was created
+      ansible.builtin.assert:
+        that:
+          - create_idempotency is not changed
+          - '"document" in create_doc'
+          - document_info.document is defined
+          - document_info.document.default_version == "1"
+          - document_info.document.document_versions | length == 1
+
+    # Update (add new document version and update default version)
+    - name: Update SSM document (check_mode=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        content_path: "{{ files_path[1] }}"
+        document_type: "{{ document_type }}"
+      register: update_check
+      check_mode: true
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure the module reported and the document was created
+      ansible.builtin.assert:
+        that:
+          - update_check is changed
+          - document_info.document is defined
+          - document_info.document.default_version == "1"
+          - document_info.document.document_versions | length == 1
+
+    - name: Update SSM document
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        content_path: "{{ files_path[1] }}"
+        document_type: "{{ document_type }}"
+      register: update_doc
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure the module reported and the document was created
+      ansible.builtin.assert:
+        that:
+          - update_doc is changed
+          - document_info.document is defined
+          - document_info.document.default_version == "1"
+          - document_info.document.document_versions | length == 2
+
+    # Update document default version
+    - name: Update document default version (check_mode=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        document_default_version: "2"
+      register: update_version_check
+      check_mode: true
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure document default version has not changed
+      ansible.builtin.assert:
+        that:
+          - update_version_check is changed
+          - document_info.document is defined
+          - document_info.document.default_version == "1"
+          - document_info.document.document_versions | length == 2
+
+    - name: Update document default version
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        document_default_version: "2"
+      register: update_version
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure document default version has changed
+      ansible.builtin.assert:
+        that:
+          - update_version is changed
+          - document_info.document is defined
+          - document_info.document.default_version == "2"
+          - document_info.document.document_versions | length == 2
+
+    - name: Update document default version (idempotency)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        document_default_version: "2"
+      register: update_version_idempotency
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure document default version has not changed
+      ansible.builtin.assert:
+        that:
+          - update_version_idempotency is not changed
+          - document_info.document is defined
+          - document_info.document.default_version == "2"
+          - document_info.document.document_versions | length == 2
+
+    # Update tags
+    - name: Update document tags (check_mode=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        resource_tags: "{{ resource_tags }}"
+      register: update_tags_check
+      check_mode: true
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module reported change but the resource tags were not updated
+      ansible.builtin.assert:
+        that:
+          - update_tags_check is changed
+          - document_info.document is defined
+          - document_info.document.tags == {}
+
+    - name: Update document tags
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        resource_tags: "{{ resource_tags }}"
+      register: update_tags
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module reported change but the resource tags were not updated
+      ansible.builtin.assert:
+        that:
+          - update_tags is changed
+          - document_info.document is defined
+          - document_info.document.tags == resource_tags
+    
+    - name: Update document tags (idempotency)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        resource_tags: "{{ resource_tags }}"
+      register: update_tags_idempotency
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module did not reported change
+      ansible.builtin.assert:
+        that:
+          - update_tags_idempotency is not changed
+          - document_info.document is defined
+          - document_info.document.tags == resource_tags
+
+    - name: Update document tags (purge_tags=False)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        resource_tags: "{{ updated_tags }}"
+        purge_tags: false
+      register: update_tags_not_purge
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure resource tags were updated
+      ansible.builtin.assert:
+        that:
+          - update_tags_not_purge is changed
+          - document_info.document is defined
+          - document_info.document.tags == resource_tags | combine(updated_tags)
+
+    - name: Update document tags (purge_tags=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        resource_tags: "{{ updated_tags }}"
+        purge_tags: true
+      register: update_tags_purge
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure resource tags were updated
+      ansible.builtin.assert:
+        that:
+          - update_tags_purge is changed
+          - document_info.document is defined
+          - document_info.document.tags == updated_tags
+  
+    # Delete Document version
+    - name: Delete document version (check_mode=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        document_version: "1"
+        state: absent
+      check_mode: true
+      register: delete_check
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module reported change while the document version was not deleted
+      ansible.builtin.assert:
+        that:
+          - delete_check is changed
+          - document_info.document is defined
+          - '"1" in document_info.document.document_versions | map(attribute="document_version") | list'
+
+    - name: Delete document version
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        document_version: "1"
+        state: absent
+      register: delete_version
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module did reported change and the document version was not deleted
+      ansible.builtin.assert:
+        that:
+          - delete_version is changed
+          - document_info.document is defined
+          - '"1" not in document_info.document.document_versions | map(attribute="document_version") | list'
+          - document_info.document.document_versions | length > 0
+
+    - name: Delete document version (idempotency)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        document_version: "1"
+        state: absent
+      register: delete_version_idempotency
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure version deletion idempotency
+      ansible.builtin.assert:
+        that:
+          - delete_version_idempotency is not changed
+          - document_info.document is defined
+          - '"1" not in document_info.document.document_versions | map(attribute="document_version") | list'
+          - document_info.document.document_versions | length > 0
+
+    # Delete document
+    - name: Delete document (check_mode=true)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        state: absent
+      register: delete_check
+      check_mode: true
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module reported change while the document was not deleted
+      ansible.builtin.assert:
+        that:
+          - delete_check is changed
+          - document_info.document is defined
+          - document_info.document.document_versions | length > 0
+
+    - name: Delete document
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        state: absent
+      register: delete_doc
+
+    - name: Describe document
+      community.aws.ssm_document_info:
+        name: "{{ document_name }}"
+      register: document_info
+
+    - name: Ensure module reported change and the document was deleted
+      ansible.builtin.assert:
+        that:
+          - delete_doc is changed
+          - document_info.document == {}
+
+    - name: Delete document (idempotency)
+      community.aws.ssm_document:
+        name: "{{ document_name }}"
+        state: absent
+      register: delete_idempotency
+
+    - name: Ensure module did not reported change (idempotency)
+      ansible.builtin.assert:
+        that:
+          - delete_idempotency is not changed
+
+  always:
+    - name: Delete SSM document
+      community.aws.ssm_document:
+        state: absent
+        name: "{{ document_name }}"

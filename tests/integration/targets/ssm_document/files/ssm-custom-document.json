@@ -1,0 +1,20 @@
+{
+    "schemaVersion": "2.2",
+    "description": "Sample document to execute hello world",
+    "parameters": {
+        "Message": {
+            "type": "String",
+            "description": "message to display",
+            "default": "Ansible is super"
+        }
+    },
+    "mainSteps": [
+      {
+        "action": "aws:runPowerShellScript",
+        "name": "example",
+        "inputs": {
+          "runCommand": ["Write-Output {{Message}}"]
+        }
+      }
+    ]
+}
