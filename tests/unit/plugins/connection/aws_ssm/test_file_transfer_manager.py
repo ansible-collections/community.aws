@@ -21,14 +21,14 @@ class TestFileTransferManager:
     def file_transfer_manager(self, connection_aws_ssm):
         """Creates an instance of FileTransferManager"""
 
-        connection_aws_ssm.s3_manager = MagicMock()
-        connection_aws_ssm.s3_manager.client = MagicMock()
+        connection_aws_ssm._s3_manager = MagicMock()
+        connection_aws_ssm._s3_manager.client = MagicMock()
         connection_aws_ssm.reconnection_retries = 5
 
         return FileTransferManager(
             bucket_name="test_bucket",
             instance_id=connection_aws_ssm._instance_id,
-            s3_client=connection_aws_ssm.s3_manager.client,
+            s3_client=connection_aws_ssm._s3_manager.client,
             reconnection_retries=connection_aws_ssm.reconnection_retries,
             verbosity_display=MagicMock(),
             close=MagicMock(),
@@ -54,7 +54,7 @@ class TestFileTransferManager:
         in_path: str,
         out_path: str,
     ):
-        connection_aws_ssm.s3_manager.client.delete_object = MagicMock()
+        connection_aws_ssm._s3_manager.client.delete_object = MagicMock()
         handler_mock = MagicMock(return_value=CommandResult(returncode=0, stdout=expected_output, stderr=""))
         setattr(file_transfer_manager, handler_method, handler_mock)
 
@@ -68,7 +68,7 @@ class TestFileTransferManager:
         )
 
         handler_mock.assert_called_once()
-        connection_aws_ssm.s3_manager.client.delete_object.assert_called_once_with(
+        connection_aws_ssm._s3_manager.client.delete_object.assert_called_once_with(
             Bucket="test_bucket", Key="test_s3_path"
         )
         assert result["returncode"] == 0
@@ -108,16 +108,16 @@ class TestFileTransferManager:
                 file_transfer_manager._exec_transport_commands("input.txt", "output.txt", commands)
 
     def test_handle_get(self, file_transfer_manager, connection_aws_ssm):
-        connection_aws_ssm.s3_manager.client.download_fileobj = MagicMock()
+        connection_aws_ssm._s3_manager.client.download_fileobj = MagicMock()
         file_transfer_manager.exec_command.return_value = (0, "test", "")
         result = file_transfer_manager._handle_get(
             "in_path", "out_path", [{"command": "test-cmd", "method": "put"}], "s3_path"
         )
         assert result["returncode"] == 0
-        connection_aws_ssm.s3_manager.client.download_fileobj.assert_called_once()
+        connection_aws_ssm._s3_manager.client.download_fileobj.assert_called_once()
 
     def test_handle_put(self, file_transfer_manager, connection_aws_ssm):
-        connection_aws_ssm.s3_manager.client.upload_fileobj = MagicMock()
+        connection_aws_ssm._s3_manager.client.upload_fileobj = MagicMock()
         file_transfer_manager.exec_command.return_value = (0, "test", "")
 
         mock_file_content = b"dummy content"
@@ -128,4 +128,4 @@ class TestFileTransferManager:
             )
 
         assert result["returncode"] == 0
-        connection_aws_ssm.s3_manager.client.upload_fileobj.assert_called_once()
+        connection_aws_ssm._s3_manager.client.upload_fileobj.assert_called_once()

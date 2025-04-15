@@ -407,8 +407,8 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
     is_windows = False
 
     _client = None
-    s3_manager = None
-    session_manager = None
+    _s3_manager = None
+    _session_manager = None
     MARK_LENGTH = 26
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -420,7 +420,6 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self.host = self._play_context.remote_addr
         self._instance_id = None
         self.terminal_manager = TerminalManager(self)
-        self.session_manager = None
         self.reconnection_retries = self.get_option("reconnection_retries")
 
         if getattr(self._shell, "SHELL_FAMILY", "") == "powershell":
@@ -433,6 +432,62 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
             self._shell_type = "powershell"
             self.is_windows = True
 
+    @property
+    def s3_client(self) -> None:
+        if self._s3_manager is not None:
+            return self._s3_manager.client
+        return None
+
+    @property
+    def s3_manager(self) -> None:
+        if self._s3_manager is None:
+            config = {"signature_version": "s3v4", "s3": {"addressing_style": self.get_option("s3_addressing_style")}}
+
+            bucket_endpoint_url = self.get_option("bucket_endpoint_url")
+            s3_endpoint_url, s3_region_name = S3ClientManager.get_bucket_endpoint(
+                bucket_name=self.get_option("bucket_name"),
+                bucket_endpoint_url=bucket_endpoint_url,
+                access_key_id=self.get_option("access_key_id"),
+                secret_key_id=self.get_option("secret_access_key"),
+                session_token=self.get_option("session_token"),
+                region_name=self.get_option("region"),
+                profile_name=self.get_option("profile"),
+            )
+
+            s3_client = self._get_boto_client(
+                "s3", endpoint_url=s3_endpoint_url, region_name=s3_region_name, config=config
+            )
+
+            self._s3_manager = S3ClientManager(s3_client)
+
+        return self._s3_manager
+
+    @property
+    def session_manager(self):
+        return self._session_manager
+
+    @session_manager.setter
+    def session_manager(self, value):
+        self._session_manager = value
+
+    @property
+    def ssm_client(self):
+        if self._client is None:
+            config = {"signature_version": "s3v4", "s3": {"addressing_style": self.get_option("s3_addressing_style")}}
+
+            self._client = self._get_boto_client("ssm", region_name=self.get_option("region"), config=config)
+        return self._client
+
+    @property
+    def instance_id(self) -> str:
+        if not self._instance_id:
+            self._instance_id = self.host if self.get_option("instance_id") is None else self.get_option("instance_id")
+        return self._instance_id
+
+    @instance_id.setter
+    def instance_id(self, instance_id: str) -> None:
+        self._instance_id = instance_id
+
     def __del__(self) -> None:
         self.close()
 
@@ -441,6 +496,7 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self._play_context.remote_user = getpass.getuser()
         if not self.session_manager:
             self.start_session()
+
         return self
 
     def _init_clients(self) -> None:
@@ -451,32 +507,11 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         self.verbosity_display(4, "INITIALIZE BOTO3 CLIENTS")
 
-        # Create S3 and SSM clients
-        config = {"signature_version": "s3v4", "s3": {"addressing_style": self.get_option("s3_addressing_style")}}
-
-        bucket_endpoint_url = self.get_option("bucket_endpoint_url")
-        s3_endpoint_url, s3_region_name = S3ClientManager.get_bucket_endpoint(
-            bucket_name=self.get_option("bucket_name"),
-            bucket_endpoint_url=bucket_endpoint_url,
-            access_key_id=self.get_option("access_key_id"),
-            secret_key_id=self.get_option("secret_access_key"),
-            session_token=self.get_option("session_token"),
-            region_name=self.get_option("region"),
-            profile_name=self.get_option("profile"),
-        )
-
-        self.verbosity_display(4, f"BUCKET Information - Endpoint: {s3_endpoint_url} / Region: {s3_region_name}")
-
-        # Initialize S3ClientManager
-        if not self.s3_manager:
-            s3_client = self._get_boto_client(
-                "s3", endpoint_url=s3_endpoint_url, region_name=s3_region_name, config=config
-            )
-            self.s3_manager = S3ClientManager(s3_client)
+        # Initialize S3 client
+        self.s3_manager
 
         # Initialize SSM client
-        if not self._client:
-            self._client = self._get_boto_client("ssm", region_name=self.get_option("region"), config=config)
+        self.ssm_client
 
         # Initialize FileTransferManager
         self.file_transfer_manager = FileTransferManager(
@@ -488,13 +523,6 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
             close=self.close,
             exec_command=self.exec_command,
         )
-
-    @property
-    def s3_client(self) -> None:
-        client = None
-        if self.s3_manager is not None:
-            client = self.s3_manager.client
-        return client
 
     def verbosity_display(self, level: int, message: str) -> None:
         """
@@ -521,16 +549,6 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         self.verbosity_display(4, "reset called on ssm connection")
         self.close()
         self.start_session()
-
-    @property
-    def instance_id(self) -> str:
-        if not self._instance_id:
-            self._instance_id = self.host if self.get_option("instance_id") is None else self.get_option("instance_id")
-        return self._instance_id
-
-    @instance_id.setter
-    def instance_id(self, instance_id: str) -> None:
-        self._instance_id = instance_id
 
     def get_executable(self) -> str:
         ssm_plugin_executable = self.get_option("plugin")
@@ -559,11 +577,12 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
 
         if self.session_manager is None:
             self.session_manager = SSMSessionManager(
-                self._client,
+                self.ssm_client,
                 self.instance_id,
                 verbosity_display=self.verbosity_display,
                 ssm_timeout=self.get_option("ssm_timeout"),
             )
+
             self.session_manager.start_session(
                 executable=executable,
                 document_name=self.get_option("ssm_document"),
@@ -695,17 +714,16 @@ class Connection(ConnectionBase, AwsConnectionPluginBase):
         s3_path = escape_path(f"{self.instance_id}/{out_path}")
         command = ""
         put_args = []
-        if self.s3_manager:
-            command, put_args = self.s3_manager.generate_host_commands(
-                self.get_option("bucket_name"),
-                self.get_option("bucket_sse_mode"),
-                self.get_option("bucket_sse_kms_key_id"),
-                s3_path,
-                in_path,
-                out_path,
-                self.is_windows,
-                ssm_action,
-            )
+        command, put_args = self.s3_manager.generate_host_commands(
+            self.get_option("bucket_name"),
+            self.get_option("bucket_sse_mode"),
+            self.get_option("bucket_sse_kms_key_id"),
+            s3_path,
+            in_path,
+            out_path,
+            self.is_windows,
+            ssm_action,
+        )
         return s3_path, command, put_args
 
     def _exec_transport_commands(self, in_path: str, out_path: str, command: dict) -> CommandResult:

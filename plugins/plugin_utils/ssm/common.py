@@ -32,7 +32,7 @@ def ssm_retry(func: Any) -> Any:
             try:
                 return_tuple = func(self, *args, **kwargs)
                 verbosity_d(4, f"ssm_retry: (success) {to_text(return_tuple)}")
-                break
+                return return_tuple
             except (AnsibleConnectionFailure, Exception) as e:
                 if attempt == remaining_tries - 1:
                     raise
@@ -58,7 +58,6 @@ def ssm_retry(func: Any) -> Any:
                     self.close()
 
                 continue
-        return return_tuple
 
     return wrapped
 

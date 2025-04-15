@@ -16,7 +16,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager import S3ClientManager
 from ansible_collections.community.aws.plugins.plugin_utils.ssm.s3clientmanager import generate_encryption_settings
-from ansible_collections.community.aws.plugins.plugin_utils.ssm.filetransfermanager import FileTransferManager
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
