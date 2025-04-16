@@ -8,6 +8,7 @@ tests/integration/targets/connection_aws_ssm_*/instance_vars_to_delete.yml
 tests/integration/targets/connection_aws_ssm_*/s3_vars_to_delete.yml
 tests/integration/targets/connection_aws_ssm_*/ssm_inventory
 tests/integration/targets/connection_aws_ssm_*/ssm_vars_to_delete.yml
+tests/integration/targets/connection_aws_ssm_*/aws-env-vars.sh
 
 ### dotenv ###
 .env
