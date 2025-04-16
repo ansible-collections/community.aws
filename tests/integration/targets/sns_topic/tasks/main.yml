@@ -298,9 +298,13 @@
       state: directory
     register: tempdir
 
+  - ansible.builtin.copy:
+      src: sns_topic_lambda.py
+      dest: "{{ tempdir.path }}/sns_topic_lambda.py"
+
   - name: ensure zip file exists
     archive:
-      path: '{{ lookup(''first_found'', sns_topic_lambda_function) }}'
+      path: "{{ tempdir.path }}/sns_topic_lambda.py"
       dest: '{{ tempdir.path }}/{{ sns_topic_lambda_function }}.zip'
       format: zip
 
