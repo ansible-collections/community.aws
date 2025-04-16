@@ -79,16 +79,16 @@
         name: "{{ efs_name }}-test-efs"
       register: efs_result
 
-    - set_fact:
-        efs_result_assertions:
+    - ansible.builtin.assert:
+        that:
           - efs_result is not changed
           - (efs_result.efs | length) == 1
-          - efs_result.efs[0].creation_token == "{{ efs_name }}-test-efs"
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
           - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
           - efs_result.efs[0].number_of_mount_targets == 2
           - (efs_result.efs[0].mount_targets | length) == 2
-          - efs_result.efs[0].name == "{{ efs_name }}-test-tag"
-          - efs_result.efs[0].tags.Name == "{{ efs_name }}-test-tag"
+          - efs_result.efs[0].name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Name == efs_name ~ "-test-tag"
           - efs_result.efs[0].tags.Purpose == "file-storage"
           - efs_result.efs[0].encrypted == false
           - efs_result.efs[0].life_cycle_state == "available"
@@ -97,9 +97,6 @@
           - efs_result.efs[0].mount_targets[0].security_groups[0] == vpc_default_sg_id
           - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
-    - assert:
-        that: efs_result_assertions
-
     # ============================================================
     - name: Get EFS by id
       efs_info:
@@ -107,7 +104,22 @@
       register: efs_result
 
     - assert:
-        that: efs_result_assertions
+        that:
+          - efs_result is not changed
+          - (efs_result.efs | length) == 1
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
+          - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
+          - efs_result.efs[0].number_of_mount_targets == 2
+          - (efs_result.efs[0].mount_targets | length) == 2
+          - efs_result.efs[0].name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Purpose == "file-storage"
+          - efs_result.efs[0].encrypted == false
+          - efs_result.efs[0].life_cycle_state == "available"
+          - efs_result.efs[0].performance_mode == "generalPurpose"
+          - efs_result.efs[0].throughput_mode  == "bursting"
+          - efs_result.efs[0].mount_targets[0].security_groups[0] == vpc_default_sg_id
+          - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     # ============================================================
     - name: Get EFS by tag
@@ -117,7 +129,22 @@
       register: efs_result
 
     - assert:
-        that: efs_result_assertions
+        that:
+          - efs_result is not changed
+          - (efs_result.efs | length) == 1
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
+          - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
+          - efs_result.efs[0].number_of_mount_targets == 2
+          - (efs_result.efs[0].mount_targets | length) == 2
+          - efs_result.efs[0].name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Purpose == "file-storage"
+          - efs_result.efs[0].encrypted == false
+          - efs_result.efs[0].life_cycle_state == "available"
+          - efs_result.efs[0].performance_mode == "generalPurpose"
+          - efs_result.efs[0].throughput_mode  == "bursting"
+          - efs_result.efs[0].mount_targets[0].security_groups[0] == vpc_default_sg_id
+          - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     # ============================================================
     - name: Get EFS by target (subnet_id)
@@ -127,7 +154,22 @@
       register: efs_result
 
     - assert:
-        that: efs_result_assertions
+        that:
+          - efs_result is not changed
+          - (efs_result.efs | length) == 1
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
+          - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
+          - efs_result.efs[0].number_of_mount_targets == 2
+          - (efs_result.efs[0].mount_targets | length) == 2
+          - efs_result.efs[0].name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Purpose == "file-storage"
+          - efs_result.efs[0].encrypted == false
+          - efs_result.efs[0].life_cycle_state == "available"
+          - efs_result.efs[0].performance_mode == "generalPurpose"
+          - efs_result.efs[0].throughput_mode  == "bursting"
+          - efs_result.efs[0].mount_targets[0].security_groups[0] == vpc_default_sg_id
+          - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     # ============================================================
     - name: Get EFS by target (security_group_id)
@@ -137,7 +179,22 @@
       register: efs_result
 
     - assert:
-        that: efs_result_assertions
+        that:
+          - efs_result is not changed
+          - (efs_result.efs | length) == 1
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
+          - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
+          - efs_result.efs[0].number_of_mount_targets == 2
+          - (efs_result.efs[0].mount_targets | length) == 2
+          - efs_result.efs[0].name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Purpose == "file-storage"
+          - efs_result.efs[0].encrypted == false
+          - efs_result.efs[0].life_cycle_state == "available"
+          - efs_result.efs[0].performance_mode == "generalPurpose"
+          - efs_result.efs[0].throughput_mode  == "bursting"
+          - efs_result.efs[0].mount_targets[0].security_groups[0] == vpc_default_sg_id
+          - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     # ============================================================
     - name: Get EFS by tag and target
@@ -149,7 +206,22 @@
       register: efs_result
 
     - assert:
-        that: efs_result_assertions
+        that:
+          - efs_result is not changed
+          - (efs_result.efs | length) == 1
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
+          - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
+          - efs_result.efs[0].number_of_mount_targets == 2
+          - (efs_result.efs[0].mount_targets | length) == 2
+          - efs_result.efs[0].name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Name == efs_name ~ "-test-tag"
+          - efs_result.efs[0].tags.Purpose == "file-storage"
+          - efs_result.efs[0].encrypted == false
+          - efs_result.efs[0].life_cycle_state == "available"
+          - efs_result.efs[0].performance_mode == "generalPurpose"
+          - efs_result.efs[0].throughput_mode  == "bursting"
+          - efs_result.efs[0].mount_targets[0].security_groups[0] == vpc_default_sg_id
+          - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     # ============================================================
     #   Not checking efs_result.efs["throughput_mode"] here as
@@ -221,17 +293,14 @@
         name: "{{ efs_name }}-test-efs"
       register: efs_result
 
-    - set_fact:
-        efs_result_assertions:
+    - ansible.builtin.assert:
+        that:
           - efs_result is not changed
           - efs_result.efs[0].throughput_mode  == "provisioned"
           - efs_result.efs[0].provisioned_throughput_in_mibps == 8.0
           - (efs_result.efs | length) == 1
-          - efs_result.efs[0].creation_token == "{{ efs_name }}-test-efs"
+          - efs_result.efs[0].creation_token == efs_name ~ "-test-efs"
           - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
-
-    - assert:
-        that: efs_result_assertions
 
     # ============================================================
     - name: Efs configure IA transition
@@ -513,7 +582,7 @@
           Purpose: file-storage
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove test subnet in zone A
@@ -526,7 +595,7 @@
           Name: "{{ efs_name }}-subnet-a"
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: Remove test subnet in zone B
@@ -539,7 +608,7 @@
           Name: "{{ efs_name }}-subnet-b"
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
 
     - name: remove the VPC
@@ -549,5 +618,5 @@
         state: absent
       register: removed
       until: removed is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
