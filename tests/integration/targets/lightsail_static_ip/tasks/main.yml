@@ -32,7 +32,7 @@
           - result.static_ip.name == static_ip_name
           - result.static_ip.resource_type == 'StaticIp'
           - result.static_ip.is_attached == false
-          - result.static_ip.ip_address | ansible.utils.ipaddr
+          - result.static_ip.ip_address | ansible.utils.ipaddr == result.static_ip.ip_address
           - '"availability_zone" in result.static_ip.location'
           - '"region_name" in result.static_ip.location'
 

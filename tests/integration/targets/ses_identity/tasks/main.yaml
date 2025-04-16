@@ -48,7 +48,7 @@
       - name: assert verification_attributes.verification_token is defined
         assert:
           that:
-            - result.verification_attributes.verification_token
+            - result.verification_attributes.verification_token | length > 0
     always:
       - name: cleanup domain identity
         ses_identity:

@@ -1,4 +1,5 @@
 cloud/aws
+time=5m
 
 efs_info
 efs_tag

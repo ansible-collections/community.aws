@@ -85,7 +85,7 @@
     - name: it should return the repo but without a policy and not create or change
       assert:
         that:
-          - result.repository
+          - result.repository is defined
           - '"policy" not in result'
           - not result.created
           - not result.changed
