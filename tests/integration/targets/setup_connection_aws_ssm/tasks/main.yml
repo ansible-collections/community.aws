@@ -10,11 +10,6 @@
       session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
-
-    - name: get ARN of calling user
-      amazon.aws.aws_caller_info:
-      register: aws_caller_info
-
     - name: setup connection argments fact
       ansible.builtin.include_tasks: 'connection_args.yml'
 
