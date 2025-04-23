@@ -52,9 +52,9 @@ action_groups:
     - aws_ses_identity_policy
     - aws_ses_rule_set
     - aws_sgw_info
+    - aws_ssm_parameter_store
     - aws_step_functions_state_machine
     - aws_step_functions_state_machine_execution
-    - aws_ssm_parameter_store
     - aws_waf_condition
     - aws_waf_info
     - aws_waf_rule
