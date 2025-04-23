@@ -1,3 +1,0 @@
----
-minor_changes:
-  - aws_ssm - Move the ``aws_ssm`` connection plugin's plugin_utils into a dedicated folder (https://github.com/ansible-collections/community.aws/pull/2279).
