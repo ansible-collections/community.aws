@@ -319,7 +319,6 @@ plugin_routing:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.storagegateway_info
     aws_ssm:
-      # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.aws_ssm
     aws_ssm_parameter_store:
       # Deprecation for this alias should not *start* prior to 2024-09-01
