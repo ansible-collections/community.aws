@@ -1,5 +1,0 @@
-- hosts: localhost
-  tasks:
-    - include_role:
-        name: ../setup_connection_aws_ssm
-        tasks_from: cleanup.yml
