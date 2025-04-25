@@ -11,7 +11,7 @@ version_added: 1.0.0
 short_description: Manage key-value pairs in AWS Systems Manager Parameter Store
 description:
   - Manage key-value pairs in AWS Systems Manager (SSM) Parameter Store.
-  - Prior to release 5.0.0 this module was called C(amazon.aws.aws_ssm_parameter_store).
+  - Prior to release 5.0.0 this module was called C(community.aws.aws_ssm_parameter_store).
     The usage did not change.
 options:
   name:
