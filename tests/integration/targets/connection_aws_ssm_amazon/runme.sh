@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+echo "Running tests for ssm connection plugin......."
 PLAYBOOK_DIR=$(pwd)
 set -eux
 
