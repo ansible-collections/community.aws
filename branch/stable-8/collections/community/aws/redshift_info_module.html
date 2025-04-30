@@ -354,7 +354,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 <span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stg</span>
 <span class="w">      </span><span class="nt">stack</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redshift_user</span>
-<span class="w">  </span><span class="nt">failed_when</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">redshift_user.results</span> <span class="o">|</span> <span class="nf">length</span> <span class="o">==</span> <span class="m">0</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">failed_when</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redshift_user.results | length == 0</span>
 </pre></div>
 </div>
 </section>
