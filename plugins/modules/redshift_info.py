@@ -61,7 +61,7 @@ EXAMPLES = r"""
       env: stg
       stack: db
   register: redshift_user
-  failed_when: "{{ redshift_user.results | length == 0 }}"
+  failed_when: redshift_user.results | length == 0
 """
 
 RETURN = r"""
