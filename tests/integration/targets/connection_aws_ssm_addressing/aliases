@@ -1,4 +1,0 @@
-time=10m
-
-cloud/aws
-connection_aws_ssm

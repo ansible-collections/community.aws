@@ -197,6 +197,9 @@ action_groups:
     - wafv2_web_acl
     - wafv2_web_acl_info
 plugin_routing:
+  connection:
+    aws_ssm:
+      redirect: amazon.aws.aws_ssm
   modules:
     autoscaling_group_info:
       redirect: amazon.aws.autoscaling_group_info
