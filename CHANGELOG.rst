@@ -10,7 +10,7 @@ v9.3.0
 Release Summary
 ---------------
 
-This release includes several improvements for the ``community.aws.aws_ssm`` connection plugin in preparation for its promotion to amazon.aws and bumps version of ansible-lint to `25.1.0`.
+This release includes several improvements for the ``community.aws.aws_ssm`` connection plugin in preparation for its promotion to amazon.aws and bumps version of ansible-lint to ``25.1.0``.
 
 Minor Changes
 -------------

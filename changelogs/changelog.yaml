@@ -4140,7 +4140,7 @@ releases:
         ``ProcessManager`` classes and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2272).
       release_summary: This release includes several improvements for the ``community.aws.aws_ssm``
         connection plugin in preparation for its promotion to amazon.aws and bumps
-        version of ansible-lint to `25.1.0`.
+        version of ansible-lint to ``25.1.0``.
     fragments:
     - 20250104-refactor-connection-aws_ssm-s3-operation.yml
     - 20250326-connection_aws_ssm-refactor-session-manager.yml
