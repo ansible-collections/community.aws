@@ -33,6 +33,6 @@ jobs:
               "ansible-version": "stable-2.16"
             }
           ]
-    with:
+    
       matrix_include: "[]"
       collection_pre_install: '-r source/tests/sanity/requirements.yml'
