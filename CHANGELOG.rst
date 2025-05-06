@@ -14,7 +14,7 @@ This release includes several improvements for the ``community.aws.aws_ssm`` con
 
 Minor Changes
 -------------
-ß
+
 - Bump version of ansible-lint to 25.1.2.
 - aws_ssm - Move the ``aws_ssm`` connection plugin's plugin_utils into a dedicated folder (https://github.com/ansible-collections/community.aws/pull/2279).
 - aws_ssm - Refactor S3 operations methods for improved clarity (https://github.com/ansible-collections/community.aws/pull/2275).
