@@ -4,6 +4,41 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v10.0.0
+=======
+
+Release Summary
+---------------
+
+In this major release, the ``connection/aws_ssm`` connection plugin has been fully migrated to the ``amazon.aws`` collection (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930). Playbooks or Inventory using the Fully Qualified Collection Name (FQCN) for this connection plugin should be updated to use ``amazon.aws.aws_ssm``.
+
+Major Changes
+-------------
+
+- community.aws collection - The community.aws collection has dropped support for ``botocore<1.34.0`` and ``boto3<1.34.0``. Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/amazon.aws/pull/2426).
+
+Minor Changes
+-------------
+
+- Bump version of ``ansible-lint`` to 25.1.2 (https://github.com/ansible-collections/community.aws/pull/2295).
+- Update version of ``requires_ansible`` to ``>=2.17.0`` (https://github.com/ansible-collections/community.aws/pull/2303).
+- aws_ssm - Move the ``aws_ssm`` connection plugin's plugin_utils into a dedicated folder (https://github.com/ansible-collections/community.aws/pull/2279).
+- aws_ssm - Refactor S3 operations methods for improved clarity (https://github.com/ansible-collections/community.aws/pull/2275).
+- aws_ssm - Refactor ``connection/aws_ssm`` to add new ``TerminalManager`` class and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2270).
+- aws_ssm - Refactor ``connection/aws_ssm`` to add new ``FileTransferManager`` class and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2273).
+- aws_ssm - Refactor ``connection/aws_ssm`` to add new ``SSMSessionManager`` and ``ProcessManager`` classes and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2272).
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- The ``community.aws`` collection has dropped support for ``botocore<1.31.0`` and ``boto3<1.28.0``. Most modules will continue to work with older versions of the AWS SDK.  However, compatability with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/2195).
+- connection/aws_ssm - The connection plugin has been migrated from the ``community.aws`` collection. Playbooks or Inventory using the Fully Qualified Collection Name for this connection plugin should be updated to use ``amazon.aws.aws_ssm``.
+
+Deprecated Features
+-------------------
+
+- community.aws collection - Due to the AWS SDKs announcing the end of support for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.8 by this collection has been deprecated and will removed in release 10.0.0 (https://github.com/ansible-collections/community.aws/pull/2195).
+
 v9.2.0
 ======
 
@@ -32,11 +67,11 @@ Minor Changes
 
 - aws_ssm -  Refactor ``_init_clients`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2223).
 - aws_ssm -  Refactor ``_prepare_terminal()`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/).
-- aws_ssm -  Refactor exec_command Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
+- aws_ssm -  Refactor ``exec_command`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
+- aws_ssm - Add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
 - aws_ssm - Add the possibility to define ``aws_ssm plugin`` variable via environment variable and by default use the version found on the $PATH rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
 - dms_endpoint - Improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
 - s3_lifecycle - Support for min and max object size when applying the filter rules (https://github.com/ansible-collections/community.aws/pull/2205).
-- aws_ssm - Add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
 - various modules - Linting fixups (https://github.com/ansible-collections/community.aws/pull/2221).
 - waf_condition - Add missing options validation to filters (https://github.com/ansible-collections/community.aws/pull/2220).
 
