@@ -4,6 +4,24 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v9.3.0
+======
+
+Release Summary
+---------------
+
+This release includes several improvements for the ``community.aws.aws_ssm`` connection plugin in preparation for its promotion to amazon.aws and bumps version of ansible-lint to ``25.1.0``.
+
+Minor Changes
+-------------
+ß
+- Bump version of ansible-lint to 25.1.2.
+- aws_ssm - Move the ``aws_ssm`` connection plugin's plugin_utils into a dedicated folder (https://github.com/ansible-collections/community.aws/pull/2279).
+- aws_ssm - Refactor S3 operations methods for improved clarity (https://github.com/ansible-collections/community.aws/pull/2275).
+- aws_ssm - Refactor connection/aws_ssm to add new TerminalManager class and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2270).
+- aws_ssm - Refactor connection/aws_ssm to add new ``FileTransferManager`` class and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2273).
+- aws_ssm - Refactor connection/aws_ssm to add new ``SSMSessionManager`` and ``ProcessManager`` classes and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2272).
+
 v9.2.0
 ======
 
