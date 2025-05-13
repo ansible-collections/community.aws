@@ -31,7 +31,7 @@ this collection requires Python 3.8 or greater.
 
 Amazon has also announced the planned end of support for
 [Python less than 3.9](https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/).
-As such, support for Python less than 3.9 will be removed in a release after 2026-04-01.
+As such, support for Python less than 3.9 will be removed in a release after 2026-05-01.
 
 <!---
 ### End of Support by Python Versions:
