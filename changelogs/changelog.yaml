@@ -4180,4 +4180,4 @@ releases:
     - botocore-python.yaml
     - botocore.yml
     - migrate_aws_ssm.yml
-    release_date: '2025-05-07'
+    release_date: '2025-05-13'
