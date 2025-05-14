@@ -1,5 +1,0 @@
----
-breaking_changes:
-  - connection/aws_ssm - The connection plugin has been migrated from the ``community.aws``
-    collection. Playbooks or Inventory using the Fully Qualified Collection Name for this connection plugin
-    should be updated to use ``amazon.aws.aws_ssm``.
