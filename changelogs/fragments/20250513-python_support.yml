@@ -1,0 +1,5 @@
+breaking_changes:
+- community.aws collection - Due to the AWS SDKs announcing the end of support
+  for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/),
+  support for Python less than 3.8 by this collection has been deprecated and will be removed in release 10.0.0.
+  (https://github.com/ansible-collections/community.aws/pull/2304).
