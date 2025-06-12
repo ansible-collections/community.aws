@@ -1,0 +1,192 @@
+---
+# Integration tests for medialive_network module
+- name: Wrap MediaLive Network tests with AWS credentials
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    set_fact:
+      ansible_python_interpreter: '{{ botocore_virtualenv_interpreter }}'
+
+  block:
+    # Setup test variables
+    - name: Set up test variables
+      ansible.builtin.set_fact:
+        network_name: "{{ resource_prefix }}-network"
+        ip_pool_cidr: "10.21.21.0/24"
+        route_cidr: "0.0.0.0/0"
+        route_gateway: "10.21.21.1"
+        wait_timeout: 30
+
+    # Test network creation
+    - name: Create a MediaLive Anywhere network
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: present
+        ip_pools:
+          - cidr: "{{ ip_pool_cidr }}"
+        routes:
+          - cidr: "{{ route_cidr }}"
+            gateway: "{{ route_gateway }}"
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: create_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: create_result is not failed or 'TooManyRequestsException' not in (create_result.msg | default(''))
+
+    - name: Assert network was created successfully
+      ansible.builtin.assert:
+        that:
+          - create_result is changed
+          - create_result.network is defined
+          - create_result.network.name == network_name
+          - create_result.network.state in ['ACTIVE', 'IDLE', 'IN_USE']
+          - create_result.network.ip_pools | length == 1
+          - create_result.network.ip_pools[0].cidr == ip_pool_cidr
+          - create_result.network.routes | length == 1
+          - create_result.network.routes[0].cidr == route_cidr
+          - create_result.network.routes[0].gateway == route_gateway
+          - create_result.network.network_id is defined
+          - create_result.network.arn is defined
+        fail_msg: "Network creation failed or returned unexpected data"
+        success_msg: "Network created successfully with expected properties"
+
+    # Store network ID for later use
+    - name: Store network ID
+      ansible.builtin.set_fact:
+        network_id: "{{ create_result.network.network_id }}"
+
+    # Test idempotency
+    - name: Create the same network again (idempotency check)
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: present
+        ip_pools:
+          - cidr: "{{ ip_pool_cidr }}"
+        routes:
+          - cidr: "{{ route_cidr }}"
+            gateway: "{{ route_gateway }}"
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: idempotency_result
+
+    - name: Assert idempotency
+      ansible.builtin.assert:
+        that:
+          - not idempotency_result.changed
+          - idempotency_result.network is defined
+          - idempotency_result.network.network_id == network_id
+        fail_msg: "Idempotency check failed - module made changes when none were expected"
+        success_msg: "Idempotency check passed"
+
+    # Test retrieval by ID
+    - name: Get network by ID
+      community.aws.medialive_network_info:
+        id: "{{ network_id }}"
+      register: get_by_id_result
+
+    - name: Assert network was retrieved by ID
+      ansible.builtin.assert:
+        that:
+          - not get_by_id_result.changed
+          - get_by_id_result.network is defined
+          - get_by_id_result.network.network_id == network_id
+          - get_by_id_result.network.name == network_name
+        fail_msg: "Failed to retrieve network by ID"
+        success_msg: "Successfully retrieved network by ID"
+
+    # Test retrieval by name
+    - name: Get network by name
+      community.aws.medialive_network_info:
+        name: "{{ network_name }}"
+      register: get_by_name_result
+
+    - name: Assert network was retrieved by name
+      ansible.builtin.assert:
+        that:
+          - not get_by_name_result.changed
+          - get_by_name_result.network is defined
+          - get_by_name_result.network.network_id == network_id
+          - get_by_name_result.network.name == network_name
+        fail_msg: "Failed to retrieve network by name"
+        success_msg: "Successfully retrieved network by name"
+
+    # Test check mode
+    - name: Test check mode - attempt to delete network
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+      check_mode: true
+      register: check_mode_result
+
+    - name: Assert check mode works correctly
+      ansible.builtin.assert:
+        that:
+          - check_mode_result is changed
+          - (check_mode_result.network | default({})) == {}
+        fail_msg: "Check mode did not work as expected"
+        success_msg: "Check mode correctly simulated deletion"
+
+    # Test network deletion
+    - name: Delete the network
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: delete_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
+
+    - name: Assert network was deleted
+      ansible.builtin.assert:
+        that:
+          - delete_result is changed
+        fail_msg: "Network deletion failed"
+        success_msg: "Network deleted successfully"
+
+    # Test deletion idempotency
+    - name: Try to delete the network again (idempotency check)
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+      register: delete_idempotency_result
+
+    - name: Assert delete idempotency
+      ansible.builtin.assert:
+        that:
+          - not delete_idempotency_result.changed
+        fail_msg: "Delete idempotency check failed"
+        success_msg: "Delete idempotency check passed"
+
+  # Error handling and cleanup
+  rescue:
+    - name: Capture error
+      ansible.builtin.set_fact:
+        test_failed: true
+
+    - name: Cleanup - ensure network is deleted
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+      when: network_id is defined
+
+    - name: Fail with useful error message
+      ansible.builtin.fail:
+        msg: "MediaLive Network integration tests failed. See previous errors for details."
+      when: test_failed | default(false)
+
+  always:
+    - name: Ensure all test resources are cleaned up
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+        wait: false  # Don't wait in cleanup to speed up test completion
+      ignore_errors: true
+      when: network_id is defined

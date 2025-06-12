@@ -1,0 +1,3 @@
+minor_changes:
+  - medialive_cluster_info - New module for gathering info about AWS MediaLive Anywhere clusters
+  - medialive_cluster - New module for managing AWS MediaLive Anywhere clusters
