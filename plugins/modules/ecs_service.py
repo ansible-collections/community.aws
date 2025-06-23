@@ -817,6 +817,7 @@ class EcsServiceManager:
         tags,
         propagate_tags,
         enable_execute_command,
+        availability_zone_rebalancing,
     ):
         params = dict(
             cluster=cluster_name,
@@ -840,6 +841,8 @@ class EcsServiceManager:
             params["healthCheckGracePeriodSeconds"] = health_check_grace_period_seconds
         if service_registries:
             params["serviceRegistries"] = service_registries
+        if availability_zone_rebalancing:
+            params["availabilityZoneRebalancing"] = availability_zone_rebalancing
 
         # filter placement_constraint and left only those where value is not None
         # use-case: `distinctInstance` type should never contain `expression`, but None will fail `str` type validation
@@ -887,6 +890,7 @@ class EcsServiceManager:
         purge_placement_constraints,
         purge_placement_strategy,
         enable_execute_command,
+        availability_zone_rebalancing,
     ):
         params = dict(
             cluster=cluster_name,
@@ -922,6 +926,8 @@ class EcsServiceManager:
         # desired count is not required if scheduling strategy is daemon
         if desired_count is not None:
             params["desiredCount"] = desired_count
+        if availability_zone_rebalancing:
+            params["availabilityZoneRebalancing"] = availability_zone_rebalancing
         if enable_execute_command is not None:
             params["enableExecuteCommand"] = enable_execute_command
 

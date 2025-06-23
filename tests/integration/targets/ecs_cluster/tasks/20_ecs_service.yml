@@ -61,6 +61,42 @@
       - ecs_service.service.deploymentConfiguration.deploymentCircuitBreaker.enable
       - ecs_service.service.deploymentConfiguration.deploymentCircuitBreaker.rollback
 
+- name: create ECS service definition with rebalancing disabled
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    desired_count: 1
+    availability_zone_rebalancing: DISABLED
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    placement_strategy: "{{ ecs_service_placement_strategy }}"
+    placement_constraints:
+      - type: distinctInstance
+    health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
+    load_balancers:
+      - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+        containerName: "{{ ecs_task_name }}"
+        containerPort: "{{ ecs_task_container_port }}"
+    role: "{{ ecs_service_role_name }}"
+  register: ecs_service
+
+- name: check that ECS service creation changed
+  assert:
+    that:
+      - ecs_service.changed
+
+- name: check that placement constraint has been applied
+  assert:
+    that:
+      - "ecs_service.service.availabilityZoneRebalancing == 'DISABLED'"
+
+- name: check that ECS service was created with deployment_circuit_breaker
+  assert:
+    that:
+      - ecs_service.service.deploymentConfiguration.deploymentCircuitBreaker.enable
+      - ecs_service.service.deploymentConfiguration.deploymentCircuitBreaker.rollback
+
 - name: create same ECS service definition (should not change)
   ecs_service:
     state: present
