@@ -63,6 +63,11 @@ options:
           - This parameter is required when I(state=present).
         required: false
         type: int
+    availability_zone_rebalancing:
+        description:
+          - Whether this service should be rebalanced
+        required: false
+        type: str
     client_token:
         description:
           - Unique, case-sensitive identifier you provide to ensure the idempotency of the request. Up to 32 ASCII characters are allowed.
