@@ -1,0 +1,16 @@
+- name: Run identitystore tests
+  module_defaults:
+    community.aws.identitystore_user:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+      identity_store_id: |-
+        {{
+          aws_identity_store_id |
+          mandatory("This test requires that you set up an identity_store_id.")
+        }}
+
+  block:
+    - name: Test the identitystore_user module
+      include_tasks: identitystore_user.yml

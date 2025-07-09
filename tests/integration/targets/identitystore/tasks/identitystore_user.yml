@@ -1,0 +1,285 @@
+- name: User creation under check mode
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: John Doe
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  check_mode: true
+  register: new_user_creation_check_mode
+
+- name: Assert that we looked for the user without actually creating it
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:DescribeUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - new_user_creation_check_mode is changed
+  vars:
+    resource_actions: "{{ new_user_creation_check_mode.resource_actions }}"
+
+- name: User creation
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: John Doe
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  register: new_user_creation
+
+- name: Assert that we looked for and created the user
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:CreateUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:DescribeUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - new_user_creation is changed
+  vars:
+    resource_actions: "{{ new_user_creation.resource_actions }}"
+
+- name: User creation again (idempotency) under check mode
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: John Doe
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  check_mode: true
+  register: old_user_creation_check_mode
+
+- name: Assert that we looked for the user without creating or changing it
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DescribeUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - old_user_creation_check_mode is not changed
+  vars:
+    resource_actions: "{{ old_user_creation_check_mode.resource_actions }}"
+
+- name: User creation again (idempotency)
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: John Doe
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  register: old_user_creation
+
+- name: Assert that we looked for the user without creating or changing it
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DescribeUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - old_user_creation is not changed
+  vars:
+    resource_actions: "{{ old_user_creation.resource_actions }}"
+
+- name: User modification under check mode
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: Johnny
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  check_mode: true
+  register: new_modify_check_mode
+
+- name: Assert that we would have changed some attribute
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DescribeUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - new_modify_check_mode is changed
+  vars:
+    resource_actions: "{{ new_modify_check_mode.resource_actions }}"
+
+- name: User modification
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: Johnny
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  register: new_modify
+
+- name: Assert that we have changed some attribute
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DescribeUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:UpdateUser" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - new_modify is changed
+  vars:
+    resource_actions: "{{ new_modify.resource_actions }}"
+
+- name: User modification again (idempotency) under check mode
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: Johnny
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  check_mode: true
+  register: old_modify_check_mode
+
+- name: Assert that we would not have changed any attribute
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DescribeUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - old_modify_check_mode is not changed
+  vars:
+    resource_actions: "{{ old_modify_check_mode.resource_actions }}"
+
+- name: User modification again (idempotency)
+  community.aws.identitystore_user:
+    state: present
+    user_name: john.doe@example.com
+    name:
+      family_name: Doe
+      given_name: John
+    display_name: Johnny
+    emails:
+      - value: john.doe@example.com
+        type: work
+        primary: true
+  register: old_modify
+
+- name: Assert that we have not changed any attribute
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DescribeUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - old_modify is not changed
+  vars:
+    resource_actions: "{{ old_modify.resource_actions }}"
+
+- name: User deletion under check mode
+  community.aws.identitystore_user:
+    state: absent
+    user_name: john.doe@example.com
+  check_mode: true
+  register: new_delete_check_mode
+
+- name: Assert that we would have deleted the user
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:DescribeUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - new_delete_check_mode is changed
+  vars:
+    resource_actions: "{{ new_delete_check_mode.resource_actions }}"
+
+- name: User deletion
+  community.aws.identitystore_user:
+    state: absent
+    user_name: john.doe@example.com
+  register: new_delete
+
+- name: Assert that we have deleted the user
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:DeleteUser" in resource_actions'
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DescribeUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - new_delete is changed
+  vars:
+    resource_actions: "{{ new_delete.resource_actions }}"
+
+- name: User deletion (non-existent resource) under check mode
+  community.aws.identitystore_user:
+    state: absent
+    user_name: john.doe@example.com
+  check_mode: true
+  register: old_delete_check_mode
+
+- name: Assert that we have deleted the user
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:DescribeUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - old_delete_check_mode is not changed
+  vars:
+    resource_actions: "{{ old_delete_check_mode.resource_actions }}"
+
+- name: User deletion (non-existent resource)
+  community.aws.identitystore_user:
+    state: absent
+    user_name: john.doe@example.com
+  register: old_delete
+
+- name: Assert that we have deleted the user
+  ansible.builtin.assert:
+    that:
+      - '"identitystore:GetUserId" in resource_actions'
+      - '"identitystore:CreateUser" not in resource_actions'
+      - '"identitystore:DeleteUser" not in resource_actions'
+      - '"identitystore:DescribeUser" not in resource_actions'
+      - '"identitystore:UpdateUser" not in resource_actions'
+      - old_delete is not changed
+  vars:
+    resource_actions: "{{ old_delete.resource_actions }}"
