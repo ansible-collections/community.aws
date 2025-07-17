@@ -14,6 +14,7 @@ description:
   - Prior to release 5.0.0 this module was called C(community.aws.aws_acm_info).
     The usage did not change.
   - Requires the IAM permissions 'acm:ListCertificates', 'acm:DescribeCertificate', 'acm:GetCertificate', 'acm:ListTagsForCertificate'
+  - test
 options:
   certificate_arn:
     description:
