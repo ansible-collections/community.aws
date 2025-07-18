@@ -225,18 +225,18 @@ node:
             - For information about how physical cards are identified on your node hardware, see the documentation for your node hardware. 
             - The numbering always starts at 1.
           type: int
-          required: true
+          returned: success
         channel_number:
           description: 
             - A number that uniquely identifies a port on the card. 
             - This must be an SDI port (not a timecode port, for example). 
             - For information about how ports are identified on physical cards, see the documentation for your node hardware.
           type: int
-          required: true
+          returned: success
         sdi_source:
           description: 
             - The ID of a SDI source streaming on the given SDI capture card port.
-          required: true
+          returned: success
           type: str
     state:
       description: >
