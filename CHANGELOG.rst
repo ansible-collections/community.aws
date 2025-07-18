@@ -91,8 +91,8 @@ Minor Changes
 - ec2_transit_gateway_vpc_attachment - Modify doumentation and refactor to adhere to coding guidelines (https://github.com/ansible-collections/community.aws/pull/2157).
 - ec2_vpc_egress_igw - Add the possibility to update/add tags on Egress only internet gateway (https://github.com/ansible-collections/community.aws/pull/2152).
 - ec2_vpc_egress_igw - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` util (https://github.com/ansible-collections/community.aws/pull/2152).
-- ec2_vpc_nacl - Refactor module to use shared code from `amazon.aws.plugins.module_utils.ec2` (https://github.com/ansible-collections/community.aws/pull/2159).
-- ec2_vpc_nacl_info - Refactor module to use shared code from `amazon.aws.plugins.module_utils.ec2` (https://github.com/ansible-collections/community.aws/pull/2159).
+- ec2_vpc_nacl - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` (https://github.com/ansible-collections/community.aws/pull/2159).
+- ec2_vpc_nacl_info - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` (https://github.com/ansible-collections/community.aws/pull/2159).
 - ec2_vpc_peer - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` (https://github.com/ansible-collections/community.aws/pull/2153).
 - ec2_vpc_peering_info - Refactor module to use shared code from ``amazon.aws.plugins.module_utils.ec2`` (https://github.com/ansible-collections/community.aws/pull/2153).
 - ec2_vpc_vgw - Fix call to parent static method in class ``VGWRetry`` (https://github.com/ansible-collections/community.aws/pull/2140).
