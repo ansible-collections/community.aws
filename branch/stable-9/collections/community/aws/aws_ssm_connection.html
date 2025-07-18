@@ -4,11 +4,11 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.15.0" name="antsibull-docs" />
+<meta content="2.18.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.aws_ssm connection – connect to EC2 instances via AWS Systems Manager &mdash; Ansible collections  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5707b69d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=41de9001" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/ansible.css?v=c5b67dd2" />
       <link rel="stylesheet" type="text/css" href="../../../_static/antsibull-minimal.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd-ethical-ads.css?v=289b023e" />
@@ -135,7 +135,7 @@
 <h1>community.aws.aws_ssm connection – connect to EC2 instances via AWS Systems Manager<a class="headerlink" href="#community-aws-aws-ssm-connection-connect-to-ec2-instances-via-aws-systems-manager" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This connection plugin is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 9.0.0-dev0).</p>
+<p>This connection plugin is part of the <a class="reference external" href="https://galaxy.ansible.com/ui/repo/published/community/aws/">community.aws collection</a> (version 9.3.0).</p>
 <p>It is not included in <code class="docutils literal notranslate"><span class="pre">ansible-core</span></code>.
 To check whether it is installed, run <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">list</span></code>.</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
@@ -260,9 +260,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <a class="ansibleOptionLink" href="#parameter-plugin" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>This defines the location of the session-manager-plugin binary.</p>
-<p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;/usr/local/bin/session-manager-plugin&quot;</span></code></p>
+<p>Support for environment variable was added in version 9.1.0.</p>
+<p>The plugin will first check the <code class="ansible-value docutils literal notranslate"><span class="pre">'/usr/local/bin/session-manager-plugin'</span></code> as the default path of the SSM plugin if this does not exist, it will find the session-manager-plugin from the PATH environment variable. Added in version 9.1.0.</p>
 <p class="ansible-option-line"><strong class="ansible-option-configuration">Configuration:</strong></p>
 <ul class="simple">
+<li><p>Environment variable: <span class="target" id="index-1"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_SESSION_MANAGER_PLUGIN"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_SESSION_MANAGER_PLUGIN</span></code></a></p></li>
 <li><p>Variable: ansible_aws_ssm_plugin</p></li>
 </ul>
 </div></td>
@@ -275,7 +277,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <td><div class="ansible-option-cell"><p>Sets AWS profile to use.</p>
 <p class="ansible-option-line"><strong class="ansible-option-configuration">Configuration:</strong></p>
 <ul class="simple">
-<li><p>Environment variable: <span class="target" id="index-1"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_PROFILE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code></a></p></li>
+<li><p>Environment variable: <span class="target" id="index-2"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_PROFILE"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code></a></p></li>
 <li><p>Variable: ansible_aws_ssm_profile</p></li>
 </ul>
 </div></td>
@@ -300,8 +302,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;us-east-1&quot;</span></code></p>
 <p class="ansible-option-line"><strong class="ansible-option-configuration">Configuration:</strong></p>
 <ul class="simple">
-<li><p>Environment variable: <span class="target" id="index-2"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_REGION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_REGION</span></code></a></p></li>
-<li><p>Environment variable: <span class="target" id="index-3"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_DEFAULT_REGION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_DEFAULT_REGION</span></code></a></p></li>
+<li><p>Environment variable: <span class="target" id="index-3"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_REGION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_REGION</span></code></a></p></li>
+<li><p>Environment variable: <span class="target" id="index-4"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_DEFAULT_REGION"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_DEFAULT_REGION</span></code></a></p></li>
 <li><p>Variable: ansible_aws_ssm_region</p></li>
 </ul>
 </div></td>
@@ -333,7 +335,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <td><div class="ansible-option-cell"><p>The STS secret key to use when connecting via session-manager.</p>
 <p class="ansible-option-line"><strong class="ansible-option-configuration">Configuration:</strong></p>
 <ul class="simple">
-<li><p>Environment variable: <span class="target" id="index-4"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_SECRET_ACCESS_KEY"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code></a></p></li>
+<li><p>Environment variable: <span class="target" id="index-5"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_SECRET_ACCESS_KEY"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code></a></p></li>
 <li><p>Variable: ansible_aws_ssm_secret_access_key</p></li>
 </ul>
 </div></td>
@@ -346,7 +348,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <td><div class="ansible-option-cell"><p>The STS session token to use when connecting via session-manager.</p>
 <p class="ansible-option-line"><strong class="ansible-option-configuration">Configuration:</strong></p>
 <ul class="simple">
-<li><p>Environment variable: <span class="target" id="index-5"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_SESSION_TOKEN"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code></a></p></li>
+<li><p>Environment variable: <span class="target" id="index-6"></span><a class="reference internal" href="../../environment_variables.html#envvar-AWS_SESSION_TOKEN"><code class="xref std std-envvar docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code></a></p></li>
 <li><p>Variable: ansible_aws_ssm_session_token</p></li>
 </ul>
 </div></td>
@@ -532,6 +534,38 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <span class="w">      </span><span class="nt">yum</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+
+<span class="nn">---</span>
+<span class="c1"># Execution: ansible-playbook play.yaml -i ssm_inventory.ini</span>
+<span class="c1"># =====================================================</span>
+<span class="c1"># ssm_inventory.ini</span>
+<span class="c1"># [all]</span>
+<span class="c1"># linux ansible_aws_ssm_instance_id=i-01234567829abcdef ansible_aws_ssm_region=us-east-1</span>
+
+<span class="c1"># [all:vars]</span>
+<span class="c1"># ansible_connection=community.aws.aws_ssm</span>
+<span class="c1"># ansible_python_interpreter=/usr/bin/python3</span>
+<span class="c1"># local_tmp=/tmp/ansible-local-ssm-0123456</span>
+<span class="c1"># ansible_aws_ssm_bucket_name=my-test-bucket</span>
+<span class="c1"># ansible_aws_ssm_s3_addressing_style=virtual</span>
+<span class="c1"># -----------------------</span>
+<span class="c1"># Transfer file and run script on remote host</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Transfer file and Run script into SSM manage node</span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="w">  </span><span class="nt">gather_facts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create shell script</span>
+<span class="w">      </span><span class="nt">ansible.builtin.copy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0755&#39;</span>
+<span class="w">        </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/tmp/date.sh&#39;</span>
+<span class="w">        </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">#!/usr/bin/env bash</span>
+<span class="w">          </span><span class="no">date</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Execute script from remote host</span>
+<span class="w">      </span><span class="nt">ansible.builtin.shell</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cmd</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/tmp/date.sh&#39;</span>
 </pre></div>
 </div>
 <section id="authors">
