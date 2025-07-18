@@ -26,14 +26,6 @@ options:
       - The ID of the cluster.
     required: true
     type: str
-  aws_access_key:
-    description:
-      - AWS access key ID.
-    type: str
-  aws_secret_key:
-    description:
-      - AWS secret access key.
-    type: str
   region:
     description:
       - The AWS region to use.
