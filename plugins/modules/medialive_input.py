@@ -79,7 +79,6 @@ options:
   input_security_groups:
     description:
       - A list of security groups referenced by IDs to attach to the input
-      - Mutually exclusive with O(input_vpc_request)
     type: list
     elements: str
   media_connect_flows:
