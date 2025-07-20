@@ -230,6 +230,14 @@ EXAMPLES = r"""
         storage_class: standard_ia
       - transition_days: 90
         storage_class: glacier
+
+- name: Configure cleanup policies to delete incomplete multipart uploads after 30 days
+  community.aws.s3_lifecycle:
+    name: mybucket
+    prefix: largefiles/
+    abort_incomplete_multipart_upload_days: 30
+    expire_object_delete_marker: true
+        
 """
 
 import datetime
