@@ -24,7 +24,7 @@
     # Create the required IAM role for MediaLive Anywhere nodes
     - name: Create MediaLive Anywhere node IAM role
       amazon.aws.iam_role:
-        name: MLANodeRole-Test
+        name: ansible-test-MLANodeRole
         assume_role_policy_document: |
           {
             "Version": "2012-10-17",
