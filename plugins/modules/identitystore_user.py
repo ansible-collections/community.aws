@@ -114,18 +114,11 @@ user_id:
   returned: success
 """
 
-from ansible.module_utils.common.dict_transformations import (
-    snake_dict_to_camel_dict,
-)
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import (
-    is_boto3_error_code,
-)
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import (
-    AnsibleAWSError,
-)
-from ansible_collections.amazon.aws.plugins.module_utils.modules import (
-    AnsibleAWSModule,
-)
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 
 
 def flatten_dict(nested_dict):
@@ -133,7 +126,7 @@ def flatten_dict(nested_dict):
     for key, value in nested_dict.items():
         if isinstance(value, dict):
             for inner_key, inner_value in flatten_dict(value).items():
-                flat[f'{key}.{inner_key}'] = inner_value
+                flat[f"{key}.{inner_key}"] = inner_value
         else:
             flat[key] = value
     return flat
@@ -141,59 +134,49 @@ def flatten_dict(nested_dict):
 
 def create_user(connection, module, user_attributes):
     args = {
-        'identity_store_id': module.params.get("identity_store_id"),
+        "identity_store_id": module.params.get("identity_store_id"),
         **user_attributes,
     }
-    response = connection.create_user(
-        **snake_dict_to_camel_dict(args, capitalize_first=True)
-    )
+    response = connection.create_user(**snake_dict_to_camel_dict(args, capitalize_first=True))
     module.exit_json(
         changed=True,
-        user_id=response['UserId'],
-        identity_store_id=response['IdentityStoreId'],
+        user_id=response["UserId"],
+        identity_store_id=response["IdentityStoreId"],
     )
 
 
 def update_user(connection, module, user_id, user_attributes):
-    response = connection.describe_user(
-        IdentityStoreId=module.params.get("identity_store_id"), UserId=user_id
-    )
+    response = connection.describe_user(IdentityStoreId=module.params.get("identity_store_id"), UserId=user_id)
     if all(
         value == response[key]
-        for key, value in snake_dict_to_camel_dict(
-            user_attributes, capitalize_first=True
-        ).items()
+        for key, value in snake_dict_to_camel_dict(user_attributes, capitalize_first=True).items()
     ):
         module.exit_json(
             changed=False,
             user_id=user_id,
-            identity_store_id=response['IdentityStoreId'],
+            identity_store_id=response["IdentityStoreId"],
         )
     elif module.check_mode:
         module.exit_json(
             changed=True,
             user_id=user_id,
-            identity_store_id=response['IdentityStoreId'],
+            identity_store_id=response["IdentityStoreId"],
         )
     else:
         args = {
-            'identity_store_id': module.params.get("identity_store_id"),
-            'user_id': user_id,
-            'operations': [
-                {'attribute_path': key, 'attribute_value': value}
-                for key, value in snake_dict_to_camel_dict(
-                    flatten_dict(user_attributes)
-                ).items()
+            "identity_store_id": module.params.get("identity_store_id"),
+            "user_id": user_id,
+            "operations": [
+                {"attribute_path": key, "attribute_value": value}
+                for key, value in snake_dict_to_camel_dict(flatten_dict(user_attributes)).items()
             ],
         }
 
-        connection.update_user(
-            **snake_dict_to_camel_dict(args, capitalize_first=True)
-        )
+        connection.update_user(**snake_dict_to_camel_dict(args, capitalize_first=True))
         module.exit_json(
             changed=True,
-            user_id=args['user_id'],
-            identity_store_id=args['identity_store_id'],
+            user_id=args["user_id"],
+            identity_store_id=args["identity_store_id"],
         )
 
 
@@ -201,30 +184,23 @@ def create_or_update_user(connection, module):
     identity_store_id = module.params.get("identity_store_id")
     user_name = module.params.get("user_name")
 
-    user_attributes = {
-        path: module.params.get(path)
-        for path in ('user_name', 'display_name', 'emails', 'name')
-    }
-    user_attributes = {
-        key: value
-        for key, value in user_attributes.items()
-        if value is not None
-    }
+    user_attributes = {path: module.params.get(path) for path in ("user_name", "display_name", "emails", "name")}
+    user_attributes = {key: value for key, value in user_attributes.items() if value is not None}
 
     try:
         user_id = connection.get_user_id(
             IdentityStoreId=identity_store_id,
             AlternateIdentifier={
-                'UniqueAttribute': {
-                    'AttributePath': 'userName',
-                    'AttributeValue': user_name,
+                "UniqueAttribute": {
+                    "AttributePath": "userName",
+                    "AttributeValue": user_name,
                 }
             },
         )
         update_user(
             connection=connection,
             module=module,
-            user_id=user_id['UserId'],
+            user_id=user_id["UserId"],
             user_attributes=user_attributes,
         )
     except is_boto3_error_code("ResourceNotFoundException"):
@@ -250,16 +226,16 @@ def destroy_user(connection, module):
         user_id = connection.get_user_id(
             IdentityStoreId=identity_store_id,
             AlternateIdentifier={
-                'UniqueAttribute': {
-                    'AttributePath': 'userName',
-                    'AttributeValue': user_name,
+                "UniqueAttribute": {
+                    "AttributePath": "userName",
+                    "AttributeValue": user_name,
                 }
             },
         )
         if not module.check_mode:
             connection.delete_user(
                 IdentityStoreId=identity_store_id,
-                UserId=user_id['UserId'],
+                UserId=user_id["UserId"],
             )
         module.exit_json(changed=True, identity_store_id=identity_store_id)
     except is_boto3_error_code("ResourceNotFoundException"):
