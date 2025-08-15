@@ -1,3 +1,0 @@
-minor_changes:
-  - medialive_network_info - New module for gathering info about AWS MediaLive Anywhere networks
-  - medialive_network - New module for managing AWS MediaLive Anywhere networks

@@ -1,3 +1,0 @@
-minor_changes:
-  - medialive_sdi_source - New module for managing AWS MediaLive Anywhere SDI sources
-  - medialive_sdi_source_info - New module for gathering info about AWS MediaLive Anywhere SDI sources
