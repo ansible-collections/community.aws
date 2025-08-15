@@ -18,12 +18,12 @@ author:
 options:
   cdi_input_specification:
     description:
-      - Specification of CDI inputs for this channel
+      - Specification of CDI inputs for this channel.
     type: dict
     suboptions:
       resolution:
         description:
-          - Maximum CDI input resolution
+          - Maximum CDI input resolution.
         type: str
         choices: ['SD', 'HD', 'FHD', 'UHD']
   channel_class:
@@ -80,19 +80,19 @@ options:
         suboptions:
           password_param:
             description:
-              - key used to extract the password from EC2 Parameter store
+              - key used to extract the password from EC2 Parameter store.
             type: str
           stream_name:
             description:
-              - Stream name for RTMP destinations (URLs of type rtmp://)
+              - Stream name for RTMP destinations (URLs of type rtmp://).
             type: str
           url:
             description:
-              - A URL specifying a destination
+              - A URL specifying a destination.
             type: str
           username:
             description:
-              - username for destination
+              - username for destination.
             type: str
       srt_settings:
         description:
@@ -102,15 +102,15 @@ options:
         suboptions:
           encryption_passphrase_secret_arn:
             description:
-              - Arn used to extract the password from Secrets Manager
+              - Arn used to extract the password from Secrets Manager.
             type: str
           stream_id:
             description:
-              - Stream id for SRT destinations (URLs of type srt://)
+              - Stream id for SRT destinations (URLs of type srt://).
             type: str
           url:
             description:
-              - A URL specifying a destination
+              - A URL specifying a destination.
             type: str
       logical_interface_names:
         description:
@@ -120,12 +120,12 @@ options:
         elements: str
   encoder_settings:
     description:
-      - Encoder Settings
+      - Encoder Settings.
     type: dict
     suboptions:
       audio_descriptions:
         description:
-          - Placeholder documentation for __listOfAudioDescription
+          - Placeholder documentation for __listOfAudioDescription.
         type: list
         elements: dict
         suboptions:
@@ -168,17 +168,17 @@ options:
             choices: ['FOLLOW_INPUT', 'USE_CONFIGURED']
           audio_watermarking_settings:
             description:
-              - Settings to configure one or more solutions that insert audio watermarks in the audio encode
+              - Settings to configure one or more solutions that insert audio watermarks in the audio encode.
             type: dict
             suboptions:
               nielsen_watermarks_settings:
                 description:
-                  - Settings to configure Nielsen Watermarks in the audio encode
+                  - Settings to configure Nielsen Watermarks in the audio encode.
                 type: dict
                 suboptions:
                   nielsen_cbet_settings:
                     description:
-                      - Complete these fields only if you want to insert watermarks of type Nielsen CBET
+                      - Complete these fields only if you want to insert watermarks of type Nielsen CBET.
                     type: dict
                     suboptions:
                       cbet_check_digit_string:
@@ -192,11 +192,12 @@ options:
                         choices: ['DISABLED', 'ENABLED']
                       csid:
                         description:
-                          - Enter the CBET Source ID (CSID) to use in the watermark
+                          - Enter the CBET Source ID (CSID) to use in the watermark.
                         type: str
               nielsen_distribution_type:
                 description:
-                  - Choose the distribution types that you want to assign to the watermarks - PROGRAM_CONTENT or FINAL_DISTRIBUTOR
+                  - Choose the distribution types that you want to assign to the watermarks.
+                  - PROGRAM_CONTENT or FINAL_DISTRIBUTOR.
                 type: str
                 choices: ['FINAL_DISTRIBUTOR', 'PROGRAM_CONTENT']
               nielsen_naes_ii_nw_settings:
@@ -206,15 +207,15 @@ options:
                 suboptions:
                   check_digit_string:
                     description:
-                      - Enter the check digit string for the watermark
+                      - Enter the check digit string for the watermark.
                     type: str
                   sid:
                     description:
-                      - Enter the Nielsen Source ID (SID) to include in the watermark
+                      - Enter the Nielsen Source ID (SID) to include in the watermark.
                     type: float
                   timezone:
                     description:
-                      - Choose the timezone for the time stamps in the watermark. If not provided, the timestamps will be in Coordinated Universal Time (UTC)
+                      - Choose the timezone for the time stamps in the watermark. If not provided, the timestamps will be in Coordinated Universal Time (UTC).
                     type: str
                     choices:
                       - 'AMERICA_PUERTO_RICO'
@@ -451,7 +452,7 @@ options:
                       - 'SPEECH'
                   lfe_control:
                     description:
-                      - When encoding 3/2 audio, setting to lfe enables the LFE channel
+                      - When encoding 3/2 audio, setting to lfe enables the LFE channel.
                     type: str
                     choices: ['LFE', 'NO_LFE']
                   lfe_filter:
@@ -525,11 +526,11 @@ options:
                     type: float
               pass_through_settings:
                 description:
-                  - Pass Through Settings
+                  - Pass Through Settings.
                 type: dict
               wav_settings:
                 description:
-                  - Wav Settings
+                  - Wav Settings.
                 type: dict
                 suboptions:
                   bit_depth:
@@ -638,7 +639,7 @@ options:
             suboptions:
               password_param:
                 description:
-                  - key used to extract the password from EC2 Parameter store
+                  - key used to extract the password from EC2 Parameter store.
                 type: str
               uri:
                 description:
@@ -678,7 +679,7 @@ options:
                     type: int
                   password_param:
                     description:
-                      - Documentation update needed
+                      - Documentation update needed.
                     type: str
                   pois_endpoint:
                     description:
@@ -686,7 +687,7 @@ options:
                     type: str
                   username:
                     description:
-                      - Documentation update needed
+                      - Documentation update needed.
                     type: str
                   zone_identity:
                     description:
@@ -703,12 +704,12 @@ options:
                     type: int
                   no_regional_blackout_flag:
                     description:
-                      - When set to ignore, Segment Descriptors with noRegionalBlackoutFlag set to 0 will no longer trigger blackouts or Ad Avail slates
+                      - When set to ignore, Segment Descriptors with noRegionalBlackoutFlag set to 0 will no longer trigger blackouts or Ad Avail slates.
                     type: str
                     choices: ['FOLLOW', 'IGNORE']
                   web_delivery_allowed_flag:
                     description:
-                      - When set to ignore, Segment Descriptors with webDeliveryAllowedFlag set to 0 will no longer trigger blackouts or Ad Avail slates
+                      - When set to ignore, Segment Descriptors with webDeliveryAllowedFlag set to 0 will no longer trigger blackouts or Ad Avail slates.
                     type: str
                     choices: ['FOLLOW', 'IGNORE']
               scte35_time_signal_apos:
@@ -722,12 +723,12 @@ options:
                     type: int
                   no_regional_blackout_flag:
                     description:
-                      - When set to ignore, Segment Descriptors with noRegionalBlackoutFlag set to 0 will no longer trigger blackouts or Ad Avail slates
+                      - When set to ignore, Segment Descriptors with noRegionalBlackoutFlag set to 0 will no longer trigger blackouts or Ad Avail slates.
                     type: str
                     choices: ['FOLLOW', 'IGNORE']
                   web_delivery_allowed_flag:
                     description:
-                      - When set to ignore, Segment Descriptors with webDeliveryAllowedFlag set to 0 will no longer trigger blackouts or Ad Avail slates
+                      - When set to ignore, Segment Descriptors with webDeliveryAllowedFlag set to 0 will no longer trigger blackouts or Ad Avail slates.
                     type: str
                     choices: ['FOLLOW', 'IGNORE']
           scte35_segmentation_scope:
@@ -749,7 +750,7 @@ options:
             suboptions:
               password_param:
                 description:
-                  - key used to extract the password from EC2 Parameter store
+                  - key used to extract the password from EC2 Parameter store.
                 type: str
               uri:
                 description:
@@ -757,7 +758,7 @@ options:
                 type: str
               username:
                 description:
-                  - Documentation update needed
+                  - Documentation update needed.
                 type: str
           network_end_blackout:
             description:
@@ -771,7 +772,7 @@ options:
             suboptions:
               password_param:
                 description:
-                  - key used to extract the password from EC2 Parameter store
+                  - key used to extract the password from EC2 Parameter store.
                 type: str
               uri:
                 description:
@@ -792,7 +793,7 @@ options:
             choices: ['DISABLED', 'ENABLED']
       caption_descriptions:
         description:
-          - Settings for caption decriptions
+          - Settings for caption decriptions.
         type: list
         elements: dict
         suboptions:
@@ -812,11 +813,11 @@ options:
             suboptions:
               arib_destination_settings:
                 description:
-                  - Arib Destination Settings
+                  - Arib Destination Settings.
                 type: dict
               burn_in_destination_settings:
                 description:
-                  - Burn In Destination Settings
+                  - Burn In Destination Settings.
                 type: dict
                 suboptions:
                   alignment:
@@ -840,7 +841,7 @@ options:
                     suboptions:
                       password_param:
                         description:
-                          - key used to extract the password from EC2 Parameter store
+                          - key used to extract the password from EC2 Parameter store.
                         type: str
                       uri:
                         description:
@@ -1148,7 +1149,7 @@ options:
               - 'DVBDASH_7_CLEAN_FEED'
       feature_activations:
         description:
-          - Feature Activations
+          - Feature Activations.
         type: dict
         suboptions:
           input_prepare_schedule_actions:
@@ -1182,7 +1183,7 @@ options:
             suboptions:
               black_frame_msec:
                 description:
-                  - Documentation update needed
+                  - Documentation update needed.
                 type: int
               input_loss_image_color:
                 description:
