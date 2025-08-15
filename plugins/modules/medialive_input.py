@@ -10,9 +10,9 @@ short_description: Manage AWS MediaLive Anywhere inputs
 version_added: 10.1.0
 description:
   - A module for creating, updating and deleting AWS MediaLive inputs.
-  - Requires boto3 >= 1.37.30
+  - Requires boto3 >= 1.37.34
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   name:
     description:
@@ -362,13 +362,9 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    """A personalized exception for this module"""
-    pass
 
 class MediaLiveInputManager:
     """Manage AWS MediaLive Anywhere inputs"""
@@ -426,13 +422,6 @@ class MediaLiveInputManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             raise MedialiveAnsibleAWSError(message='The provided sdi_source does not exist')
 
-    def validate_input_network_location(self, location: str, input_type: str):
-        """
-        Validates the following:
-            * if  input_network_location 
-        """
-        pass
-
     def get_input_by_name(self, name: str):
         """
         Find a input by name
@@ -448,7 +437,7 @@ class MediaLiveInputManager:
                     if input.get('Name') == name:
                         self.get_input_by_id(input.get('Id'))
                         return
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive Input',
                 exception=e

@@ -10,9 +10,9 @@ short_description: Gather MediaLive Anywhere input info
 version_added: 10.1.0
 description:
   - A module for gathering information about AWS MediaLive inputs
-  - Requires boto3 >= 1.37.30
+  - Requires boto3 >= 1.37.34
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   name:
     description:
@@ -53,17 +53,11 @@ try:
 except ImportError:
     pass # caught by AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
-from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    """A personalized exception for this module"""
-    pass
 
 class MediaLiveInputGetter:
     """Gather info about AWS MediaLive Anywhere Inputs"""

@@ -61,8 +61,6 @@
         routes:
           - cidr: "{{ route_cidr }}"
             gateway: "{{ route_gateway }}"
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: network_result
       retries: 3  # Add retries for API throttling resilience
       delay: 5
@@ -241,8 +239,6 @@
       community.aws.medialive_network:
         name: "{{ network_name }}"
         state: absent
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       when: network_id is defined
       ignore_errors: true
 
@@ -264,7 +260,6 @@
       community.aws.medialive_network:
         name: "{{ network_name }}"
         state: absent
-        wait: true
       ignore_errors: true
       when: network_id is defined
 
@@ -286,7 +281,6 @@
       community.aws.medialive_network:
         name: "{{ network_name }}"
         state: absent
-        wait: true
       ignore_errors: true
       when: network_id is defined
 

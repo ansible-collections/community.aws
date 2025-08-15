@@ -18,7 +18,6 @@
         ip_pool_cidr: "10.21.21.0/24"
         route_cidr: "0.0.0.0/0"
         route_gateway: "10.21.21.1"
-        wait_timeout: 30
 
     # Test network creation
     - name: Create a MediaLive Anywhere network
@@ -30,8 +29,6 @@
         routes:
           - cidr: "{{ route_cidr }}"
             gateway: "{{ route_gateway }}"
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: create_result
       retries: 3  # Add retries for API throttling resilience
       delay: 5
@@ -69,8 +66,6 @@
         routes:
           - cidr: "{{ route_cidr }}"
             gateway: "{{ route_gateway }}"
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: idempotency_result
 
     - name: Assert idempotency
@@ -135,8 +130,6 @@
       community.aws.medialive_network:
         name: "{{ network_name }}"
         state: absent
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: delete_result
       retries: 3  # Add retries for API throttling resilience
       delay: 5
@@ -173,7 +166,6 @@
       community.aws.medialive_network:
         name: "{{ network_name }}"
         state: absent
-        wait: true
       ignore_errors: true
       when: network_id is defined
 
@@ -187,6 +179,5 @@
       community.aws.medialive_network:
         name: "{{ network_name }}"
         state: absent
-        wait: false  # Don't wait in cleanup to speed up test completion
       ignore_errors: true
       when: network_id is defined

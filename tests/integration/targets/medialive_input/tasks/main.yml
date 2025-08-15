@@ -146,38 +146,38 @@
         fail_msg: "Check mode did not work as expected"
         success_msg: "Check mode correctly simulated deletion"
 
-  #   # Test INPUT deletion
-  #   - name: Delete the INPUT
-  #     community.aws.medialive_INPUT:
-  #       name: "{{ INPUT_name }}"
-  #       state: absent
-  #       wait: true
-  #       wait_timeout: "{{ wait_timeout }}"
-  #     register: delete_result
-  #     retries: 3  # Add retries for API throttling resilience
-  #     delay: 5
-  #     until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
+    # Test INPUT deletion
+    - name: Delete the INPUT
+      community.aws.medialive_INPUT:
+        name: "{{ INPUT_name }}"
+        state: absent
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: delete_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
 
-  #   - name: Assert INPUT was deleted
-  #     ansible.builtin.assert:
-  #       that:
-  #         - delete_result is changed
-  #       fail_msg: "INPUT deletion failed"
-  #       success_msg: "INPUT deleted successfully"
+    - name: Assert INPUT was deleted
+      ansible.builtin.assert:
+        that:
+          - delete_result is changed
+        fail_msg: "INPUT deletion failed"
+        success_msg: "INPUT deleted successfully"
 
-  #   # Test deletion idempotency
-  #   - name: Try to delete the INPUT again (idempotency check)
-  #     community.aws.medialive_INPUT:
-  #       name: "{{ INPUT_name }}"
-  #       state: absent
-  #     register: delete_idempotency_result
+    # Test deletion idempotency
+    - name: Try to delete the INPUT again (idempotency check)
+      community.aws.medialive_INPUT:
+        name: "{{ INPUT_name }}"
+        state: absent
+      register: delete_idempotency_result
 
-  #   - name: Assert delete idempotency
-  #     ansible.builtin.assert:
-  #       that:
-  #         - not delete_idempotency_result.changed
-  #       fail_msg: "Delete idempotency check failed"
-  #       success_msg: "Delete idempotency check passed"
+    - name: Assert delete idempotency
+      ansible.builtin.assert:
+        that:
+          - not delete_idempotency_result.changed
+        fail_msg: "Delete idempotency check failed"
+        success_msg: "Delete idempotency check passed"
 
   # Error handling and cleanup
   rescue:

@@ -12,7 +12,7 @@ description:
   - Get details about a AWS MediaLive Anywhere cluster.
   - This module requires boto3 >= 1.35.17.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -122,11 +122,8 @@ from typing import Dict
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
 
 class MediaLiveClusterGetter:
     '''Look up AWS MediaLive Anywhere clusters'''
@@ -174,7 +171,7 @@ class MediaLiveClusterGetter:
                     raise MedialiveAnsibleAWSError(message='Found more than one Clusters under the same name')
                 elif len(found) == 1:
                     self.get_cluster_by_id(found[0])
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get MediaLive Cluster',
                 exception=e

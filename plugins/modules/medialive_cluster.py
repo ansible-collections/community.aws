@@ -12,7 +12,7 @@ description:
   - A module for creating, updating and deleting AWS MediaLive Anywhere clusters.
   - This module requires boto3 >= 1.35.17.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -204,7 +204,7 @@ cluster:
 """
 
 import uuid
-from typing import Dict
+from typing import Dict, Literal
 
 try:
     from botocore.exceptions import WaiterError, ClientError, BotoCoreError
@@ -214,107 +214,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-
-from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
-
-
-class MediaLiveWaiterFactory(BaseWaiterFactory):
-    """Custom waiter factory for MediaLive resources"""
-
-    @property
-    def _waiter_model_data(self):
-        """Define custom waiters for MediaLive clusters"""
-        return {
-            'create_cluster': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeCluster',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'ACTIVE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IDLE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'CREATE_FAILED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'retry',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    },
-                ]
-            },
-            'update_cluster': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeCluster',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'ACTIVE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IN_USE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IDLE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'CREATE_FAILED',
-                        'argument': 'State'
-                    },
-                ]
-            },
-            'delete_cluster': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeCluster',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'DELETED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'DELETE_FAILED',
-                        'argument': 'State'
-                    },
-                ]
-            }
-        }
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
 
 class MediaLiveClusterManager:
@@ -329,7 +229,6 @@ class MediaLiveClusterManager:
         """
         self.module = module
         self.client = module.client('medialive')
-        self.waiter_factory = MediaLiveWaiterFactory(module, self.client)
         self._cluster = {}
         self.changed = False
 
@@ -368,7 +267,7 @@ class MediaLiveClusterManager:
             response = self.client.create_cluster(**create_params)  # type: ignore
             self.cluster = camel_dict_to_snake_dict(response)
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to create Medialive Cluster',
                 exception=e
@@ -400,7 +299,7 @@ class MediaLiveClusterManager:
             response = self.client.update_cluster(**update_params)  # type: ignore
             self.cluster = camel_dict_to_snake_dict(response)
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to update Medialive Cluster',
                 exception=e
@@ -425,7 +324,7 @@ class MediaLiveClusterManager:
             elif len(found) == 1:
                 self.get_cluster_by_id(found[0])
 
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get MediaLive Cluster',
                 exception=e
@@ -456,13 +355,18 @@ class MediaLiveClusterManager:
             self.changed = True
         except is_boto3_error_code('ResourceNotFoundException'):
             self.cluster = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to delete Medialive Cluster',
                 exception=e
             )
 
-    def wait_for(self, want: str, cluster_id: str, wait_timeout: int = 60):
+    def wait_for(
+        self,
+        want: Literal['cluster_created', 'cluster_deleted'],
+        cluster_id: str,
+        wait_timeout = 60
+    ):
         """
         Invoke one of the custom waiters and wait
 
@@ -473,7 +377,7 @@ class MediaLiveClusterManager:
         """
 
         try:
-            waiter = self.waiter_factory.get_waiter(want)
+            waiter = self.client.get_waiter(want) # type: ignore
             config = {
                 'Delay': min(5, wait_timeout),
                 'MaxAttempts': wait_timeout // 5
@@ -482,9 +386,9 @@ class MediaLiveClusterManager:
                 ClusterId=cluster_id,
                 WaiterConfig=config
             )
-        except WaiterError as e:
+        except WaiterError as e: # type: ignore
             raise MedialiveAnsibleAWSError(
-                message=f'Timeout waiting for cluster {cluster_id}',
+                message=f'Timeout waiting for cluster state to become {cluster_id}',
                 exception=e
             )
 
@@ -567,11 +471,6 @@ def main():
 
             manager.do_update_cluster(update_params)
 
-            # Wait for the cluster to be updated
-            if wait and cluster_id:
-                manager.wait_for('update_cluster', cluster_id, wait_timeout) # type: ignore
-                manager.get_cluster_by_id(cluster_id)
-
         # Case create
         else:
             create_params = {
@@ -588,7 +487,7 @@ def main():
 
             # Wait for the cluster to be created
             if wait and cluster_id:
-                manager.wait_for('create_cluster', cluster_id, wait_timeout) # type: ignore
+                manager.wait_for('cluster_created', cluster_id, wait_timeout) # type: ignore
                 manager.get_cluster_by_id(cluster_id)
 
     # Handle absent state
@@ -600,7 +499,7 @@ def main():
             
             # Wait for the cluster to be deleted if requested
             if wait and cluster_id:
-                manager.wait_for('delete_cluster', cluster_id, wait_timeout) # type: ignore
+                manager.wait_for('cluster_deleted', cluster_id, wait_timeout) # type: ignore
 
     module.exit_json(changed=manager.changed, cluster=manager.cluster)
 

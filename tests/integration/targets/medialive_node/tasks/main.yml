@@ -22,7 +22,6 @@
         ip_pool_cidr: "10.21.21.0/24"
         route_cidr: "0.0.0.0/0"
         route_gateway: "10.21.21.1"
-        wait_timeout: 60
 
     # Look up Account ID to use in ARN construction
     - name: Look up Account ID
@@ -115,8 +114,6 @@
         routes:
           - cidr: "{{ route_cidr }}"
             gateway: "{{ route_gateway }}"
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: network_result
       retries: 3
       delay: 5
@@ -169,8 +166,6 @@
             physical_interface_name: eth0
             network_interface_mode: NAT
         role: ACTIVE
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: create_result
       retries: 3
       delay: 5
@@ -213,8 +208,6 @@
             physical_interface_name: eth0
             network_interface_mode: NAT
         role: ACTIVE
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: idempotency_result
       when: node_id is defined
 
@@ -323,8 +316,6 @@
         name: "{{ node_name }}"
         cluster_id: "{{ cluster_id }}"
         state: absent
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: delete_result
       retries: 3
       delay: 5

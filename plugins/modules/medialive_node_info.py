@@ -10,9 +10,9 @@ short_description: Gather AWS MediaLive Anywhere node info
 version_added: 10.1.0
 description:
   - Get details about a AWS MediaLive Anywhere node.
-  - This module requires boto3 >= 1.35.17.
+  - This module requires boto3 >= 1.37.34.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -149,11 +149,8 @@ from typing import Dict
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
 
 class MediaLiveNodeGetter:
     '''Look up AWS MediaLive Anywhere nodes'''

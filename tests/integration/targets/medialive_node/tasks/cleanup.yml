@@ -4,7 +4,6 @@
     name: "{{ node_name }}"
     cluster_id: "{{ cluster_id }}"
     state: absent
-    wait: true
   ignore_errors: true
   when: node_id is defined
 
@@ -20,7 +19,6 @@
   community.aws.medialive_network:
     name: "{{ network_name }}"
     state: absent
-    wait: true
   ignore_errors: true
   when: network_id is defined
 

@@ -12,7 +12,7 @@ description:
   - A module for creating, updating and deleting AWS MediaLive Anywhere networks.
   - This module requires boto3 >= 1.35.17.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -65,21 +65,6 @@ options:
           - The gateway for the route.
         type: str
         required: true
-  wait:
-    description:
-      - Whether to wait for the network to reach the desired state.
-      - When I(state=present), wait for the network to reach the IDLE or ACTIVE states.
-      - When I(state=absent), wait for the network to reach the DELETED state.
-    type: bool
-    required: false
-    default: true
-  wait_timeout:
-    description:
-      - The maximum time in seconds to wait for the network to reach the desired state.
-      - Defaults to 60 seconds.
-    type: int
-    required: false
-    default: 60
 
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -166,111 +151,17 @@ network:
 """
 
 import uuid
-from typing import Dict
+from typing import Dict, Literal
 
 try:
-    from botocore.exceptions import WaiterError, ClientError, BotoCoreError
+    from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass # caught by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
-
-
-class MediaLiveWaiterFactory(BaseWaiterFactory):
-    '''Custom waiter factory for MediaLive resources'''
-
-    @property
-    def _waiter_model_data(self):
-        '''Define custom waiters for MediaLive networks'''
-        return {
-            'create_network': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeNetwork',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'ACTIVE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IDLE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'CREATE_FAILED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'retry',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    }
-                ]
-            },
-            'update_network': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeNetwork',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'ACTIVE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IN_USE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IDLE',
-                        'argument': 'State'
-                    }
-                ]
-            },
-            'delete_network': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeNetwork',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'DELETED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'DELETE_FAILED',
-                        'argument': 'State'
-                    }
-                ]
-            }
-        }
-
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
 class MediaLiveNetworkManager:
     '''Manage AWS MediaLive Anywhere networks'''
@@ -284,7 +175,6 @@ class MediaLiveNetworkManager:
         '''
         self.module = module
         self.client = self.module.client('medialive')
-        self.waiter_factory = MediaLiveWaiterFactory(module, self.client)
         self._network = {}
         self.changed = False
 
@@ -323,7 +213,7 @@ class MediaLiveNetworkManager:
         try:
             self.network = self.client.create_network(**create_params)  # type: ignore
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to create Medialive Network',
                 exception=e
@@ -355,7 +245,7 @@ class MediaLiveNetworkManager:
         try:
             self.network = self.client.update_network(**update_params)  # type: ignore
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to update Medialive Network',
                 exception=e
@@ -381,7 +271,7 @@ class MediaLiveNetworkManager:
             elif len(found) == 1:
                 self.get_network_by_id(found[0])
 
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive Network',
                 exception=e
@@ -398,7 +288,7 @@ class MediaLiveNetworkManager:
             self.network = self.client.describe_network(NetworkId=network_id)  # type: ignore
         except is_boto3_error_code('ResourceNotFoundException'):
             self.network = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive Network',
                 exception=e
@@ -417,35 +307,9 @@ class MediaLiveNetworkManager:
             self.changed = True
         except is_boto3_error_code('ResourceNotFoundException'):
             self.network = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to delete Medialive Network',
-                exception=e
-            )
-
-    def wait_for(self, want: str, network_id: str, wait_timeout: int = 60):
-        """
-        Invoke one of the custom waiters and wait
-
-        Args:
-            want: the name of the waiter
-            network_id: the ID of the network
-            wait_timeout: the maximum amount of time to wait in seconds (default: 60)
-        """
-
-        try:
-            waiter = self.waiter_factory.get_waiter(want)
-            config = {
-                'Delay': min(5, wait_timeout),
-                'MaxAttempts': wait_timeout // 5
-            }
-            waiter.wait(
-                NetworkId=network_id,
-                WaiterConfig=config
-            )
-        except WaiterError as e:
-            raise MedialiveAnsibleAWSError(
-                message=f'Timeout waiting for network {network_id}',
                 exception=e
             )
 
@@ -476,9 +340,7 @@ def main():
                 cidr=dict(type='str', required=True),
                 gateway=dict(type='str', required=True),
             )
-        ),
-        wait=dict(type='bool', default=True),
-        wait_timeout=dict(type='int', default=60),
+        )
     )
 
     module = AnsibleAWSModule(
@@ -493,8 +355,6 @@ def main():
     state = get_arg('state', module.params, argument_spec)
     ip_pools = get_arg('ip_pools', module.params, argument_spec)
     routes = get_arg('routes', module.params, argument_spec)
-    wait = get_arg('wait', module.params, argument_spec)
-    wait_timeout = get_arg('wait_timeout', module.params, argument_spec)
 
     # Initialize the manager
     manager = MediaLiveNetworkManager(module)
@@ -525,11 +385,6 @@ def main():
 
             manager.do_update_network(update_params)
 
-            # Wait for the network to be updated
-            if wait and network_id:
-                manager.wait_for('update_network', network_id, wait_timeout) # type: ignore
-                manager.get_network_by_id(network_id)
-
         # Case create
         else:
             create_params = {
@@ -542,11 +397,6 @@ def main():
             manager.do_create_network(create_params)
             network_id = manager.network.get('network_id')
             
-            # Wait for the network to be created
-            if wait and network_id:
-                manager.wait_for('create_network', network_id, wait_timeout) # type: ignore
-                manager.get_network_by_id(network_id)
-                
     # Handle absent state
     elif state == 'absent':
         if manager.network:
@@ -554,10 +404,6 @@ def main():
             network_id = manager.network.get('network_id')
             manager.delete_network(network_id) # type: ignore
             
-            # Wait for the network to be deleted if requested
-            if wait and network_id:
-                manager.wait_for('delete_network', network_id, wait_timeout) # type: ignore
-
     module.exit_json(changed=manager.changed, network=manager.network)
 
 
