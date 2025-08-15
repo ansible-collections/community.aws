@@ -11,7 +11,7 @@ version_added: 10.1.0
 short_description: Gather AWS MediaLive Anywhere SDI source info
 description:
   - Get details about a AWS MediaLive Anywhere SDI source.
-  - This module requires boto3 >= 1.37.30.
+  - This module requires boto3 >= 1.37.34.
 author:
   - "Brenton Buxell (@bbuxell)"
 options:
@@ -96,11 +96,7 @@ from typing import Dict
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
 
 class MediaLiveSdiSourceGetter:
@@ -129,7 +125,7 @@ class MediaLiveSdiSourceGetter:
 
         # Handle nested sdi_source
         if sdi_source.get('sdi_source'):
-            sdi_source = sdi_source.get('sdi_source')
+            sdi_source = sdi_source.get('sdi_source') # type: ignore
 
         if sdi_source.get('id'):
             sdi_source['sdi_source_id'] = sdi_source.get('id')
@@ -157,7 +153,7 @@ class MediaLiveSdiSourceGetter:
             elif len(found) == 1:
                 self.get_sdi_source_by_id(found[0])
 
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive SDI Source',
                 exception=e

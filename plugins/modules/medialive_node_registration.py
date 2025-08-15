@@ -10,9 +10,9 @@ short_description: Manage AWS MediaLive Anywhere nodes
 version_added: 10.1.0
 description:
   - A module for creating, updating and deleting AWS MediaLive Anywhere nodes.
-  - This module requires boto3 >= 1.35.17.
+  - This module requires boto3 >= 1.37.34.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -67,11 +67,8 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
 
 class MediaLiveNodeRegistrationScriptManager:
     '''Requests AWS MediaLive Anywhere node registration script'''

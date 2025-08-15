@@ -13,6 +13,7 @@ version_added: 10.1.0
 description:
   - Get information about an AWS MediaLive Channel Placement Group.
   - This module allows retrieving detailed information about a specific channel placement group.
+  - This module requires boto3 >= 1.35.17.
 author:
   - "David Teach"
 options:
@@ -76,7 +77,7 @@ placement_group:
 '''
 
 try:
-    import botocore
+    from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -110,7 +111,7 @@ def get_channel_placement_group(client, module):
         return results
     except client.exceptions.NotFoundException:
         return cpgs
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except (ClientError, BotoCoreError) as e: # type: ignore
         module.fail_json_aws(e, msg="Failed to get channel placement group information")
 
 
@@ -129,7 +130,7 @@ def main():
         client = module.client('medialive', retry_decorator=AWSRetry.exponential_backoff())
         cpgs = get_channel_placement_group(client, module)
         module.exit_json(changed=False, channel_placement_groups=cpgs)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except (ClientError, BotoCoreError) as e: # type: ignore
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
 

@@ -33,8 +33,6 @@
         routes:
           - cidr: "{{ route_cidr }}"
             gateway: "{{ route_gateway }}"
-        wait: true
-        wait_timeout: "{{ wait_timeout }}"
       register: network_result
       retries: 3
       delay: 5

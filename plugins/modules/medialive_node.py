@@ -9,9 +9,9 @@ short_description: Manage AWS MediaLive Anywhere nodes
 version_added: 10.1.0
 description:
   - A module for creating, updating and deleting AWS MediaLive Anywhere nodes.
-  - This module requires boto3 >= 1.37.30.
+  - This module requires boto3 >= 1.37.34.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -92,21 +92,6 @@ options:
           - The ID of a SDI source streaming on the given SDI capture card port.
         required: true
         type: str
-  wait:
-    description:
-      - Whether to wait for the node to reach the desired state.
-      - When I(state=present), wait for the node to reach one of the ["CREATED", "ACTIVE", "READY", "IN_USE"] states.
-      - When I(state=absent), wait for the node to be deleted.
-    type: bool
-    required: false
-    default: true
-  wait_timeout:
-    description:
-      - The maximum time in seconds to wait for the node to reach the desired state.
-      - Defaults to 60 seconds.
-    type: int
-    required: false
-    default: 60
   
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -260,7 +245,7 @@ node:
 """
 
 import uuid
-from typing import Dict
+from typing import Dict, Literal
 
 try:
     from botocore.exceptions import WaiterError, ClientError, BotoCoreError
@@ -270,107 +255,8 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MediaLiveWaiterFactory(BaseWaiterFactory):
-    '''Custom waiter factory for MediaLive resources'''
-
-    @property
-    def _waiter_model_data(self):
-        '''Define custom waiters for MediaLive Anywhere nodes'''
-        return {
-            'create_node': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeNode',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'CREATED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'REGISTERING',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'retry',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    }
-                ]
-            },
-            'update_node': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeNode',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'CREATED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'READY_TO_ACTIVATE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'READY',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'ACTIVE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'IN_USE',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'REGISTERING',
-                        'argument': 'State'
-                    },
-                ]
-            },
-            'delete_node': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeNode',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'DEREGISTERED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    }
-                ]
-            }
-        }
-
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
 
 class MediaLiveNodeManager:
     '''Manage AWS MediaLive Anywhere node'''
@@ -384,7 +270,6 @@ class MediaLiveNodeManager:
         '''
         self.module = module
         self.client = self.module.client('medialive')
-        self.waiter_factory = MediaLiveWaiterFactory(module, self.client)
         self._node = {}
         self.changed = False
 
@@ -424,7 +309,7 @@ class MediaLiveNodeManager:
         try:
             self.node = self.client.create_node(**create_params)  # type: ignore
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to create Medialive node',
                 exception=e
@@ -458,7 +343,7 @@ class MediaLiveNodeManager:
             response = self.client.update_node(**update_params)  # type: ignore
             self.node = camel_dict_to_snake_dict(response)
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to update Medialive node',
                 exception=e
@@ -473,7 +358,7 @@ class MediaLiveNodeManager:
             self.changed = True
         except is_boto3_error_code('ResourceNotFoundException'):
             self.node = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to delete Medialive node',
                 exception=e
@@ -499,7 +384,7 @@ class MediaLiveNodeManager:
             elif len(found) == 1:
                 self.get_node_by_id(cluster_id, found[0])
 
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive Node',
                 exception=e
@@ -518,35 +403,6 @@ class MediaLiveNodeManager:
             return True
         except is_boto3_error_code('ResourceNotFoundException'):
             self.node = {}
-
-    def wait_for(self, want: str, wait_timeout: int = 60):
-        """
-        Invoke one of the custom waiters and wait
-
-        Args:
-            want: the name of the waiter
-            wait_timeout: the maximum amount of time to wait in seconds (default: 60)
-        """
-        cluster_id = self.node.get('cluster_id')
-        node_id = self.node.get('node_id')
-
-        try:
-            waiter = self.waiter_factory.get_waiter(want)
-            config = {
-                'Delay': min(5, wait_timeout),
-                'MaxAttempts': wait_timeout // 5
-            }
-            waiter.wait(
-                ClusterId=cluster_id,
-                NodeId=node_id,
-                WaiterConfig=config
-            )
-            self.get_node_by_id(cluster_id, node_id) # type: ignore
-        except WaiterError as e:
-            raise MedialiveAnsibleAWSError(
-                message=f'Timeout waiting for node {node_id} in cluster {cluster_id}',
-                exception=e
-            )
 
 def get_arg(arg:str, params:dict, spec:dict):
     if arg in spec.keys():
@@ -582,9 +438,7 @@ def main():
                 sdi_source=dict(type='str', required=True),
             )
         ),
-        state=dict(type='str', default='present', choices=['present', 'absent']),
-        wait=dict(type='bool', default=True),
-        wait_timeout=dict(type='int', default=60),
+        state=dict(type='str', default='present', choices=['present', 'absent'])
     )
 
     module = AnsibleAWSModule(
@@ -601,8 +455,6 @@ def main():
     role = get_arg('role', module.params, argument_spec)
     sdi_source_mappings = get_arg('sdi_source_mappings', module.params, argument_spec)
     state = get_arg('state', module.params, argument_spec)
-    wait = get_arg('wait', module.params, argument_spec)
-    wait_timeout = get_arg('wait_timeout', module.params, argument_spec)
 
     # Initialize the manager
     manager = MediaLiveNodeManager(module)
@@ -631,11 +483,6 @@ def main():
 
             manager.do_update_node(update_params)
 
-            # Wait for the node to be updated
-            if wait:
-                manager.wait_for('update_node', wait_timeout) # type: ignore
-                manager.get_node_by_id(cluster_id, manager.node.get('node_id')) # type: ignore
-
         # Case create
         else:
             create_params = {
@@ -647,11 +494,6 @@ def main():
             }
 
             manager.do_create_node(create_params)
-
-            # Wait for the node to be created
-            if wait:
-                manager.wait_for('create_node', wait_timeout) # type: ignore
-                manager.get_node_by_id(cluster_id, manager.node.get('node_id')) # type: ignore
 
     # Handle absent state
     elif state == 'absent':

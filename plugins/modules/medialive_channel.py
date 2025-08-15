@@ -14,7 +14,7 @@ description:
   - This module includes basic functionality for managing channels, but does not include input validation
   - Requires boto3 >= 1.37.30
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   cdi_input_specification:
     description:
@@ -4833,7 +4833,7 @@ RETURN = r"""
 """
 
 import uuid
-from typing import Dict
+from typing import Dict, Literal
 
 try:
     from botocore.exceptions import WaiterError, ClientError, BotoCoreError
@@ -4843,12 +4843,9 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
 
 class MediaLiveChannelManager:
     '''Manage AWS MediaLive Anywhere Channels'''
@@ -5053,12 +5050,17 @@ class MediaLiveChannelManager:
                 exception=e
             )
 
-    def wait_for(self, want: str, channel_id: str, wait_timeout: int = 60):
+    def wait_for(
+        self,
+        want: Literal['channel_created','channel_deleted','channel_running','channel_stopped'],
+        channel_id: str,
+        wait_timeout = 60
+    ):
         """
         Invoke one of the custom waiters and wait
 
         Args:
-            want: one of 'channel_created'|'channel_deleted'|'channel_running'|'channel_stopped'
+            want: the state to wait for
             channel_id: the ID of the Channel
             wait_timeout: the maximum amount of time to wait in seconds (default: 60)
         """

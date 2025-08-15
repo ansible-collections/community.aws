@@ -132,70 +132,7 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
-
-
-class MediaLiveWaiterFactory(BaseWaiterFactory):
-    '''Custom waiter factory for MediaLive channel placement group resources'''
-
-    @property
-    def _waiter_model_data(self):
-        '''Define custom waiters for MediaLive channel placement groups'''
-        return {
-            'channel_placement_group_created': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeChannelPlacementGroup',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'ASSIGNED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'UNASSIGNED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'CREATE_FAILED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'retry',
-                        'matcher': 'error',
-                        'expected': 'ResourceNotFoundException'
-                    },
-                ]
-            },
-            'channel_placement_group_deleted': {
-                'delay': 5,
-                'maxAttempts': 120,
-                'operation': 'DescribeChannelPlacementGroup',
-                'acceptors': [
-                    {
-                        'state': 'success',
-                        'matcher': 'path',
-                        'expected': 'DELETED',
-                        'argument': 'State'
-                    },
-                    {
-                        'state': 'failure',
-                        'matcher': 'path',
-                        'expected': 'DELETE_FAILED',
-                        'argument': 'State'
-                    }
-                ]
-            }
-        }
-
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
 
 class MediaLiveChannelPlacementGroupManager:
@@ -210,7 +147,6 @@ class MediaLiveChannelPlacementGroupManager:
         '''
         self.module = module
         self.client = self.module.client('medialive')
-        self.waiter_factory = MediaLiveWaiterFactory(module, self.client)
         self._channel_placement_group = {}
         self.changed = False
 
@@ -243,7 +179,7 @@ class MediaLiveChannelPlacementGroupManager:
             response = self.client.create_channel_placement_group(**create_params)  # type: ignore
             self.channel_placement_group = camel_dict_to_snake_dict(response)
             self.changed = True
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to create MediaLive Channel Placement Group',
                 exception=e
@@ -293,7 +229,7 @@ class MediaLiveChannelPlacementGroupManager:
                         params.get('channel_placement_group_id'),
                         params.get('cluster_id')
                     )
-            except (ClientError, BotoCoreError) as e:
+            except (ClientError, BotoCoreError) as e: # type: ignore
                 raise MedialiveAnsibleAWSError(
                     message='Unable to update nodes for MediaLive Channel Placement Group',
                     exception=e
@@ -315,7 +251,7 @@ class MediaLiveChannelPlacementGroupManager:
                     params.get('channel_placement_group_id'),
                     params.get('cluster_id')
                 )
-            except (ClientError, BotoCoreError) as e:
+            except (ClientError, BotoCoreError) as e: # type: ignore
                 raise MedialiveAnsibleAWSError(
                     message='Unable to update name for MediaLive Channel Placement Group',
                     exception=e
@@ -330,14 +266,14 @@ class MediaLiveChannelPlacementGroupManager:
             cluster_id: The ID of the cluster
         """
         try:
-            response = self.client.describe_channel_placement_group(
+            response = self.client.describe_channel_placement_group( # type: ignore
                 ChannelPlacementGroupId=placement_group_id,
                 ClusterId=cluster_id
             )
             self.channel_placement_group = camel_dict_to_snake_dict(response)
         except is_boto3_error_code('ResourceNotFoundException'):
             self.channel_placement_group = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get MediaLive Channel Placement Group',
                 exception=e
@@ -362,7 +298,7 @@ class MediaLiveChannelPlacementGroupManager:
                     raise MedialiveAnsibleAWSError(message='Found more than one Channel Placement Groups under the same name')
                 elif len(found) == 1:
                     self.channel_placement_group = camel_dict_to_snake_dict(found[0])
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get MediaLive Channel Placement Group',
                 exception=e
@@ -377,25 +313,25 @@ class MediaLiveChannelPlacementGroupManager:
             cluster_id: ID of the cluster
         """
         try:
-            self.client.delete_channel_placement_group(
+            self.client.delete_channel_placement_group( # type: ignore
                 ChannelPlacementGroupId=placement_group_id,
                 ClusterId=cluster_id
             )
             self.changed = True
         except is_boto3_error_code('ResourceNotFoundException'):
             self.channel_placement_group = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to delete MediaLive Channel Placement Group',
                 exception=e
             )
 
     def wait_for(
-            self,
-            want: Literal['channel_placement_group_created', 'channel_placement_group_deleted'],
-            placement_group_id: str,
-            cluster_id: str,
-            wait_timeout: int = 60) -> None:
+        self,
+        want: Literal['channel_placement_group_assigned', 'channel_placement_group_deleted'],
+        placement_group_id: str,
+        cluster_id: str,
+        wait_timeout = 60) -> None:
         """
         Wait for a channel placement group to reach the desired state
 
@@ -406,7 +342,7 @@ class MediaLiveChannelPlacementGroupManager:
             wait_timeout: Maximum time to wait in seconds
         """
         try:
-            waiter = self.waiter_factory.get_waiter(want)
+            waiter = self.client.get_waiter(want) # type: ignore
             config = {
                 'Delay': min(5, wait_timeout),
                 'MaxAttempts': wait_timeout // 5
@@ -416,7 +352,7 @@ class MediaLiveChannelPlacementGroupManager:
                 ClusterId=cluster_id,
                 WaiterConfig=config
             )
-        except WaiterError as e:
+        except WaiterError as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message=f'Timeout waiting for channel placement group {placement_group_id} to be {want.lower()}',
                 exception=e
@@ -464,9 +400,9 @@ def main():
 
     # Find the placement group by ID if provided
     if placement_group_id:
-        manager.get_channel_placement_group_by_id(placement_group_id, cluster_id)
+        manager.get_channel_placement_group_by_id(placement_group_id, cluster_id) # type: ignore
     elif name:
-        manager.get_channel_placement_group_by_name(name, cluster_id)
+        manager.get_channel_placement_group_by_name(name, cluster_id) # type: ignore
 
     # Do nothing in check mode
     if module.check_mode:
@@ -487,7 +423,7 @@ def main():
 
             manager.do_update_channel_placement_group(update_params)
 
-            manager.get_channel_placement_group_by_id(placement_group_id, cluster_id)
+            manager.get_channel_placement_group_by_id(placement_group_id, cluster_id) # type: ignore
 
         # Case create
         else:
@@ -503,18 +439,18 @@ def main():
 
             # Wait for the placement group to be created
             if wait and placement_group_id:
-                manager.wait_for('channel_placement_group_created', placement_group_id, cluster_id, wait_timeout)
-                manager.get_channel_placement_group_by_id(placement_group_id, cluster_id)
+                manager.wait_for('channel_placement_group_assigned', placement_group_id, cluster_id, wait_timeout) # type: ignore
+                manager.get_channel_placement_group_by_id(placement_group_id, cluster_id) # type: ignore
 
     # Handle absent state
     elif state == 'absent':
         if manager.channel_placement_group.get('state') != 'DELETED':
             # Placement group exists, delete it
-            manager.delete_channel_placement_group(placement_group_id, cluster_id)
+            manager.delete_channel_placement_group(placement_group_id, cluster_id) # type: ignore
 
             # Wait for the placement group to be deleted if requested
             if wait and placement_group_id:
-                manager.wait_for('channel_placement_group_deleted', placement_group_id, cluster_id, wait_timeout)
+                manager.wait_for('channel_placement_group_deleted', placement_group_id, cluster_id, wait_timeout) # type: ignore
 
     module.exit_json(changed=manager.changed, channel_placement_group=manager.channel_placement_group)
 

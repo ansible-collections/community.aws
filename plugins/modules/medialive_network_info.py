@@ -12,7 +12,7 @@ description:
   - Get details about a AWS MediaLive Anywhere network.
   - This module requires boto3 >= 1.35.17.
 author:
-  - "Sergey Papyan"
+  - Sergey Papyan (@r363x)
 options:
   id:
     description:
@@ -118,11 +118,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-
-
-class MedialiveAnsibleAWSError(AnsibleAWSError):
-    pass
+from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
 
 class MediaLiveNetworkManager:
@@ -172,7 +168,7 @@ class MediaLiveNetworkManager:
                 raise MedialiveAnsibleAWSError(message='Found more than one Networks under the same name')
             elif len(found) == 1:
                 self.get_network_by_id(found[0])
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive Network',
                 exception=e
@@ -189,7 +185,7 @@ class MediaLiveNetworkManager:
             self.network = self.client.describe_network(NetworkId=id)  # type: ignore
         except is_boto3_error_code('ResourceNotFoundException'):
             self.network = {}
-        except (ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e: # type: ignore
             raise MedialiveAnsibleAWSError(
                 message='Unable to get Medialive Network',
                 exception=e

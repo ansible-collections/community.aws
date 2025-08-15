@@ -20,7 +20,6 @@
   community.aws.medialive_network:
     id: "{{ network_id }}"
     state: absent
-    wait: true
   ignore_errors: true
   when: network_id is defined
 
