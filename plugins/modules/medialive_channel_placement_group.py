@@ -132,7 +132,6 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
 
 
 class MediaLiveChannelPlacementGroupManager:
@@ -180,7 +179,7 @@ class MediaLiveChannelPlacementGroupManager:
             self.channel_placement_group = camel_dict_to_snake_dict(response)
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create MediaLive Channel Placement Group',
                 exception=e
             )
@@ -193,7 +192,7 @@ class MediaLiveChannelPlacementGroupManager:
             params: Parameters for channel placement group update
         """
         if not params.get('channel_placement_group_id'):
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='The channel_placement_group_id parameter is required during placement group update.')
 
         allowed_params = ['cluster_id', 'channel_placement_group_id', 'nodes', 'name']
@@ -230,7 +229,7 @@ class MediaLiveChannelPlacementGroupManager:
                         params.get('cluster_id')
                     )
             except (ClientError, BotoCoreError) as e: # type: ignore
-                raise MedialiveAnsibleAWSError(
+                raise AnsibleAWSError(
                     message='Unable to update nodes for MediaLive Channel Placement Group',
                     exception=e
                 )
@@ -252,7 +251,7 @@ class MediaLiveChannelPlacementGroupManager:
                     params.get('cluster_id')
                 )
             except (ClientError, BotoCoreError) as e: # type: ignore
-                raise MedialiveAnsibleAWSError(
+                raise AnsibleAWSError(
                     message='Unable to update name for MediaLive Channel Placement Group',
                     exception=e
                 )
@@ -274,7 +273,7 @@ class MediaLiveChannelPlacementGroupManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.channel_placement_group = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get MediaLive Channel Placement Group',
                 exception=e
             )
@@ -295,11 +294,11 @@ class MediaLiveChannelPlacementGroupManager:
                     if cpg['Name'] == name:
                         found.append(camel_dict_to_snake_dict(cpg))
                 if len(found) > 1:
-                    raise MedialiveAnsibleAWSError(message='Found more than one Channel Placement Groups under the same name')
+                    raise AnsibleAWSError(message='Found more than one Channel Placement Groups under the same name')
                 elif len(found) == 1:
                     self.channel_placement_group = camel_dict_to_snake_dict(found[0])
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get MediaLive Channel Placement Group',
                 exception=e
             )
@@ -321,7 +320,7 @@ class MediaLiveChannelPlacementGroupManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.channel_placement_group = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete MediaLive Channel Placement Group',
                 exception=e
             )
@@ -353,7 +352,7 @@ class MediaLiveChannelPlacementGroupManager:
                 WaiterConfig=config
             )
         except WaiterError as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message=f'Timeout waiting for channel placement group {placement_group_id} to be {want.lower()}',
                 exception=e
             )

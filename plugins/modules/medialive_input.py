@@ -363,7 +363,7 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveInputManager:
@@ -411,16 +411,16 @@ class MediaLiveInputManager:
         # to the CreateInput API you get the following BadRequest error
         # "The SDI sources for an SDI input must specify exactly one SDI source"
         if len(sources) != 1:
-            raise MedialiveAnsibleAWSError(message='The sdi_sources list must contain a single element')
+            raise AnsibleAWSError(message='The sdi_sources list must contain a single element')
 
         # Make sure the SDI source exists and is in IDLE state
         try:
             response = self.client.describe_sdi_source(SdiSourceId=sources[0]) # type: ignore
             if check_use and response['SdiSource']['State'] == 'IN_USE':
-                raise MedialiveAnsibleAWSError(message='The provided sdi_source is already in use')
+                raise AnsibleAWSError(message='The provided sdi_source is already in use')
 
         except is_boto3_error_code('ResourceNotFoundException'):
-            raise MedialiveAnsibleAWSError(message='The provided sdi_source does not exist')
+            raise AnsibleAWSError(message='The provided sdi_source does not exist')
 
     def get_input_by_name(self, name: str):
         """
@@ -438,7 +438,7 @@ class MediaLiveInputManager:
                         self.get_input_by_id(input.get('Id'))
                         return
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Input',
                 exception=e
             )
@@ -455,7 +455,7 @@ class MediaLiveInputManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.input = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Input',
                 exception=e
             )
@@ -484,7 +484,7 @@ class MediaLiveInputManager:
                 WaiterConfig=config
             )
         except WaiterError as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message=f'Timeout waiting for Input {input_id}',
                 exception=e
             )
@@ -531,7 +531,7 @@ class MediaLiveInputManager:
             self.input = self.client.create_input(**create_params)['Input']  # type: ignore
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive Input',
                 exception=e
             )
@@ -544,7 +544,7 @@ class MediaLiveInputManager:
             params: Parameters for input update
         """
         if not params.get('input_id'):
-            raise MedialiveAnsibleAWSError(message='The input_id parameter is required during input update.')
+            raise AnsibleAWSError(message='The input_id parameter is required during input update.')
 
         tags = params.get('tags')
         purge_tags = params.get('purge_tags')
@@ -583,7 +583,7 @@ class MediaLiveInputManager:
                 self.changed = True
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update Medialive Input',
                 exception=e
             )
@@ -602,7 +602,7 @@ class MediaLiveInputManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.input = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete Medialive Input',
                 exception=e
             )
@@ -633,7 +633,7 @@ class MediaLiveInputManager:
             if to_delete:
                 self.client.delete_tags(ResourceArn=self.input['arn'], TagKeys=to_delete) # type: ignore
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update MediaLive Input resource Tags',
                 exception=e
             )

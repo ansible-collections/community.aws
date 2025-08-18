@@ -255,7 +255,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveNodeManager:
@@ -299,7 +299,7 @@ class MediaLiveNodeManager:
 
         for param in required_params:
             if not params.get(param):
-                raise MedialiveAnsibleAWSError(
+                raise AnsibleAWSError(
                     message=f'The {", ".join(required_params)} parameters are required when creating a new node'
                 )
 
@@ -310,7 +310,7 @@ class MediaLiveNodeManager:
             self.node = self.client.create_node(**create_params)  # type: ignore
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive node',
                 exception=e
             )
@@ -344,7 +344,7 @@ class MediaLiveNodeManager:
             self.node = camel_dict_to_snake_dict(response)
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update Medialive node',
                 exception=e
             )
@@ -359,7 +359,7 @@ class MediaLiveNodeManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.node = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete Medialive node',
                 exception=e
             )
@@ -380,12 +380,12 @@ class MediaLiveNodeManager:
                     if node.get('Name') == name:
                         found.append(node.get('Id'))
             if len(found) > 1:
-                raise MedialiveAnsibleAWSError(message='Found more than one Nodes under the same name')
+                raise AnsibleAWSError(message='Found more than one Nodes under the same name')
             elif len(found) == 1:
                 self.get_node_by_id(cluster_id, found[0])
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Node',
                 exception=e
             )

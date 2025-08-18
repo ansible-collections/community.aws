@@ -67,7 +67,7 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveNodeRegistrationScriptManager:
@@ -110,7 +110,7 @@ class MediaLiveNodeRegistrationScriptManager:
 
         for param in required_params:
             if not params.get(param):
-                raise MedialiveAnsibleAWSError(
+                raise AnsibleAWSError(
                     message=f'The {", ".join(required_params)} parameters are required when creating a new node registration script'
                 )
 
@@ -121,7 +121,7 @@ class MediaLiveNodeRegistrationScriptManager:
             self.script = self.client.create_node_registration_script(**create_params)  # type: ignore
             self.changed = True
         except (ClientError, BotoCoreError) as e:
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive node registration script',
                 exception=e
             )

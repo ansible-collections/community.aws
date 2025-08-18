@@ -56,7 +56,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveInputGetter:
@@ -108,11 +108,11 @@ class MediaLiveInputGetter:
                     if input.get('Name') == name:
                         found.append(input.get('Id'))
             if len(found) > 1:
-                raise MedialiveAnsibleAWSError(message='Found more than one Inputs under the same name')
+                raise AnsibleAWSError(message='Found more than one Inputs under the same name')
             elif len(found) == 1:
                 self.get_input_by_id(found[0])
         except (ClientError, BotoCoreError) as e:
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Input',
                 exception=e
             )
@@ -129,7 +129,7 @@ class MediaLiveInputGetter:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.input = {}
         except (ClientError, BotoCoreError) as e:
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Input',
                 exception=e
             )
