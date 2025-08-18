@@ -12,7 +12,7 @@ short_description: Manage AWS MediaLive Anywhere Channels
 description:
   - A module for creating, updating and deleting AWS MediaLive Channels.
   - This module includes basic functionality for managing channels, but does not include input validation
-  - Requires boto3 >= 1.37.30
+  - Requires boto3 >= 1.37.34
 author:
   - Sergey Papyan (@r363x)
 options:
@@ -864,20 +864,20 @@ options:
                       - 'YELLOW'
                   font_opacity:
                     description:
-                      - TODO
+                      - Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
                     type: int
                   font_resolution:
                     description:
-                      - TODO
+                      - Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
                     type: int
                   font_size:
                     description:
-                      - TODO
+                      - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                     type: str
               
                   outline_color:
                     description:
-                      - TODO
+                      - Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices:
                       - 'BLACK'
@@ -888,77 +888,77 @@ options:
                       - 'YELLOW'
                   outline_size:
                     description:
-                      - TODO
+                      - Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
                     type: int
                   shadow_color:
                     description:
-                      - TODO
+                      - Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices: ['BLACK', 'NONE', 'WHITE']
                   shadow_opacity:
                     description:
-                      - TODO
+                      - Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
                     type: int
                   shadow_x_offset:
                     description:
-                      - TODO
+                      - Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
                     type: int
                   shadow_y_offset:
                     description:
-                      - TODO
+                      - Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
                     type: int
                   teletext_grid_control:
                     description:
-                      - TODO
+                      - Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
                     type: str
                     choices: ['FIXED', 'SCALED']
                   x_position:
                     description:
-                      - TODO
+                      - Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
                     type: int
                   y_position:
                     description:
-                      - TODO
+                      - Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
                     type: int
               dvb_sub_destination_settings:
                 description:
-                  - TODO
+                  - Dvb Sub Destination Settings.
                 type: dict
                 suboptions:
                   alignment:
                     description:
-                      - TODO
+                      - If no explicit xPosition or yPosition is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. Selecting “smart” justification will left-justify live subtitles and center-justify pre-recorded subtitles. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices: ['CENTERED', 'LEFT', 'SMART']
                   background_color:
                     description:
-                      - TODO
+                      - Specifies the color of the rectangle behind the captions. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices: ['BLACK', 'NONE', 'WHITE']
                   background_opacity:
                     description:
-                      - TODO
+                      - Specifies the opacity of the background rectangle. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
                     type: int
                   font:
                     description:
-                      - TODO
+                      - External font file used for caption burn-in. File extension must be ‘ttf’ or ‘tte’. Although the user can select output fonts for many different types of input captions, embedded, STL and teletext sources use a strict grid system. Using external fonts with these caption sources could cause unexpected display of proportional fonts. All burn-in and DVB-Sub font settings must match.
                     type: dict
                     suboptions:
                       password_param:
                         description:
-                          - TODO
+                          - key used to extract the password from EC2 Parameter store.
                         type: str
                       uri:
                         description:
-                          - TODO
+                          - Uniform Resource Identifier - This should be a path to a file accessible to the Live system (eg. a http:// URI) depending on the output type. For example, a RTMP destination should have a uri simliar to “rtmp://fmsserver/live”.
                         type: str
                       username:
                         description:
-                          - TODO
+                          - username for destination.
                         type: str
                   font_color:
                     description:
-                      - TODO
+                      - Specifies the color of the burned-in captions. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices:
                       - 'BLACK'
@@ -969,20 +969,20 @@ options:
                       - 'YELLOW'
                   font_opacity:
                     description:
-                      - TODO
+                      - Specifies the opacity of the burned-in captions. 255 is opaque; 0 is transparent. All burn-in and DVB-Sub font settings must match.
                     type: int
                   font_resolution:
                     description:
-                      - TODO
+                      - Font resolution in DPI (dots per inch); default is 96 dpi. All burn-in and DVB-Sub font settings must match.
                     type: int
                   font_size:
                     description:
-                      - TODO
+                      - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                     type: str
               
                   outline_color:
                     description:
-                      - TODO
+                      - Specifies font outline color. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices:
                       - 'BLACK'
@@ -993,132 +993,132 @@ options:
                       - 'YELLOW'
                   outline_size:
                     description:
-                      - TODO
+                      - Specifies font outline size in pixels. This option is not valid for source captions that are either 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
                     type: int
                   shadow_color:
                     description:
-                      - TODO
+                      - Specifies the color of the shadow cast by the captions. All burn-in and DVB-Sub font settings must match.
                     type: str
                     choices: ['BLACK', 'NONE', 'WHITE']
                   shadow_opacity:
                     description:
-                      - TODO
+                      - Specifies the opacity of the shadow. 255 is opaque; 0 is transparent. Leaving this parameter out is equivalent to setting it to 0 (transparent). All burn-in and DVB-Sub font settings must match.
                     type: int
                   shadow_x_offset:
                     description:
-                      - TODO
+                      - Specifies the horizontal offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels to the left. All burn-in and DVB-Sub font settings must match.
                     type: int
                   shadow_y_offset:
                     description:
-                      - TODO
+                      - Specifies the vertical offset of the shadow relative to the captions in pixels. A value of -2 would result in a shadow offset 2 pixels above the text. All burn-in and DVB-Sub font settings must match.
                     type: int
                   teletext_grid_control:
                     description:
-                      - TODO
+                      - Controls whether a fixed grid size will be used to generate the output subtitles bitmap. Only applicable for Teletext inputs and DVB-Sub/Burn-in outputs.
                     type: str
                     choices: ['FIXED', 'SCALED']
                   x_position:
                     description:
-                      - TODO
+                      - Specifies the horizontal position of the caption relative to the left side of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the left of the output. If no explicit xPosition is provided, the horizontal caption position will be determined by the alignment parameter. All burn-in and DVB-Sub font settings must match.
                     type: int
                   y_position:
                     description:
-                      - TODO
+                      - Specifies the vertical position of the caption relative to the top of the output in pixels. A value of 10 would result in the captions starting 10 pixels from the top of the output. If no explicit yPosition is provided, the caption will be positioned towards the bottom of the output. All burn-in and DVB-Sub font settings must match.
                     type: int
               ebu_tt_d_destination_settings:
                 description:
-                  - TODO
+                  - Ebu Tt DDestination Settings.
                 type: dict
                 suboptions:
                   copyright_holder:
                     description:
-                      - TODO
+                      - Complete this field if you want to include the name of the copyright holder in the copyright tag in the captions metadata.
                     type: str
                   fill_line_gap:
                     description:
-                      - TODO
+                      - 'Specifies how to handle the gap between the lines (in multi-line captions). ENABLED: Fill with the captions background color (as specified in the input captions). DISABLED: Leave the gap unfilled.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   font_family:
                     description:
-                      - TODO
+                      - Specifies the font family to include in the font data attached to the EBU-TT captions. Valid only if style_control is set to include. (If style_control is set to exclude, the font family is always set to monospaced.) Enter a list of font families, as a comma-separated list of font names, in order of preference. The name can be a font family (such as Arial), or a generic font family (such as serif), or default (to let the downstream player choose the font). Or leave blank to set the family to monospace. Note that you can specify only the font family. All other style information (color, bold, position and so on) is copied from the input captions. The size is always set to 100% to allow the downstream player to choose the size.
                     type: str
                   style_control:
                     description:
-                      - TODO
+                      - 'Specifies the style information to include in the font data that is attached to the EBU-TT captions. INCLUDE: Take the style information from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. EXCLUDE: Set the font family to monospaced. Do not include any other style information.'
                     type: str
                     choices: ['EXCLUDE', 'INCLUDE']
                   default_font_size:
                     description:
-                      - TODO
+                      - Specifies the default font size as a percentage of the computed cell size. Valid only if the defaultLineHeight is also set. If you leave this field empty, the default font size is 80% of the cell size.
                     type: int
                   default_line_height:
                     description:
-                      - TODO
+                      - Documentation update needed.
                     type: int
               embedded_destination_settings:
                 description:
-                  - TODO
+                  - Embedded Destination Settings.
                 type: dict
               embedded_plus_scte20_destination_settings:
                 description:
-                  - TODO
+                  - Embedded Plus Scte20 Destination Settings.
                 type: dict
               rtmp_caption_info_destination_settings:
                 description:
-                  - TODO
+                  - Rtmp Caption Info Destination Settings.
                 type: dict
               scte20_plus_embedded_destination_settings:
                 description:
-                  - TODO
+                  - Scte20 Plus Embedded Destination Settings.
                 type: dict
               scte27_destination_settings:
                 description:
-                  - TODO
+                  - Scte27 Destination Settings.
                 type: dict
               smpte_tt_destination_settings:
                 description:
-                  - TODO
+                  - Smpte Tt Destination Settings.
                 type: dict
               teletext_destination_settings:
                 description:
-                  - TODO
+                  - Teletext Destination Settings.
                 type: dict
               ttml_destination_settings:
                 description:
-                  - TODO
+                  - Ttml Destination Settings.
                 type: dict
                 suboptions:
                   style_control:
                     description:
-                      - TODO
+                      - 'Specifies the style information to include in the font data that is attached to the EBU-TT captions. INCLUDE: Take the style information from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. EXCLUDE: Set the font family to monospaced. Do not include any other style information.'
                     type: str
                     choices: ['PASSTHROUGH', 'USE_CONFIGURED']
               webvtt_destination_settings:
                 description:
-                  - TODO
+                  - Webvtt Destination Settings.
                 type: dict
                 suboptions:
                   style_control:
                     description:
-                      - TODO
+                      - 'Specifies the style information to include in the font data that is attached to the EBU-TT captions. INCLUDE: Take the style information from the source captions and include that information in the font data attached to the EBU-TT captions. This option is valid only if the source captions are Embedded or Teletext. EXCLUDE: Set the font family to monospaced. Do not include any other style information.'
                     type: str
                     choices: ['NO_STYLE_DATA', 'PASSTHROUGH']
           language_code:
             description:
-              - TODO
+              - RFC 5646 language code representing the language of the audio output track. Only used if languageControlMode is useConfigured, or there is no ISO 639 language code specified in the input.
             type: str
           language_description:
             description:
-              - TODO
+              - Human readable information to indicate captions available for players (eg. English, or Spanish).
             type: str
           name:
             description:
-              - TODO
+              - The name of this AudioDescription. Outputs will use this name to uniquely identify this AudioDescription. Description names should be unique within this Live Event.
             type: str
           caption_dash_roles:
             description:
-              - TODO
+              - Identifies the DASH roles to assign to this captions output. Applies only when the captions output is configured for DVB DASH accessibility signaling.  Dash Role Caption.
             type: list
             elements: str
             choices:
@@ -1137,7 +1137,7 @@ options:
               - 'SUPPLEMENTARY'
           dvb_dash_accessibility:
             description:
-              - TODO
+              - Identifies DVB DASH accessibility signaling in this audio output. Used in Microsoft Smooth Streaming outputs to signal accessibility information to packagers.
             type: str
             choices:
               - 'DVBDASH_1_VISUALLY_IMPAIRED'
@@ -1344,7 +1344,7 @@ options:
                 suboptions:
                   destination:
                     description:
-                      - The destination for the frame capture files. Either the URI for an Amazon S3 bucket and object, plus a file name prefix (for example, s3ssl://sportsDelivery/highlights/20180820/curling-) or the URI for a MediaStore container, plus a file name prefix (for example, mediastoressl://sportsDelivery/20180820/curling-). The final file names consist of the prefix from the destination field (for example, "curling-") + name modifier + the counter (5 digits, starting from 00001) + extension (which is always .jpg). For example, curling-low.00001.jpg
+                      - The destination for the frame capture files. Either the URI for an Amazon S3 bucket and object, plus a file name prefix (for example, s3ssl://sportsDelivery/highlights/20180820/curling-) or the URI for a MediaStore container, plus a file name prefix (for example, mediastoressl://sportsDelivery/20180820/curling-). The final file names consist of the prefix from the destination field (for example, "curling-") + name modifier + the counter (5 digits, starting from 00001) + extension (which is always.jpg). For example, curling-low.00001.jpg
                     type: dict
                     suboptions:
                       destination_ref_id:
@@ -2665,246 +2665,246 @@ options:
                                 choices: ['DROP', 'ENCODE_SILENCE']
                               arib:
                                 description:
-                                  - TODO
+                                  - When set to enabled, uses ARIB-compliant field muxing and removes video descriptor.
                                 type: str
                                 choices: ['DISABLED', 'ENABLED']
                               arib_captions_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for ARIB Captions in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               arib_captions_pid_control:
                                 description:
-                                  - TODO
+                                  - If set to auto, pid number used for ARIB Captions will be auto-selected from unused pids. If set to useConfigured, ARIB Captions will be on the configured pid number.
                                 type: str
                                 choices: ['AUTO', 'USE_CONFIGURED']
                               audio_buffer_model:
                                 description:
-                                  - TODO
+                                  - When set to dvb, uses DVB buffer model for Dolby Digital audio. When set to atsc, the ATSC model is used.
                                 type: str
                                 choices: ['ATSC', 'DVB']
                               audio_frames_per_pes:
                                 description:
-                                  - TODO
+                                  - The number of audio frames to insert for each PES packet.
                                 type: int
                                       
                               audio_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the elementary audio stream(s) in the transport stream. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               audio_stream_type:
                                 description:
-                                  - TODO
+                                  - When set to atsc, uses stream type = 0x81 for AC3 and stream type = 0x87 for EAC3. When set to dvb, uses stream type = 0x06.
                                 type: str
                                 choices: ['ATSC', 'DVB']
                               bitrate:
                                 description:
-                                  - TODO
+                                  - Average bitrate in bits/second. Valid values depend on rate control mode and profile.
                                 type: int
                               buffer_model:
                                 description:
-                                  - TODO
+                                  - Controls the timing accuracy for output network traffic. Leave as MULTIPLEX to ensure accurate network packet timing. Or set to NONE, which might result in lower latency but will result in more variability in output network packet timing. This variability might cause interruptions, jitter, or bursty behavior in your playback or receiving devices.
                                 type: str
                                 choices: ['MULTIPLEX', 'NONE']
                               cc_descriptor:
                                 description:
-                                  - TODO
+                                  - When set to enabled, generates captionServiceDescriptor in PMT.
                                 type: str
                                 choices: ['DISABLED', 'ENABLED']
                               dvb_nit_settings:
                                 description:
-                                  - TODO
+                                  - Inserts DVB Network Information Table (NIT) at the specified table repetition interval.
                                 type: dict
                                 suboptions:
                                   network_id:
                                     description:
-                                      - TODO
+                                      - Provides Network ID that matches EIDR ID format (e.g., “10.XXXX/XXXX-XXXX-XXXX-XXXX-XXXX-C”).
                                     type: int
                                   network_name:
                                     description:
-                                      - TODO
+                                      - The network name text placed in the networkNameDescriptor inside the Network Information Table. Maximum length is 256 characters.
                                     type: str
                                   rep_interval:
                                     description:
-                                      - TODO
+                                      - The number of milliseconds between instances of this table in the output transport stream.
                                     type: int
                               dvb_sdt_settings:
                                 description:
-                                  - TODO
+                                  - Inserts DVB Service Description Table (SDT) at the specified table repetition interval.
                                 type: dict
                                 suboptions:
                                   output_sdt:
                                     description:
-                                      - TODO
+                                      - Selects method of inserting SDT information into output stream. The sdtFollow setting copies SDT information from input stream to output stream. The sdtFollowIfPresent setting copies SDT information from input stream to output stream if SDT information is present in the input, otherwise it will fall back on the user-defined values. The sdtManual setting means user will enter the SDT information. The sdtNone setting means output stream will not contain SDT information.
                                     type: str
                                     choices: ['SDT_FOLLOW', 'SDT_FOLLOW_IF_PRESENT', 'SDT_MANUAL', 'SDT_NONE']
                                   rep_interval:
                                     description:
-                                      - TODO
+                                      - The number of milliseconds between instances of this table in the output transport stream.
                                     type: int
                                   service_name:
                                     description:
-                                      - TODO
+                                      - The service name placed in the serviceDescriptor in the Service Description Table. Maximum length is 256 characters.
                                     type: str
                                   service_provider_name:
                                     description:
-                                      - TODO
+                                      - The service provider name placed in the serviceDescriptor in the Service Description Table. Maximum length is 256 characters.
                                     type: str
                               dvb_sub_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source DVB Subtitle data to this output. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               dvb_tdt_settings:
                                 description:
-                                  - TODO
+                                  - Inserts DVB Time and Date Table (TDT) at the specified table repetition interval.
                                 type: dict
                                 suboptions:
                                   rep_interval:
                                     description:
-                                      - TODO
+                                      - The number of milliseconds between instances of this table in the output transport stream.
                                     type: int
                               dvb_teletext_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source DVB Teletext data to this output. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               ebif:
                                 description:
-                                  - TODO
+                                  - If set to passthrough, passes any EBIF data from the input source to this output.
                                 type: str
                                 choices: ['NONE', 'PASSTHROUGH']
                               ebp_audio_interval:
                                 description:
-                                  - TODO
+                                  - When videoAndFixedIntervals is selected, audio EBP markers will be added to partitions 3 and 4. The interval between these additional markers will be fixed, and will be slightly shorter than the video EBP marker interval. Only available when EBP Cablelabs segmentation markers are selected. Partitions 1 and 2 will always follow the video interval.
                                 type: str
                                 choices: ['VIDEO_AND_FIXED_INTERVALS', 'VIDEO_INTERVAL']
                               ebp_lookahead_ms:
                                 description:
-                                  - TODO
+                                  - When set, enforces that Encoder Boundary Points do not come within the specified time interval of each other by looking ahead at input video. If another EBP is going to come in within the specified time interval, the current EBP is not emitted, and the segment is “stretched” to the next marker. The lookahead value does not add latency to the system. The Live Event must be configured elsewhere to create sufficient latency to make the lookahead accurate.
                                 type: int
                               ebp_placement:
                                 description:
-                                  - TODO
+                                  - Controls placement of EBP on Audio PIDs. If set to videoAndAudioPids, EBP markers will be placed on the video PID and all audio PIDs. If set to videoPid, EBP markers will be placed on only the video PID.
                                 type: str
                                 choices: ['VIDEO_AND_AUDIO_PIDS', 'VIDEO_PID']
                               ecm_pid:
                                 description:
-                                  - TODO
+                                  - This field is unused and deprecated.
                                 type: str
                               es_rate_in_pes:
                                 description:
-                                  - TODO
+                                  - Include or exclude the ES Rate field in the PES header.
                                 type: str
                                 choices: ['EXCLUDE', 'INCLUDE']
                               etv_platform_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source ETV Platform data to this output. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               etv_signal_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source ETV Signal data to this output. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               fragment_time:
                                 description:
-                                  - TODO
+                                  - The length in seconds of each fragment. Only used with EBP markers.
                                 type: float
                               klv:
                                 description:
-                                  - TODO
+                                  - If set to passthrough, passes any KLV data from the input source to this output.
                                 type: str
                                 choices: ['NONE', 'PASSTHROUGH']
                               klv_data_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source KLV data to this output. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               nielsen_id3_behavior:
                                 description:
-                                  - TODO
+                                  - If set to passthrough, Nielsen inaudible tones for media tracking will be detected in the input audio and an equivalent ID3 tag will be inserted in the output.
                                 type: str
                                 choices: ['NO_PASSTHROUGH', 'PASSTHROUGH']
                               null_packet_bitrate:
                                 description:
-                                  - TODO
+                                  - Value in bits per second of extra null packets to insert into the transport stream. This can be used if a downstream encryption system requires periodic null packets.
                                 type: float
                               pat_interval:
                                 description:
-                                  - TODO
+                                  - The number of milliseconds between instances of this table in the output transport stream. Valid values are 0, 10..1000.
                                 type: int
                               pcr_control:
                                 description:
-                                  - TODO
+                                  - When set to pcrEveryPesPacket, a Program Clock Reference value is inserted for every Packetized Elementary Stream (PES) header. This parameter is effective only when the PCR PID is the same as the video or audio elementary stream.
                                 type: str
                                 choices: ['CONFIGURED_PCR_PERIOD', 'PCR_EVERY_PES_PACKET']
                               pcr_period:
                                 description:
-                                  - TODO
+                                  - Maximum time in milliseconds between Program Clock Reference (PCRs) inserted into the transport stream.
                                 type: int
                               pcr_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the Program Clock Reference (PCR) in the transport stream. When no value is given, the encoder will assign the same value as the Video PID. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               pmt_interval:
                                 description:
-                                  - TODO
+                                  - The number of milliseconds between instances of this table in the output transport stream. Valid values are 0, 10..1000.
                                 type: int
                               pmt_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for the Program Map Table (PMT) in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               program_num:
                                 description:
-                                  - TODO
+                                  - The value of the program number field in the Program Map Table.
                                 type: int
                               rate_mode:
                                 description:
-                                  - TODO
+                                  - When vbr, does not insert null packets into transport stream to fill specified bitrate. The bitrate setting acts as the maximum bitrate when vbr is set.
                                 type: str
                                 choices: ['CBR', 'VBR']
                               scte27_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source SCTE-27 data to this output. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               scte35_control:
                                 description:
-                                  - TODO
+                                  - Optionally pass SCTE-35 signals from the input source to this output.
                                 type: str
                                 choices: ['NONE', 'PASSTHROUGH']
                               scte35_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the SCTE-35 stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               segmentation_markers:
                                 description:
-                                  - TODO
+                                  - Inserts segmentation markers at each segmentationTime period. raiSegstart sets the Random Access Indicator bit in the adaptation field. raiAdapt sets the RAI bit and adds the current timecode in the private data bytes. psiSegstart inserts PAT and PMT tables at the start of segments. ebp adds Encoder Boundary Point information to the adaptation field as per OpenCable specification OC-SP-EBP-I01-130118. ebpLegacy adds Encoder Boundary Point information to the adaptation field using a legacy proprietary format.
                                 type: str
                                 choices: ['EBP', 'EBP_LEGACY', 'NONE', 'PSI_SEGSTART', 'RAI_ADAPT', 'RAI_SEGSTART']
                               segmentation_style:
                                 description:
-                                  - TODO
+                                  - The segmentation style parameter controls how segmentation markers are inserted into the transport stream. With avails, it is possible that segments may be truncated, which can influence where future segmentation markers are inserted. When a segmentation style of “resetCadence” is selected and a segment is truncated due to an avail, we will reset the segmentation cadence. This means the subsequent segment will have a duration of $segmentationTime seconds. When a segmentation style of “maintainCadence” is selected and a segment is truncated due to an avail, we will not reset the segmentation cadence. This means the subsequent segment will likely be truncated as well. However, all segments after that will have a duration of $segmentationTime seconds. Note that EBP lookahead is a slight exception to this rule.
                                 type: str
                                 choices: ['MAINTAIN_CADENCE', 'RESET_CADENCE']
                               segmentation_time:
                                 description:
-                                  - TODO
+                                  - The length in seconds of each segment. Required unless markers is set to _none_.
                                 type: float
                               timed_metadata_behavior:
                                 description:
-                                  - TODO
+                                  - When set to passthrough, timed metadata will be passed through from input to output.
                                 type: str
                                 choices: ['NO_PASSTHROUGH', 'PASSTHROUGH']
                               timed_metadata_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the timed metadata stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               transport_stream_id:
                                 description:
-                                  - TODO
+                                  - The value of the transport stream ID field in the Program Map Table.
                                 type: int
                               video_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the elementary video stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               scte35_preroll_pullup_milliseconds:
                                 description:
-                                  - TODO
+                                  - Defines the amount SCTE-35 preroll will be increased (in milliseconds) on the output. Preroll is the amount of time between the presence of a SCTE-35 indication in a transport stream and the PTS of the video frame it references. Zero means don’t add pullup (it doesn’t mean set the preroll to zero). Negative pullup is not supported, which means that you can’t make the preroll shorter. Be aware that latency in the output will increase by the pullup amount.
                                 type: float
                       destination:
                         description:
@@ -2968,246 +2968,246 @@ options:
                                 choices: ['DROP', 'ENCODE_SILENCE']
                               arib:
                                 description:
-                                  - TODO
+                                  - When set to enabled, uses ARIB-compliant field muxing and removes video descriptor.
                                 type: str
                                 choices: ['DISABLED', 'ENABLED']
                               arib_captions_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for ARIB Captions in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               arib_captions_pid_control:
                                 description:
-                                  - TODO
+                                  - If set to auto, pid number used for ARIB Captions will be auto-selected from unused pids. If set to useConfigured, ARIB Captions will be on the configured pid number.
                                 type: str
                                 choices: ['AUTO', 'USE_CONFIGURED']
                               audio_buffer_model:
                                 description:
-                                  - TODO
+                                  - When set to dvb, uses DVB buffer model for Dolby Digital audio. When set to atsc, the ATSC model is used.
                                 type: str
                                 choices: ['ATSC', 'DVB']
                               audio_frames_per_pes:
                                 description:
-                                  - TODO
+                                  - The number of audio frames to insert for each PES packet.
                                 type: int
                                       
                               audio_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the elementary audio stream(s) in the transport stream. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               audio_stream_type:
                                 description:
-                                  - TODO
+                                  - When set to atsc, uses stream type = 0x81 for AC3 and stream type = 0x87 for EAC3. When set to dvb, uses stream type = 0x06.
                                 type: str
                                 choices: ['ATSC', 'DVB']
                               bitrate:
                                 description:
-                                  - TODO
+                                  - Average bitrate in bits/second. Valid values depend on rate control mode and profile.
                                 type: int
                               buffer_model:
                                 description:
-                                  - TODO
+                                  - Controls the timing accuracy for output network traffic. Leave as MULTIPLEX to ensure accurate network packet timing. Or set to NONE, which might result in lower latency but will result in more variability in output network packet timing. This variability might cause interruptions, jitter, or bursty behavior in your playback or receiving devices.
                                 type: str
                                 choices: ['MULTIPLEX', 'NONE']
                               cc_descriptor:
                                 description:
-                                  - TODO
+                                  - When set to enabled, generates captionServiceDescriptor in PMT.
                                 type: str
                                 choices: ['DISABLED', 'ENABLED']
                               dvb_nit_settings:
                                 description:
-                                  - TODO
+                                  - Inserts DVB Network Information Table (NIT) at the specified table repetition interval.
                                 type: dict
                                 suboptions:
                                   network_id:
                                     description:
-                                      - TODO
+                                      - Provides Network ID that matches EIDR ID format (e.g., “10.XXXX/XXXX-XXXX-XXXX-XXXX-XXXX-C”).
                                     type: int
                                   network_name:
                                     description:
-                                      - TODO
+                                      - The network name text placed in the networkNameDescriptor inside the Network Information Table. Maximum length is 256 characters.
                                     type: str
                                   rep_interval:
                                     description:
-                                      - TODO
+                                      - The number of milliseconds between instances of this table in the output transport stream.
                                     type: int
                               dvb_sdt_settings:
                                 description:
-                                  - TODO
+                                  - Inserts DVB Service Description Table (SDT) at the specified table repetition interval.
                                 type: dict
                                 suboptions:
                                   output_sdt:
                                     description:
-                                      - TODO
+                                      - Selects method of inserting SDT information into output stream. The sdtFollow setting copies SDT information from input stream to output stream. The sdtFollowIfPresent setting copies SDT information from input stream to output stream if SDT information is present in the input, otherwise it will fall back on the user-defined values. The sdtManual setting means user will enter the SDT information. The sdtNone setting means output stream will not contain SDT information.
                                     type: str
                                     choices: ['SDT_FOLLOW', 'SDT_FOLLOW_IF_PRESENT', 'SDT_MANUAL', 'SDT_NONE']
                                   rep_interval:
                                     description:
-                                      - TODO
+                                      - The number of milliseconds between instances of this table in the output transport stream.
                                     type: int
                                   service_name:
                                     description:
-                                      - TODO
+                                      - The service name placed in the serviceDescriptor in the Service Description Table. Maximum length is 256 characters.
                                     type: str
                                   service_provider_name:
                                     description:
-                                      - TODO
+                                      - The service provider name placed in the serviceDescriptor in the Service Description Table. Maximum length is 256 characters.
                                     type: str
                               dvb_sub_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source DVB Subtitle data to this output. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               dvb_tdt_settings:
                                 description:
-                                  - TODO
+                                  - Inserts DVB Time and Date Table (TDT) at the specified table repetition interval.
                                 type: dict
                                 suboptions:
                                   rep_interval:
                                     description:
-                                      - TODO
+                                      - The number of milliseconds between instances of this table in the output transport stream.
                                     type: int
                               dvb_teletext_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source DVB Teletext data to this output. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               ebif:
                                 description:
-                                  - TODO
+                                  - If set to passthrough, passes any EBIF data from the input source to this output.
                                 type: str
                                 choices: ['NONE', 'PASSTHROUGH']
                               ebp_audio_interval:
                                 description:
-                                  - TODO
+                                  - When videoAndFixedIntervals is selected, audio EBP markers will be added to partitions 3 and 4. The interval between these additional markers will be fixed, and will be slightly shorter than the video EBP marker interval. Only available when EBP Cablelabs segmentation markers are selected. Partitions 1 and 2 will always follow the video interval.
                                 type: str
                                 choices: ['VIDEO_AND_FIXED_INTERVALS', 'VIDEO_INTERVAL']
                               ebp_lookahead_ms:
                                 description:
-                                  - TODO
+                                  - When set, enforces that Encoder Boundary Points do not come within the specified time interval of each other by looking ahead at input video. If another EBP is going to come in within the specified time interval, the current EBP is not emitted, and the segment is “stretched” to the next marker. The lookahead value does not add latency to the system. The Live Event must be configured elsewhere to create sufficient latency to make the lookahead accurate.
                                 type: int
                               ebp_placement:
                                 description:
-                                  - TODO
+                                  - Controls placement of EBP on Audio PIDs. If set to videoAndAudioPids, EBP markers will be placed on the video PID and all audio PIDs. If set to videoPid, EBP markers will be placed on only the video PID.
                                 type: str
                                 choices: ['VIDEO_AND_AUDIO_PIDS', 'VIDEO_PID']
                               ecm_pid:
                                 description:
-                                  - TODO
+                                  - This field is unused and deprecated.
                                 type: str
                               es_rate_in_pes:
                                 description:
-                                  - TODO
+                                  - Include or exclude the ES Rate field in the PES header.
                                 type: str
                                 choices: ['EXCLUDE', 'INCLUDE']
                               etv_platform_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source ETV Platform data to this output. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               etv_signal_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source ETV Signal data to this output. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               fragment_time:
                                 description:
-                                  - TODO
+                                  - The length in seconds of each fragment. Only used with EBP markers.
                                 type: float
                               klv:
                                 description:
-                                  - TODO
+                                  - If set to passthrough, passes any KLV data from the input source to this output.
                                 type: str
                                 choices: ['NONE', 'PASSTHROUGH']
                               klv_data_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source KLV data to this output. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               nielsen_id3_behavior:
                                 description:
-                                  - TODO
+                                  - If set to passthrough, Nielsen inaudible tones for media tracking will be detected in the input audio and an equivalent ID3 tag will be inserted in the output.
                                 type: str
                                 choices: ['NO_PASSTHROUGH', 'PASSTHROUGH']
                               null_packet_bitrate:
                                 description:
-                                  - TODO
+                                  - Value in bits per second of extra null packets to insert into the transport stream. This can be used if a downstream encryption system requires periodic null packets.
                                 type: float
                               pat_interval:
                                 description:
-                                  - TODO
+                                  - The number of milliseconds between instances of this table in the output transport stream. Valid values are 0, 10..1000.
                                 type: int
                               pcr_control:
                                 description:
-                                  - TODO
+                                  - When set to pcrEveryPesPacket, a Program Clock Reference value is inserted for every Packetized Elementary Stream (PES) header. This parameter is effective only when the PCR PID is the same as the video or audio elementary stream.
                                 type: str
                                 choices: ['CONFIGURED_PCR_PERIOD', 'PCR_EVERY_PES_PACKET']
                               pcr_period:
                                 description:
-                                  - TODO
+                                  - Maximum time in milliseconds between Program Clock Reference (PCRs) inserted into the transport stream.
                                 type: int
                               pcr_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the Program Clock Reference (PCR) in the transport stream. When no value is given, the encoder will assign the same value as the Video PID. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               pmt_interval:
                                 description:
-                                  - TODO
+                                  - The number of milliseconds between instances of this table in the output transport stream. Valid values are 0, 10..1000.
                                 type: int
                               pmt_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for the Program Map Table (PMT) in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               program_num:
                                 description:
-                                  - TODO
+                                  - The value of the program number field in the Program Map Table.
                                 type: int
                               rate_mode:
                                 description:
-                                  - TODO
+                                  - When vbr, does not insert null packets into transport stream to fill specified bitrate. The bitrate setting acts as the maximum bitrate when vbr is set.
                                 type: str
                                 choices: ['CBR', 'VBR']
                               scte27_pids:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) for input source SCTE-27 data to this output. Multiple values are accepted, and can be entered in ranges and/or by comma separation. Can be entered as decimal or hexadecimal values. Each PID specified must be in the range of 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               scte35_control:
                                 description:
-                                  - TODO
+                                  - Optionally pass SCTE-35 signals from the input source to this output.
                                 type: str
                                 choices: ['NONE', 'PASSTHROUGH']
                               scte35_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the SCTE-35 stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               segmentation_markers:
                                 description:
-                                  - TODO
+                                  - Inserts segmentation markers at each segmentationTime period. raiSegstart sets the Random Access Indicator bit in the adaptation field. raiAdapt sets the RAI bit and adds the current timecode in the private data bytes. psiSegstart inserts PAT and PMT tables at the start of segments. ebp adds Encoder Boundary Point information to the adaptation field as per OpenCable specification OC-SP-EBP-I01-130118. ebpLegacy adds Encoder Boundary Point information to the adaptation field using a legacy proprietary format.
                                 type: str
                                 choices: ['EBP', 'EBP_LEGACY', 'NONE', 'PSI_SEGSTART', 'RAI_ADAPT', 'RAI_SEGSTART']
                               segmentation_style:
                                 description:
-                                  - TODO
+                                  - The segmentation style parameter controls how segmentation markers are inserted into the transport stream. With avails, it is possible that segments may be truncated, which can influence where future segmentation markers are inserted. When a segmentation style of “resetCadence” is selected and a segment is truncated due to an avail, we will reset the segmentation cadence. This means the subsequent segment will have a duration of $segmentationTime seconds. When a segmentation style of “maintainCadence” is selected and a segment is truncated due to an avail, we will not reset the segmentation cadence. This means the subsequent segment will likely be truncated as well. However, all segments after that will have a duration of $segmentationTime seconds. Note that EBP lookahead is a slight exception to this rule.
                                 type: str
                                 choices: ['MAINTAIN_CADENCE', 'RESET_CADENCE']
                               segmentation_time:
                                 description:
-                                  - TODO
+                                  - The length in seconds of each segment. Required unless markers is set to _none_.
                                 type: float
                               timed_metadata_behavior:
                                 description:
-                                  - TODO
+                                  - When set to passthrough, timed metadata will be passed through from input to output.
                                 type: str
                                 choices: ['NO_PASSTHROUGH', 'PASSTHROUGH']
                               timed_metadata_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the timed metadata stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               transport_stream_id:
                                 description:
-                                  - TODO
+                                  - The value of the transport stream ID field in the Program Map Table.
                                 type: int
                               video_pid:
                                 description:
-                                  - TODO
+                                  - Packet Identifier (PID) of the elementary video stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
                                 type: str
                               scte35_preroll_pullup_milliseconds:
                                 description:
-                                  - TODO
+                                  - Defines the amount SCTE-35 preroll will be increased (in milliseconds) on the output. Preroll is the amount of time between the presence of a SCTE-35 indication in a transport stream and the PTS of the video frame it references. Zero means don’t add pullup (it doesn’t mean set the preroll to zero). Negative pullup is not supported, which means that you can’t make the preroll shorter. Be aware that latency in the output will increase by the pullup amount.
                                 type: float
                       destination:
                         description:
@@ -3272,17 +3272,17 @@ options:
                     choices: ['MILLISECONDS', 'SECONDS']
                   timecode_burnin_settings:
                     description:
-                      - TODO
+                      - Timecode burn-in settings.
                     type: dict
                     suboptions:
                       font_size:
                         description:
-                          - TODO
+                          - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                         type: str
                         choices: ['EXTRA_SMALL_10', 'LARGE_48', 'MEDIUM_32', 'SMALL_16']
                       position:
                         description:
-                          - TODO
+                          - Choose a timecode burn-in output position.
                         type: str
                         choices:
                           - 'BOTTOM_CENTER'
@@ -3296,80 +3296,80 @@ options:
                           - 'TOP_RIGHT'
                       prefix:
                         description:
-                          - TODO
+                          - Create a timecode burn-in prefix (optional).
                         type: str
               h264_settings:
                 description:
-                  - TODO
+                  - H264 Settings.
                 type: dict
                 suboptions:
                   adaptive_quantization:
                     description:
-                      - TODO
+                      - 'Enables or disables adaptive quantization, which is a technique MediaLive can apply to video on a frame-by-frame basis to produce more compression without losing quality. There are three types of adaptive quantization: flicker, spatial, and temporal. Set the field in one of these ways: Set to Auto. Recommended. For each type of AQ, MediaLive will determine if AQ is needed, and if so, the appropriate strength. Set a strength (a value other than Auto or Disable). This strength will apply to any of the AQ fields that you choose to enable. Set to Disabled to disable all types of adaptive quantization.'
                     type: str
                     choices: ['AUTO', 'HIGH', 'HIGHER', 'LOW', 'MAX', 'MEDIUM', 'OFF']
                   afd_signaling:
                     description:
-                      - TODO
+                      - Indicates that AFD values will be written into the output stream. If afdSignaling is “auto”, the system will try to preserve the input AFD value (in cases where multiple AFD values are valid). If set to “fixed”, the AFD value will be the value configured in the fixedAfd parameter.
                     type: str
                     choices: ['AUTO', 'FIXED', 'NONE']
                   bitrate:
                     description:
-                      - TODO
+                      - Average bitrate in bits/second. Valid values depend on rate control mode and profile.
                     type: int
                   buf_fill_pct:
                     description:
-                      - TODO
+                      - Percentage of the buffer that should initially be filled (HRD buffer model).
                     type: int
                   buf_size:
                     description:
-                      - TODO
+                      - Size of buffer (HRD buffer model) in bits.
                     type: int
                   color_metadata:
                     description:
-                      - TODO
+                      - Includes colorspace metadata in the output.
                     type: str
                     choices: ['IGNORE', 'INSERT']
                   color_space_settings:
                     description:
-                      - TODO
+                      - Color Space settings.
                     type: dict
                     suboptions:
                       color_space_passthrough_settings:
                         description:
-                          - TODO
+                          - Passthrough applies no color space conversion to the output.
                         type: dict
                       rec601_settings:
                         description:
-                          - TODO
+                          - Rec601 Settings.
                         type: dict
                       rec709_settings:
                         description:
-                          - TODO
+                          - Rec709 Settings.
                         type: dict
                   entropy_encoding:
                     description:
-                      - TODO
+                      - Entropy encoding mode. Use cabac (must be in Main or High profile) or cavlc.
                     type: str
                     choices: ['CABAC', 'CAVLC']
                   filter_settings:
                     description:
-                      - TODO
+                      - Optional. Both filters reduce bandwidth by removing imperceptible details. You can enable one of the filters. We recommend that you try both filters and observe the results to decide which one to use. The Temporal Filter reduces bandwidth by removing imperceptible details in the content. It combines perceptual filtering and motion compensated temporal filtering (MCTF). It operates independently of the compression level. The Bandwidth Reduction filter is a perceptual filter located within the encoding loop. It adapts to the current compression level to filter imperceptible signals. This filter works only when the resolution is 1080p or lower.
                     type: dict
                     suboptions:
                       temporal_filter_settings:
                         description:
-                          - TODO
+                          - Temporal Filter Settings.
                         type: dict
                         suboptions:
                           post_filter_sharpening:
                             description:
-                              - TODO
+                              - 'If you enable this filter, the results are the following: - If the source content is noisy (it contains excessive digital artifacts), the filter cleans up the source. - If the source content is already clean, the filter tends to decrease the bitrate, especially when the rate control mode is QVBR.'
                             type: str
                             choices: ['AUTO', 'DISABLED', 'ENABLED']
                           strength:
                             description:
-                              - TODO
+                              - Choose a filter strength. We recommend a strength of 1 or 2. A higher strength might take out good information, resulting in an image that is overly soft.
                             type: str
                             choices:
                               - 'AUTO'
@@ -3391,22 +3391,22 @@ options:
                               - 'STRENGTH_16'
                       bandwidth_reduction_filter_settings:
                         description:
-                          - TODO
+                          - Bandwidth Reduction Filter Settings.
                         type: dict
                         suboptions:
                           post_filter_sharpening:
                             description:
-                              - TODO
+                              - 'If you enable this filter, the results are the following: - If the source content is noisy (it contains excessive digital artifacts), the filter cleans up the source. - If the source content is already clean, the filter tends to decrease the bitrate, especially when the rate control mode is QVBR.'
                             type: str
                             choices: ['DISABLED', 'SHARPENING_1', 'SHARPENING_2', 'SHARPENING_3']
                           strength:
                             description:
-                              - TODO
+                              - Choose a filter strength. We recommend a strength of 1 or 2. A higher strength might take out good information, resulting in an image that is overly soft.
                             type: str
                             choices: ['AUTO', 'STRENGTH_1', 'STRENGTH_2', 'STRENGTH_3', 'STRENGTH_4']
                   fixed_afd:
                     description:
-                      - TODO
+                      - Four bit AFD value to write on all frames of video in the output stream. Only valid when afdSignaling is set to ‘Fixed’.
                     type: str
                     choices:
                       - 'AFD_0000'
@@ -3422,53 +3422,53 @@ options:
                       - 'AFD_1111'
                   flicker_aq:
                     description:
-                      - TODO
+                      - 'Flicker AQ makes adjustments within each frame to reduce flicker or ‘pop’ on I-frames. The value to enter in this field depends on the value in the Adaptive quantization field: If you have set the Adaptive quantization field to Auto, MediaLive ignores any value in this field. MediaLive will determine if flicker AQ is appropriate and will apply the appropriate strength. If you have set the Adaptive quantization field to a strength, you can set this field to Enabled or Disabled. Enabled: MediaLive will apply flicker AQ using the specified strength. Disabled: MediaLive won’t apply flicker AQ. If you have set the Adaptive quantization to Disabled, MediaLive ignores any value in this field and doesn’t apply flicker AQ.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   force_field_pictures:
                     description:
-                      - TODO
+                      - 'This setting applies only when scan type is “interlaced.” It controls whether coding is performed on a field basis or on a frame basis. (When the video is progressive, the coding is always performed on a frame basis.) enabled: Force MediaLive to code on a field basis, so that odd and even sets of fields are coded separately. disabled: Code the two sets of fields separately (on a field basis) or together (on a frame basis using PAFF), depending on what is most appropriate for the content.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   framerate_control:
                     description:
-                      - TODO
+                      - This field indicates how the output video frame rate is specified. If “specified” is selected then the output video frame rate is determined by framerateNumerator and framerateDenominator, else if “initializeFromSource” is selected then the output video frame rate will be set equal to the input video frame rate of the first input.
                     type: str
                     choices: ['INITIALIZE_FROM_SOURCE', 'SPECIFIED']
                   framerate_denominator:
                     description:
-                      - TODO
+                      - Framerate denominator.
                     type: int
                   framerate_numerator:
                     description:
-                      - TODO
+                      - Framerate numerator - framerate is a fraction, e.g. 24000 / 1001 = 23.976 fps.
                     type: int
                   gop_b_reference:
                     description:
-                      - TODO
+                      - Documentation update needed.
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   gop_closed_cadence:
                     description:
-                      - TODO
+                      - Frequency of closed GOPs. In streaming applications, it is recommended that this be set to 1 so a decoder joining mid-stream will receive an IDR frame as quickly as possible. Setting this value to 0 will break output segmenting.
                     type: int
                   gop_num_b_frames:
                     description:
-                      - TODO
+                      - Number of B-frames between reference frames.
                     type: int
                   gop_size:
                     description:
-                      - TODO
+                      - GOP size (keyframe interval) in units of either frames or seconds per gopSizeUnits. If gopSizeUnits is frames, gopSize must be an integer and must be greater than or equal to 1. If gopSizeUnits is seconds, gopSize must be greater than 0, but need not be an integer.
                     type: float
                       
                   gop_size_units:
                     description:
-                      - TODO
+                      - Indicates if the gopSize is specified in frames or seconds. If seconds the system will convert the gopSize into a frame count at run time.
                     type: str
                     choices: ['FRAMES', 'SECONDS']
                   level:
                     description:
-                      - TODO
+                      - H.264 Level.
                     type: str
                     choices:
                       - 'H264_LEVEL_1'
@@ -3490,109 +3490,109 @@ options:
                       - 'H264_LEVEL_AUTO'
                   look_ahead_rate_control:
                     description:
-                      - TODO
+                      - Amount of lookahead. A value of low can decrease latency and memory usage, while high can produce better quality for certain content.
                     type: str
                     choices: ['HIGH', 'LOW', 'MEDIUM']
                   max_bitrate:
                     description:
-                      - TODO
+                      - 'For QVBR: See the tooltip for Quality level For VBR: Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.'
                     type: int
                   min_i_interval:
                     description:
-                      - TODO
+                      - Only meaningful if sceneChangeDetect is set to enabled. Defaults to 5 if multiplex rate control is used. Enforces separation between repeated (cadence) I-frames and I-frames inserted by Scene Change Detection. If a scene change I-frame is within I-interval frames of a cadence I-frame, the GOP is shrunk and/or stretched to the scene change I-frame. GOP stretch requires enabling lookahead as well as setting I-interval. The normal cadence resumes for the next GOP. Note: Maximum GOP stretch = GOP size + Min-I-interval - 1.
                     type: int
                   num_ref_frames:
                     description:
-                      - TODO
+                      - Number of reference frames to use. The encoder may use more than requested if using B-frames and/or interlaced encoding.
                     type: int
                   par_control:
                     description:
-                      - TODO
+                      - This field indicates how the output pixel aspect ratio is specified. If “specified” is selected then the output video pixel aspect ratio is determined by parNumerator and parDenominator, else if “initializeFromSource” is selected then the output pixsel aspect ratio will be set equal to the input video pixel aspect ratio of the first input.
                     type: str
                     choices: ['INITIALIZE_FROM_SOURCE', 'SPECIFIED']
                   par_denominator:
                     description:
-                      - TODO
+                      - Pixel Aspect Ratio denominator.
                     type: int
                   par_numerator:
                     description:
-                      - TODO
+                      - Pixel Aspect Ratio numerator.
                     type: int
                   profile:
                     description:
-                      - TODO
+                      - AAC Profile.
                     type: str
                     choices: ['BASELINE', 'HIGH', 'HIGH_10BIT', 'HIGH_422', 'HIGH_422_10BIT', 'MAIN']
                   quality_level:
                     description:
-                      - TODO
+                      - 'Leave as STANDARD_QUALITY or choose a different value (which might result in additional costs to run the channel). - ENHANCED_QUALITY: Produces a slightly better video quality without an increase in the bitrate. Has an effect only when the Rate control mode is QVBR or CBR. If this channel is in a MediaLive multiplex, the value must be ENHANCED_QUALITY. - STANDARD_QUALITY: Valid for any Rate control mode.'
                     type: str
                     choices: ['ENHANCED_QUALITY', 'STANDARD_QUALITY']
                   qvbr_quality_level:
                     description:
-                      - TODO
+                      - 'Controls the target quality for the video encode. Applies only when the rate control mode is QVBR. You can set a target quality or you can let MediaLive determine the best quality. To set a target quality, enter values in the QVBR quality level field and the Max bitrate field. Enter values that suit your most important viewing devices. Recommended values are: - Primary screen: Quality level: 8 to 10. Max bitrate: 4M - PC or tablet: Quality level: 7. Max bitrate: 1.5M to 3M - Smartphone: Quality level: 6. Max bitrate: 1M to 1.5M To let MediaLive decide, leave the QVBR quality level field empty, and in Max bitrate enter the maximum rate you want in the video. For more information, see the section called “Video - rate control mode” in the MediaLive user guide.'
                     type: int
                   rate_control_mode:
                     description:
-                      - TODO
+                      - Rate Control Mode.
                     type: str
                     choices: ['CBR', 'MULTIPLEX', 'QVBR', 'VBR']
                   scan_type:
                     description:
-                      - TODO
+                      - Sets the scan type of the output to progressive or top-field-first interlaced.
                     type: str
                     choices: ['INTERLACED', 'PROGRESSIVE']
                   scene_change_detect:
                     description:
-                      - TODO
+                      - 'Scene change detection. - On: inserts I-frames when scene change is detected. - Off: does not force an I-frame when scene change is detected.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   slices:
                     description:
-                      - TODO
+                      - Number of slices per picture. Must be less than or equal to the number of macroblock rows for progressive pictures, and less than or equal to half the number of macroblock rows for interlaced pictures. This field is optional; when no value is specified the encoder will choose the number of slices based on encode resolution.
                     type: int
                   softness:
                     description:
-                      - TODO
+                      - Softness. Selects quantizer matrix, larger values reduce high-frequency content in the encoded image. If not set to zero, must be greater than 15.
                     type: int
                   spatial_aq:
                     description:
-                      - TODO
+                      - 'Spatial AQ makes adjustments within each frame based on spatial variation of content complexity. The value to enter in this field depends on the value in the Adaptive quantization field: If you have set the Adaptive quantization field to Auto, MediaLive ignores any value in this field. MediaLive will determine if spatial AQ is appropriate and will apply the appropriate strength. If you have set the Adaptive quantization field to a strength, you can set this field to Enabled or Disabled. Enabled: MediaLive will apply spatial AQ using the specified strength. Disabled: MediaLive won’t apply spatial AQ. If you have set the Adaptive quantization to Disabled, MediaLive ignores any value in this field and doesn’t apply spatial AQ.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   subgop_length:
                     description:
-                      - TODO
+                      - If set to fixed, use gopNumBFrames B-frames per sub-GOP. If set to dynamic, optimize the number of B-frames used for each sub-GOP to improve visual quality.
                     type: str
                     choices: ['DYNAMIC', 'FIXED']
                   syntax:
                     description:
-                      - TODO
+                      - Produces a bitstream compliant with SMPTE RP-2027.
                     type: str
                     choices: ['DEFAULT', 'RP2027']
                   temporal_aq:
                     description:
-                      - TODO
+                      - 'Temporal makes adjustments within each frame based on temporal variation of content complexity. The value to enter in this field depends on the value in the Adaptive quantization field: If you have set the Adaptive quantization field to Auto, MediaLive ignores any value in this field. MediaLive will determine if temporal AQ is appropriate and will apply the appropriate strength. If you have set the Adaptive quantization field to a strength, you can set this field to Enabled or Disabled. Enabled: MediaLive will apply temporal AQ using the specified strength. Disabled: MediaLive won’t apply temporal AQ. If you have set the Adaptive quantization to Disabled, MediaLive ignores any value in this field and doesn’t apply temporal AQ.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   timecode_insertion:
                     description:
-                      - TODO
+                      - 'Determines how timecodes should be inserted into the video elementary stream. - ‘disabled’: Do not include timecodes - ‘picTimingSei’: Pass through picture timing SEI messages from the source specified in Timecode Config.'
                     type: str
                     choices: ['DISABLED', 'PIC_TIMING_SEI']
                   timecode_burnin_settings:
                     description:
-                      - TODO
+                      - Timecode burn-in settings.
                     type: dict
                     suboptions:
                       font_size:
                         description:
-                          - TODO
+                          - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                         type: str
                         choices: ['EXTRA_SMALL_10', 'LARGE_48', 'MEDIUM_32', 'SMALL_16']
                       position:
                         description:
-                          - TODO
+                          - Choose a timecode burn-in output position.
                         type: str
                         choices:
                           - 'BOTTOM_CENTER'
@@ -3606,97 +3606,97 @@ options:
                           - 'TOP_RIGHT'
                       prefix:
                         description:
-                          - TODO
+                          - Create a timecode burn-in prefix (optional).
                         type: str
                   min_qp:
                     description:
-                      - TODO
+                      - Sets the minimum QP. If you aren’t familiar with quantization adjustment, leave the field empty. MediaLive will apply an appropriate value.
                     type: int
               h265_settings:
                 description:
-                  - TODO
+                  - H265 Settings.
                 type: dict
                 suboptions:
                   adaptive_quantization:
                     description:
-                      - TODO
+                      - 'Enables or disables adaptive quantization, which is a technique MediaLive can apply to video on a frame-by-frame basis to produce more compression without losing quality. There are three types of adaptive quantization: flicker, spatial, and temporal. Set the field in one of these ways: Set to Auto. Recommended. For each type of AQ, MediaLive will determine if AQ is needed, and if so, the appropriate strength. Set a strength (a value other than Auto or Disable). This strength will apply to any of the AQ fields that you choose to enable. Set to Disabled to disable all types of adaptive quantization.'
                     type: str
                     choices: ['AUTO', 'HIGH', 'HIGHER', 'LOW', 'MAX', 'MEDIUM', 'OFF']
                   afd_signaling:
                     description:
-                      - TODO
+                      - Indicates that AFD values will be written into the output stream. If afdSignaling is “auto”, the system will try to preserve the input AFD value (in cases where multiple AFD values are valid). If set to “fixed”, the AFD value will be the value configured in the fixedAfd parameter.
                     type: str
                     choices: ['AUTO', 'FIXED', 'NONE']
                   alternative_transfer_function:
                     description:
-                      - TODO
+                      - Whether or not EML should insert an Alternative Transfer Function SEI message to support backwards compatibility with non-HDR decoders and displays.
                     type: str
                     choices: ['INSERT', 'OMIT']
                   bitrate:
                     description:
-                      - TODO
+                      - Average bitrate in bits/second. Valid values depend on rate control mode and profile.
                     type: int
                   buf_size:
                     description:
-                      - TODO
+                      - Size of buffer (HRD buffer model) in bits.
                     type: int
                   color_metadata:
                     description:
-                      - TODO
+                      - Includes colorspace metadata in the output.
                     type: str
                     choices: ['IGNORE', 'INSERT']
                   color_space_settings:
                     description:
-                      - TODO
+                      - Color Space settings.
                     type: dict
                     suboptions:
                       color_space_passthrough_settings:
                         description:
-                          - TODO
+                          - Passthrough applies no color space conversion to the output.
                         type: dict
                       dolby_vision81_settings:
                         description:
-                          - TODO
+                          - Dolby Vision81 Settings.
                         type: dict
                       hdr10_settings:
                         description:
-                          - TODO
+                          - Hdr10 Settings.
                         type: dict
                         suboptions:
                           max_cll:
                             description:
-                              - TODO
+                              - Maximum Content Light Level An integer metadata value defining the maximum light level, in nits, of any single pixel within an encoded HDR video stream or file.
                             type: int
                           max_fall:
                             description:
-                              - TODO
+                              - Maximum Frame Average Light Level An integer metadata value defining the maximum average light level, in nits, for any single frame within an encoded HDR video stream or file.
                             type: int
                       rec601_settings:
                         description:
-                          - TODO
+                          - Rec601 Settings.
                         type: dict
                       rec709_settings:
                         description:
-                          - TODO
+                          - Rec709 Settings.
                         type: dict
                   filter_settings:
                     description:
-                      - TODO
+                      - Optional. Both filters reduce bandwidth by removing imperceptible details. You can enable one of the filters. We recommend that you try both filters and observe the results to decide which one to use. The Temporal Filter reduces bandwidth by removing imperceptible details in the content. It combines perceptual filtering and motion compensated temporal filtering (MCTF). It operates independently of the compression level. The Bandwidth Reduction filter is a perceptual filter located within the encoding loop. It adapts to the current compression level to filter imperceptible signals. This filter works only when the resolution is 1080p or lower.
                     type: dict
                     suboptions:
                       temporal_filter_settings:
                         description:
-                          - TODO
+                          - Temporal Filter Settings.
                         type: dict
                         suboptions:
                           post_filter_sharpening:
                             description:
-                              - TODO
+                              - 'If you enable this filter, the results are the following: - If the source content is noisy (it contains excessive digital artifacts), the filter cleans up the source. - If the source content is already clean, the filter tends to decrease the bitrate, especially when the rate control mode is QVBR.'
                             type: str
                             choices: ['AUTO', 'DISABLED', 'ENABLED']
                           strength:
                             description:
-                              - TODO
+                              - Choose a filter strength. We recommend a strength of 1 or 2. A higher strength might take out good information, resulting in an image that is overly soft.
                             type: str
                             choices:
                               - 'AUTO'
@@ -3718,22 +3718,22 @@ options:
                               - 'STRENGTH_16'
                       bandwidth_reduction_filter_settings:
                         description:
-                          - TODO
+                          - Bandwidth Reduction Filter Settings.
                         type: dict
                         suboptions:
                           post_filter_sharpening:
                             description:
-                              - TODO
+                              - 'If you enable this filter, the results are the following: - If the source content is noisy (it contains excessive digital artifacts), the filter cleans up the source. - If the source content is already clean, the filter tends to decrease the bitrate, especially when the rate control mode is QVBR.'
                             type: str
                             choices: ['DISABLED', 'SHARPENING_1', 'SHARPENING_2', 'SHARPENING_3']
                           strength:
                             description:
-                              - TODO
+                              - Choose a filter strength. We recommend a strength of 1 or 2. A higher strength might take out good information, resulting in an image that is overly soft.
                             type: str
                             choices: ['AUTO', 'STRENGTH_1', 'STRENGTH_2', 'STRENGTH_3', 'STRENGTH_4']
                   fixed_afd:
                     description:
-                      - TODO
+                      - Four bit AFD value to write on all frames of video in the output stream. Only valid when afdSignaling is set to ‘Fixed’.
                     type: str
                     choices:
                       - 'AFD_0000'
@@ -3749,34 +3749,34 @@ options:
                       - 'AFD_1111'
                   flicker_aq:
                     description:
-                      - TODO
+                      - 'Flicker AQ makes adjustments within each frame to reduce flicker or ‘pop’ on I-frames. The value to enter in this field depends on the value in the Adaptive quantization field: If you have set the Adaptive quantization field to Auto, MediaLive ignores any value in this field. MediaLive will determine if flicker AQ is appropriate and will apply the appropriate strength. If you have set the Adaptive quantization field to a strength, you can set this field to Enabled or Disabled. Enabled: MediaLive will apply flicker AQ using the specified strength. Disabled: MediaLive won’t apply flicker AQ. If you have set the Adaptive quantization to Disabled, MediaLive ignores any value in this field and doesn’t apply flicker AQ.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   framerate_denominator:
                     description:
-                      - TODO
+                      - Framerate denominator.
                     type: int
                   framerate_numerator:
                     description:
-                      - TODO
+                      - Framerate numerator - framerate is a fraction, e.g. 24000 / 1001 = 23.976 fps.
                     type: int
                   gop_closed_cadence:
                     description:
-                      - TODO
+                      - Frequency of closed GOPs. In streaming applications, it is recommended that this be set to 1 so a decoder joining mid-stream will receive an IDR frame as quickly as possible. Setting this value to 0 will break output segmenting.
                     type: int
                   gop_size:
                     description:
-                      - TODO
+                      - GOP size (keyframe interval) in units of either frames or seconds per gopSizeUnits. If gopSizeUnits is frames, gopSize must be an integer and must be greater than or equal to 1. If gopSizeUnits is seconds, gopSize must be greater than 0, but need not be an integer.
                     type: float
                       
                   gop_size_units:
                     description:
-                      - TODO
+                      - Indicates if the gopSize is specified in frames or seconds. If seconds the system will convert the gopSize into a frame count at run time.
                     type: str
                     choices: ['FRAMES', 'SECONDS']
                   level:
                     description:
-                      - TODO
+                      - H.264 Level.
                     type: str
                     choices:
                       - 'H265_LEVEL_1'
@@ -3795,76 +3795,76 @@ options:
                       - 'H265_LEVEL_AUTO'
                   look_ahead_rate_control:
                     description:
-                      - TODO
+                      - Amount of lookahead. A value of low can decrease latency and memory usage, while high can produce better quality for certain content.
                     type: str
                     choices: ['HIGH', 'LOW', 'MEDIUM']
                   max_bitrate:
                     description:
-                      - TODO
+                      - 'For QVBR: See the tooltip for Quality level For VBR: Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.'
                     type: int
                   min_i_interval:
                     description:
-                      - TODO
+                      - Only meaningful if sceneChangeDetect is set to enabled. Defaults to 5 if multiplex rate control is used. Enforces separation between repeated (cadence) I-frames and I-frames inserted by Scene Change Detection. If a scene change I-frame is within I-interval frames of a cadence I-frame, the GOP is shrunk and/or stretched to the scene change I-frame. GOP stretch requires enabling lookahead as well as setting I-interval. The normal cadence resumes for the next GOP. Note: Maximum GOP stretch = GOP size + Min-I-interval - 1.
                     type: int
                   par_denominator:
                     description:
-                      - TODO
+                      - Pixel Aspect Ratio denominator.
                     type: int
                   par_numerator:
                     description:
-                      - TODO
+                      - Pixel Aspect Ratio numerator.
                     type: int
                   profile:
                     description:
-                      - TODO
+                      - AAC Profile.
                     type: str
                     choices: ['MAIN', 'MAIN_10BIT']
                   qvbr_quality_level:
                     description:
-                      - TODO
+                      - 'Controls the target quality for the video encode. Applies only when the rate control mode is QVBR. You can set a target quality or you can let MediaLive determine the best quality. To set a target quality, enter values in the QVBR quality level field and the Max bitrate field. Enter values that suit your most important viewing devices. Recommended values are: - Primary screen: Quality level: 8 to 10. Max bitrate: 4M - PC or tablet: Quality level: 7. Max bitrate: 1.5M to 3M - Smartphone: Quality level: 6. Max bitrate: 1M to 1.5M To let MediaLive decide, leave the QVBR quality level field empty, and in Max bitrate enter the maximum rate you want in the video. For more information, see the section called “Video - rate control mode” in the MediaLive user guide.'
                     type: int
                   rate_control_mode:
                     description:
-                      - TODO
+                      - Rate Control Mode.
                     type: str
                     choices: ['CBR', 'MULTIPLEX', 'QVBR']
                   scan_type:
                     description:
-                      - TODO
+                      - Sets the scan type of the output to progressive or top-field-first interlaced.
                     type: str
                     choices: ['INTERLACED', 'PROGRESSIVE']
                   scene_change_detect:
                     description:
-                      - TODO
+                      - 'Scene change detection. - On: inserts I-frames when scene change is detected. - Off: does not force an I-frame when scene change is detected.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   slices:
                     description:
-                      - TODO
+                      - Number of slices per picture. Must be less than or equal to the number of macroblock rows for progressive pictures, and less than or equal to half the number of macroblock rows for interlaced pictures. This field is optional; when no value is specified the encoder will choose the number of slices based on encode resolution.
                     type: int
                   tier:
                     description:
-                      - TODO
+                      - H.265 Tier.
                     type: str
                     choices: ['HIGH', 'MAIN']
                   timecode_insertion:
                     description:
-                      - TODO
+                      - 'Determines how timecodes should be inserted into the video elementary stream. - ‘disabled’: Do not include timecodes - ‘picTimingSei’: Pass through picture timing SEI messages from the source specified in Timecode Config.'
                     type: str
                     choices: ['DISABLED', 'PIC_TIMING_SEI']
                   timecode_burnin_settings:
                     description:
-                      - TODO
+                      - Timecode burn-in settings.
                     type: dict
                     suboptions:
                       font_size:
                         description:
-                          - TODO
+                          - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                         type: str
                         choices: ['EXTRA_SMALL_10', 'LARGE_48', 'MEDIUM_32', 'SMALL_16']
                       position:
                         description:
-                          - TODO
+                          - Choose a timecode burn-in output position.
                         type: str
                         choices:
                           - 'BOTTOM_CENTER'
@@ -3878,93 +3878,93 @@ options:
                           - 'TOP_RIGHT'
                       prefix:
                         description:
-                          - TODO
+                          - Create a timecode burn-in prefix (optional).
                         type: str
                   mv_over_picture_boundaries:
                     description:
-                      - TODO
+                      - If you are setting up the picture as a tile, you must set this to “disabled”. In all other configurations, you typically enter “enabled”.
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   mv_temporal_predictor:
                     description:
-                      - TODO
+                      - If you are setting up the picture as a tile, you must set this to “disabled”. In other configurations, you typically enter “enabled”.
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   tile_height:
                     description:
-                      - TODO
+                      - Set this field to set up the picture as a tile. You must also set tileWidth. The tile height must result in 22 or fewer rows in the frame. The tile width must result in 20 or fewer columns in the frame. And finally, the product of the column count and row count must be 64 of less. If the tile width and height are specified, MediaLive will override the video codec slices field with a value that MediaLive calculates.
                     type: int
                   tile_padding:
                     description:
-                      - TODO
+                      - Set to “padded” to force MediaLive to add padding to the frame, to obtain a frame that is a whole multiple of the tile size. If you are setting up the picture as a tile, you must enter “padded”. In all other configurations, you typically enter “none”.
                     type: str
                     choices: ['NONE', 'PADDED']
                   tile_width:
                     description:
-                      - TODO
+                      - Set this field to set up the picture as a tile. See tileHeight for more information.
                     type: int
                   treeblock_size:
                     description:
-                      - TODO
+                      - Select the tree block size used for encoding. If you enter “auto”, the encoder will pick the best size. If you are setting up the picture as a tile, you must set this to 32x32. In all other configurations, you typically enter “auto”.
                     type: str
                     choices: ['AUTO', 'TREE_SIZE_32X32']
                   min_qp:
                     description:
-                      - TODO
+                      - Sets the minimum QP. If you aren’t familiar with quantization adjustment, leave the field empty. MediaLive will apply an appropriate value.
                     type: int
                   deblocking:
                     description:
-                      - TODO
+                      - Enable or disable the deblocking filter for this codec. The filter reduces blocking artifacts at block boundaries, which improves overall video quality. If the filter is disabled, visible block edges might appear in the output, especially at lower bitrates.
                     type: str
                     choices: ['DISABLED', 'ENABLED']
               mpeg2_settings:
                 description:
-                  - TODO
+                  - Mpeg2 Settings.
                 type: dict
                 suboptions:
                   adaptive_quantization:
                     description:
-                      - TODO
+                      - 'Enables or disables adaptive quantization, which is a technique MediaLive can apply to video on a frame-by-frame basis to produce more compression without losing quality. There are three types of adaptive quantization: flicker, spatial, and temporal. Set the field in one of these ways: Set to Auto. Recommended. For each type of AQ, MediaLive will determine if AQ is needed, and if so, the appropriate strength. Set a strength (a value other than Auto or Disable). This strength will apply to any of the AQ fields that you choose to enable. Set to Disabled to disable all types of adaptive quantization.'
                     type: str
                     choices: ['AUTO', 'HIGH', 'LOW', 'MEDIUM', 'OFF']
                   afd_signaling:
                     description:
-                      - TODO
+                      - Indicates that AFD values will be written into the output stream. If afdSignaling is “auto”, the system will try to preserve the input AFD value (in cases where multiple AFD values are valid). If set to “fixed”, the AFD value will be the value configured in the fixedAfd parameter.
                     type: str
                     choices: ['AUTO', 'FIXED', 'NONE']
                   color_metadata:
                     description:
-                      - TODO
+                      - Includes colorspace metadata in the output.
                     type: str
                     choices: ['IGNORE', 'INSERT']
                   color_space:
                     description:
-                      - TODO
+                      - Choose the type of color space conversion to apply to the output. For detailed information on setting up both the input and the output to obtain the desired color space in the output, see the section on "MediaLive Features - Video - color space" in the MediaLive User Guide. PASSTHROUGH: Keep the color space of the input content - do not convert it. AUTO:Convert all content that is SD to rec 601, and convert all content that is HD to rec 709.
                     type: str
                     choices: ['AUTO', 'PASSTHROUGH']
                   display_aspect_ratio:
                     description:
-                      - TODO
+                      - Sets the pixel aspect ratio for the encode.
                     type: str
                     choices: ['DISPLAYRATIO16X9', 'DISPLAYRATIO4X3']
                   filter_settings:
                     description:
-                      - TODO
+                      - Optional. Both filters reduce bandwidth by removing imperceptible details. You can enable one of the filters. We recommend that you try both filters and observe the results to decide which one to use. The Temporal Filter reduces bandwidth by removing imperceptible details in the content. It combines perceptual filtering and motion compensated temporal filtering (MCTF). It operates independently of the compression level. The Bandwidth Reduction filter is a perceptual filter located within the encoding loop. It adapts to the current compression level to filter imperceptible signals. This filter works only when the resolution is 1080p or lower.
                     type: dict
                     suboptions:
                       temporal_filter_settings:
                         description:
-                          - TODO
+                          - Temporal Filter Settings.
                         type: dict
                         suboptions:
                           post_filter_sharpening:
                             description:
-                              - TODO
+                              - 'If you enable this filter, the results are the following: - If the source content is noisy (it contains excessive digital artifacts), the filter cleans up the source. - If the source content is already clean, the filter tends to decrease the bitrate, especially when the rate control mode is QVBR.'
                             type: str
                             choices: ['AUTO', 'DISABLED', 'ENABLED']
                           strength:
                             description:
-                              - TODO
+                              - Choose a filter strength. We recommend a strength of 1 or 2. A higher strength might take out good information, resulting in an image that is overly soft.
                             type: str
                             choices:
                               - 'AUTO'
@@ -3986,7 +3986,7 @@ options:
                               - 'STRENGTH_16'
                   fixed_afd:
                     description:
-                      - TODO
+                      - Four bit AFD value to write on all frames of video in the output stream. Only valid when afdSignaling is set to ‘Fixed’.
                     type: str
                     choices:
                       - 'AFD_0000'
@@ -4002,58 +4002,58 @@ options:
                       - 'AFD_1111'
                   framerate_denominator:
                     description:
-                      - TODO
+                      - Framerate denominator.
                     type: int
                   framerate_numerator:
                     description:
-                      - TODO
+                      - Framerate numerator - framerate is a fraction, e.g. 24000 / 1001 = 23.976 fps.
                     type: int
                   gop_closed_cadence:
                     description:
-                      - TODO
+                      - Frequency of closed GOPs. In streaming applications, it is recommended that this be set to 1 so a decoder joining mid-stream will receive an IDR frame as quickly as possible. Setting this value to 0 will break output segmenting.
                     type: int
                   gop_num_b_frames:
                     description:
-                      - TODO
+                      - Number of B-frames between reference frames.
                     type: int
                   gop_size:
                     description:
-                      - TODO
+                      - GOP size (keyframe interval) in units of either frames or seconds per gopSizeUnits. If gopSizeUnits is frames, gopSize must be an integer and must be greater than or equal to 1. If gopSizeUnits is seconds, gopSize must be greater than 0, but need not be an integer.
                     type: float
                       
                   gop_size_units:
                     description:
-                      - TODO
+                      - Indicates if the gopSize is specified in frames or seconds. If seconds the system will convert the gopSize into a frame count at run time.
                     type: str
                     choices: ['FRAMES', 'SECONDS']
                   scan_type:
                     description:
-                      - TODO
+                      - Sets the scan type of the output to progressive or top-field-first interlaced.
                     type: str
                     choices: ['INTERLACED', 'PROGRESSIVE']
                   subgop_length:
                     description:
-                      - TODO
+                      - If set to fixed, use gopNumBFrames B-frames per sub-GOP. If set to dynamic, optimize the number of B-frames used for each sub-GOP to improve visual quality.
                     type: str
                     choices: ['DYNAMIC', 'FIXED']
                   timecode_insertion:
                     description:
-                      - TODO
+                      - 'Determines how timecodes should be inserted into the video elementary stream. - ‘disabled’: Do not include timecodes - ‘picTimingSei’: Pass through picture timing SEI messages from the source specified in Timecode Config.'
                     type: str
                     choices: ['DISABLED', 'GOP_TIMECODE']
                   timecode_burnin_settings:
                     description:
-                      - TODO
+                      - Timecode burn-in settings.
                     type: dict
                     suboptions:
                       font_size:
                         description:
-                          - TODO
+                          - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                         type: str
                         choices: ['EXTRA_SMALL_10', 'LARGE_48', 'MEDIUM_32', 'SMALL_16']
                       position:
                         description:
-                          - TODO
+                          - Choose a timecode burn-in output position.
                         type: str
                         choices:
                           - 'BOTTOM_CENTER'
@@ -4067,57 +4067,57 @@ options:
                           - 'TOP_RIGHT'
                       prefix:
                         description:
-                          - TODO
+                          - Create a timecode burn-in prefix (optional).
                         type: str
               av1_settings:
                 description:
-                  - TODO
+                  - Av1 Settings.
                 type: dict
                 suboptions:
                   afd_signaling:
                     description:
-                      - TODO
+                      - Indicates that AFD values will be written into the output stream. If afdSignaling is “auto”, the system will try to preserve the input AFD value (in cases where multiple AFD values are valid). If set to “fixed”, the AFD value will be the value configured in the fixedAfd parameter.
                     type: str
                     choices: ['AUTO', 'FIXED', 'NONE']
                   buf_size:
                     description:
-                      - TODO
+                      - Size of buffer (HRD buffer model) in bits.
                     type: int
                   color_space_settings:
                     description:
-                      - TODO
+                      - Color Space settings.
                     type: dict
                     suboptions:
                       color_space_passthrough_settings:
                         description:
-                          - TODO
+                          - Passthrough applies no color space conversion to the output.
                         type: dict
                       hdr10_settings:
                         description:
-                          - TODO
+                          - Hdr10 Settings.
                         type: dict
                         suboptions:
                           
                           max_cll:
                             description:
-                              - TODO
+                              - Maximum Content Light Level An integer metadata value defining the maximum light level, in nits, of any single pixel within an encoded HDR video stream or file.
                             type: int
                             
                           max_fall:
                             description:
-                              - TODO
+                              - Maximum Frame Average Light Level An integer metadata value defining the maximum average light level, in nits, for any single frame within an encoded HDR video stream or file.
                             type: int
                       rec601_settings:
                         description:
-                          - TODO
+                          - Rec601 Settings.
                         type: dict
                       rec709_settings:
                         description:
-                          - TODO
+                          - Rec709 Settings.
                         type: dict
                   fixed_afd:
                     description:
-                      - TODO
+                      - Four bit AFD value to write on all frames of video in the output stream. Only valid when afdSignaling is set to ‘Fixed’.
                     type: str
                     choices:
                       - 'AFD_0000'
@@ -4133,25 +4133,25 @@ options:
                       - 'AFD_1111'
                   framerate_denominator:
                     description:
-                      - TODO
+                      - Framerate denominator.
                     type: int
                   framerate_numerator:
                     description:
-                      - TODO
+                      - Framerate numerator - framerate is a fraction, e.g. 24000 / 1001 = 23.976 fps.
                     type: int
                   gop_size:
                     description:
-                      - TODO
+                      - GOP size (keyframe interval) in units of either frames or seconds per gopSizeUnits. If gopSizeUnits is frames, gopSize must be an integer and must be greater than or equal to 1. If gopSizeUnits is seconds, gopSize must be greater than 0, but need not be an integer.
                     type: float
                       
                   gop_size_units:
                     description:
-                      - TODO
+                      - Indicates if the gopSize is specified in frames or seconds. If seconds the system will convert the gopSize into a frame count at run time.
                     type: str
                     choices: ['FRAMES', 'SECONDS']
                   level:
                     description:
-                      - TODO
+                      - H.264 Level.
                     type: str
                     choices:
                       - 'AV1_LEVEL_2'
@@ -4171,47 +4171,47 @@ options:
                       - 'AV1_LEVEL_AUTO'
                   look_ahead_rate_control:
                     description:
-                      - TODO
+                      - Amount of lookahead. A value of low can decrease latency and memory usage, while high can produce better quality for certain content.
                     type: str
                     choices: ['HIGH', 'LOW', 'MEDIUM']
                   max_bitrate:
                     description:
-                      - TODO
+                      - 'For QVBR: See the tooltip for Quality level For VBR: Set the maximum bitrate in order to accommodate expected spikes in the complexity of the video.'
                     type: int
                   min_i_interval:
                     description:
-                      - TODO
+                      - Only meaningful if sceneChangeDetect is set to enabled. Defaults to 5 if multiplex rate control is used. Enforces separation between repeated (cadence) I-frames and I-frames inserted by Scene Change Detection. If a scene change I-frame is within I-interval frames of a cadence I-frame, the GOP is shrunk and/or stretched to the scene change I-frame. GOP stretch requires enabling lookahead as well as setting I-interval. The normal cadence resumes for the next GOP. Note: Maximum GOP stretch = GOP size + Min-I-interval - 1.
                     type: int
                   par_denominator:
                     description:
-                      - TODO
+                      - Pixel Aspect Ratio denominator.
                     type: int
                   par_numerator:
                     description:
-                      - TODO
+                      - Pixel Aspect Ratio numerator.
                     type: int
                   qvbr_quality_level:
                     description:
-                      - TODO
+                      - 'Controls the target quality for the video encode. Applies only when the rate control mode is QVBR. You can set a target quality or you can let MediaLive determine the best quality. To set a target quality, enter values in the QVBR quality level field and the Max bitrate field. Enter values that suit your most important viewing devices. Recommended values are: - Primary screen: Quality level: 8 to 10. Max bitrate: 4M - PC or tablet: Quality level: 7. Max bitrate: 1.5M to 3M - Smartphone: Quality level: 6. Max bitrate: 1M to 1.5M To let MediaLive decide, leave the QVBR quality level field empty, and in Max bitrate enter the maximum rate you want in the video. For more information, see the section called “Video - rate control mode” in the MediaLive user guide.'
                     type: int
                   scene_change_detect:
                     description:
-                      - TODO
+                      - 'Scene change detection. - On: inserts I-frames when scene change is detected. - Off: does not force an I-frame when scene change is detected.'
                     type: str
                     choices: ['DISABLED', 'ENABLED']
                   timecode_burnin_settings:
                     description:
-                      - TODO
+                      - Timecode burn-in settings.
                     type: dict
                     suboptions:
                       font_size:
                         description:
-                          - TODO
+                          - When set to ‘auto’ fontSize will scale depending on the size of the output. Giving a positive integer will specify the exact font size in points. All burn-in and DVB-Sub font settings must match.
                         type: str
                         choices: ['EXTRA_SMALL_10', 'LARGE_48', 'MEDIUM_32', 'SMALL_16']
                       position:
                         description:
-                          - TODO
+                          - Choose a timecode burn-in output position.
                         type: str
                         choices:
                           - 'BOTTOM_CENTER'
@@ -4225,7 +4225,7 @@ options:
                           - 'TOP_RIGHT'
                       prefix:
                         description:
-                          - TODO
+                          - Create a timecode burn-in prefix (optional).
                         type: str
           height:
             description:
@@ -4233,7 +4233,7 @@ options:
             type: int
           name:
             description:
-              - TODO
+              - The name of this AudioDescription. Outputs will use this name to uniquely identify this AudioDescription. Description names should be unique within this Live Event.
             type: str
           respond_to_afd:
             description:
@@ -4290,423 +4290,423 @@ options:
                 type: str
   input_attachments:
     description:
-      - TODO
+      - List of input attachments for channel.
     type: list
     elements: dict
     suboptions:
       automatic_input_failover_settings:
         description:
-          - TODO
+          - User-specified settings for defining what the conditions are for declaring the input unhealthy and failing over to a different input.
         type: dict
         suboptions:
           error_clear_time_msec:
             description:
-              - TODO
+              - This clear time defines the requirement a recovered input must meet to be considered healthy. The input must have no failover conditions for this length of time. Enter a time in milliseconds. This value is particularly important if the input_preference for the failover pair is set to PRIMARY_INPUT_PREFERRED, because after this time, MediaLive will switch back to the primary input.
             type: int
           failover_conditions:
             description:
-              - TODO
+              - A list of failover conditions. If any of these conditions occur, MediaLive will perform a failover to the other input.
             type: list
             elements: dict
             suboptions:
               failover_condition_settings:
                 description:
-                  - TODO
+                  - Failover condition type-specific settings.
                 type: dict
                 suboptions:
                   audio_silence_settings:
                     description:
-                      - TODO
+                      - MediaLive will perform a failover if the specified audio selector is silent for the specified period.
                     type: dict
                     suboptions:
                       audio_selector_name:
                         description:
-                          - TODO
+                          - The name of the AudioSelector used as the source for this AudioDescription.
                         type: str
                       audio_silence_threshold_msec:
                         description:
-                          - TODO
+                          - The amount of time (in milliseconds) that the active input must be silent before automatic input failover occurs. Silence is defined as audio loss or audio quieter than -50 dBFS.
                         type: int
                   input_loss_settings:
                     description:
-                      - TODO
+                      - MediaLive will perform a failover if content is not detected in this input for the specified period.
                     type: dict
                     suboptions:
                       input_loss_threshold_msec:
                         description:
-                          - TODO
+                          - The amount of time (in milliseconds) that no input is detected. After that time, an input failover will occur.
                         type: int
                   video_black_settings:
                     description:
-                      - TODO
+                      - MediaLive will perform a failover if content is considered black for the specified period.
                     type: dict
                     suboptions:
                       black_detect_threshold:
                         description:
-                          - TODO
+                          - 'A value used in calculating the threshold below which MediaLive considers a pixel to be ‘black’. For the input to be considered black, every pixel in a frame must be below this threshold. The threshold is calculated as a percentage (expressed as a decimal) of white. Therefore.1 means 10% white (or 90% black). Note how the formula works for any color depth. For example, if you set this field to 0.1 in 10-bit color depth: (1023*0.1=102.3), which means a pixel value of 102 or less is ‘black’. If you set this field to.1 in an 8-bit color depth: (255*0.1=25.5), which means a pixel value of 25 or less is ‘black’. The range is 0.0 to 1.0, with any number of decimal places.'
                         type: float
                       video_black_threshold_msec:
                         description:
-                          - TODO
+                          - The amount of time (in milliseconds) that the active input must be black before automatic input failover occurs.
                         type: int
           input_preference:
             description:
-              - TODO
+              - Input preference when deciding which input to make active when a previously failed input has recovered.
             type: str
             choices: ['EQUAL_INPUT_PREFERENCE', 'PRIMARY_INPUT_PREFERRED']
           secondary_input_id:
             description:
-              - TODO
+              - The input ID of the secondary input in the automatic input failover pair.
             type: str
       input_attachment_name:
         description:
-          - TODO
+          - User-specified name for the attachment. This is required if the user wants to use this input in an input switch action.
         type: str
       input_id:
         description:
-          - TODO
+          - The ID of the input.
         type: str
       input_settings:
         description:
-          - TODO
+          - Settings of an input (caption selector, etc.).
         type: dict
         suboptions:
           audio_selectors:
             description:
-              - TODO
+              - Used to select the audio stream to decode for inputs that have multiple available.
             type: list
             elements: dict
             suboptions:
               name:
                 description:
-                  - TODO
+                  - The name of this AudioDescription. Outputs will use this name to uniquely identify this AudioDescription. Description names should be unique within this Live Event.
                 type: str
               selector_settings:
                 description:
-                  - TODO
+                  - The audio selector settings.
                 type: dict
                 suboptions:
                   audio_hls_rendition_selection:
                     description:
-                      - TODO
+                      - Audio Hls Rendition Selection.
                     type: dict
                     suboptions:
                       group_id:
                         description:
-                          - TODO
+                          - Specifies the GROUP-ID in the #EXT-X-MEDIA tag of the target HLS audio rendition.
                         type: str
                       name:
                         description:
-                          - TODO
+                          - The name of this AudioDescription. Outputs will use this name to uniquely identify this AudioDescription. Description names should be unique within this Live Event.
                         type: str
                   audio_language_selection:
                     description:
-                      - TODO
+                      - Audio Language Selection.
                     type: dict
                     suboptions:
                       language_code:
                         description:
-                          - TODO
+                          - RFC 5646 language code representing the language of the audio output track. Only used if languageControlMode is useConfigured, or there is no ISO 639 language code specified in the input.
                         type: str
                       language_selection_policy:
                         description:
-                          - TODO
+                          - When set to “strict”, the transport stream demux strictly identifies audio streams by their language descriptor. If a PMT update occurs such that an audio stream matching the initially selected language is no longer present then mute will be encoded until the language returns. If “loose”, then on a PMT update the demux will choose another audio stream in the program with the same stream type if it can’t find one with the same language.
                         type: str
                         choices: ['LOOSE', 'STRICT']
                   audio_pid_selection:
                     description:
-                      - TODO
+                      - Audio Pid Selection.
                     type: dict
                     suboptions:
                       pid:
                         description:
-                          - TODO
+                          - Selects a specific PID from within a source.
                         type: int
                   audio_track_selection:
                     description:
-                      - TODO
+                      - Audio Track Selection.
                     type: dict
                     suboptions:
                       tracks:
                         description:
-                          - TODO
+                          - Selects one or more unique audio tracks from within a source.
                         type: list
                         elements: dict
                         suboptions:
                           track:
                             description:
-                              - TODO
+                              - 1-based integer value that maps to a specific audio track.
                             type: int
                       dolby_e_decode:
                         description:
-                          - TODO
+                          - Configure decoding options for Dolby E streams - these should be Dolby E frames carried in PCM streams tagged with SMPTE-337.
                         type: dict
                         suboptions:
                           program_selection:
                             description:
-                              - TODO
+                              - Applies only to Dolby E. Enter the program ID (according to the metadata in the audio) of the Dolby E program to extract from the specified track. One program extracted per audio selector. To select multiple programs, create multiple selectors with the same Track and different Program numbers. “All channels” means to ignore the program IDs and include all the channels in this selector; useful if metadata is known to be incorrect.
                             type: str
                             choices: ['ALL_CHANNELS', 'PROGRAM_1', 'PROGRAM_2', 'PROGRAM_3', 'PROGRAM_4', 'PROGRAM_5', 'PROGRAM_6', 'PROGRAM_7', 'PROGRAM_8']
           caption_selectors:
             description:
-              - TODO
+              - Used to select the caption input to use for inputs that have multiple available.
             type: list
             elements: dict
             suboptions:
               language_code:
                 description:
-                  - TODO
+                  - RFC 5646 language code representing the language of the audio output track. Only used if languageControlMode is useConfigured, or there is no ISO 639 language code specified in the input.
                 type: str
               name:
                 description:
-                  - TODO
+                  - The name of this AudioDescription. Outputs will use this name to uniquely identify this AudioDescription. Description names should be unique within this Live Event.
                 type: str
               selector_settings:
                 description:
-                  - TODO
+                  - The audio selector settings.
                 type: dict
                 suboptions:
                   ancillary_source_settings:
                     description:
-                      - TODO
+                      - Ancillary Source Settings.
                     type: dict
                     suboptions:
                       source_ancillary_channel_number:
                         description:
-                          - TODO
+                          - Specifies the number (1 to 4) of the captions channel you want to extract from the ancillary captions. If you plan to convert the ancillary captions to another format, complete this field. If you plan to choose Embedded as the captions destination in the output (to pass through all the channels in the ancillary captions), leave this field blank because MediaLive ignores the field.
                         type: int
                   arib_source_settings:
                     description:
-                      - TODO
+                      - Arib Source Settings.
                     type: dict
                   dvb_sub_source_settings:
                     description:
-                      - TODO
+                      - Dvb Sub Source Settings.
                     type: dict
                     suboptions:
                       ocr_language:
                         description:
-                          - TODO
+                          - If you will configure a WebVTT caption description that references this caption selector, use this field to provide the language to consider when translating the image-based source to text.
                         type: str
                         choices: ['DEU', 'ENG', 'FRA', 'NLD', 'POR', 'SPA']
                       pid:
                         description:
-                          - TODO
+                          - Selects a specific PID from within a source.
                         type: int
                   embedded_source_settings:
                     description:
-                      - TODO
+                      - Embedded Source Settings.
                     type: dict
                     suboptions:
                       convert608_to708:
                         description:
-                          - TODO
+                          - If upconvert, 608 data is both passed through via the “608 compatibility bytes” fields of the 708 wrapper as well as translated into 708. 708 data present in the source content will be discarded.
                         type: str
                         choices: ['DISABLED', 'UPCONVERT']
                       scte20_detection:
                         description:
-                          - TODO
+                          - Set to “auto” to handle streams with intermittent and/or non-aligned SCTE-20 and Embedded captions.
                         type: str
                         choices: ['AUTO', 'OFF']
                       source608_channel_number:
                         description:
-                          - TODO
+                          - Specifies the 608/708 channel number within the video track from which to extract captions. Unused for passthrough.
                         type: int
                       source608_track_number:
                         description:
-                          - TODO
+                          - This field is unused and deprecated.
                         type: int
                   scte20_source_settings:
                     description:
-                      - TODO
+                      - Scte20 Source Settings.
                     type: dict
                     suboptions:
                       convert608_to708:
                         description:
-                          - TODO
+                          - If upconvert, 608 data is both passed through via the “608 compatibility bytes” fields of the 708 wrapper as well as translated into 708. 708 data present in the source content will be discarded.
                         type: str
                         choices: ['DISABLED', 'UPCONVERT']
                       source608_channel_number:
                         description:
-                          - TODO
+                          - Specifies the 608/708 channel number within the video track from which to extract captions. Unused for passthrough.
                         type: int
                   scte27_source_settings:
                     description:
-                      - TODO
+                      - Scte27 Source Settings.
                     type: dict
                     suboptions:
                       ocr_language:
                         description:
-                          - TODO
+                          - If you will configure a WebVTT caption description that references this caption selector, use this field to provide the language to consider when translating the image-based source to text.
                         type: str
                         choices: ['DEU', 'ENG', 'FRA', 'NLD', 'POR', 'SPA']
                       pid:
                         description:
-                          - TODO
+                          - Selects a specific PID from within a source.
                         type: int
                   teletext_source_settings:
                     description:
-                      - TODO
+                      - Teletext Source Settings.
                     type: dict
                     suboptions:
                       output_rectangle:
                         description:
-                          - TODO
+                          - Optionally defines a region where TTML style captions will be displayed.
                         type: dict
                         suboptions:
                           height:
                             description:
-                              - TODO
+                              - Output video height, in pixels. Must be an even number. For most codecs, you can leave this field and width blank in order to use the height and width (resolution) from the source. Note, however, that leaving blank is not recommended. For the Frame Capture codec, height and width are required.
                             type: float
                           left_offset:
                             description:
-                              - TODO
+                              - Applies only if you plan to convert these source captions to EBU-TT-D or TTML in an output. (Make sure to leave the default if you don’t have either of these formats in the output.) You can define a display rectangle for the captions that is smaller than the underlying video frame. You define the rectangle by specifying the position of the left edge, top edge, bottom edge, and right edge of the rectangle, all within the underlying video frame. The units for the measurements are percentages. If you specify a value for one of these fields, you must specify a value for all of them. For leftOffset, specify the position of the left edge of the rectangle, as a percentage of the underlying frame width, and relative to the left edge of the frame. For example, "10" means the measurement is 10% of the underlying frame width. The rectangle left edge starts at that position from the left edge of the frame. This field corresponds to tts:origin - X in the TTML standard.
                             type: float
                           top_offset:
                             description:
-                              - TODO
+                              - See the description in leftOffset. For topOffset, specify the position of the top edge of the rectangle, as a percentage of the underlying frame height, and relative to the top edge of the frame. For example, "10" means the measurement is 10% of the underlying frame height. The rectangle top edge starts at that position from the top edge of the frame. This field corresponds to tts:origin - Y in the TTML standard.
                             type: float
                           width:
                             description:
-                              - TODO
+                              - Output video width, in pixels. Must be an even number. For most codecs, you can leave this field and height blank in order to use the height and width (resolution) from the source. Note, however, that leaving blank is not recommended. For the Frame Capture codec, height and width are required.
                             type: float
                       page_number:
                         description:
-                          - TODO
+                          - Specifies the teletext page number within the data stream from which to extract captions. Range of 0x100 (256) to 0x8FF (2303). Unused for passthrough. Should be specified as a hexadecimal string with no “0x” prefix.
                         type: str
           deblock_filter:
             description:
-              - TODO
+              - Enable or disable the deblock filter when filtering.
             type: str
             choices: ['DISABLED', 'ENABLED']
           denoise_filter:
             description:
-              - TODO
+              - Enable or disable the denoise filter when filtering.
             type: str
             choices: ['DISABLED', 'ENABLED']
           filter_strength:
             description:
-              - TODO
+              - Adjusts the magnitude of filtering from 1 (minimal) to 5 (strongest).
             type: int
           input_filter:
             description:
-              - TODO
+              - Turns on the filter for this input. MPEG-2 inputs have the deblocking filter enabled by default. 1) auto - filtering will be applied depending on input type/quality 2) disabled - no filtering will be applied to the input 3) forced - filtering will be applied regardless of input type.
             type: str
             choices: ['AUTO', 'DISABLED', 'FORCED']
           network_input_settings:
             description:
-              - TODO
+              - Input settings.
             type: dict
             suboptions:
               hls_input_settings:
                 description:
-                  - TODO
+                  - Specifies HLS input settings when the uri is for a HLS manifest.
                 type: dict
                 suboptions:
                   bandwidth:
                     description:
-                      - TODO
+                      - When specified the HLS stream with the m3u8 BANDWIDTH that most closely matches this value will be chosen, otherwise the highest bandwidth stream in the m3u8 will be chosen. The bitrate is specified in bits per second, as in an HLS manifest.
                     type: int
                   buffer_segments:
                     description:
-                      - TODO
+                      - When specified, reading of the HLS input will begin this many buffer segments from the end (most recently written segment). When not specified, the HLS input will begin with the first segment specified in the m3u8.
                     type: int
                   retries:
                     description:
-                      - TODO
+                      - The number of consecutive times that attempts to read a manifest or segment must fail before the input is considered unavailable.
                     type: int
                   retry_interval:
                     description:
-                      - TODO
+                      - The number of seconds between retries when an attempt to read a manifest or segment fails.
                     type: int
                   scte35_source:
                     description:
-                      - TODO
+                      - Identifies the source for the SCTE-35 messages that MediaLive will ingest. Messages can be ingested from the content segments (in the stream) or from tags in the playlist (the HLS manifest). MediaLive ignores SCTE-35 information in the source that is not selected.
                     type: str
                     choices: ['MANIFEST', 'SEGMENTS']
               server_validation:
                 description:
-                  - TODO
+                  - Check HTTPS server certificates. When set to checkCryptographyOnly, cryptography in the certificate will be checked, but not the server’s name. Certain subdomains (notably S3 buckets that use dots in the bucket name) do not strictly match the corresponding certificate’s wildcard pattern and would otherwise cause the event to error. This setting is ignored for protocols that do not use https.
                 type: str
                 choices: ['CHECK_CRYPTOGRAPHY_AND_VALIDATE_NAME', 'CHECK_CRYPTOGRAPHY_ONLY']
               multicast_input_settings:
                 description:
-                  - TODO
+                  - Specifies multicast input settings when the uri is for a multicast event.
                 type: dict
                 suboptions:
                   source_ip_address:
                     description:
-                      - TODO
+                      - Optionally, a source ip address to filter by for Source-specific Multicast (SSM).
                     type: str
           scte35_pid:
             description:
-              - TODO
+              - Packet Identifier (PID) of the SCTE-35 stream in the transport stream. Can be entered as a decimal or hexadecimal value. Valid values are 32 (or 0x20)..8182 (or 0x1ff6).
             type: int
           smpte2038_data_preference:
             description:
-              - TODO
+              - 'Specifies whether to extract applicable ancillary data from a SMPTE-2038 source in this input. Applicable data types are captions, timecode, AFD, and SCTE-104 messages. - PREFER: Extract from SMPTE-2038 if present in this input, otherwise extract from another source (if any). - IGNORE: Never extract any ancillary data from SMPTE-2038.'
             type: str
             choices: ['IGNORE', 'PREFER']
           source_end_behavior:
             description:
-              - TODO
+              - Loop input if it is a file. This allows a file input to be streamed indefinitely.
             type: str
             choices: ['CONTINUE', 'LOOP']
           video_selector:
             description:
-              - TODO
+              - Informs which video elementary stream to decode for input types that have multiple available.
             type: dict
             suboptions:
               color_space:
                 description:
-                  - TODO
+                  - Choose the type of color space conversion to apply to the output. For detailed information on setting up both the input and the output to obtain the desired color space in the output, see the section on "MediaLive Features - Video - color space" in the MediaLive User Guide. PASSTHROUGH: Keep the color space of the input content - do not convert it. AUTO:Convert all content that is SD to rec 601, and convert all content that is HD to rec 709.
                 type: str
                 choices: ['FOLLOW', 'HDR10', 'HLG_2020', 'REC_601', 'REC_709']
               color_space_settings:
                 description:
-                  - TODO
+                  - Color Space settings.
                 type: dict
                 suboptions:
                   hdr10_settings:
                     description:
-                      - TODO
+                      - Hdr10 Settings.
                     type: dict
                     suboptions:
                       max_cll:
                         description:
-                          - TODO
+                          - Maximum Content Light Level An integer metadata value defining the maximum light level, in nits, of any single pixel within an encoded HDR video stream or file.
                         type: int
                       max_fall:
                         description:
-                          - TODO
+                          - Maximum Frame Average Light Level An integer metadata value defining the maximum average light level, in nits, for any single frame within an encoded HDR video stream or file.
                         type: int
               color_space_usage:
                 description:
-                  - TODO
+                  - Applies only if colorSpace is a value other than follow. This field controls how the value in the colorSpace field will be used. fallback means that when the input does include color space data, that data will be used, but when the input has no color space data, the value in colorSpace will be used. Choose fallback if your input is sometimes missing color space data, but when it does have color space data, that data is correct. force means to always use the value in colorSpace. Choose force if your input usually has no color space data or might have unreliable color space data.
                 type: str
                 choices: ['FALLBACK', 'FORCE']
               selector_settings:
                 description:
-                  - TODO
+                  - The audio selector settings.
                 type: dict
                 suboptions:
                   video_selector_pid:
                     description:
-                      - TODO
+                      - Video Selector Pid.
                     type: dict
                     suboptions:
                       pid:
                         description:
-                          - TODO
+                          - Selects a specific PID from within a source.
                         type: int
                   video_selector_program_id:
                     description:
-                      - TODO
+                      - Video Selector Program Id.
                     type: dict
                     suboptions:
                       program_id:
                         description:
-                          - TODO
+                          - Selects a specific program from within a multi-program transport stream. If the program doesn’t exist, the first program within the transport stream will be selected by default.
                         type: int
       logical_interface_names:
         description:
@@ -4715,108 +4715,108 @@ options:
         elements: str
   input_specification:
     description:
-      - TODO
+      - Specification of network and file inputs for this channel.
     type: dict
     suboptions:
       codec:
         description:
-          - TODO
+          - Input codec.
         type: str
         choices: ['MPEG2', 'AVC', 'HEVC']
       maximum_bitrate:
         description:
-          - TODO
+          - Maximum input bitrate, categorized coarsely.
         type: str
         choices: ['MAX_10_MBPS', 'MAX_20_MBPS', 'MAX_50_MBPS']
       resolution:
         description:
-          - TODO
+          - Maximum CDI input resolution.
         type: str
         choices: ['SD', 'HD', 'UHD']
   log_level:
     description:
-      - TODO
+      - The log level to write to CloudWatch Logs.
     type: str
     choices: ['ERROR', 'WARNING', 'INFO', 'DEBUG', 'DISABLED']
   maintenance:
     description:
-      - TODO
+      - Maintenance settings for this channel.
     type: dict
     suboptions:
       maintenance_day:
         description:
-          - TODO
+          - Choose one day of the week for maintenance. The chosen day is used for all future maintenance windows.
         type: str
         choices: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
       maintenance_start_time:
         description:
-          - TODO
+          - Choose the hour that maintenance will start. The chosen time is used for all future maintenance windows.
         type: str
   name:
     description:
-      - TODO
+      - The name of this AudioDescription. Outputs will use this name to uniquely identify this AudioDescription. Description names should be unique within this Live Event.
     type: str
   request_id:
     description:
-      - TODO
+      - Unique request ID to be specified. This is needed to prevent retries from creating multiple resources.This field is autopopulated if not provided.
     type: str
   reserved:
     description:
-      - TODO
+      - Deprecated field that’s only usable by whitelisted customers.
     type: str
   role_arn:
     description:
-      - TODO
+      - An optional Amazon Resource Name (ARN) of the role to assume when running the Channel.
     type: str
   tags:
     description:
-      - TODO
+      - A collection of key-value pairs..
     type: dict
   vpc:
     description:
-      - TODO
+      - Settings for the VPC outputs.
     type: dict
     suboptions:
       public_address_allocation_ids:
         description:
-          - TODO
+          - List of public address allocation ids to associate with ENIs that will be created in Output VPC. Must specify one for SINGLE_PIPELINE, two for STANDARD channels.
         type: list
         elements: str
       security_group_ids:
         description:
-          - TODO
+          - A list of up to 5 EC2 VPC security group IDs to attach to the Output VPC network interfaces. If none are specified then the VPC default security group will be used.
         type: list
         elements: str
       subnet_ids:
         description:
-          - TODO
+          - A list of VPC subnet IDs from the same VPC. If STANDARD channel, subnet IDs must be mapped to two unique availability zones (AZ).
         type: list
         elements: str
   anywhere_settings:
     description:
-      - TODO
+      - The Elemental Anywhere settings for this channel.
     type: dict
     suboptions:
       channel_placement_group_id:
         description:
-          - TODO
+          - The ID of the channel placement group for the channel.
         type: str
       cluster_id:
         description:
-          - TODO
+          - The ID of the cluster for the channel.
         type: str
   channel_engine_version:
     description:
-      - TODO
+      - The desired engine version for this channel.
     type: dict
     suboptions:
       version:
         description:
-          - TODO
+          - The build identifier of the engine version to use for this channel. Specify ‘DEFAULT’ to reset to the default version.
         type: str
   dry_run:
     description:
-      - TODO
+      - Placeholder documentation
     type: bool
 
 extends_documentation_fragment:
