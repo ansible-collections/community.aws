@@ -214,7 +214,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveClusterManager:
@@ -258,7 +258,7 @@ class MediaLiveClusterManager:
 
         for param in required_params:
             if not params.get(param):
-                raise MedialiveAnsibleAWSError(message=f'The {param} parameter is required when creating a new cluster')
+                raise AnsibleAWSError(message=f'The {param} parameter is required when creating a new cluster')
 
         create_params = { k: v for k, v in params.items() if k in allowed_params and v }
         create_params = snake_dict_to_camel_dict(create_params, capitalize_first=True)
@@ -268,7 +268,7 @@ class MediaLiveClusterManager:
             self.cluster = camel_dict_to_snake_dict(response)
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive Cluster',
                 exception=e
             )
@@ -281,7 +281,7 @@ class MediaLiveClusterManager:
             params: Parameters for cluster update
         """
         if not params.get('cluster_id'):
-            raise MedialiveAnsibleAWSError(message='The cluster_id parameter is required during cluster update.')
+            raise AnsibleAWSError(message='The cluster_id parameter is required during cluster update.')
 
         allowed_params = ['cluster_id', 'name', 'network_settings']
 
@@ -300,7 +300,7 @@ class MediaLiveClusterManager:
             self.cluster = camel_dict_to_snake_dict(response)
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update Medialive Cluster',
                 exception=e
             )
@@ -320,12 +320,12 @@ class MediaLiveClusterManager:
                     if cluster.get('Name') == name:
                         found.append(cluster.get('Id'))
             if len(found) > 1:
-                raise MedialiveAnsibleAWSError(message='Found more than one Clusters under the same name')
+                raise AnsibleAWSError(message='Found more than one Clusters under the same name')
             elif len(found) == 1:
                 self.get_cluster_by_id(found[0])
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get MediaLive Cluster',
                 exception=e
             )
@@ -356,7 +356,7 @@ class MediaLiveClusterManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.cluster = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete Medialive Cluster',
                 exception=e
             )
@@ -387,7 +387,7 @@ class MediaLiveClusterManager:
                 WaiterConfig=config
             )
         except WaiterError as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message=f'Timeout waiting for cluster state to become {cluster_id}',
                 exception=e
             )

@@ -122,7 +122,7 @@ from typing import Dict
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveClusterGetter:
@@ -168,11 +168,11 @@ class MediaLiveClusterGetter:
                     if cluster.get('Name') == name:
                         found.append(cluster.get('Id'))
                 if len(found) > 1:
-                    raise MedialiveAnsibleAWSError(message='Found more than one Clusters under the same name')
+                    raise AnsibleAWSError(message='Found more than one Clusters under the same name')
                 elif len(found) == 1:
                     self.get_cluster_by_id(found[0])
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get MediaLive Cluster',
                 exception=e
             )

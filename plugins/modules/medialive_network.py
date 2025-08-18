@@ -161,7 +161,8 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
+
 
 class MediaLiveNetworkManager:
     '''Manage AWS MediaLive Anywhere networks'''
@@ -205,7 +206,7 @@ class MediaLiveNetworkManager:
 
         for param in required_params:
             if not params.get(param):
-                raise MedialiveAnsibleAWSError(message=f'The {param} parameter is required when creating a new Network')
+                raise AnsibleAWSError(message=f'The {param} parameter is required when creating a new Network')
 
         create_params = { k: v for k, v in params.items() if k in allowed_params and v }
         create_params = snake_dict_to_camel_dict(create_params, capitalize_first=True)
@@ -214,7 +215,7 @@ class MediaLiveNetworkManager:
             self.network = self.client.create_network(**create_params)  # type: ignore
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive Network',
                 exception=e
             )
@@ -228,7 +229,7 @@ class MediaLiveNetworkManager:
             params: Parameters for network update
         """
         if not params.get('network_id'):
-            raise MedialiveAnsibleAWSError(message='The network_id parameter is required during network update.')
+            raise AnsibleAWSError(message='The network_id parameter is required during network update.')
 
         allowed_params = ['ip_pools', 'name', 'routes', 'network_id']
 
@@ -246,7 +247,7 @@ class MediaLiveNetworkManager:
             self.network = self.client.update_network(**update_params)  # type: ignore
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update Medialive Network',
                 exception=e
             )
@@ -267,12 +268,12 @@ class MediaLiveNetworkManager:
                     if network.get('Name') == name:
                         found.append(network.get('Id'))
             if len(found) > 1:
-                raise MedialiveAnsibleAWSError(message='Found more than one Networks under the same name')
+                raise AnsibleAWSError(message='Found more than one Networks under the same name')
             elif len(found) == 1:
                 self.get_network_by_id(found[0])
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Network',
                 exception=e
             )
@@ -289,7 +290,7 @@ class MediaLiveNetworkManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.network = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Network',
                 exception=e
             )
@@ -308,7 +309,7 @@ class MediaLiveNetworkManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.network = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete Medialive Network',
                 exception=e
             )

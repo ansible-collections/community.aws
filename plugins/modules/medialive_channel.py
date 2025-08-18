@@ -4844,8 +4844,7 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
-
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 class MediaLiveChannelManager:
     '''Manage AWS MediaLive Anywhere Channels'''
@@ -4908,7 +4907,7 @@ class MediaLiveChannelManager:
 
         for param in required_params:
             if not params.get(param):
-                raise MedialiveAnsibleAWSError(message=f'The {param} parameter is required when creating a new Channel')
+                raise AnsibleAWSError(message=f'The {param} parameter is required when creating a new Channel')
 
         create_params = { k: v for k, v in params.items() if k in allowed_params and v }
         create_params = self.clean_up(create_params)
@@ -4923,7 +4922,7 @@ class MediaLiveChannelManager:
             self.channel = self.client.create_channel(**create_params)['Channel']  # type: ignore
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive Channel',
                 exception=e
             )
@@ -4937,7 +4936,7 @@ class MediaLiveChannelManager:
             params: Parameters for Channel update
         """
         if not params.get('channel_id'):
-            raise MedialiveAnsibleAWSError(message='The channel_id parameter is required during channel update.')
+            raise AnsibleAWSError(message='The channel_id parameter is required during channel update.')
 
         tags = params.get('tags')
         purge_tags = params.get('purge_tags')
@@ -4983,7 +4982,7 @@ class MediaLiveChannelManager:
                 self.changed = True
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update Medialive Channel',
                 exception=e
             )
@@ -5004,12 +5003,12 @@ class MediaLiveChannelManager:
                     if channel.get('Name') == name:
                         found.append(channel.get('Id'))
             if len(found) > 1:
-                raise MedialiveAnsibleAWSError(message='Found more than one Channels under the same name')
+                raise AnsibleAWSError(message='Found more than one Channels under the same name')
             elif len(found) == 1:
                 self.get_channel_by_id(found[0])
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Channel',
                 exception=e
             )
@@ -5026,7 +5025,7 @@ class MediaLiveChannelManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.channel = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive Channel',
                 exception=e
             )
@@ -5045,7 +5044,7 @@ class MediaLiveChannelManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.channel = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete Medialive Channel',
                 exception=e
             )
@@ -5076,7 +5075,7 @@ class MediaLiveChannelManager:
                 WaiterConfig=config
             )
         except WaiterError as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message=f'Timeout waiting for Channel {channel_id}',
                 exception=e
             )
@@ -5107,7 +5106,7 @@ class MediaLiveChannelManager:
             if to_delete:
                 self.client.delete_tags(ResourceArn=self.channel['arn'], TagKeys=to_delete) # type: ignore
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update MediaLive Channel resource Tags',
                 exception=e
             )

@@ -133,7 +133,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict, recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.community.aws.plugins.module_utils.medialive import MedialiveAnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.exceptions import AnsibleAWSError
 
 
 class MediaLiveSdiSourceManager:
@@ -182,7 +182,7 @@ class MediaLiveSdiSourceManager:
 
         for param in required_params:
             if not params.get(param):
-                raise MedialiveAnsibleAWSError(message=f'The {param} parameter is required when creating a new SDI source')
+                raise AnsibleAWSError(message=f'The {param} parameter is required when creating a new SDI source')
 
         create_params = { k: v for k, v in params.items() if k in allowed_params and v }
         create_params = snake_dict_to_camel_dict(create_params, capitalize_first=True)
@@ -192,7 +192,7 @@ class MediaLiveSdiSourceManager:
             self.sdi_source = response
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to create Medialive SDI Source',
                 exception=e
             )
@@ -205,7 +205,7 @@ class MediaLiveSdiSourceManager:
             params: Parameters for SDI source update
         """
         if not params.get('sdi_source_id'):
-            raise MedialiveAnsibleAWSError(message='The sdi_source_id parameter is required during SDI source update.')
+            raise AnsibleAWSError(message='The sdi_source_id parameter is required during SDI source update.')
 
         allowed_params = ['sdi_source_id', 'name', 'mode', 'type']
 
@@ -227,7 +227,7 @@ class MediaLiveSdiSourceManager:
             self.sdi_source = response
             self.changed = True
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to update Medialive SDI Source',
                 exception=e
             )
@@ -247,14 +247,14 @@ class MediaLiveSdiSourceManager:
                     if sdi_source.get('Name') == name:
                         found.append(sdi_source.get('Id'))
             if len(found) > 1:
-                raise MedialiveAnsibleAWSError(
+                raise AnsibleAWSError(
                     message='Found more than one Medialive SDI Sources under the same name'
                 )
             elif len(found) == 1:
                 self.get_sdi_source_by_id(found[0])
 
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to get Medialive SDI Source',
                 exception=e
             )
@@ -285,7 +285,7 @@ class MediaLiveSdiSourceManager:
         except is_boto3_error_code('ResourceNotFoundException'):
             self.sdi_source = {}
         except (ClientError, BotoCoreError) as e: # type: ignore
-            raise MedialiveAnsibleAWSError(
+            raise AnsibleAWSError(
                 message='Unable to delete Medialive SDI source',
                 exception=e
             )
