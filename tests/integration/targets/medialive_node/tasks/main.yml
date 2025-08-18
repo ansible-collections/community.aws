@@ -22,6 +22,7 @@
         ip_pool_cidr: "10.21.21.0/24"
         route_cidr: "0.0.0.0/0"
         route_gateway: "10.21.21.1"
+        wait_timeout: 30
 
     # Look up Account ID to use in ARN construction
     - name: Look up Account ID
@@ -137,11 +138,9 @@
         cluster_type: "ON_PREMISES"
         instance_role_arn: "{{ instance_role_arn }}"
         network_settings:
-          default_route: "management"
+          default_route: "logical-0"
           interface_mappings:
-            - logical_interface_name: "management"
-              network_id: "{{ network_id }}"
-            - logical_interface_name: "input"
+            - logical_interface_name: "logical-0"
               network_id: "{{ network_id }}"
         wait: true
         wait_timeout: "{{ wait_timeout }}"
