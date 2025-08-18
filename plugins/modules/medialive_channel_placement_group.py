@@ -328,7 +328,7 @@ class MediaLiveChannelPlacementGroupManager:
 
     def wait_for(
         self,
-        want: Literal['channel_placement_group_assigned', 'channel_placement_group_deleted'],
+        want: Literal['channel_placement_group_unassigned', 'channel_placement_group_deleted'],
         placement_group_id: str,
         cluster_id: str,
         wait_timeout = 60) -> None:
@@ -439,7 +439,7 @@ def main():
 
             # Wait for the placement group to be created
             if wait and placement_group_id:
-                manager.wait_for('channel_placement_group_assigned', placement_group_id, cluster_id, wait_timeout) # type: ignore
+                manager.wait_for('channel_placement_group_unassigned', placement_group_id, cluster_id, wait_timeout) # type: ignore
                 manager.get_channel_placement_group_by_id(placement_group_id, cluster_id) # type: ignore
 
     # Handle absent state

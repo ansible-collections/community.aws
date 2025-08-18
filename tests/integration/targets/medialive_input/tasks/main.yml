@@ -146,10 +146,10 @@
         fail_msg: "Check mode did not work as expected"
         success_msg: "Check mode correctly simulated deletion"
 
-    # Test INPUT deletion
-    - name: Delete the INPUT
-      community.aws.medialive_INPUT:
-        name: "{{ INPUT_name }}"
+    # Test Input deletion
+    - name: Delete the Input
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
         state: absent
         wait: true
         wait_timeout: "{{ wait_timeout }}"
@@ -158,17 +158,17 @@
       delay: 5
       until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
 
-    - name: Assert INPUT was deleted
+    - name: Assert Input was deleted
       ansible.builtin.assert:
         that:
           - delete_result is changed
-        fail_msg: "INPUT deletion failed"
-        success_msg: "INPUT deleted successfully"
+        fail_msg: "Input deletion failed"
+        success_msg: "Input deleted successfully"
 
     # Test deletion idempotency
-    - name: Try to delete the INPUT again (idempotency check)
-      community.aws.medialive_INPUT:
-        name: "{{ INPUT_name }}"
+    - name: Try to delete the Input again (idempotency check)
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
         state: absent
       register: delete_idempotency_result
 
