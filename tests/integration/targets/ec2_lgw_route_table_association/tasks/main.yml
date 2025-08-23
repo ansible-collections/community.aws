@@ -9,7 +9,7 @@
   block:
     # ==================================================================
     - name: Create Local Gateway Route Table VPC Association - check_mode
-      ec2_lgw_route_table_association:
+      community.aws.ec2_lgw_route_table_association:
         state: present
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
@@ -25,7 +25,7 @@
           - not lgw_rt_asso_check_mode.failed
 
     - name: Create Local Gateway Route Table VPC Association
-      ec2_lgw_route_table_association:
+      community.aws.ec2_lgw_route_table_association:
         state: present
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
@@ -44,7 +44,7 @@
           - lgw_rt_asso.result.VpcId == vpc_id
 
     - name: Test idempotence
-      ec2_lgw_route_table_association:
+      community.aws.ec2_lgw_route_table_association:
         state: present
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
@@ -60,7 +60,7 @@
 
     # ============================================================
     - name: Get local gateway route table associations by ID
-      ec2_lgw_route_table_association_info:
+      community.aws.ec2_lgw_route_table_association_info:
         lgw_route_table_vpc_association_id: "{{ lgw_rt_asso_id }}"
       register: lgw_rt_asso_info
       check_mode: true
@@ -83,7 +83,7 @@
           - lgw_rt_asso_details.LocalGatewayRouteTableId == lgw_route_table_id
 
     - name: Get local gateway route table associations by VPC ID
-      ec2_lgw_route_table_association_info:
+      community.aws.ec2_lgw_route_table_association_info:
         vpc_id: "{{ vpc_id }}"
       register: lgw_rt_asso_info
       check_mode: true
@@ -106,7 +106,7 @@
           - lgw_rt_asso_details.LocalGatewayRouteTableId == lgw_route_table_id
 
     - name: Get local gateway route table associations by Local Gateway Route Table ID and VPC ID
-      ec2_lgw_route_table_association_info:
+      community.aws.ec2_lgw_route_table_association_info:
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
       register: lgw_rt_asso_info
@@ -131,7 +131,7 @@
 
     # ============================================================
     - name: Delete Local Gateway Route Table VPC Association - check_mode
-      ec2_lgw_route_table_association:
+      community.aws.ec2_lgw_route_table_association:
         state: absent
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
@@ -145,7 +145,7 @@
           - not lgw_rt_asso_check_mode.failed
 
     - name: Delete Local Gateway Route Table VPC Association
-      ec2_lgw_route_table_association:
+      community.aws.ec2_lgw_route_table_association:
         state: absent
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
@@ -157,7 +157,7 @@
           - lgw_rt_asso.changed
 
     - name: Test idempotence deletion
-      ec2_lgw_route_table_association:
+      community.aws.ec2_lgw_route_table_association:
         state: absent
         lgw_route_table_id: "{{ lgw_route_table_id }}"
         vpc_id: "{{ vpc_id }}"
