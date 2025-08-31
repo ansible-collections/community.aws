@@ -19,7 +19,7 @@
 
     - name: Use set fact for vpc ids
       ansible.builtin.set_fact:
-        vpc_id: "{{ vpc_result.results.0.vpc.id }}"
+        vpc_id: "{{ vpc_result.vpc.id }}"
     # ==================================================================
     - name: Create Local Gateway Route Table VPC Association - check_mode
       community.aws.ec2_lgw_route_table_association:
