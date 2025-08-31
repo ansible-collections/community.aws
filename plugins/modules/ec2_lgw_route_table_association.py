@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v3.0+ (see https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -35,7 +36,6 @@ options:
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
-  - amazon.aws.tags
   - amazon.aws.boto3
 """
 
@@ -47,8 +47,6 @@ EXAMPLES = r"""
   community.aws.ec2_lgw_route_table_association:
     vpc_id: vpc-xxxxxxxxx
     lgw_route_table_id: lgw-rtb-xxxxxxxxxxxxxxxxx
-    tags:
-      Name: LGW-RT-vpc-1245678
   register: lgw_route_table_association
 
 # Deletion example:
@@ -104,90 +102,53 @@ result:
       returned: always
       type: str
       sample: associated
-    tags:
-      description: Tags applied to the route table.
-      returned: always
-      type: dict
-      sample:
-        Name: LGW-RT-vpc-1245678
 """
 
 
 from time import sleep
 from typing import Any
 from typing import Dict
-from typing import List
-from typing import Union
-from typing import Optional
-
-
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-
-
-@AWSRetry.jittered_backoff()
-def describe_lgw_route_table_associations(
-    client, **params: Dict[str, Union[List[str], bool, List[Dict[str, Union[str, List[str]]]]]]
-) -> List[Dict[str, Any]]:
-    paginator = client.get_paginator("describe_local_gateway_route_table_vpc_associations")
-    return paginator.paginate(**params).build_full_result()["LocalGatewayRouteTableVpcAssociations"]
-
-@AWSRetry.jittered_backoff()
-def create_lgw_route_table_association(client, lgw_route_table_id: str, vpc_id: str, tags: Optional[Dict[str, str]]) -> Dict[str, Any]:
-    params = {"LocalGatewayRouteTableId": lgw_route_table_id,
-              "VpcId": vpc_id}
-    if tags:
-        params["TagSpecifications"] = boto3_tag_specifications(tags, types="local-gateway-route-table-vpc-association")
-    return client.create_local_gateway_route_table_vpc_association(**params)["LocalGatewayRouteTableVpcAssociation"]
-
-@AWSRetry.jittered_backoff()
-def delete_lgw_route_table_association(client, lgw_route_table_vpc_association_id: str) -> bool:
-    client.delete_local_gateway_route_table_vpc_association(LocalGatewayRouteTableVpcAssociationId=lgw_route_table_vpc_association_id)
-    return True
+from ansible_collections.community.aws.plugins.module_utils.ec2 import describe_lgw_route_table_associations
+from ansible_collections.community.aws.plugins.module_utils.ec2 import create_lgw_route_table_association
+from ansible_collections.community.aws.plugins.module_utils.ec2 import delete_lgw_route_table_association
 
 
 def ensure_lgw_route_table_vpc_association_present(connection, module: AnsibleAWSModule) -> Dict[str, Any]:
     lgw_route_table_id = module.params.get("lgw_route_table_id")
-    tags = module.params.get("tags")
     vpc_id = module.params.get("vpc_id")
 
     changed = False
 
     filters = ansible_dict_to_boto3_filter_list({"vpc-id": vpc_id, "local-gateway-route-table-id": lgw_route_table_id})
     lgw_route_table_associations = describe_lgw_route_table_associations(connection, Filters=filters)
-
-    #If not Local Gateway Route Table Association found, create new association
     if lgw_route_table_associations in ([], None):
         changed = True
         if module.check_mode:
-            lgw_route_table_associations = {"LocalGatewayRouteTableVpcAssociationId": "lgw-vpc-assoc-xxxxxxxxxxx", 
-                                           "LocalGatewayRouteTableId": lgw_route_table_id, 
-                                           "LocalGatewayRouteTableArn": f"arn:aws:ec2:us-east-2:xxxxxxxxxxxx:local-gateway-route-table/{lgw_route_table_id}",
-                                           "LocalGatewayId": "lgw-xxxxxxxxxxxxxx",
-                                           "VpcId": vpc_id,
-                                           "OwnerId": "xxxxxxxxxxx",
-                                           "State": "associated",
-                                           "Tags": tags}
+            lgw_route_table_associations = {"LocalGatewayRouteTableVpcAssociationId": "lgw-vpc-assoc-xxxxxxxxxxx",
+                                            "LocalGatewayRouteTableId": lgw_route_table_id,
+                                            "LocalGatewayRouteTableArn": f"arn:aws:ec2:us-east-2:xxxxxxxxxxxx:local-gateway-route-table/{lgw_route_table_id}",
+                                            "LocalGatewayId": "lgw-xxxxxxxxxxxxxx",
+                                            "VpcId": vpc_id,
+                                            "OwnerId": "xxxxxxxxxxx",
+                                            "State": "associated"}
+
             return dict(changed=changed, result=lgw_route_table_associations)
 
-        create_lgw_route_table_association(connection, lgw_route_table_id, vpc_id, tags)
+        create_lgw_route_table_association(connection, lgw_route_table_id, vpc_id)
 
     if changed:
-        #Wait for the local gateway route table association to be created
         lgw_route_table_associations = describe_lgw_route_table_associations(connection, Filters=filters)
         while lgw_route_table_associations[0]["State"] != "associated":
             sleep(5)
             lgw_route_table_associations = describe_lgw_route_table_associations(connection, Filters=filters)
 
-    lgw_route_table_associations[0]["Tags"] = boto3_tag_list_to_ansible_dict(lgw_route_table_associations[0]["Tags"])
-
     return dict(changed=changed, result=lgw_route_table_associations[0])
+
 
 def ensure_lgw_route_table_vpc_association_absent(connection, module: AnsibleAWSModule) -> Dict[str, bool]:
     lgw_route_table_vpc_association_id = module.params.get("lgw_route_table_vpc_association_id")
@@ -227,7 +188,6 @@ def main() -> None:
     argument_spec = dict(
         lgw_route_table_id=dict(type="str"),
         vpc_id=dict(),
-        tags=dict(type="dict", aliases=["resource_tags"]),
         lgw_route_table_vpc_association_id=dict(type="str"),
         state=dict(default="present", choices=["present", "absent"]),
     )
@@ -235,7 +195,7 @@ def main() -> None:
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         required_if=[
-            ["state", "absent", ["lgw_route_table_vpc_association_id","vpc_id"],True],
+            ["state", "absent", ["lgw_route_table_vpc_association_id", "vpc_id"], True],
         ],
         required_together=[
             ["lgw_route_table_id", "vpc_id"],

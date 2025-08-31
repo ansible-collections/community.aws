@@ -7,6 +7,19 @@
       session_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
+    # ============================================================
+    - name: Create a VPC
+      amazon.aws.ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        state: present
+        cidr_block: "{{ vpc_cidr }}"
+        tags:
+          Description: Created by ansible-test
+      register: vpc_result
+
+    - name: Use set fact for vpc ids
+      ansible.builtin.set_fact:
+        vpc_id: "{{ vpc_result.results.0.vpc.id }}"
     # ==================================================================
     - name: Create Local Gateway Route Table VPC Association - check_mode
       community.aws.ec2_lgw_route_table_association:

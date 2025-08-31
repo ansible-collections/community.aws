@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v3.0+ (see https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -30,7 +31,6 @@ options:
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
-  - amazon.aws.tags
   - amazon.aws.boto3
 """
 
@@ -100,34 +100,16 @@ result:
       returned: always
       type: str
       sample: associated
-    tags:
-      description: Tags applied to the route table.
-      returned: always
-      type: dict
-      sample:
-        Name: LGW-RT-vpc-1245678
 """
 
 
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Union
-
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleEC2Error
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import ansible_dict_to_boto3_filter_list
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.ec2 import describe_lgw_route_table_associations
 
-
-@AWSRetry.jittered_backoff()
-def describe_lgw_route_table_associations(
-    client, **params: Dict[str, Union[List[str], bool, List[Dict[str, Union[str, List[str]]]]]]
-) -> List[Dict[str, Any]]:
-    paginator = client.get_paginator("describe_local_gateway_route_table_vpc_associations")
-    return paginator.paginate(**params).build_full_result()["LocalGatewayRouteTableVpcAssociations"]
 
 def list_ec2_lgw_route_tables_associations(connection, module: AnsibleAWSModule) -> None:
     lgw_route_table_id = module.params.get("lgw_route_table_id")
@@ -141,7 +123,7 @@ def list_ec2_lgw_route_tables_associations(connection, module: AnsibleAWSModule)
     elif vpc_id:
         filters = ansible_dict_to_boto3_filter_list({"vpc-id": vpc_id})
     elif lgw_route_table_id:
-      filters = ansible_dict_to_boto3_filter_list({"local-gateway-route-table-id": lgw_route_table_id})
+        filters = ansible_dict_to_boto3_filter_list({"local-gateway-route-table-id": lgw_route_table_id})
 
     try:
         lgw_route_table_associations = describe_lgw_route_table_associations(connection, Filters=filters)
