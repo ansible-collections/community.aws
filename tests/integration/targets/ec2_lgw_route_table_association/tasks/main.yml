@@ -183,13 +183,11 @@
 
 # ============================================================
   always:
-    - ansible.builtin.debug:
-        msg: "Removing test dependencies"
-
     - name: Delete vpc
       amazon.aws.ec2_vpc_net:
-        vpc_id: "{{ vpc_id }}"
+        name: "{{ vpc_name }}"
         state: absent
+        cidr_block: "{{ vpc_cidr }}"
       register: result
       retries: 10
       delay: 5
