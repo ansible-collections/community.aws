@@ -6,7 +6,7 @@
 DOCUMENTATION = r"""
 ---
 module: identitystore_user
-version_added: 0.0.0
+version_added: 10.1.0
 short_description: Manage users in Identity Store (IAM Identity Center)
 description:
   - Manage users in the Identity Store service.
@@ -23,7 +23,7 @@ options:
   display_name:
     description:
       - A string containing the name of the user.
-      - https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/API_CreateUser.html
+      - U(https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/API_CreateUser.html).
     type: str
   user_name:
     description:
@@ -33,42 +33,42 @@ options:
   name:
     description:
       - A dictionary containing the full name of the user.
-      - https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/API_Name.html
+      - U(https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/API_Name.html).
     type: dict
     suboptions:
       family_name:
         description:
-          - The family name of the user
+          - The family name of the user.
         type: str
       given_name:
         description:
-          - The given name of the user
+          - The given name of the user.
         type: str
   emails:
     description:
       - A list of email dictionaries containing email addresses for the user.
-      - https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/API_Email.html
+      - U(https://docs.aws.amazon.com/singlesignon/latest/IdentityStoreAPIReference/API_Email.html).
     type: list
     elements: dict
     suboptions:
       value:
         description:
-          - The e-mail address
+          - The e-mail address.
         required: true
         type: str
       type:
         description:
-          - The type of e-mail address (e.g., "work")
+          - The type of e-mail address (e.g., "work").
         required: true
         type: str
       primary:
         description:
-          - Whether this e-mail address is the user's primary address
+          - Whether this e-mail address is the user's primary address.
         required: true
         type: bool
   state:
     description:
-      - Create/Update or Delete a user
+      - Create/Update or Delete a user.
     choices: [ 'present', 'absent' ]
     required: True
     type: str
@@ -103,13 +103,13 @@ EXAMPLES = r"""
 RETURN = r"""
 identity_store_id:
   description:
-    - just echos the identity_store_id
+    - Just echos the identity_store_id.
   type: str
   returned: success
 user_id:
   description:
-    - the identifier for a user in the identity store
-    - only present if the user exists when we return
+    - The identifier for a user in the identity store.
+    - Only present if the user exists when we return.
   type: str
   returned: success
 """
