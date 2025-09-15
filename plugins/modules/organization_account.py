@@ -103,14 +103,14 @@ EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create new AWS account (simple)
-  laurobmb.aws.organization_account:
+  community.aws.organization_account:
     action: create_account
     email: "admin@company.com"
     name: "DemoProject"
   register: create_account_result
 
 - name: Create new AWS account with custom Role and Tags
-  laurobmb.aws.organization_account:
+  community.aws.organization_account:
     action: create_account
     email: "admin@company.com"
     name: "DemoProjectWithTags"
@@ -123,7 +123,7 @@ EXAMPLES = r'''
   register: create_account_custom_result
 
 - name: Move the newly created account to the destination OU
-  laurobmb.aws.organization_account:
+  community.aws.organization_account:
     action: move_account
     id: "{{ create_account_result.status.AccountId }}"
     ou_id: "ou-jojo-zeg98nd3"
