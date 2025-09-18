@@ -1,0 +1,4 @@
+---
+ecs_task_family_name: "{{ resource_prefix }}-ecs-taskdefinition"
+ecs_task_container_name: "{{ resource_prefix }}-container"
+ecs_task_image: "httpd:2.4"
