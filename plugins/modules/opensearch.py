@@ -489,7 +489,6 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible.module_utils.six import string_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.policy import compare_policies
@@ -754,7 +753,7 @@ def set_vpc_options(module, current_domain_config, desired_domain_config, change
             vpc_config = {}
             desired_domain_config["VPCOptions"] = vpc_config
         # OpenSearch cluster is attached to VPC
-        if isinstance(vpc_subnets, string_types):
+        if isinstance(vpc_subnets, str):
             vpc_subnets = [x.strip() for x in vpc_subnets.split(",")]
         vpc_config["SubnetIds"] = vpc_subnets
 
@@ -763,7 +762,7 @@ def set_vpc_options(module, current_domain_config, desired_domain_config, change
         if vpc_config is None:
             vpc_config = {}
             desired_domain_config["VPCOptions"] = vpc_config
-        if isinstance(vpc_security_groups, string_types):
+        if isinstance(vpc_security_groups, str):
             vpc_security_groups = [x.strip() for x in vpc_security_groups.split(",")]
         vpc_config["SecurityGroupIds"] = vpc_security_groups
 
