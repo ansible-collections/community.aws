@@ -11,6 +11,7 @@
       sasl_scram: true
       unauthenticated: false
     subnets: "{{ subnet_ids }}"
+    instance_type: "{{ msk_instance_type }}"
     wait: true
     tags: "{{ tags_create }}"
     configuration_arn: "{{ msk_config.arn }}"
@@ -35,6 +36,7 @@
       sasl_scram: true
       unauthenticated: false
     subnets: "{{ subnet_ids }}"
+    instance_type: "{{ msk_instance_type }}"
     wait: true
     tags: "{{ tags_create }}"
     configuration_arn: "{{ msk_config.arn }}"
@@ -55,7 +57,7 @@
       - "msk_cluster.cluster_info.tags.key1 == 'value1'"
       - "msk_cluster.cluster_info.cluster_name == msk_cluster_name"
       - "msk_cluster.cluster_info.number_of_broker_nodes == msk_broker_nodes"
-      - "msk_cluster.cluster_info.broker_node_group_info.instance_type == 'kafka.t3.small'"
+      - "msk_cluster.cluster_info.broker_node_group_info.instance_type == msk_instance_type"
       - "msk_cluster.cluster_info.broker_node_group_info.storage_info.ebs_storage_info.volume_size == 10"
       - "msk_cluster.cluster_info.client_authentication.sasl.iam.enabled == true"
       - "msk_cluster.cluster_info.client_authentication.sasl.scram.enabled == true"
@@ -76,6 +78,7 @@
       sasl_scram: true
       unauthenticated: false
     subnets: "{{ subnet_ids }}"
+    instance_type: "{{ msk_instance_type }}"
     wait: true
     tags: "{{ tags_create }}"
     configuration_arn: "{{ msk_config.arn }}"
