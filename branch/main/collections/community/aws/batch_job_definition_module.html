@@ -253,7 +253,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-environment"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-environment"><strong>environment</strong></p>
 <a class="ansibleOptionLink" href="#parameter-environment" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The environment variables to pass to a container. This parameter maps to Env in the Create a container section of the Docker Remote API and the –env option to docker run.</p>
+<td><div class="ansible-option-cell"><p>The environment variables to pass to a container. This parameter maps to Env in the Create a container section of the Docker Remote API and the --env option to docker run.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
@@ -303,14 +303,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-memory"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-memory"><strong>memory</strong></p>
 <a class="ansibleOptionLink" href="#parameter-memory" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The hard limit (in MiB) of memory to present to the container. If your container attempts to exceed the memory specified here, the container is killed. This parameter maps to Memory in the Create a container section of the Docker Remote API and the –memory option to docker run.</p>
+<td><div class="ansible-option-cell"><p>The hard limit (in MiB) of memory to present to the container. If your container attempts to exceed the memory specified here, the container is killed. This parameter maps to Memory in the Create a container section of the Docker Remote API and the --memory option to docker run.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-mount_points"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-mount-points"><strong>mount_points</strong></p>
 <a class="ansibleOptionLink" href="#parameter-mount_points" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The mount points for data volumes in your container. This parameter maps to Volumes in the Create a container section of the Docker Remote API and the –volume option to docker run.</p>
+<td><div class="ansible-option-cell"><p>The mount points for data volumes in your container. This parameter maps to Volumes in the Create a container section of the Docker Remote API and the --volume option to docker run.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
@@ -346,7 +346,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-privileged"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-privileged"><strong>privileged</strong></p>
 <a class="ansibleOptionLink" href="#parameter-privileged" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user). This parameter maps to Privileged in the Create a container section of the Docker Remote API and the –privileged option to docker run.</p>
+<td><div class="ansible-option-cell"><p>When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user). This parameter maps to Privileged in the Create a container section of the Docker Remote API and the --privileged option to docker run.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -365,7 +365,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-readonly_root_filesystem"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-readonly-root-filesystem"><strong>readonly_root_filesystem</strong></p>
 <a class="ansibleOptionLink" href="#parameter-readonly_root_filesystem" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>When this parameter is true, the container is given read-only access to its root file system. This parameter maps to ReadonlyRootfs in the Create a container section of the Docker Remote API and the –read-only option to docker run.</p>
+<td><div class="ansible-option-cell"><p>When this parameter is true, the container is given read-only access to its root file system. This parameter maps to ReadonlyRootfs in the Create a container section of the Docker Remote API and the --read-only option to docker run.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -429,7 +429,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-ulimits"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-ulimits"><strong>ulimits</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ulimits" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>A list of ulimits to set in the container. This parameter maps to Ulimits in the Create a container section of the Docker Remote API and the –ulimit option to docker run.</p>
+<td><div class="ansible-option-cell"><p>A list of ulimits to set in the container. This parameter maps to Ulimits in the Create a container section of the Docker Remote API and the --ulimit option to docker run.</p>
 <p class="ansible-option-line"><strong class="ansible-option-default-bold">Default:</strong> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
@@ -458,7 +458,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-user"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-user"><strong>user</strong></p>
 <a class="ansibleOptionLink" href="#parameter-user" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The user name to use inside the container. This parameter maps to User in the Create a container section of the Docker Remote API and the –user option to docker run.</p>
+<td><div class="ansible-option-cell"><p>The user name to use inside the container. This parameter maps to User in the Create a container section of the Docker Remote API and the --user option to docker run.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -478,7 +478,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-batch
 <div class="ansibleOptionAnchor" id="parameter-vcpus"></div><p class="ansible-option-title" id="ansible-collections-community-aws-batch-job-definition-module-parameter-vcpus"><strong>vcpus</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vcpus" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The number of vCPUs reserved for the container. This parameter maps to CpuShares in the Create a container section of the Docker Remote API and the –cpu-shares option to docker run. Each vCPU is equivalent to 1,024 CPU shares.</p>
+<td><div class="ansible-option-cell"><p>The number of vCPUs reserved for the container. This parameter maps to CpuShares in the Create a container section of the Docker Remote API and the --cpu-shares option to docker run. Each vCPU is equivalent to 1,024 CPU shares.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
