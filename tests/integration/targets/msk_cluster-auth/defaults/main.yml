@@ -8,8 +8,9 @@ vpc_subnet_name_prefix: "{{ resource_prefix }}"
 
 msk_config_name: "{{ resource_prefix }}-msk-cluster-auth"
 msk_cluster_name: "{{ tiny_prefix }}-msk-cluster-auth"
-msk_version: 2.8.1
+msk_version: '4.0.x.kraft'
 msk_broker_nodes: 2
+msk_instance_type: 'kafka.m5.2xlarge'
 
 tags_create:
   key1: "value1"

@@ -10,6 +10,8 @@ eks_subnets:
     cidr: 10.0.2.0/24
     type: public
 
+eks_nodegroup_ami_type: "AL2_x86_64"
+
 eks_security_groups:
   - name: "{{ eks_cluster_name }}-control-plane-sg"
     description: "EKS Control Plane Security Group"
