@@ -12,7 +12,7 @@
       desired_size: 1
     disk_size: 20
     instance_types: 't3.micro'
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -23,7 +23,7 @@
         effect: 'NO_SCHEDULE'
     capacity_type: 'on_demand'
   register: eks_nodegroup_result
-  ignore_errors: 'yes'
+  ignore_errors: true
 
 - name: check that eks_nodegroup did nothing
   assert:
@@ -45,7 +45,7 @@
       id: 'lt-0824c69cafa69ac81'
     disk_size: 30
   register: eks_nodegroup_result
-  ignore_errors: 'yes'
+  ignore_errors: true
 
 - name: check that eks_nodegroup did nothing
   assert:
@@ -68,7 +68,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -106,7 +106,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -144,7 +144,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -182,7 +182,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -219,7 +219,7 @@
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
     wait: True
     disk_size: 40
-  ignore_errors: 'yes'
+  ignore_errors: true
   register: eks_nodegroup_result
 
 - name: check that eks_nodegroup did nothing
@@ -236,7 +236,7 @@
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
     wait: True
     instance_types: ['t3.small']
-  ignore_errors: 'yes'
+  ignore_errors: true
   register: eks_nodegroup_result
 
 - name: check that eks_nodegroup did nothing
@@ -260,7 +260,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -298,7 +298,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -335,7 +335,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:
@@ -373,7 +373,7 @@
       desired_size: 2
     disk_size: 30
     instance_types: ['t3.small']
-    ami_type: 'AL2_x86_64'
+    ami_type: '{{ eks_nodegroup_ami_type }}'
     update_config:
       max_unavailable_percentage: 50
     labels:

@@ -64,6 +64,7 @@
             Statement:
               Effect: Allow
               Action: "*"
+              Resource: "*"
         register: create_result
 
       - name: Assert queue created with configuration
@@ -93,6 +94,7 @@
             Statement:
               Effect: Allow
               Action: "*"
+              Resource: "*"
           kms_master_key_id: alias/aws/sqs
         register: create_result
 
@@ -114,6 +116,7 @@
             Statement:
               Effect: Allow
               Action: "*"
+              Resource: "*"
         register: create_result
 
       - name: Assert queue updated with configuration
