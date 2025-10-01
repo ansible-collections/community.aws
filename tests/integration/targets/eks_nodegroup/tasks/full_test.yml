@@ -21,7 +21,7 @@
       - key: 'test'
         value: 'test'
         effect: 'NO_SCHEDULE'
-    capacity_type: 'on_demand'
+    capacity_type: 'ON_DEMAND'
   register: eks_nodegroup_result
   ignore_errors: true
 
