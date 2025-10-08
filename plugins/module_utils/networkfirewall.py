@@ -8,7 +8,6 @@ from copy import deepcopy
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible.module_utils.six import string_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.arn import parse_aws_arn
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
@@ -46,7 +45,7 @@ def _merge_dict(current, new, purge):
 
 
 def _string_list(value):
-    if isinstance(value, string_types):
+    if isinstance(value, str):
         value = [value]
     elif isinstance(value, bool):
         value = [to_text(value).lower()]

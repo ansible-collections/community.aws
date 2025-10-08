@@ -14,7 +14,6 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible.module_utils.six import string_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
@@ -160,9 +159,9 @@ def compare_domain_versions(version1, version2):
         "Elasticsearch": 1,
         "OpenSearch": 2,
     }
-    if isinstance(version1, string_types):
+    if isinstance(version1, str):
         version1 = parse_version(version1)
-    if isinstance(version2, string_types):
+    if isinstance(version2, str):
         version2 = parse_version(version2)
     if version1 is None and version2 is not None:
         return -1

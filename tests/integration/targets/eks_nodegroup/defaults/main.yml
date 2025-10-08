@@ -1,6 +1,6 @@
 eks_cluster_name: "{{ resource_prefix }}"
-eks_nodegroup_name_a: ng-template-a
-eks_nodegroup_name_lt: ng-template-lt
+eks_nodegroup_name_a: "ng-template-{{ resource_prefix }}-a"
+eks_nodegroup_name_lt: "ng-template-{{ resource_prefix }}-lt"
 
 eks_subnets:
   - zone: a
@@ -9,6 +9,8 @@ eks_subnets:
   - zone: b
     cidr: 10.0.2.0/24
     type: public
+
+eks_nodegroup_ami_type: "AL2_x86_64"
 
 eks_security_groups:
   - name: "{{ eks_cluster_name }}-control-plane-sg"
