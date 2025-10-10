@@ -1,0 +1,31 @@
+---
+# Test table names
+table_name: "{{ resource_prefix }}-lookup-test"
+table_name_gsi: "{{ resource_prefix }}-lookup-gsi"
+
+# Test data
+test_items:
+  - platform_name: test-platform
+    environment_name: dev
+    stack_name: web-server
+    status: active
+    version: "1.0.0"
+    deployed_at: "2024-01-01T00:00:00Z"
+  - platform_name: test-platform
+    environment_name: prod
+    stack_name: web-server
+    status: active
+    version: "1.5.0"
+    deployed_at: "2024-01-03T00:00:00Z"
+  - platform_name: test-platform
+    environment_name: staging
+    stack_name: api-server
+    status: inactive
+    version: "0.9.0"
+    deployed_at: "2024-01-04T00:00:00Z"
+  - platform_name: test-platform
+    environment_name: test
+    stack_name: database
+    status: active
+    version: "2.0.0"
+    deployed_at: "2024-01-02T00:00:00Z"
