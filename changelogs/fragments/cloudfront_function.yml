@@ -1,3 +1,0 @@
----
-minor_changes:
-  - cloudfront_function - new module to manage AWS CloudFront Functions (https://github.com/ansible-collections/community.aws/pull/XXXX).
