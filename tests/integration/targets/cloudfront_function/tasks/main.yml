@@ -10,7 +10,7 @@
   block:
     # Test 1: Create a CloudFront function with inline code (state=present)
     - name: Create CloudFront function with inline code
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: present
         comment: "Test function for integration tests"
@@ -38,7 +38,7 @@
 
     # Test 2: Idempotency - create same function again (should not change)
     - name: Create same function again (idempotency check)
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: present
         comment: "Test function for integration tests"
@@ -61,7 +61,7 @@
 
     # Test 3: Update function code
     - name: Update function code
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: present
         comment: "Test function for integration tests"
@@ -87,7 +87,7 @@
 
     # Test 4: Update function comment
     - name: Update function comment
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: present
         comment: "Updated comment for test function"
@@ -114,7 +114,7 @@
 
     # Test 5: Create and publish function in one step
     - name: Create and publish function
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test2"
         state: published
         comment: "Function to be published"
@@ -137,7 +137,7 @@
 
     # Test 6: Idempotency - publish already published function
     - name: Publish already published function (idempotency)
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test2"
         state: published
         comment: "Function to be published"
@@ -158,7 +158,7 @@
 
     # Test 7: Update and publish function
     - name: Update and publish function
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test2"
         state: published
         comment: "Updated and published function"
@@ -180,7 +180,7 @@
 
     # Test 8: Create function from file
     - name: Create function from file
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test3"
         state: present
         comment: "Function loaded from file"
@@ -197,7 +197,7 @@
 
     # Test 9: Test with cloudfront-js-1.0 runtime
     - name: Create function with cloudfront-js-1.0 runtime
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test4"
         state: present
         comment: "Function with JS 1.0 runtime"
@@ -220,7 +220,7 @@
 
     # Test 10: Update runtime version
     - name: Update runtime from 1.0 to 2.0
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test4"
         state: present
         comment: "Function with JS 1.0 runtime"
@@ -243,7 +243,7 @@
 
     # Test 11: Check mode - create function
     - name: Create function in check mode
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-checkmode"
         state: present
         comment: "Check mode test"
@@ -261,7 +261,7 @@
           - check_mode_create is changed
 
     - name: Verify function was not actually created
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-checkmode"
         state: absent
       register: delete_checkmode
@@ -274,7 +274,7 @@
 
     # Test 12: Check mode - update function
     - name: Update function in check mode
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: present
         comment: "Check mode update"
@@ -296,7 +296,7 @@
           - check_mode_update is changed
 
     - name: Verify function was not actually updated
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: present
         comment: "Updated comment for test function"
@@ -321,7 +321,7 @@
 
     # Test 13: Delete function
     - name: Delete CloudFront function
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: absent
       register: delete_function
@@ -334,7 +334,7 @@
 
     # Test 14: Idempotency - delete non-existent function
     - name: Delete function again (idempotency)
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test1"
         state: absent
       register: delete_function_idempotent
@@ -347,7 +347,7 @@
 
     # Test 15: Check mode - delete function
     - name: Delete function in check mode
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test2"
         state: absent
       check_mode: true
@@ -360,7 +360,7 @@
 
     # Test 16: Verify function still exists after check mode delete
     - name: Delete function for real
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ function_name }}-test2"
         state: absent
       register: delete_for_real
@@ -373,7 +373,7 @@
   always:
     # Cleanup - delete all test functions
     - name: Cleanup - delete test functions
-      community.aws.cloudfront_function:
+      cloudfront_function:
         name: "{{ item }}"
         state: absent
       ignore_errors: true
