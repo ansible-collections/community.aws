@@ -346,7 +346,7 @@ def main():
         if not code_bytes:
             module.fail_json(msg="code parameter is required when creating a new function")
 
-        changed, _ = create_function(client, module, name, comment, runtime, code_bytes)
+        changed, create_response = create_function(client, module, name, comment, runtime, code_bytes)
 
         if not module.check_mode:
             current = get_function(client, name)
@@ -391,7 +391,7 @@ def main():
             if not code_bytes:
                 module.fail_json(msg="code parameter is required when updating function configuration")
 
-        changed, _ = update_function(client, module, name, etag, comment, runtime, code_bytes)
+        changed, update_response = update_function(client, module, name, etag, comment, runtime, code_bytes)
 
         if not module.check_mode:
             # Refresh function details to get new ETag
@@ -408,7 +408,7 @@ def main():
 
             # Only publish if not already in LIVE stage
             if not already_published:
-                publish_changed, _ = publish_function(client, module, name, etag)
+                publish_changed, publish_response = publish_function(client, module, name, etag)
                 changed = changed or publish_changed
                 current = get_function(client, name)
                 msg = msg + " and published" if msg else "Function published"
