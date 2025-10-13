@@ -315,9 +315,7 @@ def main():
 
     # Use module.client() to properly handle AWS credentials and config
     try:
-        client = module.client(
-            "cloudfront", retry_decorator=AWSRetry.jittered_backoff()
-        )
+        client = module.client("cloudfront", retry_decorator=AWSRetry.jittered_backoff())
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Failed to connect to AWS")
 
@@ -346,9 +344,7 @@ def main():
     # Handle function creation
     if not current:
         if not code_bytes:
-            module.fail_json(
-                msg="code parameter is required when creating a new function"
-            )
+            module.fail_json(msg="code parameter is required when creating a new function")
 
         changed, _ = create_function(client, module, name, comment, runtime, code_bytes)
 
@@ -363,11 +359,7 @@ def main():
 
         result = {
             "changed": changed,
-            "msg": (
-                "Function created and published"
-                if state == "published"
-                else "Function created"
-            ),
+            "msg": ("Function created and published" if state == "published" else "Function created"),
         }
         if not module.check_mode:
             result["function"] = format_function_output(current)
@@ -384,9 +376,7 @@ def main():
         remote_hash = get_function_code_hash(client, name, stage="DEVELOPMENT")
 
     # Check what needs updating
-    needs_config_update = comment != config.get("Comment", "") or runtime != config.get(
-        "Runtime"
-    )
+    needs_config_update = comment != config.get("Comment", "") or runtime != config.get("Runtime")
     needs_code_update = local_hash and local_hash != remote_hash
     needs_update = needs_config_update or needs_code_update
 
@@ -399,13 +389,9 @@ def main():
         # If only config changed, we need to provide existing code
         if needs_config_update and not needs_code_update:
             if not code_bytes:
-                module.fail_json(
-                    msg="code parameter is required when updating function configuration"
-                )
+                module.fail_json(msg="code parameter is required when updating function configuration")
 
-        changed, _ = update_function(
-            client, module, name, etag, comment, runtime, code_bytes
-        )
+        changed, _ = update_function(client, module, name, etag, comment, runtime, code_bytes)
 
         if not module.check_mode:
             # Refresh function details to get new ETag
