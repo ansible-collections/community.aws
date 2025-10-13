@@ -1,0 +1,385 @@
+- module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+
+  collections:
+    - amazon.aws
+
+  block:
+    # Test 1: Create a CloudFront function with inline code (state=present)
+    - name: Create CloudFront function with inline code
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: present
+        comment: "Test function for integration tests"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 200,
+              statusDescription: 'OK'
+            };
+            return response;
+          }
+      register: create_function
+
+    - name: Ensure function was created
+      assert:
+        that:
+          - create_function is changed
+          - create_function.function.name == "{{ function_name }}-test1"
+          - create_function.function.status == "UNASSOCIATED"
+          - create_function.function.stage == "DEVELOPMENT"
+          - create_function.function.runtime == "cloudfront-js-2.0"
+          - create_function.function.comment == "Test function for integration tests"
+          - create_function.msg == "Function created"
+
+    # Test 2: Idempotency - create same function again (should not change)
+    - name: Create same function again (idempotency check)
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: present
+        comment: "Test function for integration tests"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 200,
+              statusDescription: 'OK'
+            };
+            return response;
+          }
+      register: create_function_idempotent
+
+    - name: Ensure function was not changed (idempotency)
+      assert:
+        that:
+          - create_function_idempotent is not changed
+          - create_function_idempotent.msg == "Function is up to date"
+
+    # Test 3: Update function code
+    - name: Update function code
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: present
+        comment: "Test function for integration tests"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 301,
+              statusDescription: 'Moved Permanently',
+              headers: {
+                'location': { value: 'https://example.com/' }
+              }
+            };
+            return response;
+          }
+      register: update_function_code
+
+    - name: Ensure function code was updated
+      assert:
+        that:
+          - update_function_code is changed
+          - update_function_code.msg == "Function updated"
+
+    # Test 4: Update function comment
+    - name: Update function comment
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: present
+        comment: "Updated comment for test function"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 301,
+              statusDescription: 'Moved Permanently',
+              headers: {
+                'location': { value: 'https://example.com/' }
+              }
+            };
+            return response;
+          }
+      register: update_function_comment
+
+    - name: Ensure function comment was updated
+      assert:
+        that:
+          - update_function_comment is changed
+          - update_function_comment.function.comment == "Updated comment for test function"
+          - update_function_comment.msg == "Function updated"
+
+    # Test 5: Create and publish function in one step
+    - name: Create and publish function
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test2"
+        state: published
+        comment: "Function to be published"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var request = event.request;
+            request.headers['x-custom-header'] = { value: 'test-value' };
+            return request;
+          }
+      register: create_and_publish
+
+    - name: Ensure function was created and published
+      assert:
+        that:
+          - create_and_publish is changed
+          - create_and_publish.function.name == "{{ function_name }}-test2"
+          - create_and_publish.function.stage == "LIVE"
+          - create_and_publish.msg == "Function created and published"
+
+    # Test 6: Idempotency - publish already published function
+    - name: Publish already published function (idempotency)
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test2"
+        state: published
+        comment: "Function to be published"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var request = event.request;
+            request.headers['x-custom-header'] = { value: 'test-value' };
+            return request;
+          }
+      register: publish_idempotent
+
+    - name: Ensure no change for already published function
+      assert:
+        that:
+          - publish_idempotent is not changed
+          - publish_idempotent.msg == "Function already published"
+
+    # Test 7: Update and publish function
+    - name: Update and publish function
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test2"
+        state: published
+        comment: "Updated and published function"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var request = event.request;
+            request.headers['x-updated-header'] = { value: 'updated-value' };
+            return request;
+          }
+      register: update_and_publish
+
+    - name: Ensure function was updated and published
+      assert:
+        that:
+          - update_and_publish is changed
+          - update_and_publish.function.comment == "Updated and published function"
+          - update_and_publish.function.stage == "LIVE"
+
+    # Test 8: Create function from file
+    - name: Create function from file
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test3"
+        state: present
+        comment: "Function loaded from file"
+        runtime: cloudfront-js-2.0
+        code: "{{ lookup('file', 'viewer-request.js') }}"
+      register: create_from_file
+
+    - name: Ensure function from file was created
+      assert:
+        that:
+          - create_from_file is changed
+          - create_from_file.function.name == "{{ function_name }}-test3"
+          - create_from_file.msg == "Function created"
+
+    # Test 9: Test with cloudfront-js-1.0 runtime
+    - name: Create function with cloudfront-js-1.0 runtime
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test4"
+        state: present
+        comment: "Function with JS 1.0 runtime"
+        runtime: cloudfront-js-1.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 200,
+              statusDescription: 'OK'
+            };
+            return response;
+          }
+      register: create_js10_runtime
+
+    - name: Ensure function with JS 1.0 runtime was created
+      assert:
+        that:
+          - create_js10_runtime is changed
+          - create_js10_runtime.function.runtime == "cloudfront-js-1.0"
+
+    # Test 10: Update runtime version
+    - name: Update runtime from 1.0 to 2.0
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test4"
+        state: present
+        comment: "Function with JS 1.0 runtime"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 200,
+              statusDescription: 'OK'
+            };
+            return response;
+          }
+      register: update_runtime
+
+    - name: Ensure runtime was updated
+      assert:
+        that:
+          - update_runtime is changed
+          - update_runtime.function.runtime == "cloudfront-js-2.0"
+
+    # Test 11: Check mode - create function
+    - name: Create function in check mode
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-checkmode"
+        state: present
+        comment: "Check mode test"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            return event.request;
+          }
+      check_mode: true
+      register: check_mode_create
+
+    - name: Ensure check mode reports change but doesn't create
+      assert:
+        that:
+          - check_mode_create is changed
+
+    - name: Verify function was not actually created
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-checkmode"
+        state: absent
+      register: delete_checkmode
+      ignore_errors: true
+
+    - name: Ensure function doesn't exist
+      assert:
+        that:
+          - delete_checkmode is not changed
+
+    # Test 12: Check mode - update function
+    - name: Update function in check mode
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: present
+        comment: "Check mode update"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 404,
+              statusDescription: 'Not Found'
+            };
+            return response;
+          }
+      check_mode: true
+      register: check_mode_update
+
+    - name: Ensure check mode reports change
+      assert:
+        that:
+          - check_mode_update is changed
+
+    - name: Verify function was not actually updated
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: present
+        comment: "Updated comment for test function"
+        runtime: cloudfront-js-2.0
+        code: |
+          function handler(event) {
+            var response = {
+              statusCode: 301,
+              statusDescription: 'Moved Permanently',
+              headers: {
+                'location': { value: 'https://example.com/' }
+              }
+            };
+            return response;
+          }
+      register: verify_not_updated
+
+    - name: Ensure function was not changed by check mode
+      assert:
+        that:
+          - verify_not_updated is not changed
+
+    # Test 13: Delete function
+    - name: Delete CloudFront function
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: absent
+      register: delete_function
+
+    - name: Ensure function was deleted
+      assert:
+        that:
+          - delete_function is changed
+          - delete_function.msg == "Function deleted"
+
+    # Test 14: Idempotency - delete non-existent function
+    - name: Delete function again (idempotency)
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test1"
+        state: absent
+      register: delete_function_idempotent
+
+    - name: Ensure no change when deleting non-existent function
+      assert:
+        that:
+          - delete_function_idempotent is not changed
+          - delete_function_idempotent.msg == "Function does not exist"
+
+    # Test 15: Check mode - delete function
+    - name: Delete function in check mode
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test2"
+        state: absent
+      check_mode: true
+      register: check_mode_delete
+
+    - name: Ensure check mode reports change
+      assert:
+        that:
+          - check_mode_delete is changed
+
+    # Test 16: Verify function still exists after check mode delete
+    - name: Delete function for real
+      community.aws.cloudfront_function:
+        name: "{{ function_name }}-test2"
+        state: absent
+      register: delete_for_real
+
+    - name: Ensure function was actually deleted
+      assert:
+        that:
+          - delete_for_real is changed
+
+  always:
+    # Cleanup - delete all test functions
+    - name: Cleanup - delete test functions
+      community.aws.cloudfront_function:
+        name: "{{ item }}"
+        state: absent
+      ignore_errors: true
+      loop:
+        - "{{ function_name }}-test1"
+        - "{{ function_name }}-test2"
+        - "{{ function_name }}-test3"
+        - "{{ function_name }}-test4"
+        - "{{ function_name }}-checkmode"
