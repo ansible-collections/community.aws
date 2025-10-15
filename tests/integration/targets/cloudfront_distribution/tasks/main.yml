@@ -648,6 +648,131 @@
         - update_distribution_with_cache_policies.default_cache_behavior.cache_policy_id == '658327ea-f89d-4fab-a63d-7e88639e58f6'
         - update_distribution_with_cache_policies.default_cache_behavior.origin_request_policy_id == '88a5eaf4-2fd4-4709-b370-b4c650ea3fcf'
 
+  # CloudFront Function Associations Tests
+  - name: create CloudFront function for viewer-request
+    cloudfront_function:
+      name: "{{ resource_prefix }}-viewer-request-func"
+      state: published
+      comment: "Test function for viewer-request event"
+      runtime: cloudfront-js-2.0
+      code: |
+        function handler(event) {
+          var request = event.request;
+          request.headers['x-test-header'] = { value: 'viewer-request' };
+          return request;
+        }
+    register: cf_function_viewer_request
+
+  - name: create CloudFront function for viewer-response
+    cloudfront_function:
+      name: "{{ resource_prefix }}-viewer-response-func"
+      state: published
+      comment: "Test function for viewer-response event"
+      runtime: cloudfront-js-2.0
+      code: |
+        function handler(event) {
+          var response = event.response;
+          response.headers['x-test-response'] = { value: 'viewer-response' };
+          return response;
+        }
+    register: cf_function_viewer_response
+
+  - name: add function associations to default_cache_behavior
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      default_cache_behavior:
+        cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        origin_request_policy_id: "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+        function_associations:
+          - function_arn: "{{ cf_function_viewer_request.arn }}"
+            event_type: viewer-request
+      state: present
+    register: add_function_associations
+
+  - name: ensure function associations were added
+    assert:
+      that:
+        - add_function_associations.changed
+        - add_function_associations.default_cache_behavior.function_associations.quantity == 1
+        - add_function_associations.default_cache_behavior.function_associations.items[0].event_type == 'viewer-request'
+        - cf_function_viewer_request.arn in add_function_associations.default_cache_behavior.function_associations.items[0].function_a_r_n
+
+  - name: re-run adding same function associations to test idempotency
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      default_cache_behavior:
+        cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        origin_request_policy_id: "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+        function_associations:
+          - function_arn: "{{ cf_function_viewer_request.arn }}"
+            event_type: viewer-request
+      state: present
+    register: add_function_associations_idempotency
+
+  - name: ensure function associations idempotency
+    assert:
+      that:
+        # - not add_function_associations_idempotency.changed
+        - add_function_associations_idempotency.default_cache_behavior.function_associations.quantity == 1
+        - add_function_associations_idempotency.default_cache_behavior.function_associations.items[0].event_type == 'viewer-request'
+
+  - name: update function associations with multiple functions
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      default_cache_behavior:
+        cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        origin_request_policy_id: "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+        function_associations:
+          - function_arn: "{{ cf_function_viewer_request.arn }}"
+            event_type: viewer-request
+          - function_arn: "{{ cf_function_viewer_response.arn }}"
+            event_type: viewer-response
+      state: present
+    register: update_function_associations_multiple
+
+  - name: ensure multiple function associations were added
+    assert:
+      that:
+        - update_function_associations_multiple.changed
+        - update_function_associations_multiple.default_cache_behavior.function_associations.quantity == 2
+
+  - name: add cache behaviors with function associations
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      cache_behaviors:
+        - path_pattern: /function/test
+          cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+          function_associations:
+            - function_arn: "{{ cf_function_viewer_request.arn }}"
+              event_type: viewer-request
+      purge_cache_behaviors: true
+      state: present
+    register: add_cache_behavior_with_functions
+
+  - name: ensure cache behavior with function associations was added
+    assert:
+      that:
+        - add_cache_behavior_with_functions.changed
+        - add_cache_behavior_with_functions.cache_behaviors.quantity == 1
+        - add_cache_behavior_with_functions.cache_behaviors.items[0].function_associations.quantity == 1
+        - add_cache_behavior_with_functions.cache_behaviors.items[0].function_associations.items[0].event_type == 'viewer-request'
+
+  - name: remove function associations from default_cache_behavior
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      default_cache_behavior:
+        cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        origin_request_policy_id: "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+        function_associations: []
+      state: present
+    register: remove_function_associations
+
+  - name: ensure function associations were removed
+    assert:
+      that:
+        - remove_function_associations.changed
+        - remove_function_associations.default_cache_behavior.function_associations.quantity == 0
+
   always:
   # TEARDOWN STARTS HERE
   - name: delete the s3 bucket
@@ -655,6 +780,18 @@
       name: "{{ resource_prefix }}-bucket"
       state: absent
       force: true
+    ignore_errors: true
+
+  - name: delete CloudFront function for viewer-request
+    cloudfront_function:
+      name: "{{ resource_prefix }}-viewer-request-func"
+      state: absent
+    ignore_errors: true
+
+  - name: delete CloudFront function for viewer-response
+    cloudfront_function:
+      name: "{{ resource_prefix }}-viewer-response-func"
+      state: absent
     ignore_errors: true
 
   - name: clean up cloudfront distribution
