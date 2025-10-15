@@ -1,18 +1,24 @@
 ---
-- name: 'ecs_cluster integration tests'
+- name: "ecs_cluster integration tests"
   collections:
     - amazon.aws
   module_defaults:
     group/aws:
-      access_key: '{{ aws_access_key }}'
-      secret_key: '{{ aws_secret_key }}'
-      session_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region }}'
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
 
   block:
-    - include_tasks: 01_create_requirements.yml
-    - include_tasks: 10_ecs_cluster.yml
-    - include_tasks: 20_ecs_service.yml
+    - name: Create required resources
+      include_tasks: 01_create_requirements.yml
+
+    - name: ECS Cluster tests
+      include_tasks: 10_ecs_cluster.yml
+
+    - name: ECS Service tests
+      include_tasks: 20_ecs_service.yml
 
   always:
-    - include_tasks: 99_terminate_everything.yml
+    - name: Cleanup
+      include_tasks: 99_terminate_everything.yml

@@ -12,17 +12,17 @@ ecs_task_memory: 128
 target_swap_mb: 0
 target_swappiness: 80
 ecs_task_containers:
-- name: "{{ ecs_task_name }}"
-  image: "{{ ecs_task_image_path }}"
-  essential: true
-  memory: "{{ ecs_task_memory }}"
-  portMappings:
-  - containerPort: "{{ ecs_task_container_port }}"
-    hostPort: "{{ ecs_task_host_port|default(0) }}"
-  linuxParameters:
-    maxSwap: "{{ target_swap_mb }}"
-    swappiness: "{{ target_swappiness }}"
-  mountPoints: "{{ ecs_task_mount_points|default([]) }}"
+  - name: "{{ ecs_task_name }}"
+    image: "{{ ecs_task_image_path }}"
+    essential: true
+    memory: "{{ ecs_task_memory }}"
+    portMappings:
+      - containerPort: "{{ ecs_task_container_port }}"
+        hostPort: "{{ ecs_task_host_port|default(0) }}"
+    linuxParameters:
+      maxSwap: "{{ target_swap_mb }}"
+      swappiness: "{{ target_swappiness }}"
+    mountPoints: "{{ ecs_task_mount_points|default([]) }}"
 ecs_service_deployment_configuration:
   minimum_healthy_percent: 0
   maximum_percent: 100
@@ -39,13 +39,13 @@ ecs_target_group_name: "{{ resource_prefix[:28] }}-tg"
 ecs_load_balancer_name: "{{ resource_prefix[:29] }}-lb"
 ecs_service_health_check_grace_period: 60
 ecs_fargate_task_containers:
-- name: "{{ ecs_task_name }}"
-  image: "{{ ecs_task_image_path }}"
-  essential: true
-  portMappings:
-  - containerPort: "{{ ecs_task_container_port }}"
-    hostPort: "{{ ecs_task_host_port|default(0) }}"
-  #mountPoints: "{{ ecs_task_mount_points|default([]) }}"
+  - name: "{{ ecs_task_name }}"
+    image: "{{ ecs_task_image_path }}"
+    essential: true
+    portMappings:
+      - containerPort: "{{ ecs_task_container_port }}"
+        hostPort: "{{ ecs_task_host_port|default(0) }}"
+    #mountPoints: "{{ ecs_task_mount_points|default([]) }}"
 ecs_taskdefinition_placement_constraints:
   - type: memberOf
-    expression: 'attribute:ecs.instance-type == t3.micro'
+    expression: "attribute:ecs.instance-type == t3.micro"
