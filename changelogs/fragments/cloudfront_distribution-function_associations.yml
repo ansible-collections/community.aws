@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - cloudfront_distribution - Add support for CloudFront Functions via the ``function_associations`` parameter in cache behaviors. CloudFront Functions can be associated with ``viewer-request`` and ``viewer-response`` events for lightweight request/response transformations (https://github.com/ansible-collections/community.aws/pull/XXXX).
