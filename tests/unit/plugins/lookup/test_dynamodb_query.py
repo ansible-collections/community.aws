@@ -423,9 +423,7 @@ class TestLookupModuleErrors:
         aws_lookup_base_run.return_value = True
 
         mock_client = MagicMock()
-        mock_client.query.side_effect = _create_client_error(
-            "ValidationException", "Invalid key condition expression"
-        )
+        mock_client.query.side_effect = _create_client_error("ValidationException", "Invalid key condition expression")
         mock_client.meta.region_name = "us-east-1"
 
         lookup_plugin.client = MagicMock(return_value=mock_client)
