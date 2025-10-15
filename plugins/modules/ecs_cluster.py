@@ -76,9 +76,23 @@ options:
         required: false
         type: bool
         default: true
+    purge_tags:
+        version_added: 10.0.1
+        description:
+            - Toggle overwriting of existing tags.
+        required: false
+        type: bool
+        default: false
+    tags:
+        description:
+          - A dictionary of tags to add or remove from the resource.
+        type: dict
+        required: false
+        version_added: 10.0.1
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
+  - amazon.aws.tags
   - amazon.aws.boto3
 """
 
@@ -161,6 +175,11 @@ status:
     returned: always
     type: str
     sample: ACTIVE
+tags:
+    description: Cluster tags
+    returned: always
+    type: dict
+    sample: {"key": "value"}
 """
 
 import time
@@ -170,8 +189,15 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+from ansible.module_utils.common.dict_transformations import (
+    camel_dict_to_snake_dict,
+    snake_dict_to_camel_dict,
+    recursive_diff,
+)
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import (
+    ansible_dict_to_boto3_tag_list,
+    boto3_tag_list_to_ansible_dict,
+)
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -192,8 +218,16 @@ class EcsClusterManager:
                 return c
         return None
 
+    def refresh_cluster_state(self, cluster_name):
+        response = self.ecs.describe_clusters(clusters=[cluster_name], include=["TAGS"])
+        for cluster in response["clusters"]:
+            if cluster["clusterName"] == cluster_name:
+                if "tags" in cluster:
+                    cluster["tags"] = boto3_tag_list_to_ansible_dict(cluster["tags"], "key", "value")
+                return cluster
+
     def describe_cluster(self, cluster_name):
-        response = self.ecs.describe_clusters(clusters=[cluster_name])
+        response = self.ecs.describe_clusters(clusters=[cluster_name], include=["TAGS"])
         if len(response["failures"]) > 0:
             c = self.find_in_array(response["failures"], cluster_name, "arn")
             if c and c["reason"] == "MISSING":
@@ -205,13 +239,20 @@ class EcsClusterManager:
                 return c
         raise Exception(f"Unknown problem describing cluster {cluster_name}.")
 
-    def create_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy):
+    def create_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy, tags):
         params = dict(clusterName=cluster_name)
         if capacity_providers:
             params["capacityProviders"] = snake_dict_to_camel_dict(capacity_providers)
         if capacity_provider_strategy:
             params["defaultCapacityProviderStrategy"] = snake_dict_to_camel_dict(capacity_provider_strategy)
+        if tags:
+            params["tags"] = ansible_dict_to_boto3_tag_list(tags, "key", "value")
+
         response = self.ecs.create_cluster(**params)
+
+        if "tags" in response["cluster"]:
+            response["cluster"]["tags"] = boto3_tag_list_to_ansible_dict(response["cluster"]["tags"])
+
         return response["cluster"]
 
     def update_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy):
@@ -226,6 +267,15 @@ class EcsClusterManager:
             params["defaultCapacityProviderStrategy"] = []
         response = self.ecs.put_cluster_capacity_providers(**params)
         return response["cluster"]
+
+    def update_tags(self, cluster_arn, to_delete_tags, to_add_tags):
+        if to_delete_tags:
+            delete_keys = [t for t in to_delete_tags.keys()]
+            self.ecs.untag_resource(resourceArn=cluster_arn, tagKeys=delete_keys)
+        if to_add_tags:
+            self.ecs.tag_resource(
+                resourceArn=cluster_arn, tags=ansible_dict_to_boto3_tag_list(to_add_tags, "key", "value")
+            )
 
     def delete_cluster(self, clusterName):
         return self.ecs.delete_cluster(cluster=clusterName)
@@ -249,6 +299,8 @@ def main():
                 base=dict(type="int", default=0),
             ),
         ),
+        tags=dict(type="dict", required=False, aliases=["resource_tags"]),
+        purge_tags=dict(required=False, type="bool", default=False),
     )
     required_together = [["state", "name"]]
 
@@ -258,6 +310,7 @@ def main():
         required_together=required_together,
     )
 
+    existing = None
     cluster_mgr = EcsClusterManager(module)
     try:
         existing = cluster_mgr.describe_cluster(module.params["name"])
@@ -273,6 +326,8 @@ def main():
         if existing and "status" in existing and existing["status"] == "ACTIVE":
             existing_cp = existing["capacityProviders"]
             existing_cps = existing["defaultCapacityProviderStrategy"]
+            existing["tags"] = boto3_tag_list_to_ansible_dict(existing["tags"], "key", "value")
+            existing_tags = existing["tags"]
 
             if requested_cp is None:
                 requested_cp = []
@@ -295,6 +350,23 @@ def main():
                 requested_cp = existing_cp
                 requested_cps = existing_cps
 
+            if module.params["tags"]:
+                if module.params["purge_tags"]:
+                    tags_to_remove = existing_tags
+                    tags_changed = True
+                else:
+                    tags_to_remove = None
+
+                cluster_mgr.update_tags(
+                    existing["clusterArn"],
+                    tags_to_remove,
+                    module.params["tags"],
+                )
+
+                tags_changed = True if recursive_diff(existing_tags, module.params["tags"]) is not None else False
+
+                results["changed"] = tags_changed
+
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
                 if not module.check_mode:
@@ -304,8 +376,11 @@ def main():
                         capacity_provider_strategy=requested_cps,
                     )
                 results["changed"] = True
+
             else:
                 results["cluster"] = existing
+
+            results["cluster"] = cluster_mgr.refresh_cluster_state(cluster_name=module.params["name"])
         else:
             if not module.check_mode:
                 # doesn't exist. create it.
@@ -313,6 +388,7 @@ def main():
                     cluster_name=module.params["name"],
                     capacity_providers=requested_cp,
                     capacity_provider_strategy=requested_cps,
+                    tags=module.params["tags"],
                 )
             results["changed"] = True
 
