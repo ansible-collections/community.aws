@@ -314,9 +314,7 @@ class LookupModule(AWSLookupBase):
         # Validate query operation parameters
         if operation == "query":
             if not partition_key or not partition_value:
-                raise AnsibleError(
-                    "partition_key and partition_value are required when operation is 'query'"
-                )
+                raise AnsibleError("partition_key and partition_value are required when operation is 'query'")
 
         # Create DynamoDB client
         retry_decorator = AWSRetry.jittered_backoff(
