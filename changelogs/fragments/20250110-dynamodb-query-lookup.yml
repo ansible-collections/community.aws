@@ -1,3 +1,0 @@
----
-minor_changes:
-  - dynamodb_query - new lookup plugin to query AWS DynamoDB tables with support for Query and Scan operations, secondary indexes (GSI/LSI), filter expressions, and pagination.
