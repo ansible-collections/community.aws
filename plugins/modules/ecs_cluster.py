@@ -77,7 +77,7 @@ options:
         type: bool
         default: true
     purge_tags:
-        version_added: 10.0.1
+        version_added: 10.1.0
         description:
             - Toggle overwriting of existing tags.
         required: false
@@ -88,7 +88,7 @@ options:
           - A dictionary of tags to add or remove from the resource.
         type: dict
         required: false
-        version_added: 10.0.1
+        version_added: 10.1.0
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -189,15 +189,12 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import (
-    camel_dict_to_snake_dict,
-    snake_dict_to_camel_dict,
-    recursive_diff,
-)
-from ansible_collections.amazon.aws.plugins.module_utils.tagging import (
-    ansible_dict_to_boto3_tag_list,
-    boto3_tag_list_to_ansible_dict,
-)
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import recursive_diff
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -270,7 +267,7 @@ class EcsClusterManager:
 
     def update_tags(self, cluster_arn, to_delete_tags, to_add_tags):
         if to_delete_tags:
-            delete_keys = [t for t in to_delete_tags.keys()]
+            delete_keys = list(to_delete_tags.keys())
             self.ecs.untag_resource(resourceArn=cluster_arn, tagKeys=delete_keys)
         if to_add_tags:
             self.ecs.tag_resource(
