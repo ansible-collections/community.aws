@@ -317,6 +317,21 @@ options:
                     - Specifies the event type that triggers a Lambda function invocation.
                     - This can be C(viewer-request), C(origin-request), C(origin-response) or C(viewer-response).
                   type: str
+            function_associations:
+              description:
+                - A list of CloudFront function associations to use for this cache behavior.
+              type: list
+              elements: dict
+              suboptions:
+                function_arn:
+                  description: The ARN of the CloudFront function.
+                  type: str
+                event_type:
+                  description:
+                    - Specifies the event type that triggers a CloudFront function invocation.
+                    - This can be C(viewer-request) or C(viewer-response).
+                    - CloudFront functions only support viewer events, not origin events.
+                  type: str
             field_level_encryption_id:
               description:
                 - The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.
@@ -453,6 +468,21 @@ options:
                   description:
                     - Specifies the event type that triggers a Lambda function invocation.
                     - This can be C(viewer-request), C(origin-request), C(origin-response) or C(viewer-response).
+                  type: str
+            function_associations:
+              description:
+                - A list of CloudFront function associations to use for this cache behavior.
+              type: list
+              elements: dict
+              suboptions:
+                function_arn:
+                  description: The ARN of the CloudFront function.
+                  type: str
+                event_type:
+                  description:
+                    - Specifies the event type that triggers a CloudFront function invocation.
+                    - This can be C(viewer-request) or C(viewer-response).
+                    - CloudFront functions only support viewer events, not origin events.
                   type: str
             field_level_encryption_id:
               description:
@@ -904,6 +934,23 @@ cache_behaviors:
               sample:
               - lambda_function_arn: arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function
                 event_type: viewer-response
+        function_associations:
+          description: CloudFront function associations for a cache behavior.
+          returned: always
+          type: complex
+          contains:
+            quantity:
+              description: Count of CloudFront function associations.
+              returned: always
+              type: int
+              sample: 1
+            items:
+              description: List of CloudFront function associations.
+              returned: when list is not empty
+              type: list
+              sample:
+              - function_arn: arn:aws:cloudfront::123456789012:function/my-function
+                event_type: viewer-request
         max_ttl:
           description: Maximum Time to Live.
           returned: always
@@ -1132,6 +1179,23 @@ default_cache_behavior:
           sample:
           - lambda_function_arn: arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function
             event_type: viewer-response
+    function_associations:
+      description: CloudFront function associations for a cache behavior.
+      returned: always
+      type: complex
+      contains:
+        quantity:
+          description: Count of CloudFront function associations.
+          returned: always
+          type: int
+          sample: 1
+        items:
+          description: List of CloudFront function associations.
+          returned: when list is not empty
+          type: list
+          sample:
+          - function_arn: arn:aws:cloudfront::123456789012:function/my-function
+            event_type: viewer-request
     max_ttl:
       description: Maximum Time to Live.
       returned: always
@@ -1679,6 +1743,12 @@ class CloudFrontValidationManager(object):
                 "origin-response",
             ]
         )
+        self.__valid_function_association_event_types = set(
+            [
+                "viewer-request",
+                "viewer-response",
+            ]
+        )
         self.__valid_viewer_certificate_ssl_support_methods = set(
             [
                 "sni-only",
@@ -1954,6 +2024,9 @@ class CloudFrontValidationManager(object):
         cache_behavior = self.validate_lambda_function_associations(
             config, cache_behavior.get("lambda_function_associations"), cache_behavior
         )
+        cache_behavior = self.validate_function_associations(
+            config, cache_behavior.get("function_associations"), cache_behavior
+        )
         cache_behavior = self.validate_trusted_signers(config, cache_behavior.get("trusted_signers"), cache_behavior)
         cache_behavior = self.validate_field_level_encryption_id(
             config, cache_behavior.get("field_level_encryption_id"), cache_behavior
@@ -2084,6 +2157,27 @@ class CloudFrontValidationManager(object):
             return cache_behavior
         except Exception as e:
             self.module.fail_json_aws(e, msg="Error validating lambda function associations")
+
+    def validate_function_associations(self, config, function_associations, cache_behavior):
+        try:
+            if function_associations is not None:
+                self.validate_is_list(function_associations, "function_associations")
+                for association in function_associations:
+                    association = change_dict_key_name(association, "function_arn", "function_a_r_n")
+                    self.validate_attribute_with_allowed_values(
+                        association.get("event_type"),
+                        "cache_behaviors[].function_associations.event_type",
+                        self.__valid_function_association_event_types,
+                    )
+                cache_behavior["function_associations"] = ansible_list_to_cloudfront_list(function_associations)
+            else:
+                if "function_associations" in config:
+                    cache_behavior["function_associations"] = config.get("function_associations")
+                else:
+                    cache_behavior["function_associations"] = ansible_list_to_cloudfront_list([])
+            return cache_behavior
+        except Exception as e:
+            self.module.fail_json_aws(e, msg="Error validating function associations")
 
     def validate_field_level_encryption_id(self, config, field_level_encryption_id, cache_behavior):
         if field_level_encryption_id is not None:
