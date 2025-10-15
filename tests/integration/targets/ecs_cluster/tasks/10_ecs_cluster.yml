@@ -3,12 +3,24 @@
   ecs_cluster:
     name: "{{ ecs_cluster_name }}"
     state: present
+    tags:
+      cluster_tag_key: cluster_tag_value
+      cluster_tag_key2: cluster_tag_value2
   register: ecs_cluster
 
 - name: check that ecs_cluster changed
   assert:
     that:
       - ecs_cluster.changed
+
+- name: Check tags are added to the cluster
+  assert:
+    that:
+      - ecs_cluster.cluster.tags is defined
+      - ecs_cluster.cluster.tags.cluster_tag_key is defined
+      - ecs_cluster.cluster.tags.cluster_tag_key2 is defined
+      - ecs_cluster.cluster.tags.cluster_tag_key == "cluster_tag_value"
+      - ecs_cluster.cluster.tags.cluster_tag_key2 == "cluster_tag_value2"
 
 - name: immutable create same ECS cluster
   ecs_cluster:
@@ -21,6 +33,25 @@
     that:
       - not ecs_cluster_again.changed
 
+- name: Update cluster tags
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+    tags:
+      cluster_tag_key: cluster_tag_value_updated
+      cluster_tag_key_new: cluster_tag_value_new
+  register: ecs_cluster_updated_tags
+
+- name: Check tags are updated correctly
+  assert:
+    that:
+      - ecs_cluster.cluster.tags is defined
+      - ecs_cluster_updated_tags.cluster.tags.cluster_tag_key is defined
+      - ecs_cluster_updated_tags.cluster.tags.cluster_tag_key2 is defined
+      - ecs_cluster_updated_tags.cluster.tags.cluster_tag_key == "cluster_tag_value_updated"
+      - ecs_cluster_updated_tags.cluster.tags.cluster_tag_key_new == "cluster_tag_value_new"
+      - ecs_cluster_updated_tags.cluster.tags.cluster_tag_key2 == "cluster_tag_value2"
+
 - name: create an ECS cluster to test capacity provider strategy
   ecs_cluster:
     name: "{{ ecs_cluster_name }}-cps"
@@ -31,7 +62,7 @@
   ecs_cluster:
     name: "{{ ecs_cluster_name }}-cps"
     state: present
-    purge_capacity_providers: True
+    purge_capacity_providers: true
     capacity_providers:
       - FARGATE
       - FARGATE_SPOT
@@ -55,7 +86,7 @@
   ecs_cluster:
     name: "{{ ecs_cluster_name }}-cps"
     state: present
-    purge_capacity_providers: True
+    purge_capacity_providers: true
     capacity_providers:
       - FARGATE
       - FARGATE_SPOT
