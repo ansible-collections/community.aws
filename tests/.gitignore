@@ -1,4 +1,3 @@
 output/
 integration/cloud-config-*.ini
 integration/cloud-config-*.yml
-.lock
