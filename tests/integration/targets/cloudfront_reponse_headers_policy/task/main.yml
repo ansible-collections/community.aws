@@ -9,6 +9,7 @@
       region: '{{ aws_region }}'
   block:
 
+    # Test 1: Create policy with comment
     - name: Create a simple header policy
       cloudfront_response_headers_policy:
         name: "{{ resource_prefix }}-my-header-policy"
@@ -19,7 +20,7 @@
         state: present
       register: create_result
 
-    - name: Assert creation withouth errors and return values
+    - name: Assert creation without errors and return values
       assert:
         that:
           - create_result is changed
@@ -73,10 +74,9 @@
           - update_result is changed
           - update_result.response_headers_policy.response_headers_policy_config.cors_config.access_control_max_age_sec == 1800
 
-    - name: Ensure policy is deleted
+    - name: Delete the first test policy
       cloudfront_response_headers_policy:
         name: "{{ resource_prefix }}-my-header-policy"
-        comment: Created by Ansible test
         state: absent
       register: delete_result
 
@@ -85,12 +85,200 @@
         that:
           - delete_result is changed
           - delete_result is not failed
-          - update_result.response_headers_policy is undefined
+
+    # Test 2: Create policy WITHOUT comment (mimics d(omit) usage)
+    - name: Create policy without comment
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-no-comment-policy"
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://example.com'
+          access_control_allow_methods:
+            items:
+              - GET
+              - POST
+          origin_override: true
+        state: present
+      register: no_comment_result
+
+    - name: Assert creation succeeded
+      assert:
+        that:
+          - no_comment_result is changed
+          - no_comment_result is not failed
+
+    - name: Rerun policy without comment to test idempotency
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-no-comment-policy"
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://example.com'
+          access_control_allow_methods:
+            items:
+              - GET
+              - POST
+          origin_override: true
+        state: present
+      register: no_comment_rerun
+
+    - name: Assert idempotency without comment
+      assert:
+        that:
+          - no_comment_rerun is not changed
+          - no_comment_rerun is not failed
+
+    - name: Delete no-comment policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-no-comment-policy"
+        state: absent
+
+    # Test 3: Create policy with list items in different order (test sorting)
+    - name: Create policy with ordered list
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-list-order-policy"
+        comment: Testing list ordering
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://foo.com'
+              - 'https://bar.com'
+              - 'https://baz.com'
+          access_control_allow_methods:
+            items:
+              - GET
+              - POST
+              - OPTIONS
+          origin_override: true
+        state: present
+      register: ordered_list_result
+
+    - name: Assert creation succeeded
+      assert:
+        that:
+          - ordered_list_result is changed
+
+    - name: Rerun with same list in different order
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-list-order-policy"
+        comment: Testing list ordering
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://baz.com'
+              - 'https://foo.com'
+              - 'https://bar.com'
+          access_control_allow_methods:
+            items:
+              - OPTIONS
+              - GET
+              - POST
+          origin_override: true
+        state: present
+      register: reordered_list_result
+
+    - name: Assert idempotency with reordered lists
+      assert:
+        that:
+          - reordered_list_result is not changed
+          - reordered_list_result is not failed
+
+    - name: Delete list-order policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-list-order-policy"
+        state: absent
+
+    # Test 4: Minimal policy (only name)
+    - name: Create minimal policy with only name
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-minimal-policy"
+        state: present
+      register: minimal_result
+
+    - name: Assert minimal creation succeeded
+      assert:
+        that:
+          - minimal_result is changed
+          - minimal_result is not failed
+
+    - name: Rerun minimal policy to test idempotency
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-minimal-policy"
+        state: present
+      register: minimal_rerun
+
+    - name: Assert minimal policy idempotency
+      assert:
+        that:
+          - minimal_rerun is not changed
+          - minimal_rerun is not failed
+
+    - name: Delete minimal policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-minimal-policy"
+        state: absent
+
+    # Test 5: Check mode
+    - name: Create policy for check mode test
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-check-mode-policy"
+        comment: Check mode test
+        security_headers_config:
+          content_type_options:
+            override: true
+        state: present
+      register: check_mode_create
+
+    - name: Run in check mode with no changes
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-check-mode-policy"
+        comment: Check mode test
+        security_headers_config:
+          content_type_options:
+            override: true
+        state: present
+      check_mode: true
+      register: check_mode_no_change
+
+    - name: Assert check mode reports no change
+      assert:
+        that:
+          - check_mode_no_change is not changed
+          - check_mode_no_change is not failed
+
+    - name: Run in check mode with changes
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-check-mode-policy"
+        comment: Check mode test modified
+        security_headers_config:
+          content_type_options:
+            override: true
+        state: present
+      check_mode: true
+      register: check_mode_with_change
+
+    - name: Assert check mode reports change
+      assert:
+        that:
+          - check_mode_with_change is changed
+          - check_mode_with_change is not failed
+
+    - name: Delete check mode policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-check-mode-policy"
+        state: absent
 
   always:
 
-    - name: Ensure policy is deleted
+    - name: Ensure all test policies are deleted
       cloudfront_response_headers_policy:
-        name: "{{ resource_prefix }}-my-header-policy"
+        name: "{{ item }}"
         state: absent
-        ignore_errors: true
+      ignore_errors: true
+      loop:
+        - "{{ resource_prefix }}-my-header-policy"
+        - "{{ resource_prefix }}-no-comment-policy"
+        - "{{ resource_prefix }}-list-order-policy"
+        - "{{ resource_prefix }}-minimal-policy"
+        - "{{ resource_prefix }}-check-mode-policy"
