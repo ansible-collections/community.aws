@@ -189,6 +189,73 @@
         name: "{{ resource_prefix }}-list-order-policy"
         state: absent
 
+    # Test 3b: Idempotency after AWS potentially reorders - rerun SAME order twice
+    - name: Create policy with specific URL order
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-aws-reorder-policy"
+        comment: Testing AWS reordering behavior
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://zzz.example.com'
+              - 'https://aaa.example.com'
+              - 'https://mmm.example.com'
+          access_control_allow_headers:
+            items:
+              - 'X-Custom-Header'
+              - '*'
+          access_control_allow_methods:
+            items:
+              - POST
+              - GET
+              - OPTIONS
+          access_control_allow_credentials: false
+          access_control_max_age_sec: 600
+          origin_override: true
+        state: present
+      register: aws_reorder_create
+
+    - name: Assert creation succeeded
+      assert:
+        that:
+          - aws_reorder_create is changed
+
+    - name: Rerun with EXACT same config to test idempotency
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-aws-reorder-policy"
+        comment: Testing AWS reordering behavior
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://zzz.example.com'
+              - 'https://aaa.example.com'
+              - 'https://mmm.example.com'
+          access_control_allow_headers:
+            items:
+              - 'X-Custom-Header'
+              - '*'
+          access_control_allow_methods:
+            items:
+              - POST
+              - GET
+              - OPTIONS
+          access_control_allow_credentials: false
+          access_control_max_age_sec: 600
+          origin_override: true
+        state: present
+      register: aws_reorder_rerun
+
+    - name: Assert idempotency after potential AWS reordering
+      assert:
+        that:
+          - aws_reorder_rerun is not changed
+          - aws_reorder_rerun is not failed
+
+    - name: Delete aws-reorder policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-aws-reorder-policy"
+        state: absent
+
     # Test 4: Minimal policy (only name)
     - name: Create minimal policy with only name
       cloudfront_response_headers_policy:
@@ -280,5 +347,6 @@
         - "{{ resource_prefix }}-my-header-policy"
         - "{{ resource_prefix }}-no-comment-policy"
         - "{{ resource_prefix }}-list-order-policy"
+        - "{{ resource_prefix }}-aws-reorder-policy"
         - "{{ resource_prefix }}-minimal-policy"
         - "{{ resource_prefix }}-check-mode-policy"
