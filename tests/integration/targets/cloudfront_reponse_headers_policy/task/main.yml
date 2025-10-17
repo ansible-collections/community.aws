@@ -256,6 +256,92 @@
         name: "{{ resource_prefix }}-aws-reorder-policy"
         state: absent
 
+    # Test 3c: Exact real-world scenario with comment and multiple CORS fields
+    - name: Create policy matching real-world usage pattern
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-realworld-policy"
+        comment: "CORS policy for test distribution"
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - "https://admin.example.com"
+              - "https://example.com"
+          access_control_allow_headers:
+            items:
+              - '*'
+          access_control_allow_methods:
+            items:
+              - GET
+          access_control_allow_credentials: false
+          access_control_max_age_sec: 600
+          origin_override: true
+        state: present
+      register: realworld_create
+
+    - name: Assert creation succeeded
+      assert:
+        that:
+          - realworld_create is changed
+
+    - name: Rerun EXACT same real-world config
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-realworld-policy"
+        comment: "CORS policy for test distribution"
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - "https://admin.example.com"
+              - "https://example.com"
+          access_control_allow_headers:
+            items:
+              - '*'
+          access_control_allow_methods:
+            items:
+              - GET
+          access_control_allow_credentials: false
+          access_control_max_age_sec: 600
+          origin_override: true
+        state: present
+      register: realworld_rerun
+
+    - name: Assert real-world idempotency
+      assert:
+        that:
+          - realworld_rerun is not changed
+          - realworld_rerun is not failed
+
+    - name: Third run to ensure consistent idempotency
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-realworld-policy"
+        comment: "CORS policy for test distribution"
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - "https://admin.example.com"
+              - "https://example.com"
+          access_control_allow_headers:
+            items:
+              - '*'
+          access_control_allow_methods:
+            items:
+              - GET
+          access_control_allow_credentials: false
+          access_control_max_age_sec: 600
+          origin_override: true
+        state: present
+      register: realworld_third
+
+    - name: Assert third run also shows no change
+      assert:
+        that:
+          - realworld_third is not changed
+          - realworld_third is not failed
+
+    - name: Delete realworld policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-realworld-policy"
+        state: absent
+
     # Test 4: Minimal policy (only name)
     - name: Create minimal policy with only name
       cloudfront_response_headers_policy:
@@ -348,5 +434,6 @@
         - "{{ resource_prefix }}-no-comment-policy"
         - "{{ resource_prefix }}-list-order-policy"
         - "{{ resource_prefix }}-aws-reorder-policy"
+        - "{{ resource_prefix }}-realworld-policy"
         - "{{ resource_prefix }}-minimal-policy"
         - "{{ resource_prefix }}-check-mode-policy"
