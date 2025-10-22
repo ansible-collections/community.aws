@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - ses_configuration_set - new module to manage SES configuration sets (https://github.com/ansible-collections/community.aws/pull/XXXX).

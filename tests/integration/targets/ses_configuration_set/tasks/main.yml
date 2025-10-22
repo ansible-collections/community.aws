@@ -1,0 +1,381 @@
+---
+- module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+    # ============================================================
+    - name: Test create configuration set (check mode)
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-test"
+        state: present
+      check_mode: true
+      register: result
+
+    - name: Assert configuration set would be created
+      assert:
+        that:
+          - result is changed
+
+    # ============================================================
+    - name: Test create configuration set
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-test"
+        state: present
+      register: result
+
+    - name: Assert configuration set was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-test'
+
+    # ============================================================
+    - name: Test create configuration set (idempotency)
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-test"
+        state: present
+      register: result
+
+    - name: Assert configuration set was not changed
+      assert:
+        that:
+          - result is not changed
+
+    # ============================================================
+    - name: Test create configuration set with delivery options
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-options"
+        state: present
+        delivery_options:
+          tls_policy: true
+          sending_pool_name: "{{ resource_prefix }}-pool"
+      register: result
+
+    - name: Assert configuration set with delivery options was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-options'
+
+    # ============================================================
+    - name: Test create configuration set with tracking options
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-tracking"
+        state: present
+        tracking_options:
+          custom_redirect_domain: "track.example.com"
+          https_policy: OPTIONAL
+      register: result
+
+    - name: Assert configuration set with tracking options was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-tracking'
+
+    # ============================================================
+    - name: Test update tracking options https_policy
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-tracking"
+        state: present
+        tracking_options:
+          custom_redirect_domain: "track.example.com"
+          https_policy: REQUIRE
+      register: result
+
+    - name: Assert tracking options were updated
+      assert:
+        that:
+          - result is changed
+
+    # ============================================================
+    - name: Test create configuration set with reputation options
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-reputation"
+        state: present
+        reputation_options:
+          reputation_metrics_enabled: true
+      register: result
+
+    - name: Assert configuration set with reputation options was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-reputation'
+
+    # ============================================================
+    - name: Test create configuration set with sending options
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-sending"
+        state: present
+        sending_options:
+          sending_enabled: true
+      register: result
+
+    - name: Assert configuration set with sending options was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-sending'
+
+    # ============================================================
+    - name: Test create configuration set with suppression options
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-suppression"
+        state: present
+        suppression_options:
+          suppressed_reasons:
+            - BOUNCE
+            - COMPLAINT
+      register: result
+
+    - name: Assert configuration set with suppression options was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-suppression'
+
+    # ============================================================
+    - name: Test create configuration set with all options combined
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-all-options"
+        state: present
+        delivery_options:
+          tls_policy: false
+          sending_pool_name: "{{ resource_prefix }}-pool"
+        tracking_options:
+          custom_redirect_domain: "track.example.com"
+          https_policy: REQUIRE_OPEN_ONLY
+        reputation_options:
+          reputation_metrics_enabled: true
+        sending_options:
+          sending_enabled: true
+        suppression_options:
+          suppressed_reasons:
+            - BOUNCE
+      register: result
+
+    - name: Assert configuration set with all options was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-all-options'
+
+    # ============================================================
+    - name: Test create configuration set with event destination
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-events"
+        state: present
+        event_destinations:
+          - name: test-destination
+            enabled: true
+            matching_event_types:
+              - send
+              - bounce
+              - complaint
+            cloudwatch_destination:
+              dimension_configurations:
+                - dimension_name: "ses:configuration-set"
+                  dimension_value_source: messageTag
+                  default_dimension_value: "{{ resource_prefix }}-with-events"
+      register: result
+
+    - name: Assert configuration set with event destination was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-events'
+          - result.configuration_set.event_destinations | length == 1
+
+    # ============================================================
+    - name: Test update configuration set event destination
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-events"
+        state: present
+        event_destinations:
+          - name: test-destination
+            enabled: false
+            matching_event_types:
+              - send
+              - bounce
+            cloudwatch_destination:
+              dimension_configurations:
+                - dimension_name: "ses:configuration-set"
+                  dimension_value_source: messageTag
+                  default_dimension_value: "{{ resource_prefix }}-with-events"
+      register: result
+
+    - name: Assert event destination was updated
+      assert:
+        that:
+          - result is changed
+
+    # ============================================================
+    - name: Test delete event destination
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-events"
+        state: present
+        event_destinations: []
+      register: result
+
+    - name: Assert event destination was deleted
+      assert:
+        that:
+          - result is changed
+
+    # ============================================================
+    - name: Create SNS topic for event destination tests
+      community.aws.sns_topic:
+        name: "{{ resource_prefix }}-ses-events"
+        state: present
+      register: sns_topic
+
+    # ============================================================
+    - name: Test create configuration set with SNS event destination
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-with-sns"
+        state: present
+        event_destinations:
+          - name: sns-destination
+            enabled: true
+            matching_event_types:
+              - bounce
+              - complaint
+            sns_destination:
+              topic_arn: "{{ sns_topic.sns_arn }}"
+      register: result
+
+    - name: Assert configuration set with SNS event destination was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-with-sns'
+          - result.configuration_set.event_destinations | length == 1
+
+    # ============================================================
+    - name: Test create configuration set with multiple event destinations
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-multi-events"
+        state: present
+        event_destinations:
+          - name: cloudwatch-destination
+            enabled: true
+            matching_event_types:
+              - send
+              - delivery
+            cloudwatch_destination:
+              dimension_configurations:
+                - dimension_name: "ses:configuration-set"
+                  dimension_value_source: messageTag
+                  default_dimension_value: "{{ resource_prefix }}-multi"
+          - name: sns-destination
+            enabled: true
+            matching_event_types:
+              - bounce
+              - complaint
+            sns_destination:
+              topic_arn: "{{ sns_topic.sns_arn }}"
+      register: result
+
+    - name: Assert configuration set with multiple event destinations was created
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.name == resource_prefix ~ '-multi-events'
+          - result.configuration_set.event_destinations | length == 2
+
+    # ============================================================
+    - name: Test update - remove one event destination from multiple
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-multi-events"
+        state: present
+        event_destinations:
+          - name: cloudwatch-destination
+            enabled: true
+            matching_event_types:
+              - send
+              - delivery
+            cloudwatch_destination:
+              dimension_configurations:
+                - dimension_name: "ses:configuration-set"
+                  dimension_value_source: messageTag
+                  default_dimension_value: "{{ resource_prefix }}-multi"
+      register: result
+
+    - name: Assert one event destination was removed
+      assert:
+        that:
+          - result is changed
+          - result.configuration_set.event_destinations | length == 1
+
+    # ============================================================
+    - name: Delete SNS topic
+      community.aws.sns_topic:
+        name: "{{ resource_prefix }}-ses-events"
+        state: absent
+      ignore_errors: true
+
+    # ============================================================
+    - name: Test delete configuration set (check mode)
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-test"
+        state: absent
+      check_mode: true
+      register: result
+
+    - name: Assert configuration set would be deleted
+      assert:
+        that:
+          - result is changed
+
+    # ============================================================
+    - name: Test delete configuration set
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-test"
+        state: absent
+      register: result
+
+    - name: Assert configuration set was deleted
+      assert:
+        that:
+          - result is changed
+
+    # ============================================================
+    - name: Test delete configuration set (idempotency)
+      community.aws.ses_configuration_set:
+        name: "{{ resource_prefix }}-test"
+        state: absent
+      register: result
+
+    - name: Assert configuration set deletion was idempotent
+      assert:
+        that:
+          - result is not changed
+
+  # ============================================================
+  always:
+    - name: Cleanup - delete all test configuration sets
+      community.aws.ses_configuration_set:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ resource_prefix }}-test"
+        - "{{ resource_prefix }}-with-options"
+        - "{{ resource_prefix }}-with-tracking"
+        - "{{ resource_prefix }}-with-reputation"
+        - "{{ resource_prefix }}-with-sending"
+        - "{{ resource_prefix }}-with-suppression"
+        - "{{ resource_prefix }}-all-options"
+        - "{{ resource_prefix }}-with-events"
+        - "{{ resource_prefix }}-with-sns"
+        - "{{ resource_prefix }}-multi-events"
+      ignore_errors: true
+
+    - name: Cleanup - delete SNS topic
+      community.aws.sns_topic:
+        name: "{{ resource_prefix }}-ses-events"
+        state: absent
+      ignore_errors: true
