@@ -1,0 +1,25 @@
+---
+minor_changes:
+  - ec2_customer_gateway - Fix documentation for the return block.
+breaking_changes:
+  - cloudfront_invalidation - Return value key ``items`` in ``invalidation -> invalidation_batch -> paths`` has been renamed to ``objects_paths``.
+  - cloudfront_distribution - Return value key ``items`` in ``active_trusted_signers`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``aliases`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> allowed_methods -> cached_methods`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> allowed_methods`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> forwarded_values -> cookies -> whitelisted_names`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> forwarded_values -> headers`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> forwarded_values -> query_string_cache_keys`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> lambda_function_associations`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``custom_error_responses`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> allowed_methods -> cached_methods`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> allowed_methods`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> forwarded_values -> cookies -> whitelisted_names`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> forwarded_values -> headers`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> forwarded_values -> query_string_cache_keys`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> lambda_function_associations`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``origins -> items -> custom_origin_config -> origin_ssl_protocols`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``origins`` has been renamed to ````.
+  - cloudfront_distribution - Return value key ``items`` in ``restrictions -> geo_restriction`` has been renamed to ````.
+  - cloudfront_invalidation - Return value key ``items`` in ``invalidation -> invalidation_batch -> paths`` has been renamed to ````.

@@ -102,7 +102,7 @@ invalidation:
           returned: always
           type: complex
           contains:
-            items:
+            objects_paths:
               description: A list of the paths that you want to invalidate.
               returned: always
               type: list
@@ -216,7 +216,7 @@ class CloudFrontInvalidationValidationManager(object):
     def create_aws_list(self, invalidation_batch):
         aws_list = {}
         aws_list["Quantity"] = len(invalidation_batch)
-        aws_list["Items"] = invalidation_batch
+        aws_list["ObjectsPaths"] = invalidation_batch
         return aws_list
 
     def validate_invalidation_batch(self, invalidation_batch, caller_reference):

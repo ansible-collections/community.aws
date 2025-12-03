@@ -740,7 +740,7 @@ active_trusted_signers:
       returned: always
       type: int
       sample: 1
-    items:
+    elements:
       description: Number of trusted signers.
       returned: when there are trusted signers
       type: list
@@ -751,7 +751,7 @@ aliases:
   returned: always
   type: complex
   contains:
-    items:
+    elements:
       description: List of aliases.
       returned: always
       type: list
@@ -772,7 +772,7 @@ cache_behaviors:
   returned: always
   type: complex
   contains:
-    items:
+    elements:
       description: List of cache behaviors.
       returned: always
       type: complex
@@ -787,7 +787,7 @@ cache_behaviors:
               returned: always
               type: complex
               contains:
-                items:
+                elements:
                   description: List of cached methods.
                   returned: always
                   type: list
@@ -799,7 +799,7 @@ cache_behaviors:
                   returned: always
                   type: int
                   sample: 2
-            items:
+            elements:
               description: List of methods allowed by the cache behavior.
               returned: always
               type: list
@@ -846,7 +846,7 @@ cache_behaviors:
                       returned: always
                       type: int
                       sample: 1
-                    items:
+                    elements:
                       description: List of cookies to forward.
                       returned: when list is not empty
                       type: list
@@ -861,7 +861,7 @@ cache_behaviors:
                   returned: always
                   type: int
                   sample: 1
-                items:
+                elements:
                   description: List of headers to vary on.
                   returned: when list is not empty
                   type: list
@@ -882,7 +882,7 @@ cache_behaviors:
                   returned: always
                   type: int
                   sample: 1
-                items:
+                elements:
                   description: List of query string cache keys to use in cache lookups.
                   returned: when list is not empty
                   type: list
@@ -897,7 +897,7 @@ cache_behaviors:
               returned: always
               type: int
               sample: 1
-            items:
+            elements:
               description: List of lambda function associations.
               returned: when list is not empty
               type: list
@@ -970,7 +970,7 @@ custom_error_responses:
   returned: always
   type: complex
   contains:
-    items:
+    elements:
       description: List of custom error responses.
       returned: always
       type: complex
@@ -1015,7 +1015,7 @@ default_cache_behavior:
           returned: always
           type: complex
           contains:
-            items:
+            elements:
               description: List of cached methods.
               returned: always
               type: list
@@ -1027,7 +1027,7 @@ default_cache_behavior:
               returned: always
               type: int
               sample: 2
-        items:
+        elements:
           description: List of methods allowed by the cache behavior.
           returned: always
           type: list
@@ -1074,7 +1074,7 @@ default_cache_behavior:
                   returned: always
                   type: int
                   sample: 1
-                items:
+                elements:
                   description: List of cookies to forward.
                   returned: when list is not empty
                   type: list
@@ -1089,7 +1089,7 @@ default_cache_behavior:
               returned: always
               type: int
               sample: 1
-            items:
+            elements:
               description: List of headers to vary on.
               returned: when list is not empty
               type: list
@@ -1110,7 +1110,7 @@ default_cache_behavior:
               returned: always
               type: int
               sample: 1
-            items:
+            elements:
               description: List of query string cache keys to use in cache lookups.
               returned: when list is not empty
               type: list
@@ -1125,7 +1125,7 @@ default_cache_behavior:
           returned: always
           type: int
           sample: 1
-        items:
+        elements:
           description: List of lambda function associations.
           returned: when list is not empty
           type: list
@@ -1253,7 +1253,7 @@ origins:
   returned: always
   type: complex
   contains:
-    items:
+    elements:
       description: List of origins.
       returned: always
       type: complex
@@ -1303,7 +1303,7 @@ origins:
               returned: always
               type: complex
               contains:
-                items:
+                elements:
                   description: List of SSL protocols.
                   returned: always
                   type: list
@@ -1391,7 +1391,7 @@ restrictions:
           returned: always
           type: int
           sample: 1
-        items:
+        elements:
           description: List of country codes allowed or disallowed.
           returned: always
           type: list
@@ -1503,7 +1503,7 @@ def ansible_list_to_cloudfront_list(list_items=None, include_quantity=True):
     if include_quantity:
         result["quantity"] = len(list_items)
     if len(list_items) > 0:
-        result["items"] = list_items
+        result["elements"] = list_items
     return result
 
 
@@ -2140,7 +2140,7 @@ class CloudFrontValidationManager(object):
             else:
                 valid_trusted_signers = dict(quantity=config.get("quantity", 0))
                 if "items" in config:
-                    valid_trusted_signers = dict(items=config["items"])
+                    valid_trusted_signers = dict(elements=config["items"])
             valid_trusted_signers["enabled"] = trusted_signers.get(
                 "enabled", config.get("enabled", self.__default_trusted_signers_enabled)
             )
