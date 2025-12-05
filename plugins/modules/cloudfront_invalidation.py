@@ -102,7 +102,7 @@ invalidation:
           returned: always
           type: complex
           contains:
-            objects_paths:
+            elements:
               description: A list of the paths that you want to invalidate.
               returned: always
               type: list
@@ -141,6 +141,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto
 from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.dict_transformations import rename_dict_keys
 
 
 class CloudFrontInvalidationServiceManager(object):
@@ -216,7 +217,7 @@ class CloudFrontInvalidationValidationManager(object):
     def create_aws_list(self, invalidation_batch):
         aws_list = {}
         aws_list["Quantity"] = len(invalidation_batch)
-        aws_list["ObjectsPaths"] = invalidation_batch
+        aws_list["Items"] = invalidation_batch
         return aws_list
 
     def validate_invalidation_batch(self, invalidation_batch, caller_reference):
@@ -262,7 +263,7 @@ def main():
     valid_pascal_target_paths = snake_dict_to_camel_dict(valid_target_paths, True)
     result, changed = service_mgr.create_invalidation(distribution_id, valid_pascal_target_paths)
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
+    module.exit_json(changed=changed, **rename_dict_keys(camel_dict_to_snake_dict(result), "items", "elements"))
 
 
 if __name__ == "__main__":

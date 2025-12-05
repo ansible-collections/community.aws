@@ -1470,6 +1470,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
+from ansible_collections.community.aws.plugins.module_utils.dict_transformations import rename_dict_keys
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
@@ -1503,7 +1504,7 @@ def ansible_list_to_cloudfront_list(list_items=None, include_quantity=True):
     if include_quantity:
         result["quantity"] = len(list_items)
     if len(list_items) > 0:
-        result["elements"] = list_items
+        result["items"] = list_items
     return result
 
 
@@ -2140,7 +2141,7 @@ class CloudFrontValidationManager(object):
             else:
                 valid_trusted_signers = dict(quantity=config.get("quantity", 0))
                 if "items" in config:
-                    valid_trusted_signers = dict(elements=config["items"])
+                    valid_trusted_signers = dict(items=config["items"])
             valid_trusted_signers["enabled"] = trusted_signers.get(
                 "enabled", config.get("enabled", self.__default_trusted_signers_enabled)
             )
@@ -2538,6 +2539,7 @@ def main():
         config["CallerReference"] = validation_mgr.validate_caller_reference(caller_reference)
         result = create_distribution(client, module, config, ansible_dict_to_boto3_tag_list(tags or {}))
         result = camel_dict_to_snake_dict(result)
+        result = rename_dict_keys(result, "items", "elements")
         result["tags"] = list_tags_for_resource(client, module, result["arn"])
 
     if delete:
@@ -2561,6 +2563,7 @@ def main():
         distribution["Distribution"]["DistributionConfig"]["tags"] = existing_tags
         changed |= update_tags(client, module, existing_tags, tags, purge_tags, result["ARN"])
         result = camel_dict_to_snake_dict(result)
+        result = rename_dict_keys(result, "items", "elements")
         result["distribution_config"]["tags"] = config["tags"] = list_tags_for_resource(client, module, result["arn"])
         result["diff"] = dict()
         diff = recursive_diff(distribution["Distribution"]["DistributionConfig"], config)
