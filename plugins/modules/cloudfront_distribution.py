@@ -255,72 +255,72 @@ options:
                 - A list that contains the query string parameters you want CloudFront to use as a basis for caching for a cache behavior.
               type: list
               elements: str
-            trusted_signers:
-              description:
-                - A dict that specifies the AWS accounts that you want to allow to create signed URLs for private content.
-              type: dict
-              suboptions:
-                enabled:
-                  description: Whether you want to require viewers to use signed URLs to access the files specified by I(target_origin_id)
-                  type: bool
-                items:
-                  description: A list of trusted signers for this cache behavior.
-                  elements: str
-                  type: list
-            viewer_protocol_policy:
-              description:
-                - The protocol that viewers can use to access the files in the origin specified by I(target_origin_id).
-                - Valid values are C(allow-all), C(redirect-to-https) and C(https-only).
-              type: str
-            default_ttl:
-              description: The default amount of time that you want objects to stay in CloudFront caches.
-              type: int
-            max_ttl:
-              description: The maximum amount of time that you want objects to stay in CloudFront caches.
-              type: int
-            min_ttl:
-              description: The minimum amount of time that you want objects to stay in CloudFront caches.
-              type: int
-            allowed_methods:
-              description: A dict that controls which HTTP methods CloudFront processes and forwards.
-              type: dict
-              suboptions:
-                items:
-                  description: A list of HTTP methods that you want CloudFront to process and forward.
-                  type: list
-                  elements: str
-                cached_methods:
-                  description:
-                    - A list of HTTP methods that you want CloudFront to apply caching to.
-                    - This can either be C([GET,HEAD]), or C([GET,HEAD,OPTIONS]).
-                  type: list
-                  elements: str
-            smooth_streaming:
-              description:
-                - Whether you want to distribute media files in the Microsoft Smooth Streaming format.
+        trusted_signers:
+          description:
+            - A dict that specifies the AWS accounts that you want to allow to create signed URLs for private content.
+          type: dict
+          suboptions:
+            enabled:
+              description: Whether you want to require viewers to use signed URLs to access the files specified by I(target_origin_id)
               type: bool
-            compress:
-              description:
-                - Whether you want CloudFront to automatically compress files.
-              type: bool
-            lambda_function_associations:
-              description:
-                - A list of Lambda function associations to use for this cache behavior.
+            items:
+              description: A list of trusted signers for this cache behavior.
+              elements: str
               type: list
-              elements: dict
-              suboptions:
-                lambda_function_arn:
-                  description: The ARN of the Lambda function.
-                  type: str
-                event_type:
-                  description:
-                    - Specifies the event type that triggers a Lambda function invocation.
-                    - This can be C(viewer-request), C(origin-request), C(origin-response) or C(viewer-response).
-                  type: str
-            field_level_encryption_id:
+        viewer_protocol_policy:
+          description:
+            - The protocol that viewers can use to access the files in the origin specified by I(target_origin_id).
+            - Valid values are C(allow-all), C(redirect-to-https) and C(https-only).
+          type: str
+        default_ttl:
+          description: The default amount of time that you want objects to stay in CloudFront caches.
+          type: int
+        max_ttl:
+          description: The maximum amount of time that you want objects to stay in CloudFront caches.
+          type: int
+        min_ttl:
+          description: The minimum amount of time that you want objects to stay in CloudFront caches.
+          type: int
+        allowed_methods:
+          description: A dict that controls which HTTP methods CloudFront processes and forwards.
+          type: dict
+          suboptions:
+            items:
+              description: A list of HTTP methods that you want CloudFront to process and forward.
+              type: list
+              elements: str
+            cached_methods:
               description:
-                - The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.
+                - A list of HTTP methods that you want CloudFront to apply caching to.
+                - This can either be C([GET,HEAD]), or C([GET,HEAD,OPTIONS]).
+              type: list
+              elements: str
+        smooth_streaming:
+          description:
+            - Whether you want to distribute media files in the Microsoft Smooth Streaming format.
+          type: bool
+        compress:
+          description:
+            - Whether you want CloudFront to automatically compress files.
+          type: bool
+        lambda_function_associations:
+          description:
+            - A list of Lambda function associations to use for this cache behavior.
+          type: list
+          elements: dict
+          suboptions:
+            lambda_function_arn:
+              description: The ARN of the Lambda function.
               type: str
+            event_type:
+              description:
+                - Specifies the event type that triggers a Lambda function invocation.
+                - This can be C(viewer-request), C(origin-request), C(origin-response) or C(viewer-response).
+              type: str
+        field_level_encryption_id:
+          description:
+            - The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.
+          type: str
 
     cache_behaviors:
       type: list
@@ -392,72 +392,72 @@ options:
                 - A list that contains the query string parameters you want CloudFront to use as a basis for caching for a cache behavior.
               type: list
               elements: str
-            trusted_signers:
-              description:
-                - A dict that specifies the AWS accounts that you want to allow to create signed URLs for private content.
-              type: dict
-              suboptions:
-                enabled:
-                  description: Whether you want to require viewers to use signed URLs to access the files specified by I(path_pattern) and I(target_origin_id)
-                  type: bool
-                items:
-                  description: A list of trusted signers for this cache behavior.
-                  elements: str
-                  type: list
-            viewer_protocol_policy:
-              description:
-                - The protocol that viewers can use to access the files in the origin specified by I(target_origin_id) when a request matches I(path_pattern).
-                - Valid values are C(allow-all), C(redirect-to-https) and C(https-only).
-              type: str
-            default_ttl:
-              description: The default amount of time that you want objects to stay in CloudFront caches.
-              type: int
-            max_ttl:
-              description: The maximum amount of time that you want objects to stay in CloudFront caches.
-              type: int
-            min_ttl:
-              description: The minimum amount of time that you want objects to stay in CloudFront caches.
-              type: int
-            allowed_methods:
-              description: A dict that controls which HTTP methods CloudFront processes and forwards.
-              type: dict
-              suboptions:
-                items:
-                  description: A list of HTTP methods that you want CloudFront to process and forward.
-                  type: list
-                  elements: str
-                cached_methods:
-                  description:
-                    - A list of HTTP methods that you want CloudFront to apply caching to.
-                    - This can either be C([GET,HEAD]), or C([GET,HEAD,OPTIONS]).
-                  type: list
-                  elements: str
-            smooth_streaming:
-              description:
-                - Whether you want to distribute media files in the Microsoft Smooth Streaming format.
+        trusted_signers:
+          description:
+            - A dict that specifies the AWS accounts that you want to allow to create signed URLs for private content.
+          type: dict
+          suboptions:
+            enabled:
+              description: Whether you want to require viewers to use signed URLs to access the files specified by I(path_pattern) and I(target_origin_id)
               type: bool
-            compress:
-              description:
-                - Whether you want CloudFront to automatically compress files.
-              type: bool
-            lambda_function_associations:
-              description:
-                - A list of Lambda function associations to use for this cache behavior.
+            items:
+              description: A list of trusted signers for this cache behavior.
+              elements: str
               type: list
-              elements: dict
-              suboptions:
-                lambda_function_arn:
-                  description: The ARN of the Lambda function.
-                  type: str
-                event_type:
-                  description:
-                    - Specifies the event type that triggers a Lambda function invocation.
-                    - This can be C(viewer-request), C(origin-request), C(origin-response) or C(viewer-response).
-                  type: str
-            field_level_encryption_id:
+        viewer_protocol_policy:
+          description:
+            - The protocol that viewers can use to access the files in the origin specified by I(target_origin_id) when a request matches I(path_pattern).
+            - Valid values are C(allow-all), C(redirect-to-https) and C(https-only).
+          type: str
+        default_ttl:
+          description: The default amount of time that you want objects to stay in CloudFront caches.
+          type: int
+        max_ttl:
+          description: The maximum amount of time that you want objects to stay in CloudFront caches.
+          type: int
+        min_ttl:
+          description: The minimum amount of time that you want objects to stay in CloudFront caches.
+          type: int
+        allowed_methods:
+          description: A dict that controls which HTTP methods CloudFront processes and forwards.
+          type: dict
+          suboptions:
+            items:
+              description: A list of HTTP methods that you want CloudFront to process and forward.
+              type: list
+              elements: str
+            cached_methods:
               description:
-                - The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.
+                - A list of HTTP methods that you want CloudFront to apply caching to.
+                - This can either be C([GET,HEAD]), or C([GET,HEAD,OPTIONS]).
+              type: list
+              elements: str
+        smooth_streaming:
+          description:
+            - Whether you want to distribute media files in the Microsoft Smooth Streaming format.
+          type: bool
+        compress:
+          description:
+            - Whether you want CloudFront to automatically compress files.
+          type: bool
+        lambda_function_associations:
+          description:
+            - A list of Lambda function associations to use for this cache behavior.
+          type: list
+          elements: dict
+          suboptions:
+            lambda_function_arn:
+              description: The ARN of the Lambda function.
               type: str
+            event_type:
+              description:
+                - Specifies the event type that triggers a Lambda function invocation.
+                - This can be C(viewer-request), C(origin-request), C(origin-response) or C(viewer-response).
+              type: str
+        field_level_encryption_id:
+          description:
+            - The field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data.
+          type: str
 
 
     purge_cache_behaviors:
