@@ -484,9 +484,9 @@ def create_broker(conn, module):
         module.fail_json(msg="At least one security group must be specified on broker creation")
     #
     if kwargs.get("EngineType", "").upper() == "RABBITMQ":
-        _has_audit_logs = 'Logs' in kwargs and 'Audit' in kwargs['Logs']
+        _has_audit_logs = "Logs" in kwargs and "Audit" in kwargs["Logs"]
         if _has_audit_logs:
-            kwargs["Logs"].pop('Audit')
+            kwargs["Logs"].pop("Audit")
     changed = True
     result = conn.create_broker(**kwargs)
     #
@@ -516,9 +516,9 @@ def update_broker(conn, module, broker_id):
     result = {"broker_id": broker_id, "broker_name": broker_name}
     changed = False
     if kwargs.get("EngineType", "").upper() == "RABBITMQ":
-        _has_audit_logs = 'Logs' in kwargs and 'Audit' in kwargs['Logs']
+        _has_audit_logs = "Logs" in kwargs and "Audit" in kwargs["Logs"]
         if _has_audit_logs:
-            kwargs["Logs"].pop('Audit')
+            kwargs["Logs"].pop("Audit")
     if _needs_change(api_result, kwargs):
         changed = True
         if not module.check_mode:
