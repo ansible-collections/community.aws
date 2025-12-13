@@ -49,14 +49,15 @@
 - name: update broker
   mq_broker:
     broker_name: "{{ broker_name }}"
-    auto_minor_version_upgrade: false
-    storage_type: EBS
+    # the following needs to be true for any update operation past certain engine versions
+    auto_minor_version_upgrade: true
+    storage_type: 'EBS'
   register: result
 - name: verify broker update
   assert:
     fail_msg: broker update failed
     that:
-    - ( result.changed | bool)
+    - not ( result.changed | bool)
     - result.broker['broker_id'] == broker_id
   when: not ansible_check_mode
 - name: reboot broker to make pending changes active
@@ -95,15 +96,15 @@
     that:
     - result_u1.broker['broker_id'] == broker_id
     - result_u1.broker['broker_name'] == broker_name
-    - not ( result_u1.broker['auto_minor_version_upgrade'] | bool )
+    - ( result_u1.broker['auto_minor_version_upgrade'] | bool )
     # the next one checks that changes to create-only parameters are silently ignore
     - result_u1.broker['storage_type'] == result_c1.broker['storage_type']
   when: not ansible_check_mode
 - name: repeat update broker
   mq_broker:
     broker_name: "{{ broker_name }}"
-    auto_minor_version_upgrade: false
-    storage_type: EBS
+    auto_minor_version_upgrade: true
+    storage_type: 'EBS'
   register: result
 - name: get details after re-update
   mq_broker_info:
