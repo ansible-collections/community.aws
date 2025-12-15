@@ -1,0 +1,16 @@
+- name: Create a k8s namespace
+  kubernetes.core.k8s:
+    name: "{{ k8s_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Create a ServiceAccount object from an inline definition
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: "{{ k8s_service_account }}"
+        namespace: "{{ k8s_namespace }}"

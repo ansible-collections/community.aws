@@ -1,0 +1,77 @@
+- name: remove EKS cluster
+  eks_cluster:
+    name: '{{ eks_cluster_name }}'
+    state: absent
+    wait: true
+  register: eks_delete
+  ignore_errors: true
+- name: create list of all additional EKS security groups
+  set_fact:
+    additional_eks_sg:
+      - name: '{{ eks_cluster_name }}-workers-sg'
+
+- name: set all security group rule lists to empty to remove circular dependency
+  ec2_security_group:
+    name: '{{ item.name }}'
+    description: '{{ item.description }}'
+    state: present
+    rules: []
+    rules_egress: []
+    purge_rules: true
+    purge_rules_egress: true
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  with_items: '{{ eks_security_groups }}'
+  ignore_errors: true
+
+- name: remove security groups
+  ec2_security_group:
+    name: '{{ item.name }}'
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  with_items: '{{ eks_security_groups|reverse|list + additional_eks_sg }}'
+  ignore_errors: true
+
+- name: Delete securitygroup for node access
+  amazon.aws.ec2_security_group:
+    name: 'ansible-test-eks_nodegroup'
+    description: "SSH access"
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    rules: []
+    state: absent
+
+- name: Delete Keypair for Access to Nodegroup nodes
+  amazon.aws.ec2_key:
+    name: "ansible-test-eks_nodegroup"
+    state: absent
+
+- name: remove Route Tables
+  ec2_vpc_route_table:
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    route_table_id: '{{ item }}'
+    lookup: id
+  with_items:
+    - '{{ public_route_table.route_table.route_table_id }}'
+  ignore_errors: true
+
+- name: remove setup subnet
+  ec2_vpc_subnet:
+    az: '{{ aws_region }}{{ item.zone }}'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    cidr: '{{ item.cidr}}'
+    state: absent
+  with_items: '{{ eks_subnets }}'
+  ignore_errors: true
+
+- name: remove Internet Gateway
+  amazon.aws.ec2_vpc_igw:
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id}}'
+  ignore_errors: true
+
+- name: remove setup VPC
+  ec2_vpc_net:
+    cidr_block: 10.0.0.0/16
+    state: absent
+    name: '{{ resource_prefix }}_aws_eks'
+  ignore_errors: true

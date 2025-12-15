@@ -1,0 +1,7 @@
+- name: Create pod identity association
+  community.aws.eks_pod_identity_association:
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: "{{ pod_identity_association_role.role_name }}"
+    namespace: "{{ k8s_namespace }}"
+    service_account: "{{ k8s_service_account }}"
+    state: present
