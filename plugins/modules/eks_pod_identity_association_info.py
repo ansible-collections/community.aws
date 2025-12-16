@@ -7,12 +7,12 @@
 DOCUMENTATION = r"""
 ---
 module: eks_pod_identity_association_info
-version_added: 10.0.0
+version_added: 10.1.0
 short_description: Retrieve EKS pod identity association details
 description:
   - Get details about a pod identity association.
 author:
-  - Ali Al-Khalidi (@doteast)
+  - Ali AlKhalidi (@doteast)
 options:
   cluster_name:
     description: Name of EKS Cluster.
@@ -38,7 +38,6 @@ options:
 extends_documentation_fragment:
   - amazon.aws.boto3
   - amazon.aws.common.modules
-  - amazon.aws.region.modules
 """
 
 
@@ -48,11 +47,6 @@ EXAMPLES = r"""
     cluster_name: myeks
     association_id: "aws-pod-identity-association-id"
   register: association_info
-- name: get current pod identity association settings by namespace
-  community.aws.eks_pod_identity_association_info:
-    cluster_name: myeks
-    namespace: test-ns
-  register: association_ns_info
 - name: get current pod identity association settings by service account and namespace
   community.aws.eks_pod_identity_association_info:
     cluster_name: myeks
@@ -86,6 +80,8 @@ def get_association_id(client, module):
     association_id = None
     try:
         response = client.list_pod_identity_associations(clusterName=cluster_name, namespace=namespace, serviceAccount=service_account)
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't list pod identity associations.")
 
@@ -103,6 +99,8 @@ def get_association_info(client, module, association_id, cluster_name):
             clusterName=cluster_name,
             associationId=association_id
             )
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't get pod identity association details.")
 

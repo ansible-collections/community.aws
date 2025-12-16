@@ -7,14 +7,14 @@
 DOCUMENTATION = r"""
 ---
 module: eks_pod_identity_association
-version_added: 10.0.0
+version_added: 10.1.0
 short_description: Manage an EKS pod identity association
 description:
   - Manage an AWS EKS pod identity association. See
     U(https://docs.aws.amazon.com/eks/latest/userguide/pod-id-association.html)
     U(https://docs.aws.amazon.com/eks/latest/userguide/pod-id-assign-target-role.html) for details.
 author:
-  - "Ali Al-Khalidi (@doteast)"
+  - "Ali AlKhalidi (@doteast)"
 options:
   cluster_name:
     description: Name of EKS Cluster.
@@ -46,12 +46,6 @@ options:
         - Can be used only during creation.
     type: dict
     aliases: ['resource_tags']
-  disable_session_tags:
-    description:
-      - Whether or not to alter existing targets in the group to match what is passed with the module
-    required: false
-    default: false
-    type: bool
   state:
     description:
       - Create or destroy the association.
@@ -61,7 +55,6 @@ options:
     type: str
 extends_documentation_fragment:
   - amazon.aws.common.modules
-  - amazon.aws.region.modules
   - amazon.aws.tags
   - amazon.aws.boto3
 """
@@ -120,11 +113,6 @@ tags:
     type: dict
     sample:
       foo: bar
-disable_session_tags:
-    description: The state of the automatic sessions tags.
-    returned: when state present
-    type: bool
-    sample: True
 external_id:
     description: The unique identifier for this EKS Pod Identity association for a target IAM role.
     returned: when state present
@@ -161,12 +149,10 @@ PARAMS_MAP = {
     "target_role_arn": "targetRoleArn",
     "namespace": "namespace",
     "service_account": "serviceAccount",
-    "disable_session_tags": "disableSessionTags",
     "tags": "Tags",
 }
 
 DEFAULTS = {
-    "disable_session_tags": False,
 }
 
 CREATE_ONLY_PARAMS = [
@@ -216,6 +202,8 @@ def get_association_id(client, module):
     association_id = None
     try:
         response = client.list_pod_identity_associations(clusterName=cluster_name, namespace=namespace, serviceAccount=service_account)
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't list pod identity associations.")
 
@@ -232,6 +220,8 @@ def get_association_info(client, module, association_id, cluster_name):
             clusterName=cluster_name,
             associationId=association_id
             )
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't get pod identity association details.")
 
@@ -250,7 +240,12 @@ def update_assocition(client, module, association_id):
     if _needs_change(api_result, kwargs):
         changed = True
         if not module.check_mode:
-            api_result = client.update_pod_identity_association(**kwargs)
+            try:
+                api_result = client.update_pod_identity_association(**kwargs)
+            except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+                module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Couldn't update pod identity association.")
             result = camel_dict_to_snake_dict(api_result["association"], ignore_list=["Tags"])
         #
 
@@ -263,6 +258,8 @@ def delete_association(client, module, association_id, cluster_name):
             clusterName=cluster_name,
             associationId=association_id
         )
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't delete pod identity association.")
 
@@ -272,7 +269,16 @@ def create_assocition(client, module):
     kwargs = _fill_kwargs(module)
 
     changed = True
-    result = client.create_pod_identity_association(**kwargs)
+    try:
+        result = client.create_pod_identity_association(**kwargs)
+    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
+    except (
+        botocore.exceptions.BotoCoreError,
+        botocore.exceptions.ClientError,
+    ) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg=f"Couldn't create association")
+
 
     return {"association": camel_dict_to_snake_dict(result, ignore_list=["Tags"]), "changed": changed}
 
@@ -321,7 +327,6 @@ def main():
         target_role_arn=dict(type="str"),
         namespace=dict(type="str",required=True),
         service_account=dict(type="str", required=True),
-        disable_session_tags=dict(type="bool", default=False),
         tags=dict(type="dict"),
         state=dict(choices=["absent", "present"], default="present"),
     )

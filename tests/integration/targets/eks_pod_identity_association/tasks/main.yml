@@ -1,5 +1,5 @@
 ---
-- name: 'eks_nodegroup integration tests'
+- name: 'eks_pod_identity_association and eks_pod_identity_association_info integration tests'
   collections:
     - amazon.aws
     - community.aws
@@ -9,10 +9,10 @@
       access_key: '{{ aws_access_key }}'
       secret_key: '{{ aws_secret_key }}'
       session_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region }}'
+      region: "{{ aws_region | default('us-east-1') }}"
   block:
     - include_tasks: dependecies.yml
-#    - include_tasks: k8s_dependencies.yml
-#    - include_tasks: full_test.yml
-  # always:
-  #   - include_tasks: cleanup.yml
+    - include_tasks: k8s_dependencies.yml
+    - include_tasks: full_test.yml
+  always:
+    - include_tasks: cleanup.yml
