@@ -1,7 +1,7 @@
 # Create a EKS Cluster to test Nodegroup
 # This space was a copy by aws_eks_cluster integration test
 - name: ensure IAM instance role exists
-  iam_role:
+  amazon.aws.iam_role:
     name: ansible-test-{{ tiny_prefix }}-eks_nodegroup-cluster
     assume_role_policy_document: '{{ lookup(''file'',''eks-trust-policy.json'') }}'
     state: present
@@ -12,7 +12,7 @@
   register: iam_role
 
 - name: create a VPC to work in
-  ec2_vpc_net:
+  amazon.aws.ec2_vpc_net:
     cidr_block: 10.0.0.0/16
     state: present
     name: '{{ resource_prefix }}_aws_eks'
@@ -21,7 +21,7 @@
   register: setup_vpc
 
 - name: create subnets
-  ec2_vpc_subnet:
+  amazon.aws.ec2_vpc_subnet:
     az: '{{ aws_region }}{{ item.zone }}'
     tags: '{ "Name": "{{ resource_prefix }}_aws_eks-subnet-{{ item.type }}-{{ item.zone }}" }'
     vpc_id: '{{ setup_vpc.vpc.id }}'
@@ -52,7 +52,7 @@
   register: public_route_table
 
 - name: create security groups to use for EKS
-  ec2_security_group:
+  amazon.aws.ec2_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
@@ -63,7 +63,7 @@
   register: setup_security_groups
 
 - name: create EKS cluster
-  eks_cluster:
+  community.aws.eks_cluster:
     name: '{{ eks_cluster_name }}'
     security_groups: '{{ eks_security_groups | map(attribute=''name'') }}'
     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
@@ -79,7 +79,7 @@
 
 # Dependecies to eks nodegroup
 - name: create IAM instance role
-  iam_role:
+  amazon.aws.iam_role:
     name: 'ansible-test-{{ tiny_prefix }}-eks_nodegroup-ng'
     assume_role_policy_document: '{{ lookup(''file'',''eks-nodegroup-trust-policy.json'') }}'
     state: present
@@ -112,7 +112,7 @@
   register: ec2_key_eks_nodegroup
 
 - name: create nodegroup (check mode)
-  eks_nodegroup:
+  community.aws.eks_nodegroup:
     name: '{{ eks_nodegroup_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
@@ -150,7 +150,7 @@
       - eks_nodegroup_result.changed
 
 - name: create IAM role for Pod Identity
-  iam_role:
+  amazon.aws.iam_role:
     name: 'ansible-test-{{ tiny_prefix }}-eks-pod-identity-association'
     assume_role_policy_document: '{{ lookup(''file'',''eks-pod-identity-association-trust-policy.json'') }}'
     state: present
@@ -166,3 +166,7 @@
     state: present
     policy_json: "{{ lookup('template', 'eks-pod-identity-association-policy.json.j2') }}"
   register: pod_identity_association_policy
+
+- name: Create Kubeconfig cluster file
+  command: >
+    aws eks update-kubeconfig --region {{ region }} --name {{ eks_cluster_name }}

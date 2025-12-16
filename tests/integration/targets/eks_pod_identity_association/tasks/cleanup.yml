@@ -1,5 +1,5 @@
 - name: remove EKS cluster
-  eks_cluster:
+  community.aws.eks_cluster:
     name: '{{ eks_cluster_name }}'
     state: absent
     wait: true
@@ -11,7 +11,7 @@
       - name: '{{ eks_cluster_name }}-workers-sg'
 
 - name: set all security group rule lists to empty to remove circular dependency
-  ec2_security_group:
+  amazon.aws.ec2_security_group:
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     state: present
@@ -24,7 +24,7 @@
   ignore_errors: true
 
 - name: remove security groups
-  ec2_security_group:
+  amazon.aws.ec2_security_group:
     name: '{{ item.name }}'
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id }}'
@@ -45,7 +45,7 @@
     state: absent
 
 - name: remove Route Tables
-  ec2_vpc_route_table:
+  amazon.aws.ec2_vpc_route_table:
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id }}'
     route_table_id: '{{ item }}'
@@ -55,7 +55,7 @@
   ignore_errors: true
 
 - name: remove setup subnet
-  ec2_vpc_subnet:
+  amazon.aws.ec2_vpc_subnet:
     az: '{{ aws_region }}{{ item.zone }}'
     vpc_id: '{{ setup_vpc.vpc.id }}'
     cidr: '{{ item.cidr}}'
@@ -70,7 +70,7 @@
   ignore_errors: true
 
 - name: remove setup VPC
-  ec2_vpc_net:
+  amazon.aws.ec2_vpc_net:
     cidr_block: 10.0.0.0/16
     state: absent
     name: '{{ resource_prefix }}_aws_eks'
