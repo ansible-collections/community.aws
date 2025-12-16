@@ -215,14 +215,13 @@ def get_association_id(client, module):
     service_account = module.params["service_account"]
     association_id = None
     try:
-        paginator = client.get_paginator("list_pod_identity_associations")
-        response = paginator.paginate(clusterName=cluster_name, namespace=namespace, serviceAccount=service_account).build_full_result()
+        response = client.list_pod_identity_associations(clusterName=cluster_name, namespace=namespace, serviceAccount=service_account)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't list pod identity associations.")
 
     if len(response["associations"]) > 1:
         module.warn("found multiple associations matcing fields")
-    if len(response["associations"]) == 1:
+    if len(response["associations"]) >= 1:
         association_id = response["associations"][0]["associationId"]
     return association_id
 
@@ -323,7 +322,6 @@ def main():
         namespace=dict(type="str",required=True),
         service_account=dict(type="str", required=True),
         disable_session_tags=dict(type="bool", default=False),
-        target_role_arn=dict(type="str"),
         tags=dict(type="dict"),
         state=dict(choices=["absent", "present"], default="present"),
     )
