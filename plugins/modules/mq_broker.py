@@ -113,7 +113,7 @@ options:
   enable_audit_log:
     description:
         - Enable/disable to push audit logs to AWS CloudWatch.
-        - Ignored for engine_tyep of RABBITMQ
+        - Ignored for O(engine_type=RABBITMQ).
     type: bool
     default: false
   enable_general_log:
@@ -466,6 +466,15 @@ def delete_broker(conn, module, broker_id):
     return response
 
 
+def _filter_unsupported_params(kwargs):
+    if kwargs.get("EngineType", "").upper() == "RABBITMQ":
+        _has_audit_logs = "Logs" in kwargs and "Audit" in kwargs["Logs"]
+        if _has_audit_logs:
+            kwargs["Logs"].pop("Audit")
+
+    return kwargs
+
+
 def create_broker(conn, module):
     kwargs = _fill_kwargs(module)
     wait = module.params.get("wait")
@@ -483,10 +492,7 @@ def create_broker(conn, module):
     if "SecurityGroups" not in kwargs or len(kwargs["SecurityGroups"]) == 0:
         module.fail_json(msg="At least one security group must be specified on broker creation")
     #
-    if kwargs.get("EngineType", "").upper() == "RABBITMQ":
-        _has_audit_logs = "Logs" in kwargs and "Audit" in kwargs["Logs"]
-        if _has_audit_logs:
-            kwargs["Logs"].pop("Audit")
+    kwargs = _filter_unsupported_params(kwargs)
     changed = True
     result = conn.create_broker(**kwargs)
     #
@@ -514,11 +520,8 @@ def update_broker(conn, module, broker_id):
     if "EngineVersion" in kwargs and kwargs["EngineVersion"] == "latest":
         kwargs["EngineVersion"] = api_result["EngineVersion"]
     result = {"broker_id": broker_id, "broker_name": broker_name}
+    kwargs = _filter_unsupported_params(kwargs)
     changed = False
-    if kwargs.get("EngineType", "").upper() == "RABBITMQ":
-        _has_audit_logs = "Logs" in kwargs and "Audit" in kwargs["Logs"]
-        if _has_audit_logs:
-            kwargs["Logs"].pop("Audit")
     if _needs_change(api_result, kwargs):
         changed = True
         if not module.check_mode:
