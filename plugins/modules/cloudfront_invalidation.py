@@ -102,14 +102,27 @@ invalidation:
           returned: always
           type: complex
           contains:
-            elements:
-              description: A list of the paths that you want to invalidate.
+            items:
+              description:
+                - A list of the paths that you want to invalidate.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(invalidation.invalidation_batch.paths.elements) instead.
               returned: always
               type: list
               sample:
               - /testpathtwo/test2.js
               - /testpathone/test1.css
               - /testpaththree/test3.ss
+            elements:
+              description:
+                - A list of the paths that you want to invalidate.
+              returned: always
+              type: list
+              sample:
+              - /testpathtwo/test2.js
+              - /testpathone/test1.css
+              - /testpaththree/test3.ss
+              version_added: 10.1.0
             quantity:
               description: The number of objects that you want to invalidate.
               returned: always
@@ -141,7 +154,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto
 from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.community.aws.plugins.module_utils.dict_transformations import rename_dict_keys
 
 
 class CloudFrontInvalidationServiceManager(object):
@@ -263,7 +275,12 @@ def main():
     valid_pascal_target_paths = snake_dict_to_camel_dict(valid_target_paths, True)
     result, changed = service_mgr.create_invalidation(distribution_id, valid_pascal_target_paths)
 
-    module.exit_json(changed=changed, **rename_dict_keys(camel_dict_to_snake_dict(result), "items", "elements"))
+    # Duplicate 'Invalidation.InvalidationBatch.Paths.Items' to 'Invalidation.InvalidationBatch.Paths.Elements'
+    result["Invalidation"]["InvalidationBatch"]["Paths"]["Elements"] = result["Invalidation"]["InvalidationBatch"][
+        "Paths"
+    ]["Items"]
+
+    module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
 
 
 if __name__ == "__main__":

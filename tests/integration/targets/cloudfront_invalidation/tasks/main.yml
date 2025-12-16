@@ -27,6 +27,15 @@
       distribution_id: '{{ distribution_id }}'
       target_paths:
         - '/path/invalidation'
+    register: create_invalidation
+
+  - name: Ensure result contains expected keys
+    ansible.builtin.assert:
+      that:
+        - create_invalidation is changed
+        - '"items" in create_invalidation.invalidation.invalidation_batch.paths'
+        - '"elements" in create_invalidation.invalidation.invalidation_batch.paths'
+        - create_invalidation.invalidation.invalidation_batch.paths['items'] == create_invalidation.invalidation.invalidation_batch.paths['elements']
 
   - name: get cloudfront invalidation
     cloudfront_distribution_info:

@@ -1,25 +1,47 @@
 ---
-minor_changes:
+deprecated_features:
+  - cloudfront_invalidation - The ``items`` return value in ``invalidation.invalidation_batch.paths`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``active_trusted_signers`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``aliases`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors.items.allowed_methods.cached_methods`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors.items.allowed_methods`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors.items.forwarded_values.cookies.whitelisted_names`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors.items.forwarded_values.headers`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors.items.forwarded_values.query_string_cache_keys`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors.items.lambda_function_associations`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``cache_behaviors`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``custom_error_responses`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``default_cache_behavior.allowed_methods.cached_methods`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``default_cache_behavior.allowed_methods`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``default_cache_behavior.forwarded_values.cookies.whitelisted_names`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``default_cache_behavior.forwarded_values.headers`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``default_cache_behavior.forwarded_values.query_string_cache_keys`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``default_cache_behavior.lambda_function_associations`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``origins.items.custom_origin_config.origin_ssl_protocols`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``origins`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - The ``items`` return value in ``restrictions.geo_restriction`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_invalidation - The ``items`` return value in ``invalidation.invalidation_batch.paths`` has been deprecated and will be remove in a release after 2026-12-15. Use ``elements`` instead (https://github.com/ansible-collections/community.aws/pull/2354).
+bugfixes:
   - ec2_customer_gateway - Fix documentation for the return block (https://github.com/ansible-collections/community.aws/pull/2354).
-breaking_changes:
-  - cloudfront_invalidation - Return value key ``items`` in ``invalidation -> invalidation_batch -> paths`` has been renamed to ``elements``.
-  - cloudfront_distribution - Return value key ``items`` in ``active_trusted_signers`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``aliases`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> allowed_methods -> cached_methods`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> allowed_methods`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> forwarded_values -> cookies -> whitelisted_names`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> forwarded_values -> headers`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> forwarded_values -> query_string_cache_keys`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors -> items -> lambda_function_associations`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``cache_behaviors`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``custom_error_responses`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> allowed_methods -> cached_methods`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> allowed_methods`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> forwarded_values -> cookies -> whitelisted_names`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> forwarded_values -> headers`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> forwarded_values -> query_string_cache_keys`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``default_cache_behavior -> lambda_function_associations`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``origins -> items -> custom_origin_config -> origin_ssl_protocols`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``origins`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_distribution - Return value key ``items`` in ``restrictions -> geo_restriction`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
-  - cloudfront_invalidation - Return value key ``items`` in ``invalidation -> invalidation_batch -> paths`` has been renamed to ``elements`` (https://github.com/ansible-collections/community.aws/pull/2354).
+minor_changes:
+  - cloudfront_invalidation - Added ``elements`` key to `invalidation.invalidation_batch.paths`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``active_trusted_signers`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``aliases`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors.items.allowed_methods.cached_methods`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors.items.allowed_methods`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors.items.forwarded_values.cookies.whitelisted_names`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors.items.forwarded_values.headers`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors.items.forwarded_values.query_string_cache_keys`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors.items.lambda_function_associations`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``cache_behaviors`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``custom_error_responses`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``default_cache_behavior.allowed_methods.cached_methods`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``default_cache_behavior.allowed_methods`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``default_cache_behavior.forwarded_values.cookies.whitelisted_names`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``default_cache_behavior.forwarded_values.headers`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``default_cache_behavior.forwarded_values.query_string_cache_keys`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``default_cache_behavior.lambda_function_associations`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``origins.items.custom_origin_config.origin_ssl_protocols`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``origins`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_distribution - Added ``elements`` key to ``restrictions.geo_restriction`` (https://github.com/ansible-collections/community.aws/pull/2354).
+  - cloudfront_invalidation - Added ``elements`` key to ``invalidation.invalidation_batch.paths`` (https://github.com/ansible-collections/community.aws/pull/2354).
