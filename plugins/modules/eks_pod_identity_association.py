@@ -24,10 +24,6 @@ options:
     description: ARN of IAM role to associate with the service account.
     type: str    
     required: true
-  target_role_arn:
-    description: ARN of IAM target role to associate with the service account.
-    type: str    
-    required: false
   namespace:
     description:
       - EKS Kubernetes namespace inside the cluster to create the association in.
@@ -68,7 +64,19 @@ EXAMPLES = r"""
     role_arn: arn:aws:iam:us-east-1:1231231123:role/abcd
     namespace: test-ns
     service_account: test-sa
+    tags:
+      foo: bar
     state: present
+
+- name: Delete pod identity association
+  community.aws.eks_pod_identity_association:
+    cluster_name: myeks
+    role_arn: arn:aws:iam:us-east-1:1231231123:role/abcd
+    namespace: test-ns
+    service_account: test-sa
+    tags:
+      foo: bar
+    state: absent
 """
 
 RETURN = r"""
@@ -79,11 +87,6 @@ cluster_name:
   sample: test_cluster
 role_arn:
   description: ARN of the IAM role to associate with the service account.
-  returned: when state is present
-  type: str
-  sample: arn:aws:iam:us-east-1:1231231123:role/abcd
-target_role_arn:
-  description: ARN of the target IAM role to associate with the service account.
   returned: when state is present
   type: str
   sample: arn:aws:iam:us-east-1:1231231123:role/abcd
@@ -106,18 +109,13 @@ association_id:
     description: The ID of the association.
     returned: when state present
     type: str
-    sample: TBD
+    sample: a-a1b2c3d4e5f6g7h8i
 tags:
     description: Metadata that assists with categorization and organization.
     returned: when state present
     type: dict
     sample:
       foo: bar
-external_id:
-    description: The unique identifier for this EKS Pod Identity association for a target IAM role.
-    returned: when state present
-    type: str
-    sample: TBD
 created_at:
   description: Association creation date and time.
   returned: when state is present
@@ -128,11 +126,6 @@ modified_at:
   returned: when state is present
   type: str
   sample: '2022-01-18T20:00:00.111000+00:00'
-owner_arn:
-    description: If defined, the EKS Pod Identity association is owned by an Amazon EKS add-on.
-    returned: when state present
-    type: str
-    sample: TBD
 """
 
 try:

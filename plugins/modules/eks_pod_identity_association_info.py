@@ -34,7 +34,6 @@ options:
       - Ignore when association Id is provided.
       - Must be coupled with namespace.
     type: str
-
 extends_documentation_fragment:
   - amazon.aws.boto3
   - amazon.aws.common.modules
@@ -45,8 +44,9 @@ EXAMPLES = r"""
 - name: get current pod identity association settings by id
   community.aws.eks_pod_identity_association_info:
     cluster_name: myeks
-    association_id: "aws-pod-identity-association-id"
+    association_id: a-a1b2c3d4e5f6g7h8i
   register: association_info
+
 - name: get current pod identity association settings by service account and namespace
   community.aws.eks_pod_identity_association_info:
     cluster_name: myeks
