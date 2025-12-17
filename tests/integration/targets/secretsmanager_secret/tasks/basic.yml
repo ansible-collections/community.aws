@@ -72,6 +72,20 @@
   # ============================================================
   # Creation testing
   # ============================================================
+  - name: add secret to AWS Secrets Manager (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+    check_mode: True
+
+  - name: assert secret would be created
+    assert:
+      that:
+        - result is changed
+
   - name: add secret to AWS Secrets Manager
     secretsmanager_secret:
       name: "{{ secret_name }}"
@@ -134,6 +148,46 @@
     assert:
       that:
         - result.changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.version_ids_to_stages | length == 2
+
+  - name: Set secret description - idempotency (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+    check_mode: True
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Set secret description - idempotency
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is not changed
         - '"arn" in result.secret'
         - '"created_date" in result.secret'
         - '"description" in result.secret'
@@ -578,6 +632,22 @@
   # Resource policy
   ###############################################################
 
+  - name: add resource policy to secret (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      resource_policy: "{{ lookup('template', 'secret-policy.j2', convert_data=False) | string }}"
+    register: result
+    check_mode: True
+
+  - name: assert would be changed
+    assert:
+      that:
+        - result is changed
+
   - name: add resource policy to secret
     secretsmanager_secret:
       name: "{{ secret_name }}"
@@ -592,6 +662,52 @@
     assert:
       that:
         - result.changed
+
+  - name: add resource policy to secret - idempotency (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      resource_policy: "{{ lookup('template', 'secret-policy.j2', convert_data=False) | string }}"
+    register: result
+    check_mode: True
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: add resource policy to secret - idempotency
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      resource_policy: "{{ lookup('template', 'secret-policy.j2', convert_data=False) | string }}"
+    register: result
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: remove existing resource policy from secret (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+    check_mode: True
+
+  - name: assert would be changed
+    assert:
+      that:
+        - result is changed
 
   - name: remove existing resource policy from secret
     secretsmanager_secret:
@@ -689,6 +805,121 @@
         - result is not changed
 
   # ============================================================
+  # Binary secret testing
+  # ============================================================
+
+  - name: Create binary secret (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'binary content here' | b64encode }}"
+    register: result
+    check_mode: True
+
+  - name: assert secret would be created
+    assert:
+      that:
+        - result is changed
+
+  - name: Create binary secret
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'binary content here' | b64encode }}"
+    register: result
+
+  - name: assert secret is created
+    assert:
+      that:
+        - result is changed
+        - '"arn" in result.secret'
+        - '"name" in result.secret'
+        - result.secret.name == "{{ secret_name }}-binary"
+
+  - name: Create binary secret - idempotency (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'binary content here' | b64encode }}"
+    register: result
+    check_mode: True
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Create binary secret - idempotency
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'binary content here' | b64encode }}"
+    register: result
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update binary secret (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'updated binary content' | b64encode }}"
+    register: result
+    check_mode: True
+
+  - name: assert would be changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update binary secret
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'updated binary content' | b64encode }}"
+    register: result
+
+  - name: assert changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update binary secret - idempotency (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'updated binary content' | b64encode }}"
+    register: result
+    check_mode: True
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update binary secret - idempotency
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
+      state: present
+      secret_type: 'binary'
+      secret: "{{ 'updated binary content' | b64encode }}"
+    register: result
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
   # Overwrite testing
   # ============================================================
 
@@ -720,6 +951,35 @@
     assert:
       that:
         - result is changed
+
+  - name: Create secret with overwrite = False - idempotency (Check mode)
+    secretsmanager_secret:
+      name: "{{ secret_name }}-2"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      overwrite: False
+    register: result
+    check_mode: True
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Create secret with overwrite = False - idempotency
+    secretsmanager_secret:
+      name: "{{ secret_name }}-2"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      overwrite: False
+    register: result
+
+  - name: assert not changed
+    assert:
+      that:
+        - result is not changed
 
   - name: Update secret with overwrite = False (Check mode)
     secretsmanager_secret:
@@ -754,6 +1014,19 @@
   # Removal testing
   # ============================================================
 
+  - name: remove secret (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 7
+    register: result
+    check_mode: True
+
+  - name: assert key would be deleted
+    assert:
+      that:
+        - result is changed
+
   - name: remove secret
     secretsmanager_secret:
       name: "{{ secret_name }}"
@@ -766,7 +1039,20 @@
       that:
         - result.changed
 
-  - name: remove secret (idempotency)
+  - name: remove secret - idempotency (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 7
+    register: result
+    check_mode: True
+
+  - name: assert no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: remove secret - idempotency
     secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
@@ -776,7 +1062,20 @@
   - name: assert no change happened
     assert:
       that:
-        - not result.changed
+        - result is not changed
+
+  - name: immediate secret removal (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 0
+    register: result
+    check_mode: True
+
+  - name: assert key would be deleted
+    assert:
+      that:
+        - result is changed
 
   - name: immediate secret removal
     secretsmanager_secret:
@@ -790,9 +1089,23 @@
       that:
         - result.changed
 
-  # AWS Doesn't expose when the secret will be removed, all we can do is
-  # check that we didn't throw an error
-  - name: immediate secret removal
+  - name: immediate secret removal - idempotency (CHECK_MODE)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 0
+    register: result
+    check_mode: True
+
+  - name: assert no change
+    assert:
+      that:
+        - result is not failed
+        # XXX potential bug, we probably need to add code to wait for the secret to have been
+        # deleted
+        # - result is not changed
+
+  - name: immediate secret removal - idempotency
     secretsmanager_secret:
       name: "{{ secret_name }}"
       state: absent
@@ -802,7 +1115,10 @@
   - name: assert no change happened
     assert:
       that:
-        - not result.failed
+        - result is not failed
+        # XXX potential bug, we probably need to add code to wait for the secret to have been
+        # deleted
+        # - result is not changed
 
   always:
   - name: remove secret
@@ -815,6 +1131,13 @@
   - name: remove secret 2
     secretsmanager_secret:
       name: "{{ secret_name }}-2"
+      state: absent
+      recovery_window: 0
+    ignore_errors: yes
+
+  - name: remove binary secret
+    secretsmanager_secret:
+      name: "{{ secret_name }}-binary"
       state: absent
       recovery_window: 0
     ignore_errors: yes
