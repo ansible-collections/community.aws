@@ -79,7 +79,9 @@ def get_association_id(client, module):
     service_account = module.params["service_account"]
     association_id = None
     try:
-        response = client.list_pod_identity_associations(clusterName=cluster_name, namespace=namespace, serviceAccount=service_account)
+        response = client.list_pod_identity_associations(
+            clusterName=cluster_name, namespace=namespace, serviceAccount=service_account
+        )
     except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -92,13 +94,9 @@ def get_association_id(client, module):
     return association_id
 
 
-
 def get_association_info(client, module, association_id, cluster_name):
     try:
-        return client.describe_pod_identity_association(
-            clusterName=cluster_name,
-            associationId=association_id
-            )
+        return client.describe_pod_identity_association(clusterName=cluster_name, associationId=association_id)
     except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -110,7 +108,7 @@ def main():
         cluster_name=dict(type="str", required=True),
         association_id=dict(type="str"),
         namespace=dict(type="str"),
-        service_account=dict(type="str")
+        service_account=dict(type="str"),
     )
     required_one_of = (
         (
@@ -127,7 +125,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        required_one_of=required_one_of,
+        mutually_exclusive=required_one_of,
         required_together=required_together,
         supports_check_mode=True,
     )
@@ -135,20 +133,24 @@ def main():
     association_id = module.params["association_id"]
 
     client = module.client("eks")
-
+    changed = False
     try:
         if not association_id:
             association_id = get_association_id(client, module)
         if not association_id:
             if module.check_mode:
                 module.exit_json(
-                    association={"association_id": "fakeId", "clusert_name": cluster_name if cluster_name else "fakeName"}
+                    association={
+                        "association_id": "fakeId",
+                        "clusert_name": cluster_name if cluster_name else "fakeName",
+                    },
+                    changed=changed,
                 )
         result = get_association_info(client, module, association_id, cluster_name)
     except botocore.exceptions.ClientError as e:
         module.fail_json_aws(e)
     #
-    module.exit_json(association=camel_dict_to_snake_dict(result["association"], ignore_list=["Tags"]))
+    module.exit_json(association=camel_dict_to_snake_dict(result["association"], ignore_list=["Tags"]), changed=changed)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,39 @@
+- name: delete policy
+  amazon.aws.iam_policy:
+    iam_type: role
+    iam_name: "{{ pod_identity_association_role.iam_role.role_name }}"
+    policy_name: 'ansible-test-{{ tiny_prefix }}-eks-pod-identity-association'
+    state: absent
+    policy_json: "{{ lookup('template', 'eks-pod-identity-association-policy.json.j2') }}"
+  ignore_errors: true
+
+- name: delete IAM role for Pod Identity
+  amazon.aws.iam_role:
+    name: 'ansible-test-{{ tiny_prefix }}-eks-pod-identity-association'
+    assume_role_policy_document: '{{ lookup(''file'',''eks-pod-identity-association-trust-policy.json'') }}'
+    state: absent
+    create_instance_profile: no
+    managed_policies: []
+  ignore_errors: true
+
+- name: delete policy for replacement role
+  amazon.aws.iam_policy:
+    iam_type: role
+    iam_name: "{{ pod_identity_association_role_replacement.iam_role.role_name }}"
+    policy_name: 'ansible-test-{{ tiny_prefix }}-epia-replacement'
+    state: absent
+    policy_json: "{{ lookup('template', 'eks-pod-identity-association-policy.json.j2') }}"
+  ignore_errors: true
+
+- name: delete replacement IAM role for Pod Identity
+  amazon.aws.iam_role:
+    name: 'ansible-test-{{ tiny_prefix }}-epia-replacement'
+    assume_role_policy_document: '{{ lookup(''file'',''eks-pod-identity-association-trust-policy.json'') }}'
+    state: absent
+    create_instance_profile: no
+    managed_policies: []
+  ignore_errors: true
+
 - name: remove EKS cluster
   community.aws.eks_cluster:
     name: '{{ eks_cluster_name }}'

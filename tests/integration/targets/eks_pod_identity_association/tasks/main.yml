@@ -9,10 +9,10 @@
       access_key: '{{ aws_access_key }}'
       secret_key: '{{ aws_secret_key }}'
       session_token: '{{ security_token | default(omit) }}'
-      region: "{{ aws_region | default('us-east-1') }}"
+      region: "{{ aws_region }}"
   block:
     - include_tasks: dependecies.yml
-    - include_tasks: k8s_dependencies.yml
+    - include_tasks: k8s_depedencies.yml
     - include_tasks: full_test.yml
   always:
     - include_tasks: cleanup.yml

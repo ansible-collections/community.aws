@@ -146,20 +146,19 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 PARAMS_MAP = {
     "cluster_name": "clusterName",
     "role_arn": "roleArn",
-    "target_role_arn": "targetRoleArn",
     "namespace": "namespace",
     "service_account": "serviceAccount",
-    "tags": "Tags",
+    "tags": "tags",
 }
 
-DEFAULTS = {
-}
+DEFAULTS = {}
 
 CREATE_ONLY_PARAMS = [
     "namespace",
     "service_account",
     "tags",
 ]
+
 
 def _set_kwarg(kwargs, key, value):
     mapped_key = PARAMS_MAP[key]
@@ -184,6 +183,7 @@ def _fill_kwargs(module, apply_defaults=True, ignore_create_params=False):
             pass
     return kwargs
 
+
 def _needs_change(current, desired):
     needs_change = False
     for key in desired:
@@ -195,13 +195,16 @@ def _needs_change(current, desired):
     #
     return needs_change
 
+
 def get_association_id(client, module):
     cluster_name = module.params["cluster_name"]
     namespace = module.params["namespace"]
     service_account = module.params["service_account"]
     association_id = None
     try:
-        response = client.list_pod_identity_associations(clusterName=cluster_name, namespace=namespace, serviceAccount=service_account)
+        response = client.list_pod_identity_associations(
+            clusterName=cluster_name, namespace=namespace, serviceAccount=service_account
+        )
     except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -216,10 +219,7 @@ def get_association_id(client, module):
 
 def get_association_info(client, module, association_id, cluster_name):
     try:
-        return client.describe_pod_identity_association(
-            clusterName=cluster_name,
-            associationId=association_id
-            )
+        return client.describe_pod_identity_association(clusterName=cluster_name, associationId=association_id)
     except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -232,12 +232,9 @@ def update_assocition(client, module, association_id):
     kwargs["associationId"] = association_id
     # get current state for comparison:
     api_result = get_association_info(client, module, association_id, cluster_name)
-    association_arn = api_result["associationArn"]
-    result = {
-        "association_id": association_id, "association_arn": association_arn
-    }
+    result = camel_dict_to_snake_dict(api_result["association"], ignore_list=["Tags"])
     changed = False
-    if _needs_change(api_result, kwargs):
+    if _needs_change(api_result["association"], kwargs):
         changed = True
         if not module.check_mode:
             try:
@@ -251,13 +248,10 @@ def update_assocition(client, module, association_id):
 
     return {"association": result, "changed": changed}
 
-def delete_association(client, module, association_id, cluster_name):
 
+def delete_association(client, module, association_id, cluster_name):
     try:
-        response = client.delete_pod_identity_association(
-            clusterName=cluster_name,
-            associationId=association_id
-        )
+        response = client.delete_pod_identity_association(clusterName=cluster_name, associationId=association_id)
     except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
         module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -265,34 +259,27 @@ def delete_association(client, module, association_id, cluster_name):
 
     return response
 
+
 def create_assocition(client, module):
     kwargs = _fill_kwargs(module)
 
     changed = True
-    try:
-        result = client.create_pod_identity_association(**kwargs)
-    except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
-        module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
-    except (
-        botocore.exceptions.BotoCoreError,
-        botocore.exceptions.ClientError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg=f"Couldn't create association")
-
+    result = {"association_arn": "fakeArn", "association_id": "fakeId"}
+    if not module.check_mode:
+        try:
+            result = client.create_pod_identity_association(**kwargs)
+        except botocore.exceptions.EndpointConnectionError:  # pylint: disable=duplicate-except
+            module.fail_json(msg=f"Region {client.meta.region_name} is not supported by EKS")
+        except (
+            botocore.exceptions.BotoCoreError,
+            botocore.exceptions.ClientError,
+        ) as e:  # pylint: disable=duplicate-except
+            module.fail_json_aws(e, msg=f"Couldn't create association")
 
     return {"association": camel_dict_to_snake_dict(result, ignore_list=["Tags"]), "changed": changed}
 
 
 def ensure_present(client, module):
-    if module.check_mode:
-        return {
-            "association": {
-                "association_arn": "fakeArn",
-                "association_id": "fakeId"
-                },
-            "changed": True
-        }
-
     association_id = get_association_id(client, module)
     if association_id:
         return update_assocition(client, module, association_id)
@@ -302,30 +289,30 @@ def ensure_present(client, module):
 
 def ensure_absent(client, module):
     cluster_name = module.params["cluster_name"]
-    result = {"cluster_name": cluster_name, "association_id": None}
-    if module.check_mode:
-        return {"association": camel_dict_to_snake_dict(result, ignore_list=["Tags"]), "changed": True}
+    changed = False
+    result = {"cluster_name": cluster_name, "association_id": "fakeId"}
     association_id = get_association_id(client, module)
-    result["association_id"] = association_id
+    result["association_id"] = association_id if association_id else "fakeId"
 
     if not association_id:
         # silently ignore delete of unknown association
-        return {"association": result, "changed": False}
+        return {"association": camel_dict_to_snake_dict(result, ignore_list=["Tags"]), "changed": changed}
 
-    try:
-        api_result = get_association_info(client, module, association_id, cluster_name)
-        delete_association(client, module, association_id, cluster_name)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json_aws(e)
+    if not module.check_mode:
+        try:
+            result = delete_association(client, module, association_id, cluster_name)
+        except botocore.exceptions.ClientError as e:
+            module.fail_json_aws(e)
 
     return {"association": result, "changed": True}
+
 
 def main():
     argument_spec = dict(
         cluster_name=dict(type="str", required=True),
         role_arn=dict(type="str", required=True),
         target_role_arn=dict(type="str"),
-        namespace=dict(type="str",required=True),
+        namespace=dict(type="str", required=True),
         service_account=dict(type="str", required=True),
         tags=dict(type="dict"),
         state=dict(choices=["absent", "present"], default="present"),
@@ -352,7 +339,7 @@ def main():
         except botocore.exceptions.ClientError as e:
             module.fail_json_aws(e)
 
-    module.exit_json(**result)            
+    module.exit_json(**result)
 
 
 if __name__ == "__main__":

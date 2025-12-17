@@ -4,7 +4,6 @@ s3_bucket_name: "pia-{{ resource_prefix }}"
 k8s_namespace: "pia-{{ resource_prefix }}-ns"
 k8s_service_account: "pia-{{ resource_prefix }}-sa"
 
-
 eks_subnets:
   - zone: a
     cidr: 10.0.1.0/24

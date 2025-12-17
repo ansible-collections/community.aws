@@ -3,18 +3,13 @@
 - name: Create pod identity association (check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '123456789012') }}"
+    role_arn: "{{ pod_identity_association_role.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association is created (check mode)
@@ -26,18 +21,13 @@
 - name: Create pod identity association
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '123456789012') }}"
+    role_arn: "{{ pod_identity_association_role.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association is created
   assert:
@@ -47,18 +37,13 @@
 - name: Create pod identity association (idempotency)(check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '123456789012') }}"
+    role_arn: "{{ pod_identity_association_role.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association is not changed (idempotency)(check mode)
@@ -70,23 +55,91 @@
 - name: Create pod identity association (idempotency)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '123456789012') }}"
+    role_arn: "{{ pod_identity_association_role.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association is not changed (idempotency)
   assert:
     that:
       - not pod_identity_result.changed
+
+##
+# info
+- name: Get pod identity association info for non existing cluster
+  community.aws.eks_pod_identity_association_info:
+    cluster_name: 'NoSuchCluster'
+    namespace: "{{ k8s_namespace }}"
+    service_account: "{{ k8s_service_account }}"
+  register: pod_identity_info_result
+  ignore_errors: true
+
+- name: check that eks_pod_identity_association failed
+  assert:
+    that:
+      - not pod_identity_info_result.changed
+      - pod_identity_info_result is failed
+
+- name: Get pod identity association info for non existing namespace
+  community.aws.eks_pod_identity_association_info:
+    cluster_name: '{{ eks_cluster_name }}'
+    namespace: "no-such-namespace"
+    service_account: "{{ k8s_service_account }}"
+  register: pod_identity_info_result
+  ignore_errors: true
+
+- name: check that eks_pod_identity_association failed
+  assert:
+    that:
+      - not pod_identity_info_result.changed
+      - pod_identity_info_result is failed
+
+- name: Get pod identity association info for non existing service account
+  community.aws.eks_pod_identity_association_info:
+    cluster_name: '{{ eks_cluster_name }}'
+    namespace: "{{ k8s_namespace }}"
+    service_account: "no-such-sa"
+  register: pod_identity_info_result
+  ignore_errors: true
+
+- name: check that eks_pod_identity_association failed
+  assert:
+    that:
+      - not pod_identity_info_result.changed
+      - pod_identity_info_result is failed
+
+- name: Get pod identity association info for non existing association id
+  community.aws.eks_pod_identity_association_info:
+    cluster_name: '{{ eks_cluster_name }}'
+    association_id: "a-a1b2c3d4e5f6g7h8i"
+  register: pod_identity_info_result
+  ignore_errors: true
+
+- name: check that eks_pod_identity_association failed
+  assert:
+    that:
+      - not pod_identity_info_result.changed
+      - pod_identity_info_result is failed
+
+- name: Get pod identity association info with conflicting parameters
+  community.aws.eks_pod_identity_association_info:
+    cluster_name: '{{ eks_cluster_name }}'
+    namespace: "{{ k8s_namespace }}"
+    service_account: "{{ k8s_service_account }}"    
+    association_id: "{{ pod_identity_result.association.association_id }}"
+  register: pod_identity_info_result
+  ignore_errors: true
+
+- name: Get pod identity association info with missing parameters
+  community.aws.eks_pod_identity_association_info:
+    cluster_name: '{{ eks_cluster_name }}'
+    namespace: "{{ k8s_namespace }}"
+  register: pod_identity_info_result
+  ignore_errors: true
 
 - name: Get pod identity association info
   community.aws.eks_pod_identity_association_info:
@@ -94,14 +147,12 @@
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
   register: pod_identity_result_i1
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association_info succeeds and returns same results
   assert:
     that:
-      - pod_identity_result_i1.changed
-      - pod_identity_result_i1.association_id == pod_identity_result.association_id
+      - not pod_identity_result_i1.changed
+      - pod_identity_result_i1.association.association_id == pod_identity_result.association.association_id
 
 ###
 # Update ignored
@@ -109,18 +160,13 @@
 - name: Test - attempt to update association with ignored parameter (tags) (check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '123456789012') }}"
+    role_arn: "{{ pod_identity_association_role.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'bar': 'foo'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association did nothing (check mode)
@@ -131,18 +177,13 @@
 - name: Test - attempt to update association with ignored parameter (tags)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '123456789012') }}"
+    role_arn: "{{ pod_identity_association_role.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'bar': 'foo'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association did nothing
   assert:
@@ -151,22 +192,16 @@
 
 ###
 # Update
-
-- name: Test - attempt to update association with parameter (taregt_role_arn) (check mode)
+- name: Test - attempt to update association with parameter (role_arn) (check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association is updated (check mode)
@@ -174,42 +209,32 @@
     that:
       - pod_identity_result.changed
 
-- name: Test - attempt to update association with parameter (taregt_role_arn)
+- name: Test - attempt to update association with parameter (role_arn)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association is updated
   assert:
     that:
       - pod_identity_result.changed
 
-- name: Test - attempt to update association with parameter (taregt_role_arn) (check mode)
+- name: Test - attempt to update association with parameter (role_arn) (idempotency)(check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association did nothing (check mode)
@@ -217,21 +242,16 @@
     that:
       - not pod_identity_result.changed
 
-- name: Test - attempt to update association with parameter (taregt_role_arn) (idempotency)
+- name: Test - attempt to update association with parameter (role_arn) (idempotency)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: present
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association did nothing
   assert:
@@ -244,18 +264,13 @@
 - name: Delete association (check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: absent
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association is deleted (check mode)
@@ -266,18 +281,13 @@
 - name: Delete association
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: absent
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association is deleted
   assert:
@@ -287,18 +297,13 @@
 - name: Delete association (idempotency)(check mode)
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: absent
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
   check_mode: True
 
 - name: check that eks_pod_identity_association is not changed (check mode)
@@ -309,18 +314,13 @@
 - name: Delete association
   community.aws.eks_pod_identity_association:
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: "{{ pod_identity_association_role.arn }}"
-    taregt_role_arn: "{{ pod_identity_association_role.arn | replace(account_id, '120987654321') }}"
+    role_arn: "{{ pod_identity_association_role_replacement.iam_role.arn }}"
     namespace: "{{ k8s_namespace }}"
     service_account: "{{ k8s_service_account }}"
     tags:
       'foo': 'bar'
     state: absent
   register: pod_identity_result
-  variables:
-    account_id: "{{ (pod_identity_association_role.arn | split(':'))[2] }}"
-  environment:
-    AWS_DEFAULT_REGION: 'us-east-1'
 
 - name: check that eks_pod_identity_association is not changed
   assert:
