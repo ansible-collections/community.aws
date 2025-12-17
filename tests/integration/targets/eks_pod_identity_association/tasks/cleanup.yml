@@ -74,11 +74,13 @@
     vpc_id: '{{ setup_vpc.vpc.id }}'
     rules: []
     state: absent
+  ignore_errors: true
 
 - name: Delete Keypair for Access to Nodegroup nodes
   amazon.aws.ec2_key:
     name: "ansible-test-eks_nodegroup"
     state: absent
+  ignore_errors: true
 
 - name: remove Route Tables
   amazon.aws.ec2_vpc_route_table:
