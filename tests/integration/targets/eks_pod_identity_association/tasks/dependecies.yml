@@ -1,153 +1,152 @@
-# Create a EKS Cluster to test Nodegroup
-# This space was a copy by aws_eks_cluster integration test
-# - name: ensure IAM instance role exists
-#   amazon.aws.iam_role:
-#     name: ansible-test-{{ tiny_prefix }}-eks_nodegroup-cluster
-#     assume_role_policy_document: '{{ lookup(''file'',''eks-trust-policy.json'') }}'
-#     state: present
-#     create_instance_profile: 'no'
-#     managed_policies:
-#       - AmazonEKSServicePolicy
-#       - AmazonEKSClusterPolicy
-#   register: iam_role
+# Create a EKS Cluster and NodeGroup to test pod identity association
+# This space was a copy by eks_nodegroup integration test
+- name: ensure IAM instance role exists
+  amazon.aws.iam_role:
+    name: ansible-test-{{ tiny_prefix }}-eks_nodegroup-cluster
+    assume_role_policy_document: '{{ lookup(''file'',''eks-trust-policy.json'') }}'
+    state: present
+    create_instance_profile: 'no'
+    managed_policies:
+      - AmazonEKSServicePolicy
+      - AmazonEKSClusterPolicy
+  register: iam_role
 
-# - name: create a VPC to work in
-#   amazon.aws.ec2_vpc_net:
-#     cidr_block: 10.0.0.0/16
-#     state: present
-#     name: '{{ resource_prefix }}_aws_eks'
-#     resource_tags:
-#       Name: '{{ resource_prefix }}_aws_eks'
-#   register: setup_vpc
+- name: create a VPC to work in
+  amazon.aws.ec2_vpc_net:
+    cidr_block: 10.0.0.0/16
+    state: present
+    name: '{{ resource_prefix }}_aws_eks'
+    resource_tags:
+      Name: '{{ resource_prefix }}_aws_eks'
+  register: setup_vpc
 
-# - name: create subnets
-#   amazon.aws.ec2_vpc_subnet:
-#     az: '{{ aws_region }}{{ item.zone }}'
-#     tags: '{ "Name": "{{ resource_prefix }}_aws_eks-subnet-{{ item.type }}-{{ item.zone }}" }'
-#     vpc_id: '{{ setup_vpc.vpc.id }}'
-#     cidr: '{{ item.cidr }}'
-#     map_public: 'yes'
-#     state: present
-#   register: setup_subnets
-#   with_items:
-#     - '{{ eks_subnets }}'
+- name: create subnets
+  amazon.aws.ec2_vpc_subnet:
+    az: '{{ aws_region }}{{ item.zone }}'
+    tags: '{ "Name": "{{ resource_prefix }}_aws_eks-subnet-{{ item.type }}-{{ item.zone }}" }'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    cidr: '{{ item.cidr }}'
+    map_public: 'yes'
+    state: present
+  register: setup_subnets
+  with_items:
+    - '{{ eks_subnets }}'
 
-# - name: create Internet Gateway
-#   amazon.aws.ec2_vpc_igw:
-#     vpc_id: '{{ setup_vpc.vpc.id }}'
-#     state: present
-#     tags:
-#       Name: '{{ resource_prefix }}_IGW'
-#   register: setup_igw
+- name: create Internet Gateway
+  amazon.aws.ec2_vpc_igw:
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    state: present
+    tags:
+      Name: '{{ resource_prefix }}_IGW'
+  register: setup_igw
 
-# - name: Set up public subnet route table
-#   community.aws.ec2_vpc_route_table:
-#     vpc_id: '{{ setup_vpc.vpc.id }}'
-#     tags:
-#       Name: "EKS-ng-{{ tiny_prefix }}"
-#     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
-#     routes:
-#       - dest: 0.0.0.0/0
-#         gateway_id: '{{ setup_igw.gateway_id }}'
-#   register: public_route_table
+- name: Set up public subnet route table
+  community.aws.ec2_vpc_route_table:
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    tags:
+      Name: "EKS-ng-{{ tiny_prefix }}"
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: '{{ setup_igw.gateway_id }}'
+  register: public_route_table
 
-# - name: create security groups to use for EKS
-#   amazon.aws.ec2_security_group:
-#     name: '{{ item.name }}'
-#     description: '{{ item.description }}'
-#     state: present
-#     rules: '{{ item.rules }}'
-#     rules_egress: '{{ item.rules_egress|default(omit) }}'
-#     vpc_id: '{{ setup_vpc.vpc.id }}'
-#   with_items: '{{ eks_security_groups }}'
-#   register: setup_security_groups
+- name: create security groups to use for EKS
+  amazon.aws.ec2_security_group:
+    name: '{{ item.name }}'
+    description: '{{ item.description }}'
+    state: present
+    rules: '{{ item.rules }}'
+    rules_egress: '{{ item.rules_egress|default(omit) }}'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  with_items: '{{ eks_security_groups }}'
+  register: setup_security_groups
 
-# - name: create EKS cluster
-#   community.aws.eks_cluster:
-#     name: '{{ eks_cluster_name }}'
-#     security_groups: '{{ eks_security_groups | map(attribute=''name'') }}'
-#     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
-#     role_arn: '{{ iam_role.iam_role.arn }}'
-#     version: 1.32
-#     wait: true
-#   register: eks_create
+- name: create EKS cluster
+  community.aws.eks_cluster:
+    name: '{{ eks_cluster_name }}'
+    security_groups: '{{ eks_security_groups | map(attribute=''name'') }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    role_arn: '{{ iam_role.iam_role.arn }}'
+    version: 1.32
+    wait: true
+  register: eks_create
 
-# - name: check that EKS cluster was created
-#   assert:
-#     that:
-#       - eks_create.name == eks_cluster_name
+- name: check that EKS cluster was created
+  assert:
+    that:
+      - eks_create.name == eks_cluster_name
 
-# # Dependecies to eks nodegroup
-# - name: create IAM instance role
-#   amazon.aws.iam_role:
-#     name: 'ansible-test-{{ tiny_prefix }}-eks_nodegroup-ng'
-#     assume_role_policy_document: '{{ lookup(''file'',''eks-nodegroup-trust-policy.json'') }}'
-#     state: present
-#     create_instance_profile: no
-#     managed_policies:
-#       - AmazonEKSWorkerNodePolicy
-#       - AmazonEC2ContainerRegistryReadOnly
-#       - AmazonEKS_CNI_Policy
-#   register: iam_role_eks_nodegroup
+# Dependecies to eks nodegroup
+- name: create IAM instance role
+  amazon.aws.iam_role:
+    name: 'ansible-test-{{ tiny_prefix }}-eks_nodegroup-ng'
+    assume_role_policy_document: '{{ lookup(''file'',''eks-nodegroup-trust-policy.json'') }}'
+    state: present
+    create_instance_profile: no
+    managed_policies:
+      - AmazonEKSWorkerNodePolicy
+      - AmazonEC2ContainerRegistryReadOnly
+      - AmazonEKS_CNI_Policy
+  register: iam_role_eks_nodegroup
 
-# - name: Pause a few seconds to ensure IAM role is available to next task
-#   pause:
-#     seconds: 10
+- name: Pause a few seconds to ensure IAM role is available to next task
+  pause:
+    seconds: 10
 
-# - name: Create securitygroup for node access
-#   amazon.aws.ec2_security_group:
-#     name: 'ansible-test-eks_nodegroup'
-#     description: "SSH access"
-#     vpc_id: '{{ setup_vpc.vpc.id }}'
-#     rules:
-#       - proto: tcp
-#         ports:
-#           - 22
-#         cidr_ip: 0.0.0.0/0
-#   register: securitygroup_eks_nodegroup
+- name: Create securitygroup for node access
+  amazon.aws.ec2_security_group:
+    name: 'ansible-test-eks_nodegroup'
+    description: "SSH access"
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    rules:
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 0.0.0.0/0
+  register: securitygroup_eks_nodegroup
 
-# - name: Create Keypair for Access to Nodegroup nodes
-#   amazon.aws.ec2_key:
-#     name: "ansible-test-eks_nodegroup"
-#   register: ec2_key_eks_nodegroup
+- name: Create Keypair for Access to Nodegroup nodes
+  amazon.aws.ec2_key:
+    name: "ansible-test-eks_nodegroup"
+  register: ec2_key_eks_nodegroup
 
-# - name: create nodegroup (check mode)
-#   community.aws.eks_nodegroup:
-#     name: '{{ eks_nodegroup_name_a }}'
-#     state: present
-#     cluster_name: '{{ eks_cluster_name }}'
-#     node_role: '{{ iam_role_eks_nodegroup.iam_role.arn }}'
-#     subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
-#     scaling_config:
-#       min_size: 1
-#       max_size: 3
-#       desired_size: 2
-#     disk_size: 30
-#     instance_types: ['t3.small']
-#     ami_type: '{{ eks_nodegroup_ami_type }}'
-#     update_config:
-#       max_unavailable_percentage: 50
-#     labels:
-#       'env': 'test'
-#     taints:
-#       - key: 'env'
-#         value: 'test'
-#         effect: 'PREFER_NO_SCHEDULE'
-#     capacity_type: 'SPOT'
-#     tags:
-#       'foo': 'bar'
-#     remote_access:
-#       ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
-#       source_sg:
-#         - "{{ securitygroup_eks_nodegroup.group_id }}"
-#     wait: False
-#   register: eks_nodegroup_result
-#   check_mode: True
+- name: create nodegroup
+  community.aws.eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.iam_role.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 3
+      desired_size: 2
+    disk_size: 30
+    instance_types: ['t3.small']
+    ami_type: '{{ eks_nodegroup_ami_type }}'
+    update_config:
+      max_unavailable_percentage: 50
+    labels:
+      'env': 'test'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
+    wait: False
+  register: eks_nodegroup_result
 
-# - name: check that eks_nodegroup is created (check mode)
-#   assert:
-#     that:
-#       - eks_nodegroup_result.changed
+- name: check that eks_nodegroup is created
+  assert:
+    that:
+      - eks_nodegroup_result.changed
 
 - name: create IAM role for Pod Identity
   amazon.aws.iam_role:
