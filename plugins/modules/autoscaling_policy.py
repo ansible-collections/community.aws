@@ -94,12 +94,12 @@ options:
     elements: dict
     suboptions:
       lower_bound:
-        type: int
+        type: float
         description:
           - The lower bound for the difference between the alarm threshold and
             the CloudWatch metric.
       upper_bound:
-        type: int
+        type: float
         description:
           - The upper bound for the difference between the alarm threshold and
             the CloudWatch metric.
@@ -549,7 +549,7 @@ def delete_scaling_policy(connection, module):
 
 def main():
     step_adjustment_spec = dict(
-        lower_bound=dict(type="int"), upper_bound=dict(type="int"), scaling_adjustment=dict(type="int", required=True)
+        lower_bound=dict(type="float"), upper_bound=dict(type="float"), scaling_adjustment=dict(type="int", required=True)
     )
 
     predefined_metric_spec = dict(

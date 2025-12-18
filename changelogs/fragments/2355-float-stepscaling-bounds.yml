@@ -1,0 +1,2 @@
+bugfixes:
+  - autoscaling_policy - allow float type for step_adjustments lower_bound and upper_bound parameters (https://github.com/ansible-collections/community.aws/issues/2355)
