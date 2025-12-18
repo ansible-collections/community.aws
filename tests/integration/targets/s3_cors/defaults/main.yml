@@ -1,0 +1,1 @@
+test_bucket_name: "test-cors-{{ 100000 | random | to_uuid }}"
