@@ -143,6 +143,8 @@ action_groups:
     - lightsail
     - lightsail_snapshot
     - lightsail_static_ip
+    - medialive_network_info
+    - medialive_network
     - mq_broker
     - mq_broker_config
     - mq_broker_info
