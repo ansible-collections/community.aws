@@ -1,2 +1,2 @@
 minor_changes:
-  - elb_network_lb - correct listeners.DefaultActions.Type to required field
+  - elb_network_lb - Correct `listeners.DefaultActions.Type` to required field (https://github.com/ansible-collections/community.aws/pull/2250).
