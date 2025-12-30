@@ -30,7 +30,7 @@
         that:
           - create_function is changed
           - create_function.function.name == "{{ function_name }}-test1"
-          - create_function.function.status == "UNASSOCIATED"
+          - create_function.function.status == "UNPUBLISHED"
           - create_function.function.stage == "DEVELOPMENT"
           - create_function.function.runtime == "cloudfront-js-2.0"
           - create_function.function.comment == "Test function for integration tests"

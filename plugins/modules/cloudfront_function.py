@@ -127,7 +127,7 @@ function:
       type: str
       returned: always
     status:
-      description: Status of the function (DEVELOPMENT or LIVE).
+      description: Status of the function (UNPUBLISHED or PUBLISHED).
       type: str
       returned: always
     stage:
@@ -355,7 +355,7 @@ def main():
             if state == "published":
                 etag = current["ETag"]
                 publish_function(client, module, name, etag)
-                current = get_function(client, name)
+                current = get_function(client, name, stage="LIVE")
 
         result = {
             "changed": changed,
@@ -410,10 +410,13 @@ def main():
             if not already_published:
                 publish_changed, publish_response = publish_function(client, module, name, etag)
                 changed = changed or publish_changed
-                current = get_function(client, name)
+                current = get_function(client, name, stage="LIVE")
                 msg = msg + " and published" if msg else "Function published"
-            elif not msg:
-                msg = "Function already published"
+            else:
+                # Already published, get LIVE stage info for output
+                current = get_function(client, name, stage="LIVE")
+                if not msg:
+                    msg = "Function already published"
         else:
             # In check mode, assume we would publish if not already live
             if not changed:
