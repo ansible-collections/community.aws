@@ -51,7 +51,6 @@
         state: present
         delivery_options:
           tls_policy: true
-          sending_pool_name: "{{ resource_prefix }}-pool"
       register: result
 
     - name: Assert configuration set with delivery options was created
@@ -145,7 +144,6 @@
         state: present
         delivery_options:
           tls_policy: false
-          sending_pool_name: "{{ resource_prefix }}-pool"
         tracking_options:
           custom_redirect_domain: "track.example.com"
           https_policy: REQUIRE_OPEN_ONLY

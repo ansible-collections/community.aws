@@ -608,18 +608,19 @@ def update_event_destination(client, module, config_set_name, destination):
         }
 
         # Add CloudWatch destination if specified
-        if "cloudwatch_destination" in destination:
+        if "cloudwatch_destination" in destination and destination["cloudwatch_destination"] is not None:
             cw_dest = destination["cloudwatch_destination"]
-            event_destination_config["CloudWatchDestination"] = {
-                "DimensionConfigurations": [
-                    {
-                        "DimensionName": dim["dimension_name"],
-                        "DimensionValueSource": dim["dimension_value_source"],
-                        "DefaultDimensionValue": dim["default_dimension_value"],
-                    }
-                    for dim in cw_dest["dimension_configurations"]
-                ]
-            }
+            if cw_dest.get("dimension_configurations"):
+                event_destination_config["CloudWatchDestination"] = {
+                    "DimensionConfigurations": [
+                        {
+                            "DimensionName": dim["dimension_name"],
+                            "DimensionValueSource": dim["dimension_value_source"],
+                            "DefaultDimensionValue": dim["default_dimension_value"],
+                        }
+                        for dim in cw_dest["dimension_configurations"]
+                    ]
+                }
 
         # Add Kinesis Firehose destination if specified
         if "kinesis_firehose_destination" in destination and destination["kinesis_firehose_destination"] is not None:
@@ -857,7 +858,7 @@ def main():
     suppression_options = module.params.get("suppression_options")
     tracking_options = module.params.get("tracking_options")
     vdm_options = module.params.get("vdm_options")
-    desired_destinations = module.params.get("event_destinations", [])
+    desired_destinations = module.params.get("event_destinations") or []
 
     # Use module.client() to properly handle AWS credentials and config
     try:
