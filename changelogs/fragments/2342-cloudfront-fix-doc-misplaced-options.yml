@@ -1,0 +1,2 @@
+minor_changes:
+  - cloudfront_distribution - move misplaced options out of ``forwarded_values`` ``suboptions``. (https://github.com/ansible-collections/community.aws/pull/2342).
