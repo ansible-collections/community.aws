@@ -746,15 +746,6 @@ active_trusted_signers:
       type: list
       sample:
       - key_pair_id
-    items:
-      description: 
-        - Number of trusted signers.
-        - This return value has been deprecated and will be removed in a release after
-          2026-12-01. Use RV(active_trusted_signers.key_pair_ids) instead.
-      returned: when there are trusted signers
-      type: list
-      sample:
-      - key_pair_id
 aliases:
   description: Aliases that refer to the distribution.
   returned: always
