@@ -740,8 +740,17 @@ active_trusted_signers:
       returned: always
       type: int
       sample: 1
-    items:
+    key_pair_ids:
       description: Number of trusted signers.
+      returned: when there are trusted signers
+      type: list
+      sample:
+      - key_pair_id
+    items:
+      description: 
+        - Number of trusted signers.
+        - This return value has been deprecated and will be removed in a release after
+          2026-12-01. Use RV(active_trusted_signers.key_pair_ids) instead.
       returned: when there are trusted signers
       type: list
       sample:
@@ -751,8 +760,17 @@ aliases:
   returned: always
   type: complex
   contains:
-    items:
+    alias_list:
       description: List of aliases.
+      returned: always
+      type: list
+      sample:
+      - test.example.com
+    items:
+      description: 
+        - List of aliases.
+        - This return value has been deprecated and will be removed in a release after
+          2026-12-01. Use RV(aliases.alias_list) instead.
       returned: always
       type: list
       sample:
@@ -772,8 +790,187 @@ cache_behaviors:
   returned: always
   type: complex
   contains:
-    items:
+    behaviors:
       description: List of cache behaviors.
+      returned: always
+      type: complex
+      contains:
+        allowed_methods:
+          description: Methods allowed by the cache behavior.
+          returned: always
+          type: complex
+          contains:
+            cached_methods:
+              description: Methods cached by the cache behavior.
+              returned: always
+              type: complex
+              contains:
+                methods_list:
+                  description: List of cached methods.
+                  returned: always
+                  type: list
+                  sample:
+                  - HEAD
+                  - GET
+                quantity:
+                  description: Count of cached methods.
+                  returned: always
+                  type: int
+                  sample: 2
+            methods_list:
+              description: List of methods allowed by the cache behavior.
+              returned: always
+              type: list
+              sample:
+              - HEAD
+              - GET
+            quantity:
+              description: Count of methods allowed by the cache behavior.
+              returned: always
+              type: int
+              sample: 2
+        compress:
+          description: Whether compression is turned on for the cache behavior.
+          returned: always
+          type: bool
+          sample: false
+        default_ttl:
+          description: Default Time to Live of the cache behavior.
+          returned: always
+          type: int
+          sample: 86400
+        forwarded_values:
+          description: Values forwarded to the origin for this cache behavior.
+          returned: always
+          type: complex
+          contains:
+            cookies:
+              description: Cookies to forward to the origin.
+              returned: always
+              type: complex
+              contains:
+                forward:
+                  description: Which cookies to forward to the origin for this cache behavior.
+                  returned: always
+                  type: str
+                  sample: none
+                whitelisted_names:
+                  description: The names of the cookies to forward to the origin for this cache behavior.
+                  returned: when I(forward=whitelist)
+                  type: complex
+                  contains:
+                    quantity:
+                      description: Count of cookies to forward.
+                      returned: always
+                      type: int
+                      sample: 1
+                    items:
+                      description: List of cookies to forward.
+                      returned: when list is not empty
+                      type: list
+                      sample: my_cookie
+            headers:
+              description: Which headers are used to vary on cache retrievals.
+              returned: always
+              type: complex
+              contains:
+                quantity:
+                  description: Count of headers to vary on.
+                  returned: always
+                  type: int
+                  sample: 1
+                items:
+                  description: List of headers to vary on.
+                  returned: when list is not empty
+                  type: list
+                  sample:
+                  - Host
+            query_string:
+              description: Whether the query string is used in cache lookups.
+              returned: always
+              type: bool
+              sample: false
+            query_string_cache_keys:
+              description: Which query string keys to use in cache lookups.
+              returned: always
+              type: complex
+              contains:
+                quantity:
+                  description: Count of query string cache keys to use in cache lookups.
+                  returned: always
+                  type: int
+                  sample: 1
+                cache_keys:
+                  description: List of query string cache keys to use in cache lookups.
+                  returned: when list is not empty
+                  type: list
+                  sample:
+        lambda_function_associations:
+          description: Lambda function associations for a cache behavior.
+          returned: always
+          type: complex
+          contains:
+            quantity:
+              description: Count of lambda function associations.
+              returned: always
+              type: int
+              sample: 1
+            associations:
+              description: List of lambda function associations.
+              returned: when list is not empty
+              type: list
+              sample:
+              - lambda_function_arn: arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function
+                event_type: viewer-response
+        max_ttl:
+          description: Maximum Time to Live.
+          returned: always
+          type: int
+          sample: 31536000
+        min_ttl:
+          description: Minimum Time to Live.
+          returned: always
+          type: int
+          sample: 0
+        path_pattern:
+          description: Path pattern that determines this cache behavior.
+          returned: always
+          type: str
+          sample: /path/to/files/*
+        smooth_streaming:
+          description: Whether smooth streaming is enabled.
+          returned: always
+          type: bool
+          sample: false
+        target_origin_id:
+          description: ID of origin reference by this cache behavior.
+          returned: always
+          type: str
+          sample: origin_abcd
+        trusted_signers:
+          description: Trusted signers.
+          returned: always
+          type: complex
+          contains:
+            enabled:
+              description: Whether trusted signers are enabled for this cache behavior.
+              returned: always
+              type: bool
+              sample: false
+            quantity:
+              description: Count of trusted signers.
+              returned: always
+              type: int
+              sample: 1
+        viewer_protocol_policy:
+          description: Policy of how to handle http/https.
+          returned: always
+          type: str
+          sample: redirect-to-https
+    items:
+      description: 
+        - List of cache behaviors.
+        - This return value has been deprecated and will be removed in a release after 2026-12-01. Use RV(cache_behaviors.behaviors) instead.
       returned: always
       type: complex
       contains:
@@ -846,7 +1043,7 @@ cache_behaviors:
                       returned: always
                       type: int
                       sample: 1
-                    items:
+                    cookie_names:
                       description: List of cookies to forward.
                       returned: when list is not empty
                       type: list
@@ -861,7 +1058,7 @@ cache_behaviors:
                   returned: always
                   type: int
                   sample: 1
-                items:
+                headers_list:
                   description: List of headers to vary on.
                   returned: when list is not empty
                   type: list
@@ -2266,7 +2463,7 @@ class CloudFrontValidationManager(object):
             if aliases is not None:
                 if not purge_aliases:
                     aliases.extend(
-                        [alias for alias in config.get("aliases", {}).get("items", []) if alias not in aliases]
+                        [alias for alias in config.get("aliases", {}).get("alias_list", []) if alias not in aliases]
                     )
                 config["aliases"] = ansible_list_to_cloudfront_list(aliases)
             if logging is not None:
@@ -2364,7 +2561,7 @@ class CloudFrontValidationManager(object):
         distributions = self.__cloudfront_facts_mgr.list_distributions(keyed=False)
         if distributions:
             for distribution in distributions:
-                distribution_aliases = distribution.get("Aliases", {}).get("Items", [])
+                distribution_aliases = distribution.get("Aliases", {}).get("alias_list", [])
                 if set(aliases) & set(distribution_aliases):
                     return distribution["Id"]
         return None
@@ -2433,6 +2630,22 @@ def main():
             ["default_origin_domain_name", "distribution_id"],
             ["default_origin_domain_name", "alias"],
         ],
+    )
+
+    module.deprecate(
+        "The 'items' key in active_trusted_signers return value is deprecated. Use 'key_pair_ids' instead.",
+        date="2026-12-01",
+        collection_name="community.aws",
+    )
+    module.deprecate(
+        "The 'items' key in aliases return value is deprecated. Use 'alias_list' instead.",
+        date="2026-12-01",
+        collection_name="community.aws",
+    )
+    module.deprecate(
+        "The 'items' key in cache_behaviors return value is deprecated. Use 'behaviors' instead.",
+        date="2026-12-01",
+        collection_name="community.aws",
     )
 
     client = module.client("cloudfront", retry_decorator=AWSRetry.jittered_backoff())
@@ -2511,7 +2724,7 @@ def main():
             purge_origins,
         )
         config["cache_behaviors"] = validation_mgr.validate_cache_behaviors(
-            config.get("cache_behaviors", {}).get("items", []),
+            config.get("cache_behaviors", {}).get("behaviors", []),
             cache_behaviors,
             config["origins"],
             purge_cache_behaviors,

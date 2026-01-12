@@ -1,0 +1,22 @@
+---
+deprecated_features:
+  - cloudfront_distribution - the ``items`` key in the ``active_trusted_signers`` return value has been deprecated  in favor of ``key_pair_ids`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``aliases`` return value has been deprecated  in favor of ``alias_list`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors`` return value has been deprecated  in favor of ``behaviors`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors.allowed_methods`` return value has been deprecated  in favor of ``methods_list`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors.allowed_methods.cached_methods`` return value has been deprecated  in favor of ``methods_list`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors.lambda_function_associations`` return value has been deprecated  in favor of ``associations`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors.forwarded_values.query_string_cache_keys`` return value has been deprecated  in favor of ``cache_keys`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors.forwarded_values.headers`` return value has been deprecated  in favor of ``headers_list`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+  - cloudfront_distribution - the ``items`` key in the ``cache_behaviors.forwarded_values.cookies.whitelisted_names`` return value has been deprecated  in favor of ``cookie_names`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+
+minor_changes:
+  - cloudfront_distribution - added ``key_pair_ids`` key to ``active_trusted_signers`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``alias_list`` key to ``aliases`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``behaviors`` key to ``cache_behaviors`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``methods_list`` key to ``cache_behaviors.allowed_methods`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``methods_list`` key to ``cache_behaviors.allowed_methods.cached_methods`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``associations`` key to ``cache_behaviors.lambda_function_associations`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``cache_keys`` key to ``cache_behaviors.forwarded_values.query_string_cache_keys`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``headers_list`` key to ``cache_behaviors.forwarded_values.headers`` return value that can be accessed using Jinja2 dot notation (<pr>)
+  - cloudfront_distribution - added ``cookie_names`` key to ``cache_behaviors.forwarded_values.cookies.whitelisted_names`` return value that can be accessed using Jinja2 dot notation (<pr>)
