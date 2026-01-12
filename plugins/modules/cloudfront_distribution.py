@@ -740,8 +740,16 @@ active_trusted_signers:
       returned: always
       type: int
       sample: 1
+    key_pair_ids:
+      description: List of trusted signers.
+      returned: when there are trusted signers
+      type: list
+      sample:
+      - key_pair_id
     items:
-      description: Number of trusted signers.
+      description:
+        - List of trusted signers.
+        - This return value has been deprecated and will be removed in a release after 2026-12-01. Use RV(active_trusted_signers.key_pair_ids) instead.
       returned: when there are trusted signers
       type: list
       sample:
@@ -2574,6 +2582,16 @@ def main():
     if "distribution_config" in result:
         result.update(result["distribution_config"])
         del result["distribution_config"]
+
+    # Handle deprecation of the items key for Jinja2 compatibility
+    if "items" in result.get("active_trusted_signers", {}):
+        module.deprecate(
+            "The 'items' key in the 'active_trusted_signers' return value has been deprecated. "
+            "Use 'key_pair_ids' instead.",
+            date="2026-12-01",
+            collection_name="community.aws",
+        )
+        result["active_trusted_signers"]["key_pair_ids"] = result["active_trusted_signers"]["items"]
 
     module.exit_json(changed=changed, **result)
 

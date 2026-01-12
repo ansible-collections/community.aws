@@ -1,0 +1,1 @@
+plugins/modules/cloudfront_distribution.py validate-modules:bad-return-value-key # deprecated `items` keys kept for backward compatibility until 2026-12-01

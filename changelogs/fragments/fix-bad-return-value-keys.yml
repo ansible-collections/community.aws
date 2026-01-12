@@ -1,0 +1,6 @@
+---
+deprecated_features:
+  - cloudfront_distribution - the ``items`` key in the ``active_trusted_signers`` return value has been deprecated  in favor of ``key_pair_ids`` for Jinja2 compatibility. The ``items`` key will be removed in a release after 2026-12-01 (<pr>)
+
+minor_changes:
+  - cloudfront_distribution - added ``key_pair_ids`` key to ``active_trusted_signers`` return value that can be accessed using Jinja2 dot notation (<pr>)
