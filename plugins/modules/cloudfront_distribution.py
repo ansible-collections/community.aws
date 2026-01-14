@@ -742,7 +742,7 @@ active_trusted_signers:
       sample: 1
     items:
       description:
-        - Number of trusted signers.
+        - A list of trusted signers.
         - This return value has been deprecated and will be removed in a release after 2026-12-16.
           Use RV(active_trusted_signers.elements) instead.
       returned: when there are trusted signers
@@ -750,12 +750,43 @@ active_trusted_signers:
       sample:
       - key_pair_id
     elements:
-      description: Number of trusted signers.
+      description: A list of trusted signers.
       returned: when there are trusted signers
       type: list
       version_added: 10.1.0
       sample:
       - key_pair_id
+active_trusted_key_groups:
+  description:
+    - This field contains a list of key groups and the public keys in each key group that CloudFront
+      can use to verify the signatures of signed URLs or signed cookies.
+  returned: always
+  type: complex
+  contains:
+    enabled:
+      description:
+        - This field is true if any of the key groups have public keys that CloudFront can use to verify
+          the signatures of signed URLs and signed cookies. If not, this field is false.
+      returned: always
+      type: bool
+      sample: false
+    quantity:
+      description: Number of key groups.
+      returned: always
+      type: int
+      sample: 1
+    items:
+      description:
+        - A list of key groups.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(active_trusted_key_groups.elements) instead.
+      returned: when there are trusted signers
+      type: list
+    elements:
+      description: A list of key groups.
+      returned: when there are trusted signers
+      type: list
+      version_added: 10.1.0
 aliases:
   description: Aliases that refer to the distribution.
   returned: always
@@ -1885,6 +1916,7 @@ web_acl_id:
 import datetime
 import re
 from collections import OrderedDict
+import copy
 
 try:
     import botocore
@@ -2825,28 +2857,21 @@ def duplicate_keys_for_deprecation(result):
     """
     Rename all dict 'items' keys to 'elements'
     """
-    keys_targets = [
+    for t in (
         "active_trusted_signers.elements",
-        "aliases.elements",
-        "cache_behaviors.elements",
-        "cache_behaviors.elements.allowed_methods.elements",
-        "cache_behaviors.elements.forwarded_values.cookies.whitelisted_names.elements",
-        "cache_behaviors.elements.forwarded_values.headers.elements",
-        "cache_behaviors.elements.forwarded_values.query_string_cache_keys.elements",
-        "cache_behaviors.elements.lambda_function_associations.elements",
-        "custom_error_responses.elements",
-        "default_cache_behavior.allowed_methods.cached_methods.elements",
-        "default_cache_behavior.allowed_methods.elements",
-        "default_cache_behavior.forwarded_values.cookies.whitelisted_names.elements",
-        "default_cache_behavior.forwarded_values.headers.elements",
-        "default_cache_behavior.forwarded_values.query_string_cache_keys.elements",
-        "default_cache_behavior.lambda_function_associations.elements",
-        "origins.elements",
-        "origins.elements.custom_origin_config.origin_ssl_protocols.elements",
-        "restrictions.geo_restriction.elements",
-    ]
-
-    for t in keys_targets:
+        "active_trusted_key_groups.elements",
+        "distribution_config.aliases.elements",
+        "distribution_config.cache_behaviors.elements",
+        "distribution_config.custom_error_responses.elements",
+        "distribution_config.default_cache_behavior.allowed_methods.cached_methods.elements",
+        "distribution_config.default_cache_behavior.allowed_methods.elements",
+        "distribution_config.default_cache_behavior.forwarded_values.cookies.whitelisted_names.elements",
+        "distribution_config.default_cache_behavior.forwarded_values.headers.elements",
+        "distribution_config.default_cache_behavior.forwarded_values.query_string_cache_keys.elements",
+        "distribution_config.default_cache_behavior.lambda_function_associations.elements",
+        "distribution_config.origins.elements",
+        "distribution_config.restrictions.geo_restriction.elements",
+    ):
         keys = t.split(".")
         copy_result = result
         while True:
@@ -2858,6 +2883,48 @@ def duplicate_keys_for_deprecation(result):
             except KeyError:
                 # The result does contain the key, skipping it
                 break
+
+    # Origins
+    for i in result.get("distribution_config", {}).get("origins", {}).get("elements", []):
+        try:
+            items = i["custom_origin_config"]["origin_ssl_protocols"]["items"]
+            i["elements"] = items
+            del i["custom_origin_config"]["origin_ssl_protocols"]["items"]
+        except KeyError:
+            pass
+
+    # Cache behaviors
+    for i in result.get("distribution_config", {}).get("cache_behaviors", {}).get("elements", []):
+        try:
+            i["allowed_methods"]["elements"] = i["allowed_methods"]["items"]
+            del i["allowed_methods"]["items"]
+        except KeyError:
+            pass
+
+        try:
+            i["lambda_function_associations"]["elements"] = i["lambda_function_associations"]["items"]
+            del i["lambda_function_associations"]["items"]
+        except KeyError:
+            pass
+        try:
+            i["forwarded_values"]["cookies"]["whitelisted_names"]["elements"] = i["forwarded_values"]["cookies"][
+                "whitelisted_names"
+            ]["items"]
+            del i["forwarded_values"]["cookies"]["whitelisted_names"]["items"]
+        except KeyError:
+            pass
+        try:
+            i["forwarded_values"]["headers"]["elements"] = i["forwarded_values"]["headers"]["items"]
+            del i["forwarded_values"]["headers"]["items"]
+        except KeyError:
+            pass
+        try:
+            i["forwarded_values"]["query_string_cache_keys"]["elements"] = i["forwarded_values"][
+                "query_string_cache_keys"
+            ]["items"]
+            del i["forwarded_values"]["query_string_cache_keys"]["items"]
+        except KeyError:
+            pass
 
 
 def main():
@@ -3023,6 +3090,7 @@ def main():
         )
         # e_tag = distribution['ETag']
         result = delete_distribution(client, module, distribution)
+        result.pop("ResponseMetadata", None)
 
     if update:
         changed = config != distribution["Distribution"]["DistributionConfig"]

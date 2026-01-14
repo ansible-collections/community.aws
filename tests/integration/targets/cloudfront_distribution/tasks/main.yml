@@ -30,6 +30,9 @@
       that:
         - cf_distribution.changed
         - cf_distribution.enabled
+        # ensure dict keys for deprecation
+        - '"items" in cf_distribution.origins'
+        - '"elements" in cf_distribution.origins'
 
   - name: ensure that default value of 'ipv6_enabled' is 'false'
     assert:
@@ -455,7 +458,7 @@
     assert:
       that:
         # - not reverse_cache_behaviors.changed
-        - reverse_cache_behaviors.cache_behaviors|length == 2
+        - reverse_cache_behaviors.cache_behaviors.elements|length == 2
 
   - name: reverse some cache behaviors properly
     cloudfront_distribution:
@@ -471,7 +474,7 @@
     assert:
       that:
         - reverse_cache_behaviors_with_purge.changed
-        - reverse_cache_behaviors_with_purge.cache_behaviors|length == 2
+        - reverse_cache_behaviors_with_purge.cache_behaviors.elements|length == 2
 
   - name: update origin that changes target id (failure expected)
     cloudfront_distribution:
