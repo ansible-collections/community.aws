@@ -1916,7 +1916,6 @@ web_acl_id:
 import datetime
 import re
 from collections import OrderedDict
-import copy
 
 try:
     import botocore
