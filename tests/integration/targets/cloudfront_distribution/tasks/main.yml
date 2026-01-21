@@ -30,6 +30,9 @@
       that:
         - cf_distribution.changed
         - cf_distribution.enabled
+        # ensure dict keys for deprecation
+        - '"items" in cf_distribution.origins'
+        - '"elements" in cf_distribution.origins'
 
   - name: ensure that default value of 'ipv6_enabled' is 'false'
     assert:
@@ -167,8 +170,8 @@
     assert:
       that:
         - update_origin_origin_shield.changed
-        - update_origin_origin_shield.origins['items'][0].origin_shield.enabled
-        - update_origin_origin_shield.origins['items'][0].origin_shield.origin_shield_region == aws_region
+        - update_origin_origin_shield.origins['elements'][0].origin_shield.enabled
+        - update_origin_origin_shield.origins['elements'][0].origin_shield.origin_shield_region == aws_region
 
   # TODO: fix module idempotency issue
   # - name: enable origin Origin Shield again to test idempotency
@@ -188,8 +191,8 @@
   #   assert:
   #     that:
   #       - not update_origin_origin_shield_idempotency.changed
-  #       - update_origin_origin_shield_idempotency.origins['items'][0].origin_shield.enabled
-  #       - update_origin_origin_shield_idempotency.origins['items'][0].origin_shield.origin_shield_region == '{{ aws_region }}'
+  #       - update_origin_origin_shield_idempotency.origins['elements'][0].origin_shield.enabled
+  #       - update_origin_origin_shield_idempotency.origins['elements'][0].origin_shield.origin_shield_region == '{{ aws_region }}'
 
   - name: disable origin Origin Shield
     cloudfront_distribution:
@@ -207,7 +210,7 @@
     assert:
       that:
         - update_origin_origin_shield_disable.changed
-        - not update_origin_origin_shield_disable.origins['items'][0].origin_shield.enabled
+        - not update_origin_origin_shield_disable.origins['elements'][0].origin_shield.enabled
 
   - name: update restrictions
     cloudfront_distribution:
@@ -455,7 +458,7 @@
     assert:
       that:
         # - not reverse_cache_behaviors.changed
-        - reverse_cache_behaviors.cache_behaviors|length == 2
+        - reverse_cache_behaviors.cache_behaviors.elements|length == 2
 
   - name: reverse some cache behaviors properly
     cloudfront_distribution:
@@ -471,7 +474,7 @@
     assert:
       that:
         - reverse_cache_behaviors_with_purge.changed
-        - reverse_cache_behaviors_with_purge.cache_behaviors|length == 2
+        - reverse_cache_behaviors_with_purge.cache_behaviors.elements|length == 2
 
   - name: update origin that changes target id (failure expected)
     cloudfront_distribution:
@@ -526,7 +529,7 @@
       that:
         - item.s3_origin_config.origin_access_identity.startswith('origin-access-identity/cloudfront/')
     when: "'s3_origin_config' in item"
-    loop: "{{ update_origin_to_s3.origins['items'] }}"
+    loop: "{{ update_origin_to_s3.origins['elements'] }}"
 
   - name: update origin to remove s3 origin access identity
     cloudfront_distribution:
@@ -543,7 +546,7 @@
       that:
         - not item.s3_origin_config.origin_access_identity
     when: "'s3_origin_config' in item"
-    loop: "{{ update_origin_to_s3_without_origin_access.origins['items'] }}"
+    loop: "{{ update_origin_to_s3_without_origin_access.origins['elements'] }}"
 
   - name: delete the s3 bucket
     s3_bucket:
@@ -630,7 +633,7 @@
       that:
         - result.changed
         - result.origins['quantity'] > 0
-        - result.origins['items'] | selectattr('s3_origin_config', 'defined') | map(attribute='s3_origin_config') | selectattr('origin_access_identity', 'eq', origin_access_identity) | list | length == 1
+        - result.origins['elements'] | selectattr('s3_origin_config', 'defined') | map(attribute='s3_origin_config') | selectattr('origin_access_identity', 'eq', origin_access_identity) | list | length == 1
 
   - name: update distribution to use cache_policy_id and origin_request_policy_id
     cloudfront_distribution:
