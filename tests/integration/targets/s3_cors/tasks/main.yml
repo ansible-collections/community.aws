@@ -1,0 +1,120 @@
+    - name: Create test bucket
+      amazon.aws.s3_bucket:
+        name: "{{ test_bucket_name }}"
+        state: present
+      when: not ansible_check_mode
+
+    # Test 1: Initial CORS configuration (should change)
+    - name: Set initial CORS rules
+      community.aws.s3_cors:
+        name: "{{ test_bucket_name }}"
+        rules:
+          - allowed_origins:
+              - "http://www.example.com/"
+            allowed_methods:
+              - GET
+              - POST
+            allowed_headers:
+              - Authorization
+            expose_headers:
+              - x-amz-server-side-encryption
+              - x-amz-request-id
+            max_age_seconds: 30000
+        state: present
+      register: initial_result
+
+    - name: Verify initial setup changed
+      assert:
+        that:
+          - initial_result.changed == true
+          - "'rules' in initial_result"
+
+    # Test 2: Idempotency - reapply same rules (should NOT change)
+    - name: Reapply same CORS rules
+      community.aws.s3_cors:
+        name: "{{ test_bucket_name }}"
+        rules:
+          - allowed_origins:
+              - "http://www.example.com/"
+            allowed_methods:
+              - GET
+              - POST
+            allowed_headers:
+              - Authorization
+            expose_headers:
+              - x-amz-server-side-encryption
+              - x-amz-request-id
+            max_age_seconds: 30000
+        state: present
+      register: idempotent_result
+
+    - name: Verify idempotency (no change)
+      assert:
+        that:
+          - idempotent_result.changed == false
+
+    # Test 3: Update to different rules (should change)
+    - name: Update to different CORS rules
+      community.aws.s3_cors:
+        name: "{{ test_bucket_name }}"
+        rules:
+          - allowed_origins:
+              - "*"
+            allowed_methods:
+              - GET
+            allowed_headers:
+              - "*"
+            max_age_seconds: 3600
+        state: present
+      register: update_result
+
+    - name: Verify update changed
+      assert:
+        that:
+          - update_result.changed == true
+
+    # Test 4: Remove CORS configuration
+    - name: Remove CORS rules
+      community.aws.s3_cors:
+        name: "{{ test_bucket_name }}"
+        state: absent
+      register: remove_result
+
+    - name: Verify removal changed
+      assert:
+        that:
+          - remove_result.changed == true
+
+    # Test 5: Test with empty rules list (should remove existing CORS)
+    - name: Set CORS rules again (to have something to remove)
+      community.aws.s3_cors:
+        name: "{{ test_bucket_name }}"
+        rules:
+          - allowed_origins:
+              - "https://test.example.com"
+            allowed_methods:
+              - GET
+        state: present
+      register: prep_result
+
+    - name: Apply empty rules list (should remove CORS)
+      community.aws.s3_cors:
+        name: "{{ test_bucket_name }}"
+        rules: []
+        state: present
+      register: empty_rules_result
+
+    - name: Verify empty rules removed CORS
+      assert:
+        that:
+          - empty_rules_result.changed == true
+
+    # Cleanup: Delete test bucket (skip in check mode)
+    - name: Delete test bucket
+      amazon.aws.s3_bucket:
+        name: "{{ test_bucket_name }}"
+        state: absent
+        force: true
+      when:
+        - not ansible_check_mode
+        - not preserve_bucket | default(false)

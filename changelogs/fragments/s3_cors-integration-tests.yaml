@@ -1,0 +1,2 @@
+minor_changes:
+  - Added integration tests for the `community.aws.s3_cors` module (https://github.com/ansible-collections/community.aws/issues/988).
