@@ -1,0 +1,3 @@
+minor_changes:
+  - elasticache - add replication group support (including Valkey engines) for create/modify/delete workflows.
+  - elasticache_parameter_group - add Valkey and newer cache parameter group families to the documented choices.

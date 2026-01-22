@@ -30,7 +30,8 @@ options:
   engine:
     description:
       - Name of the cache engine to be used.
-      - Supported values are C(redis) and C(memcached).
+      - Supported values are C(redis) and C(memcached) when managing cache clusters.
+      - Supported values are C(redis) and C(valkey) when I(replication_group=true).
     default: memcached
     type: str
   cache_engine_version:
@@ -49,6 +50,56 @@ options:
       - Required when I(state=present).
     type: int
     default: 1
+  replication_group:
+    description:
+      - Whether to manage a replication group instead of a cache cluster.
+    type: bool
+    default: false
+  replication_group_description:
+    description:
+      - Description for the replication group.
+      - Required when I(replication_group=true) and I(state=present).
+    type: str
+  num_cache_clusters:
+    description:
+      - The number of cache clusters in the replication group.
+      - Only used when I(replication_group=true).
+    type: int
+  replicas_per_node_group:
+    description:
+      - The number of replica nodes in each node group (shard) for the replication group.
+      - Only used when I(replication_group=true).
+    type: int
+  num_node_groups:
+    description:
+      - The number of node groups (shards) for the replication group.
+      - Only used when I(replication_group=true).
+    type: int
+  automatic_failover:
+    description:
+      - Whether automatic failover is enabled for the replication group.
+      - Only used when I(replication_group=true).
+    type: bool
+  multi_az_enabled:
+    description:
+      - Whether Multi-AZ is enabled for the replication group.
+      - Only used when I(replication_group=true).
+    type: bool
+  transit_encryption_enabled:
+    description:
+      - Whether in-transit encryption is enabled for the replication group.
+      - Only used when I(replication_group=true).
+    type: bool
+  cluster_mode:
+    description:
+      - Cluster mode setting for the replication group (for example, C(enabled) or C(disabled)).
+      - Only used when I(replication_group=true).
+    type: str
+  retain_primary_cluster:
+    description:
+      - Whether to retain the primary cluster when deleting a replication group.
+      - Only used when I(replication_group=true).
+    type: bool
   cache_port:
     description:
       - The port number on which each of the cache nodes will accept
@@ -128,6 +179,16 @@ EXAMPLES = r"""
   community.aws.elasticache:
     name: "test-please-delete"
     state: rebooted
+
+- name: Create a Valkey replication group
+  community.aws.elasticache:
+    name: "test-valkey-rg"
+    state: present
+    replication_group: true
+    replication_group_description: "Valkey test replication group"
+    engine: valkey
+    node_type: cache.t3.micro
+    num_cache_clusters: 1
 """
 
 from time import sleep
@@ -473,6 +534,291 @@ class ElastiCacheManager:
         return cache_node_ids[-num_nodes_to_remove:]
 
 
+class ReplicationGroupManager:
+    """Handles elasticache replication group creation and destruction"""
+
+    EXIST_STATUSES = ["available", "creating", "modifying", "deleting"]
+
+    def __init__(
+        self,
+        module,
+        name,
+        engine,
+        cache_engine_version,
+        node_type,
+        num_cache_clusters,
+        cache_port,
+        cache_parameter_group,
+        cache_subnet_group,
+        cache_security_groups,
+        security_group_ids,
+        replication_group_description,
+        automatic_failover,
+        multi_az_enabled,
+        transit_encryption_enabled,
+        replicas_per_node_group,
+        num_node_groups,
+        cluster_mode,
+        retain_primary_cluster,
+        wait,
+    ):
+        self.module = module
+        self.name = name
+        self.engine = engine.lower()
+        self.cache_engine_version = cache_engine_version
+        self.node_type = node_type
+        self.num_cache_clusters = num_cache_clusters
+        self.cache_port = cache_port
+        self.cache_parameter_group = cache_parameter_group
+        self.cache_subnet_group = cache_subnet_group
+        self.cache_security_groups = cache_security_groups
+        self.security_group_ids = security_group_ids
+        self.replication_group_description = replication_group_description
+        self.automatic_failover = automatic_failover
+        self.multi_az_enabled = multi_az_enabled
+        self.transit_encryption_enabled = transit_encryption_enabled
+        self.replicas_per_node_group = replicas_per_node_group
+        self.num_node_groups = num_node_groups
+        self.cluster_mode = cluster_mode
+        self.retain_primary_cluster = retain_primary_cluster
+        self.wait = wait
+
+        self.changed = False
+        self.data = None
+        self.status = "gone"
+        self.conn = self._get_elasticache_connection()
+        self._refresh_data()
+
+    def ensure_present(self):
+        """Ensure replication group exists or create it if not"""
+        if self.exists():
+            self.sync()
+        else:
+            self.create()
+
+    def ensure_absent(self):
+        """Ensure replication group is gone or delete it if not"""
+        self.delete()
+
+    def ensure_rebooted(self):
+        """Replication group reboot is not supported by this module"""
+        self.module.fail_json(msg="state 'rebooted' is not supported when replication_group is true")
+
+    def exists(self):
+        """Check if replication group exists"""
+        return self.status in self.EXIST_STATUSES
+
+    def create(self):
+        """Create an ElastiCache replication group"""
+        if self.status == "available":
+            return
+        if self.status in ["creating", "modifying"]:
+            if self.wait:
+                self._wait_for_status("available")
+            return
+        if self.status == "deleting":
+            if self.wait:
+                self._wait_for_status("gone")
+            else:
+                self.module.fail_json(msg=f"'{self.name}' is currently deleting. Cannot create.")
+
+        kwargs = dict(
+            ReplicationGroupId=self.name,
+            ReplicationGroupDescription=self.replication_group_description,
+            CacheNodeType=self.node_type,
+            Engine=self.engine,
+        )
+        if self.cache_engine_version:
+            kwargs["EngineVersion"] = self.cache_engine_version
+        if self.num_cache_clusters is not None:
+            kwargs["NumCacheClusters"] = self.num_cache_clusters
+        if self.cache_port is not None:
+            kwargs["Port"] = self.cache_port
+        if self.cache_parameter_group:
+            kwargs["CacheParameterGroupName"] = self.cache_parameter_group
+        if self.cache_subnet_group:
+            kwargs["CacheSubnetGroupName"] = self.cache_subnet_group
+        if self.cache_security_groups:
+            kwargs["CacheSecurityGroupNames"] = self.cache_security_groups
+        if self.security_group_ids:
+            kwargs["SecurityGroupIds"] = self.security_group_ids
+        if self.automatic_failover is not None:
+            kwargs["AutomaticFailoverEnabled"] = self.automatic_failover
+        if self.multi_az_enabled is not None:
+            kwargs["MultiAZEnabled"] = self.multi_az_enabled
+        if self.transit_encryption_enabled is not None:
+            kwargs["TransitEncryptionEnabled"] = self.transit_encryption_enabled
+        if self.replicas_per_node_group is not None:
+            kwargs["ReplicasPerNodeGroup"] = self.replicas_per_node_group
+        if self.num_node_groups is not None:
+            kwargs["NumNodeGroups"] = self.num_node_groups
+        if self.cluster_mode is not None:
+            kwargs["ClusterMode"] = self.cluster_mode
+
+        try:
+            self.conn.create_replication_group(**kwargs)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Failed to create replication group")
+
+        self._refresh_data()
+        self.changed = True
+        if self.wait:
+            self._wait_for_status("available")
+        return True
+
+    def delete(self):
+        """Destroy an ElastiCache replication group"""
+        if self.status == "gone":
+            return
+        if self.status == "deleting":
+            if self.wait:
+                self._wait_for_status("gone")
+            return
+        if self.status in ["creating", "modifying"]:
+            if self.wait:
+                self._wait_for_status("available")
+            else:
+                self.module.fail_json(msg=f"'{self.name}' is currently {self.status}. Cannot delete.")
+
+        kwargs = dict(ReplicationGroupId=self.name)
+        if self.retain_primary_cluster is not None:
+            kwargs["RetainPrimaryCluster"] = self.retain_primary_cluster
+
+        try:
+            response = self.conn.delete_replication_group(**kwargs)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Failed to delete replication group")
+
+        replication_group_data = response.get("ReplicationGroup", None)
+        self._refresh_data(replication_group_data)
+
+        self.changed = True
+        if self.wait:
+            self._wait_for_status("gone")
+
+    def sync(self):
+        """Sync settings to replication group if required"""
+        if not self.exists():
+            self.module.fail_json(msg=f"'{self.name}' is {self.status}. Cannot sync.")
+
+        if self.status in ["creating", "modifying"]:
+            if self.wait:
+                self._wait_for_status("available")
+            else:
+                return
+
+        if self._requires_modification():
+            self.modify()
+
+    def modify(self):
+        """Modify the replication group."""
+        kwargs = dict(ReplicationGroupId=self.name, ApplyImmediately=True)
+        if self.cache_engine_version:
+            kwargs["EngineVersion"] = self.cache_engine_version
+        if self.cache_parameter_group:
+            kwargs["CacheParameterGroupName"] = self.cache_parameter_group
+        if self.cache_security_groups:
+            kwargs["CacheSecurityGroupNames"] = self.cache_security_groups
+        if self.security_group_ids:
+            kwargs["SecurityGroupIds"] = self.security_group_ids
+        if self.automatic_failover is not None:
+            kwargs["AutomaticFailoverEnabled"] = self.automatic_failover
+        if self.multi_az_enabled is not None:
+            kwargs["MultiAZEnabled"] = self.multi_az_enabled
+        if self.transit_encryption_enabled is not None:
+            kwargs["TransitEncryptionEnabled"] = self.transit_encryption_enabled
+
+        try:
+            self.conn.modify_replication_group(**kwargs)
+        except botocore.exceptions.ClientError as e:
+            self.module.fail_json_aws(e, msg="Failed to modify replication group")
+
+        self._refresh_data()
+        self.changed = True
+        if self.wait:
+            self._wait_for_status("available")
+
+    def get_info(self):
+        """Return basic info about the replication group"""
+        info = {"name": self.name, "status": self.status}
+        if self.data:
+            info["data"] = self.data
+        return info
+
+    def _wait_for_status(self, awaited_status):
+        """Wait for status to change from present status to awaited_status"""
+        status_map = {"creating": "available", "modifying": "available", "deleting": "gone"}
+        if self.status == awaited_status:
+            return
+        if status_map[self.status] != awaited_status:
+            self.module.fail_json(
+                msg=f"Invalid awaited status. '{self.status}' cannot transition to '{awaited_status}'"
+            )
+
+        if awaited_status not in set(status_map.values()):
+            self.module.fail_json(msg=f"'{awaited_status}' is not a valid awaited status.")
+
+        while True:
+            sleep(1)
+            self._refresh_data()
+            if self.status == awaited_status:
+                break
+
+    def _requires_modification(self):
+        """Check if replication group requires (nondestructive) modification"""
+        if self.cache_engine_version and self.data.get("EngineVersion") != self.cache_engine_version:
+            return True
+
+        cache_security_groups = [sg["CacheSecurityGroupName"] for sg in self.data.get("CacheSecurityGroups", [])]
+        if self.cache_security_groups and set(cache_security_groups) != set(self.cache_security_groups):
+            return True
+
+        if self.security_group_ids:
+            vpc_security_groups = [sg["SecurityGroupId"] for sg in self.data.get("SecurityGroups", [])]
+            if set(vpc_security_groups) != set(self.security_group_ids):
+                return True
+
+        if self.automatic_failover is not None and self.data.get("AutomaticFailover") != self.automatic_failover:
+            return True
+
+        if self.multi_az_enabled is not None and self.data.get("MultiAZ") != self.multi_az_enabled:
+            return True
+
+        if (
+            self.transit_encryption_enabled is not None
+            and self.data.get("TransitEncryptionEnabled") != self.transit_encryption_enabled
+        ):
+            return True
+
+        if self.cache_parameter_group:
+            current_group = self.data.get("CacheParameterGroup", {}).get("CacheParameterGroupName")
+            if current_group and current_group != self.cache_parameter_group:
+                return True
+
+        return False
+
+    def _get_elasticache_connection(self):
+        """Get an elasticache connection"""
+        try:
+            return self.module.client("elasticache")
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Failed to connect to AWS")
+
+    def _refresh_data(self, replication_group_data=None):
+        """Refresh data about this replication group"""
+        if replication_group_data is None:
+            try:
+                response = self.conn.describe_replication_groups(ReplicationGroupId=self.name)
+            except is_boto3_error_code("ReplicationGroupNotFoundFault"):
+                self.data = None
+                self.status = "gone"
+                return
+            except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+                self.module.fail_json_aws(e, msg="Failed to describe replication groups")
+            replication_group_data = response["ReplicationGroups"][0]
+        self.data = replication_group_data
+        self.status = self.data["Status"]
+
 def main():
     """elasticache ansible module"""
     argument_spec = dict(
@@ -482,6 +828,16 @@ def main():
         cache_engine_version=dict(default=""),
         node_type=dict(default="cache.t2.small"),
         num_nodes=dict(default=1, type="int"),
+        replication_group=dict(default=False, type="bool"),
+        replication_group_description=dict(type="str"),
+        num_cache_clusters=dict(type="int"),
+        replicas_per_node_group=dict(type="int"),
+        num_node_groups=dict(type="int"),
+        automatic_failover=dict(type="bool"),
+        multi_az_enabled=dict(type="bool"),
+        transit_encryption_enabled=dict(type="bool"),
+        cluster_mode=dict(type="str"),
+        retain_primary_cluster=dict(type="bool"),
         # alias for compat with the original PR 1950
         cache_parameter_group=dict(default="", aliases=["parameter_group"]),
         cache_port=dict(type="int"),
@@ -511,29 +867,78 @@ def main():
     wait = module.params["wait"]
     hard_modify = module.params["hard_modify"]
     cache_parameter_group = module.params["cache_parameter_group"]
+    replication_group = module.params["replication_group"]
+    replication_group_description = module.params["replication_group_description"]
+    num_cache_clusters = module.params["num_cache_clusters"]
+    replicas_per_node_group = module.params["replicas_per_node_group"]
+    num_node_groups = module.params["num_node_groups"]
+    automatic_failover = module.params["automatic_failover"]
+    multi_az_enabled = module.params["multi_az_enabled"]
+    transit_encryption_enabled = module.params["transit_encryption_enabled"]
+    cluster_mode = module.params["cluster_mode"]
+    retain_primary_cluster = module.params["retain_primary_cluster"]
 
     if cache_subnet_group and cache_security_groups:
         module.fail_json(msg="Can't specify both cache_subnet_group and cache_security_groups")
 
-    if state == "present" and not num_nodes:
+    if replication_group:
+        if engine not in ["redis", "valkey"]:
+            module.fail_json(msg="When replication_group is true, engine must be 'redis' or 'valkey'")
+        if len(name) > 40:
+            module.fail_json(msg="'name' must be 40 characters or fewer when replication_group is true")
+        if state == "present" and not replication_group_description:
+            module.fail_json(msg="'replication_group_description' is required when replication_group is true")
+        if state == "rebooted":
+            module.fail_json(msg="state 'rebooted' is not supported when replication_group is true")
+        if state == "present" and not (num_cache_clusters or num_node_groups):
+            module.fail_json(msg="replication groups require 'num_cache_clusters' or 'num_node_groups'")
+    else:
+        if engine not in ["redis", "memcached"]:
+            module.fail_json(msg="When replication_group is false, engine must be 'redis' or 'memcached'")
+
+    if not replication_group and state == "present" and not num_nodes:
         module.fail_json(msg="'num_nodes' is a required parameter. Please specify num_nodes > 0")
 
-    elasticache_manager = ElastiCacheManager(
-        module,
-        name,
-        engine,
-        cache_engine_version,
-        node_type,
-        num_nodes,
-        cache_port,
-        cache_parameter_group,
-        cache_subnet_group,
-        cache_security_groups,
-        security_group_ids,
-        zone,
-        wait,
-        hard_modify,
-    )
+    if replication_group:
+        elasticache_manager = ReplicationGroupManager(
+            module,
+            name,
+            engine,
+            cache_engine_version,
+            node_type,
+            num_cache_clusters,
+            cache_port,
+            cache_parameter_group,
+            cache_subnet_group,
+            cache_security_groups,
+            security_group_ids,
+            replication_group_description,
+            automatic_failover,
+            multi_az_enabled,
+            transit_encryption_enabled,
+            replicas_per_node_group,
+            num_node_groups,
+            cluster_mode,
+            retain_primary_cluster,
+            wait,
+        )
+    else:
+        elasticache_manager = ElastiCacheManager(
+            module,
+            name,
+            engine,
+            cache_engine_version,
+            node_type,
+            num_nodes,
+            cache_port,
+            cache_parameter_group,
+            cache_subnet_group,
+            cache_security_groups,
+            security_group_ids,
+            zone,
+            wait,
+            hard_modify,
+        )
 
     if state == "present":
         elasticache_manager.ensure_present()
