@@ -208,239 +208,239 @@ plugin_routing:
     aws_acm:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_acm has been deprecated. Please update your tasks to use community.aws.acm_certificate.
+        warning_text: the community.aws.aws_acm alias has been deprecated. Please update your tasks to use community.aws.acm_certificate.
       redirect: community.aws.acm_certificate
     aws_acm_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_acm_info has been deprecated. Please update your tasks to use community.aws.acm_certificate_info.
+        warning_text: the community.aws.aws_acm_info alias has been deprecated. Please update your tasks to use community.aws.acm_certificate_info.
       redirect: community.aws.acm_certificate_info
     aws_api_gateway:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_api_gateway has been deprecated. Please update your tasks to use community.aws.api_gateway.
+        warning_text: the community.aws.aws_api_gateway alias has been deprecated. Please update your tasks to use community.aws.api_gateway.
       redirect: community.aws.api_gateway
     aws_api_gateway_domain:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_api_gateway_domain has been deprecated. Please update your tasks to use community.aws.api_gateway_domain.
+        warning_text: the community.aws.aws_api_gateway_domain alias has been deprecated. Please update your tasks to use community.aws.api_gateway_domain.
       redirect: community.aws.api_gateway_domain
     aws_application_scaling_policy:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_application_scaling_policy has been deprecated. Please update your tasks to use community.aws.application_autoscaling_policy.
+        warning_text: the community.aws.aws_application_scaling_policy alias has been deprecated. Please update your tasks to use community.aws.application_autoscaling_policy.
       redirect: community.aws.application_autoscaling_policy
     aws_batch_compute_environment:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_batch_compute_environment has been deprecated. Please update your tasks to use community.aws.batch_compute_environment.
+        warning_text: the community.aws.aws_batch_compute_environment alias has been deprecated. Please update your tasks to use community.aws.batch_compute_environment.
       redirect: community.aws.batch_compute_environment
     aws_batch_job_definition:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_batch_job_definition has been deprecated. Please update your tasks to use community.aws.batch_job_definition.
+        warning_text: the community.aws.aws_batch_job_definition alias has been deprecated. Please update your tasks to use community.aws.batch_job_definition.
       redirect: community.aws.batch_job_definition
     aws_batch_job_queue:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_batch_job_queue has been deprecated. Please update your tasks to use community.aws.batch_job_queue.
+        warning_text: the community.aws.aws_batch_job_queue alias has been deprecated. Please update your tasks to use community.aws.batch_job_queue.
       redirect: community.aws.batch_job_queue
     aws_codebuild:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_codebuild has been deprecated. Please update your tasks to use community.aws.codebuild_project.
+        warning_text: the community.aws.aws_codebuild alias has been deprecated. Please update your tasks to use community.aws.codebuild_project.
       redirect: community.aws.codebuild_project
     aws_codecommit:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_codecommit has been deprecated. Please update your tasks to use community.aws.codecommit_repository.
+        warning_text: the community.aws.aws_codecommit alias has been deprecated. Please update your tasks to use community.aws.codecommit_repository.
       redirect: community.aws.codecommit_repository
     aws_codepipeline:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_codepipeline has been deprecated. Please update your tasks to use community.aws.codepipeline.
+        warning_text: the community.aws.aws_codepipeline alias has been deprecated. Please update your tasks to use community.aws.codepipeline.
       redirect: community.aws.codepipeline
     aws_config_aggregation_authorization:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_config_aggregation_authorization has been deprecated. Please update your tasks to use community.aws.config_aggregation_authorization.
+        warning_text: the community.aws.aws_config_aggregation_authorization alias has been deprecated. Please update your tasks to use community.aws.config_aggregation_authorization.
       redirect: community.aws.config_aggregation_authorization
     aws_config_aggregator:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_config_aggregator has been deprecated. Please update your tasks to use community.aws.config_aggregator.
+        warning_text: the community.aws.aws_config_aggregator alias has been deprecated. Please update your tasks to use community.aws.config_aggregator.
       redirect: community.aws.config_aggregator
     aws_config_delivery_channel:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_config_delivery_channel has been deprecated. Please update your tasks to use community.aws.config_delivery_channel.
+        warning_text: the community.aws.aws_config_delivery_channel alias has been deprecated. Please update your tasks to use community.aws.config_delivery_channel.
       redirect: community.aws.config_delivery_channel
     aws_config_recorder:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_config_recorder has been deprecated. Please update your tasks to use community.aws.config_recorder.
+        warning_text: the community.aws.aws_config_recorder alias has been deprecated. Please update your tasks to use community.aws.config_recorder.
       redirect: community.aws.config_recorder
     aws_config_rule:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_config_rule has been deprecated. Please update your tasks to use community.aws.config_rule.
+        warning_text: the community.aws.aws_config_rule alias has been deprecated. Please update your tasks to use community.aws.config_rule.
       redirect: community.aws.config_rule
     aws_direct_connect_confirm_connection:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_direct_connect_confirm_connection has been deprecated. Please update your tasks to use community.aws.directconnect_confirm_connection.
+        warning_text: the community.aws.aws_direct_connect_confirm_connection alias has been deprecated. Please update your tasks to use community.aws.directconnect_confirm_connection.
       redirect: community.aws.directconnect_confirm_connection
     aws_direct_connect_connection:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_direct_connect_connection has been deprecated. Please update your tasks to use community.aws.directconnect_connection.
+        warning_text: the community.aws.aws_direct_connect_connection alias has been deprecated. Please update your tasks to use community.aws.directconnect_connection.
       redirect: community.aws.directconnect_connection
     aws_direct_connect_gateway:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_direct_connect_gateway has been deprecated. Please update your tasks to use community.aws.directconnect_gateway.
+        warning_text: the community.aws.aws_direct_connect_gateway alias has been deprecated. Please update your tasks to use community.aws.directconnect_gateway.
       redirect: community.aws.directconnect_gateway
     aws_direct_connect_link_aggregation_group:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_direct_connect_link_aggregation_group has been deprecated. Please update your tasks to use community.aws.directconnect_link_aggregation_group.
+        warning_text: the community.aws.aws_direct_connect_link_aggregation_group alias has been deprecated. Please update your tasks to use community.aws.directconnect_link_aggregation_group.
       redirect: community.aws.directconnect_link_aggregation_group
     aws_direct_connect_virtual_interface:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_direct_connect_virtual_interface has been deprecated. Please update your tasks to use community.aws.directconnect_virtual_interface.
+        warning_text: the community.aws.aws_direct_connect_virtual_interface alias has been deprecated. Please update your tasks to use community.aws.directconnect_virtual_interface.
       redirect: community.aws.directconnect_virtual_interface
     aws_eks_cluster:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_eks_cluster has been deprecated. Please update your tasks to use community.aws.eks_cluster.
+        warning_text: the community.aws.aws_eks_cluster alias has been deprecated. Please update your tasks to use community.aws.eks_cluster.
       redirect: community.aws.eks_cluster
     aws_elasticbeanstalk_app:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_elasticbeanstalk_app has been deprecated. Please update your tasks to use community.aws.elasticbeanstalk_app.
+        warning_text: the community.aws.aws_elasticbeanstalk_app alias has been deprecated. Please update your tasks to use community.aws.elasticbeanstalk_app.
       redirect: community.aws.elasticbeanstalk_app
     aws_glue_connection:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_glue_connection has been deprecated. Please update your tasks to use community.aws.glue_connection.
+        warning_text: the community.aws.aws_glue_connection alias has been deprecated. Please update your tasks to use community.aws.glue_connection.
       redirect: community.aws.glue_connection
     aws_glue_crawler:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_glue_crawler has been deprecated. Please update your tasks to use community.aws.glue_crawler.
+        warning_text: the community.aws.aws_glue_crawler alias has been deprecated. Please update your tasks to use community.aws.glue_crawler.
       redirect: community.aws.glue_crawler
     aws_glue_job:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_glue_job has been deprecated. Please update your tasks to use community.aws.glue_job.
+        warning_text: the community.aws.aws_glue_job alias has been deprecated. Please update your tasks to use community.aws.glue_job.
       redirect: community.aws.glue_job
     aws_inspector_target:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_inspector_target has been deprecated. Please update your tasks to use community.aws.inspector_target.
+        warning_text: the community.aws.aws_inspector_target alias has been deprecated. Please update your tasks to use community.aws.inspector_target.
       redirect: community.aws.inspector_target
     aws_kms:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_kms has been deprecated. Please update your tasks to use amazon.aws.kms_key.
+        warning_text: the community.aws.aws_kms alias has been deprecated. Please update your tasks to use amazon.aws.kms_key.
       redirect: amazon.aws.kms_key
     aws_kms_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_kms_info has been deprecated. Please update your tasks to use amazon.aws.kms_key_info.
+        warning_text: the community.aws.aws_kms_info alias has been deprecated. Please update your tasks to use amazon.aws.kms_key_info.
       redirect: amazon.aws.kms_key_info
     aws_msk_cluster:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_msk_cluster has been deprecated. Please update your tasks to use community.aws.msk_cluster.
+        warning_text: the community.aws.aws_msk_cluster alias has been deprecated. Please update your tasks to use community.aws.msk_cluster.
       redirect: community.aws.msk_cluster
     aws_msk_config:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_msk_config has been deprecated. Please update your tasks to use community.aws.msk_config.
+        warning_text: the community.aws.aws_msk_config alias has been deprecated. Please update your tasks to use community.aws.msk_config.
       redirect: community.aws.msk_config
     aws_region_info:
       redirect: amazon.aws.aws_region_info
     aws_s3_bucket_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_s3_bucket_info has been deprecated. Please update your tasks to use amazon.aws.s3_bucket_info.
+        warning_text: the community.aws.aws_s3_bucket_info alias has been deprecated. Please update your tasks to use amazon.aws.s3_bucket_info.
       redirect: amazon.aws.s3_bucket_info
     aws_s3_cors:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_s3_cors has been deprecated. Please update your tasks to use community.aws.s3_cors.
+        warning_text: the community.aws.aws_s3_cors alias has been deprecated. Please update your tasks to use community.aws.s3_cors.
       redirect: community.aws.s3_cors
     aws_secret:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_secret has been deprecated. Please update your tasks to use community.aws.secretsmanager_secret.
+        warning_text: the community.aws.aws_secret alias has been deprecated. Please update your tasks to use community.aws.secretsmanager_secret.
       redirect: community.aws.secretsmanager_secret
     aws_ses_identity:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_ses_identity has been deprecated. Please update your tasks to use community.aws.ses_identity.
+        warning_text: the community.aws.aws_ses_identity alias has been deprecated. Please update your tasks to use community.aws.ses_identity.
       redirect: community.aws.ses_identity
     aws_ses_identity_policy:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_ses_identity_policy has been deprecated. Please update your tasks to use community.aws.ses_identity_policy.
+        warning_text: the community.aws.aws_ses_identity_policy alias has been deprecated. Please update your tasks to use community.aws.ses_identity_policy.
       redirect: community.aws.ses_identity_policy
     aws_ses_rule_set:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_ses_rule_set has been deprecated. Please update your tasks to use community.aws.ses_rule_set.
+        warning_text: the community.aws.aws_ses_rule_set alias has been deprecated. Please update your tasks to use community.aws.ses_rule_set.
       redirect: community.aws.ses_rule_set
     aws_sgw_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_sgw_info has been deprecated. Please update your tasks to use community.aws.storagegateway_info.
+        warning_text: the community.aws.aws_sgw_info alias has been deprecated. Please update your tasks to use community.aws.storagegateway_info.
       redirect: community.aws.storagegateway_info
     aws_ssm_parameter_store:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_ssm_parameter_store has been deprecated. Please update your tasks to use community.aws.ssm_parameter.
+        warning_text: the community.aws.aws_ssm_parameter_store alias has been deprecated. Please update your tasks to use community.aws.ssm_parameter.
       redirect: community.aws.ssm_parameter
     aws_step_functions_state_machine:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_step_functions_state_machine has been deprecated. Please update your tasks to use community.aws.stepfunctions_state_machine.
+        warning_text: the community.aws.aws_step_functions_state_machine alias has been deprecated. Please update your tasks to use community.aws.stepfunctions_state_machine.
       redirect: community.aws.stepfunctions_state_machine
     aws_step_functions_state_machine_execution:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_step_functions_state_machine_execution has been deprecated. Please update your tasks to use community.aws.stepfunctions_state_machine_execution.
+        warning_text: the community.aws.aws_step_functions_state_machine_execution alias has been deprecated. Please update your tasks to use community.aws.stepfunctions_state_machine_execution.
       redirect: community.aws.stepfunctions_state_machine_execution
     aws_waf_condition:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_waf_condition has been deprecated. Please update your tasks to use community.aws.waf_condition.
+        warning_text: the community.aws.aws_waf_condition alias has been deprecated. Please update your tasks to use community.aws.waf_condition.
       redirect: community.aws.waf_condition
     aws_waf_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_waf_info has been deprecated. Please update your tasks to use community.aws.waf_info.
+        warning_text: the community.aws.aws_waf_info alias has been deprecated. Please update your tasks to use community.aws.waf_info.
       redirect: community.aws.waf_info
     aws_waf_rule:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_waf_rule has been deprecated. Please update your tasks to use community.aws.waf_rule.
+        warning_text: the community.aws.aws_waf_rule alias has been deprecated. Please update your tasks to use community.aws.waf_rule.
       redirect: community.aws.waf_rule
     aws_waf_web_acl:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.aws_waf_web_acl has been deprecated. Please update your tasks to use community.aws.waf_web_acl.
+        warning_text: the community.aws.aws_waf_web_acl alias has been deprecated. Please update your tasks to use community.aws.waf_web_acl.
       redirect: community.aws.waf_web_acl
     cloudtrail:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.cloudtrail has been deprecated. Please update your tasks to use amazon.aws.cloudtrail.
+        warning_text: the community.aws.cloudtrail alias has been deprecated. Please update your tasks to use amazon.aws.cloudtrail.
       redirect: amazon.aws.cloudtrail
     cloudfront_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.cloudfront_info has been deprecated. Please update your tasks to use community.aws.cloudfront_distribution_info.
+        warning_text: the community.aws.cloudfront_info alias has been deprecated. Please update your tasks to use community.aws.cloudfront_distribution_info.
       redirect: community.aws.cloudfront_distribution_info
     cloudwatchevent_rule:
       redirect: amazon.aws.cloudwatchevent_rule
@@ -455,32 +455,32 @@ plugin_routing:
     ec2_asg:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_asg has been deprecated. Please update your tasks to use amazon.aws.autoscaling_group.
+        warning_text: the community.aws.ec2_asg alias has been deprecated. Please update your tasks to use amazon.aws.autoscaling_group.
       redirect: amazon.aws.autoscaling_group
     ec2_asg_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_asg_info has been deprecated. Please update your tasks to use amazon.aws.autoscaling_group_info.
+        warning_text: the community.aws.ec2_asg_info alias has been deprecated. Please update your tasks to use amazon.aws.autoscaling_group_info.
       redirect: amazon.aws.autoscaling_group_info
     ec2_asg_instance_refresh:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_asg_instance_refresh has been deprecated. Please update your tasks to use amazon.aws.autoscaling_instance_refresh.
+        warning_text: the community.aws.ec2_asg_instance_refresh alias has been deprecated. Please update your tasks to use amazon.aws.autoscaling_instance_refresh.
       redirect: amazon.aws.autoscaling_instance_refresh
     ec2_asg_instance_refresh_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_asg_instance_refresh_info has been deprecated. Please update your tasks to use amazon.aws.autoscaling_instance_refresh_info.
+        warning_text: the community.aws.ec2_asg_instance_refresh_info alias has been deprecated. Please update your tasks to use amazon.aws.autoscaling_instance_refresh_info.
       redirect: amazon.aws.autoscaling_instance_refresh_info
     ec2_asg_lifecycle_hook:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_asg_lifecycle_hook has been deprecated. Please update your tasks to use community.aws.autoscaling_lifecycle_hook.
+        warning_text: the community.aws.ec2_asg_lifecycle_hook alias has been deprecated. Please update your tasks to use community.aws.autoscaling_lifecycle_hook.
       redirect: community.aws.autoscaling_lifecycle_hook
     ec2_asg_scheduled_action:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_asg_scheduled_action has been deprecated. Please update your tasks to use community.aws.autoscaling_scheduled_action.
+        warning_text: the community.aws.ec2_asg_scheduled_action alias has been deprecated. Please update your tasks to use community.aws.autoscaling_scheduled_action.
       redirect: community.aws.autoscaling_scheduled_action
     ec2_eip:
       redirect: amazon.aws.ec2_eip
@@ -491,7 +491,7 @@ plugin_routing:
     ec2_metric_alarm:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_metric_alarm has been deprecated. Please update your tasks to use amazon.aws.cloudwatch_metric_alarm.
+        warning_text: the community.aws.ec2_metric_alarm alias has been deprecated. Please update your tasks to use amazon.aws.cloudwatch_metric_alarm.
       redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_instance:
       redirect: amazon.aws.ec2_instance
@@ -500,22 +500,22 @@ plugin_routing:
     ec2_lc:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_lc has been deprecated. Please update your tasks to use community.aws.autoscaling_launch_config.
+        warning_text: the community.aws.ec2_lc alias has been deprecated. Please update your tasks to use community.aws.autoscaling_launch_config.
       redirect: community.aws.autoscaling_launch_config
     ec2_lc_find:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_lc_find has been deprecated. Please update your tasks to use community.aws.autoscaling_launch_config_find.
+        warning_text: the community.aws.ec2_lc_find alias has been deprecated. Please update your tasks to use community.aws.autoscaling_launch_config_find.
       redirect: community.aws.autoscaling_launch_config_find
     ec2_lc_info:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_lc_info has been deprecated. Please update your tasks to use community.aws.autoscaling_launch_config_info.
+        warning_text: the community.aws.ec2_lc_info alias has been deprecated. Please update your tasks to use community.aws.autoscaling_launch_config_info.
       redirect: community.aws.autoscaling_launch_config_info
     ec2_scaling_policy:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.ec2_scaling_policy has been deprecated. Please update your tasks to use community.aws.autoscaling_policy.
+        warning_text: the community.aws.ec2_scaling_policy alias has been deprecated. Please update your tasks to use community.aws.autoscaling_policy.
       redirect: community.aws.autoscaling_policy
     ec2_vpc_endpoint:
       redirect: amazon.aws.ec2_vpc_endpoint
@@ -544,7 +544,7 @@ plugin_routing:
     execute_lambda:
       deprecation:
         removal_date: "2027-01-01"
-        warning_text: community.aws.execute_lambda has been deprecated. Please update your tasks to use amazon.aws.lambda_execute.
+        warning_text: the community.aws.execute_lambda alias has been deprecated. Please update your tasks to use amazon.aws.lambda_execute.
       redirect: amazon.aws.lambda_execute
     iam_access_key:
       redirect: amazon.aws.iam_access_key
