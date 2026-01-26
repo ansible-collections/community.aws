@@ -22,7 +22,8 @@ author:
 deprecated:
   removed_in: 12.0.0
   why: Amazon has retired the "WAF Classic" service.
-  alternatives: Please use the "AWS WAF (WAFv2)" service and modules instead.
+  alternatives:
+    - Please use the "AWS WAF (WAFv2)" service and modules instead.
 
 options:
   name:
