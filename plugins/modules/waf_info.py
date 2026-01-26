@@ -8,10 +8,20 @@ DOCUMENTATION = r"""
 module: waf_info
 short_description: Retrieve information for WAF ACLs, Rules, Conditions and Filters
 version_added: 1.0.0
+
 description:
   - Retrieve information for WAF ACLs, Rules, Conditions and Filters.
   - Prior to release 5.0.0 this module was called C(community.aws.aws_waf_info).
     The usage did not change.
+
+author:
+  - Mike Mochan (@mmochan)
+  - Will Thames (@willthames)
+
+deprecated:
+  removed_in: 12.0.0
+  why: Amazon has retired the "WAF Classic" service.  Please use the "AWS WAF (WAFv2)" service and modules instead.
+
 options:
   name:
     description:
@@ -23,9 +33,6 @@ options:
     required: false
     type: bool
 
-author:
-  - Mike Mochan (@mmochan)
-  - Will Thames (@willthames)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
