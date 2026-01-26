@@ -1447,11 +1447,65 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-active_trusted_key_groups"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-key-groups"><strong>active_trusted_key_groups</strong></p>
+<a class="ansibleOptionLink" href="#return-active_trusted_key_groups" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This field contains a list of key groups and the public keys in each key group that CloudFront can use to verify the signatures of signed URLs or signed cookies.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-active_trusted_key_groups/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-key-groups-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-active_trusted_key_groups/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of key groups.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when there are trusted signers</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-active_trusted_key_groups/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-key-groups-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-active_trusted_key_groups/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>This field is true if any of the key groups have public keys that CloudFront can use to verify the signatures of signed URLs and signed cookies. If not, this field is false.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-active_trusted_key_groups/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-key-groups-items"><strong>items</strong></p>
+<a class="ansibleOptionLink" href="#return-active_trusted_key_groups/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of key groups.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-key-groups-elements"><span class="std std-ref"><span class="pre">active_trusted_key_groups.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when there are trusted signers</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-active_trusted_key_groups/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-key-groups-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-active_trusted_key_groups/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Number of key groups.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-active_trusted_signers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-signers"><strong>active_trusted_signers</strong></p>
 <a class="ansibleOptionLink" href="#return-active_trusted_signers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Key pair IDs that CloudFront is aware of for each trusted signer.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-active_trusted_signers/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-signers-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-active_trusted_signers/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of trusted signers.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when there are trusted signers</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;key_pair_id&quot;]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -1467,7 +1521,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <div class="ansibleOptionAnchor" id="return-active_trusted_signers/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-signers-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-active_trusted_signers/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Number of trusted signers.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of trusted signers.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-active-trusted-signers-elements"><span class="std std-ref"><span class="pre">active_trusted_signers.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when there are trusted signers</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;key_pair_id&quot;]</span></code></p>
 </div></td>
@@ -1490,8 +1545,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-aliases/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-aliases-items"><strong>items</strong></p>
-<a class="ansibleOptionLink" href="#return-aliases/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<div class="ansibleOptionAnchor" id="return-aliases/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-aliases-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-aliases/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of aliases.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
@@ -1499,6 +1555,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-aliases/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-aliases-items"><strong>items</strong></p>
+<a class="ansibleOptionLink" href="#return-aliases/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of aliases.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-aliases-elements"><span class="std std-ref"><span class="pre">aliases.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;test.example.com&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-aliases/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-aliases-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-aliases/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1507,7 +1573,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-arn"><strong>arn</strong></p>
 <a class="ansibleOptionLink" href="#return-arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1516,7 +1582,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:cloudfront::123456789012:distribution/E1234ABCDEFGHI&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors"><strong>cache_behaviors</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1524,15 +1590,312 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-cache_behaviors/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items"><strong>items</strong></p>
-<a class="ansibleOptionLink" href="#return-cache_behaviors/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cache behaviors.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/allowed_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods"><strong>allowed_methods</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/allowed_methods" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Methods allowed by the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/allowed_methods/cached_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods-cached-methods"><strong>cached_methods</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/allowed_methods/cached_methods" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Methods cached by the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/allowed_methods/cached_methods/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods-cached-methods-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/allowed_methods/cached_methods/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cached methods.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/allowed_methods/cached_methods/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods-cached-methods-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/allowed_methods/cached_methods/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of cached methods.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/allowed_methods/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/allowed_methods/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of methods allowed by the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/allowed_methods/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/allowed_methods/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of methods allowed by the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/compress"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-compress"><strong>compress</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/compress" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether compression is turned on for the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/default_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-default-ttl"><strong>default_ttl</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/default_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Default Time to Live of the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">86400</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values"><strong>forwarded_values</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Values forwarded to the origin for this cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/cookies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-cookies"><strong>cookies</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/cookies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Cookies to forward to the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/cookies/forward"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-cookies-forward"><strong>forward</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/cookies/forward" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Which cookies to forward to the origin for this cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/cookies/whitelisted_names"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-cookies-whitelisted-names"><strong>whitelisted_names</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/cookies/whitelisted_names" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The names of the cookies to forward to the origin for this cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when <em>forward=whitelist</em></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/cookies/whitelisted_names/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-cookies-whitelisted-names-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/cookies/whitelisted_names/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cookies to forward.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;my_cookie&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/cookies/whitelisted_names/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-cookies-whitelisted-names-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/cookies/whitelisted_names/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of cookies to forward.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-headers"><strong>headers</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/headers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Which headers are used to vary on cache retrievals.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/headers/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-headers-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/headers/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of headers to vary on.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;Host&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/headers/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-headers-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/headers/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of headers to vary on.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/query_string"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-query-string"><strong>query_string</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/query_string" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether the query string is used in cache lookups.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/query_string_cache_keys"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-query-string-cache-keys"><strong>query_string_cache_keys</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/query_string_cache_keys" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Which query string keys to use in cache lookups.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/query_string_cache_keys/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-query-string-cache-keys-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/query_string_cache_keys/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of query string cache keys to use in cache lookups.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/forwarded_values/query_string_cache_keys/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-query-string-cache-keys-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/forwarded_values/query_string_cache_keys/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of query string cache keys to use in cache lookups.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/lambda_function_associations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-lambda-function-associations"><strong>lambda_function_associations</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/lambda_function_associations" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Lambda function associations for a cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/lambda_function_associations/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-lambda-function-associations-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/lambda_function_associations/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of lambda function associations.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;event_type&quot;:</span> <span class="pre">&quot;viewer-response&quot;,</span> <span class="pre">&quot;lambda_function_arn&quot;:</span> <span class="pre">&quot;arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function&quot;}]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/lambda_function_associations/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-lambda-function-associations-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/lambda_function_associations/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of lambda function associations.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/max_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-max-ttl"><strong>max_ttl</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/max_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Maximum Time to Live.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">31536000</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/min_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-min-ttl"><strong>min_ttl</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/min_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Minimum Time to Live.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">0</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/path_pattern"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-path-pattern"><strong>path_pattern</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/path_pattern" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Path pattern that determines this cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;/path/to/files/*&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/smooth_streaming"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-smooth-streaming"><strong>smooth_streaming</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/smooth_streaming" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether smooth streaming is enabled.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/target_origin_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-target-origin-id"><strong>target_origin_id</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/target_origin_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ID of origin reference by this cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;origin_abcd&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/trusted_signers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-trusted-signers"><strong>trusted_signers</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/trusted_signers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Trusted signers.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/trusted_signers/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-trusted-signers-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/trusted_signers/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether trusted signers are enabled for this cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/trusted_signers/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-trusted-signers-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/trusted_signers/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of trusted signers.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/elements/viewer_protocol_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-viewer-protocol-policy"><strong>viewer_protocol_policy</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/elements/viewer_protocol_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Policy of how to handle http/https.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;redirect-to-https&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-cache_behaviors/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items"><strong>items</strong></p>
+<a class="ansibleOptionLink" href="#return-cache_behaviors/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cache behaviors.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements"><span class="std std-ref"><span class="pre">cache_behaviors.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/allowed_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-allowed-methods"><strong>allowed_methods</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/allowed_methods" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1540,7 +1903,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/allowed_methods/cached_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-allowed-methods-cached-methods"><strong>cached_methods</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/allowed_methods/cached_methods" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1548,7 +1911,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/allowed_methods/cached_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-allowed-methods-cached-methods-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/allowed_methods/cached_methods/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -1557,7 +1920,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/allowed_methods/cached_methods/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-allowed-methods-cached-methods-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/allowed_methods/cached_methods/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1566,16 +1929,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/allowed_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-allowed-methods-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/allowed_methods/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of methods allowed by the cache behavior.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-allowed-methods-elements"><span class="std std-ref"><span class="pre">cache_behaviors.elements.allowed_methods.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/allowed_methods/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-allowed-methods-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/allowed_methods/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1584,7 +1948,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/compress"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-compress"><strong>compress</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/compress" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1593,7 +1957,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/default_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-default-ttl"><strong>default_ttl</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/default_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1602,7 +1966,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">86400</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values"><strong>forwarded_values</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1610,7 +1974,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/cookies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-cookies"><strong>cookies</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/cookies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1618,7 +1982,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/cookies/forward"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-cookies-forward"><strong>forward</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/cookies/forward" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1627,7 +1991,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/cookies/whitelisted_names"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-cookies-whitelisted-names"><strong>whitelisted_names</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/cookies/whitelisted_names" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1635,16 +1999,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when <em>forward=whitelist</em></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/cookies/whitelisted_names/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-cookies-whitelisted-names-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/cookies/whitelisted_names/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cookies to forward.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-cookies-whitelisted-names-elements"><span class="std std-ref"><span class="pre">cache_behaviors.elements.forwarded_values.cookies.whitelisted_names.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;my_cookie&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/cookies/whitelisted_names/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-cookies-whitelisted-names-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/cookies/whitelisted_names/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1653,7 +2018,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-headers"><strong>headers</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/headers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1661,16 +2026,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/headers/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-headers-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/headers/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of headers to vary on.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-headers-elements"><span class="std std-ref"><span class="pre">cache_behaviors.elements.forwarded_values.headers.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;Host&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/headers/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-headers-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/headers/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1679,7 +2045,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/query_string"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-query-string"><strong>query_string</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/query_string" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1688,7 +2054,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/query_string_cache_keys"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-query-string-cache-keys"><strong>query_string_cache_keys</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/query_string_cache_keys" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1696,15 +2062,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/query_string_cache_keys/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-query-string-cache-keys-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/query_string_cache_keys/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of query string cache keys to use in cache lookups.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-forwarded-values-query-string-cache-keys-elements"><span class="std std-ref"><span class="pre">cache_behaviors.elements.forwarded_values.query_string_cache_keys.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/forwarded_values/query_string_cache_keys/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-forwarded-values-query-string-cache-keys-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/forwarded_values/query_string_cache_keys/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1713,7 +2080,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/lambda_function_associations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-lambda-function-associations"><strong>lambda_function_associations</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/lambda_function_associations" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1721,16 +2088,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/lambda_function_associations/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-lambda-function-associations-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/lambda_function_associations/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of lambda function associations.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-elements-lambda-function-associations-elements"><span class="std std-ref"><span class="pre">cache_behaviors.elements.lambda_function_associations.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;event_type&quot;:</span> <span class="pre">&quot;viewer-response&quot;,</span> <span class="pre">&quot;lambda_function_arn&quot;:</span> <span class="pre">&quot;arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function&quot;}]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/lambda_function_associations/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-lambda-function-associations-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/lambda_function_associations/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1739,7 +2107,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/max_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-max-ttl"><strong>max_ttl</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/max_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1748,7 +2116,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">31536000</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/min_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-min-ttl"><strong>min_ttl</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/min_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1757,7 +2125,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">0</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/path_pattern"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-path-pattern"><strong>path_pattern</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/path_pattern" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1766,7 +2134,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;/path/to/files/*&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/smooth_streaming"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-smooth-streaming"><strong>smooth_streaming</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/smooth_streaming" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1775,7 +2143,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/target_origin_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-target-origin-id"><strong>target_origin_id</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/target_origin_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1784,7 +2152,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;origin_abcd&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/trusted_signers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-trusted-signers"><strong>trusted_signers</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/trusted_signers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1792,7 +2160,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/trusted_signers/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-trusted-signers-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/trusted_signers/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1801,7 +2169,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/trusted_signers/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-trusted-signers-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/trusted_signers/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1810,7 +2178,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/items/viewer_protocol_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-items-viewer-protocol-policy"><strong>viewer_protocol_policy</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/items/viewer_protocol_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1819,7 +2187,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;redirect-to-https&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-cache_behaviors/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-cache-behaviors-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-cache_behaviors/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1828,7 +2196,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-caller_reference"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-caller-reference"><strong>caller_reference</strong></p>
 <a class="ansibleOptionLink" href="#return-caller_reference" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1837,7 +2205,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;1484796016700&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-comment"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-comment"><strong>comment</strong></p>
 <a class="ansibleOptionLink" href="#return-comment" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1846,7 +2214,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;my</span> <span class="pre">first</span> <span class="pre">CloudFront</span> <span class="pre">distribution&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-custom_error_responses"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses"><strong>custom_error_responses</strong></p>
 <a class="ansibleOptionLink" href="#return-custom_error_responses" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -1854,11 +2222,57 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-custom_error_responses/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-custom_error_responses/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of custom error responses.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-custom_error_responses/elements/error_caching_min_ttl"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-elements-error-caching-min-ttl"><strong>error_caching_min_ttl</strong></p>
+<a class="ansibleOptionLink" href="#return-custom_error_responses/elements/error_caching_min_ttl" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Minimum time to cache this error response.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">300</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-custom_error_responses/elements/error_code"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-elements-error-code"><strong>error_code</strong></p>
+<a class="ansibleOptionLink" href="#return-custom_error_responses/elements/error_code" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Origin response code that triggers this error response.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">500</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-custom_error_responses/elements/response_code"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-elements-response-code"><strong>response_code</strong></p>
+<a class="ansibleOptionLink" href="#return-custom_error_responses/elements/response_code" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Response code to return to the requester.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;500&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-custom_error_responses/elements/response_page_path"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-elements-response-page-path"><strong>response_page_path</strong></p>
+<a class="ansibleOptionLink" href="#return-custom_error_responses/elements/response_page_path" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Path that contains the error page to display.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;/errors/5xx.html&quot;</span></code></p>
+</div></td>
+</tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-custom_error_responses/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-custom_error_responses/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of custom error responses.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-custom-error-responses-elements"><span class="std std-ref"><span class="pre">custom_error_responses.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
@@ -1932,8 +2346,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-default_cache_behavior/allowed_methods/cached_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-cached-methods-items"><strong>items</strong></p>
-<a class="ansibleOptionLink" href="#return-default_cache_behavior/allowed_methods/cached_methods/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/allowed_methods/cached_methods/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-cached-methods-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/allowed_methods/cached_methods/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cached methods.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
@@ -1941,6 +2356,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/allowed_methods/cached_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-cached-methods-items"><strong>items</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/allowed_methods/cached_methods/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cached methods.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-cached-methods-elements"><span class="std std-ref"><span class="pre">default_cache_behavior.allowed_methods.cached_methods.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/allowed_methods/cached_methods/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-cached-methods-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/allowed_methods/cached_methods/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1949,11 +2374,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
 </div></td>
 </tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/allowed_methods/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/allowed_methods/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of methods allowed by the cache behavior.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
+</div></td>
+</tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/allowed_methods/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/allowed_methods/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of methods allowed by the cache behavior.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-allowed-methods-elements"><span class="std std-ref"><span class="pre">default_cache_behavior.allowed_methods.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;HEAD&quot;,</span> <span class="pre">&quot;GET&quot;]</span></code></p>
 </div></td>
@@ -2019,6 +2455,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/cookies/whitelisted_names/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-cookies-whitelisted-names-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/cookies/whitelisted_names/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of cookies to forward.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-cookies-whitelisted-names-elements"><span class="std std-ref"><span class="pre">default_cache_behavior.forwarded_values.cookies.whitelisted_names.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;my_cookie&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/cookies/whitelisted_names/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-cookies-whitelisted-names-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/cookies/whitelisted_names/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -2027,7 +2474,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;my_cookie&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/cookies/whitelisted_names/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-cookies-whitelisted-names-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/cookies/whitelisted_names/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -2036,7 +2483,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-headers"><strong>headers</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/headers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -2044,11 +2491,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/headers/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-headers-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/headers/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of headers to vary on.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;Host&quot;]</span></code></p>
+</div></td>
+</tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/headers/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-headers-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/headers/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of headers to vary on.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-headers-elements"><span class="std std-ref"><span class="pre">default_cache_behavior.forwarded_values.headers.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;Host&quot;]</span></code></p>
 </div></td>
@@ -2080,14 +2538,24 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/query_string_cache_keys/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-query-string-cache-keys-items"><strong>items</strong></p>
-<a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/query_string_cache_keys/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/query_string_cache_keys/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-query-string-cache-keys-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/query_string_cache_keys/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of query string cache keys to use in cache lookups.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/query_string_cache_keys/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-query-string-cache-keys-items"><strong>items</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/query_string_cache_keys/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of query string cache keys to use in cache lookups.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-query-string-cache-keys-elements"><span class="std std-ref"><span class="pre">default_cache_behavior.forwarded_values.query_string_cache_keys.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/forwarded_values/query_string_cache_keys/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-forwarded-values-query-string-cache-keys-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/forwarded_values/query_string_cache_keys/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -2096,7 +2564,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/lambda_function_associations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-lambda-function-associations"><strong>lambda_function_associations</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/lambda_function_associations" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -2104,11 +2572,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-default_cache_behavior/lambda_function_associations/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-lambda-function-associations-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-default_cache_behavior/lambda_function_associations/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of lambda function associations.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;event_type&quot;:</span> <span class="pre">&quot;viewer-response&quot;,</span> <span class="pre">&quot;lambda_function_arn&quot;:</span> <span class="pre">&quot;arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function&quot;}]</span></code></p>
+</div></td>
+</tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_cache_behavior/lambda_function_associations/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-lambda-function-associations-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-default_cache_behavior/lambda_function_associations/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of lambda function associations.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-default-cache-behavior-lambda-function-associations-elements"><span class="std std-ref"><span class="pre">default_cache_behavior.lambda_function_associations.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when list is not empty</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;event_type&quot;:</span> <span class="pre">&quot;viewer-response&quot;,</span> <span class="pre">&quot;lambda_function_arn&quot;:</span> <span class="pre">&quot;arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function&quot;}]</span></code></p>
 </div></td>
@@ -2336,10 +2815,205 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of origins.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/connection_attempts"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-connection-attempts"><strong>connection_attempts</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/connection_attempts" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of times that CloudFront attempts to connect to the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">3</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/connection_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-connection-timeout"><strong>connection_timeout</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/connection_timeout" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of seconds that CloudFront waits when trying to establish a connection to the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">10</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-headers"><strong>custom_headers</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_headers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Custom headers passed to the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_headers/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-headers-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_headers/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of headers.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config"><strong>custom_origin_config</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Configuration of the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/http_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-http-port"><strong>http_port</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/http_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Port on which HTTP is listening.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">80</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/https_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-https-port"><strong>https_port</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/https_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Port on which HTTPS is listening.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">443</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/origin_keepalive_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-keepalive-timeout"><strong>origin_keepalive_timeout</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/origin_keepalive_timeout" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Keep-alive timeout.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">5</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/origin_protocol_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-protocol-policy"><strong>origin_protocol_policy</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/origin_protocol_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Policy of which protocols are supported.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;https-only&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/origin_read_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-read-timeout"><strong>origin_read_timeout</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/origin_read_timeout" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Timeout for reads to the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">30</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/origin_ssl_protocols"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-ssl-protocols"><strong>origin_ssl_protocols</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/origin_ssl_protocols" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>SSL protocols allowed by the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/origin_ssl_protocols/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-ssl-protocols-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/origin_ssl_protocols/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of SSL protocols.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;TLSv1&quot;,</span> <span class="pre">&quot;TLSv1.1&quot;,</span> <span class="pre">&quot;TLSv1.2&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/custom_origin_config/origin_ssl_protocols/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-ssl-protocols-quantity"><strong>quantity</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/custom_origin_config/origin_ssl_protocols/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Count of SSL protocols.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">3</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/domain_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-domain-name"><strong>domain_name</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/domain_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Domain name of the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test-origin.example.com&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-id"><strong>id</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ID of the origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test-origin.example.com&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/origin_path"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-origin-path"><strong>origin_path</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/origin_path" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Subdirectory to prefix the request from the S3 or HTTP origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/origin_shield"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-origin-shield"><strong>origin_shield</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/origin_shield" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 6.0.0</em></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Configuration of the origin Origin Shield.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/origin_shield/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-origin-shield-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/origin_shield/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether Origin Shield is enabled or not.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/origin_shield/origin_shield_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-origin-shield-origin-shield-region"><strong>origin_shield_region</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/origin_shield/origin_shield_region" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Which region is used by Origin Shield.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when enabled is true</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;us-east-1&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/s3_origin_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-s3-origin-config"><strong>s3_origin_config</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/s3_origin_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Origin access identity configuration for S3 Origin.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when s3_origin_access_identity_enabled is true</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/elements/s3_origin_config/origin_access_identity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-s3-origin-config-origin-access-identity"><strong>origin_access_identity</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/elements/s3_origin_config/origin_access_identity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The origin access id as a path.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> success</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;origin-access-identity/cloudfront/EXAMPLEID&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-origins/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-origins/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of origins.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements"><span class="std std-ref"><span class="pre">origins.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
@@ -2444,6 +3118,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <a class="ansibleOptionLink" href="#return-origins/items/custom_origin_config/origin_ssl_protocols/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of SSL protocols.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-origins-elements-custom-origin-config-origin-ssl-protocols-elements"><span class="std std-ref"><span class="pre">origins.elements.custom_origin_config.origin_ssl_protocols.elements</span></span></a></code> instead.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;TLSv1&quot;,</span> <span class="pre">&quot;TLSv1.1&quot;,</span> <span class="pre">&quot;TLSv1.2&quot;]</span></code></p>
 </div></td>
@@ -2563,8 +3238,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-items"><strong>items</strong></p>
-<a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/elements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-elements"><strong>elements</strong></p>
+<a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/elements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 10.1.0</em></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of country codes allowed or disallowed.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
@@ -2572,6 +3248,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-items"><strong>items</strong></p>
+<a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of country codes allowed or disallowed.</p>
+<p>This return value has been deprecated and will be removed in a release after 2026-12-16. Use <code class="ansible-return-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-elements"><span class="std std-ref"><span class="pre">restrictions.geo_restriction.elements</span></span></a></code> instead.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;xy&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -2580,7 +3266,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/restriction_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-restriction-type"><strong>restriction_type</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/restriction_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2589,7 +3275,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;blacklist&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-status"><strong>status</strong></p>
 <a class="ansibleOptionLink" href="#return-status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2598,7 +3284,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;InProgress&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -2607,7 +3293,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Hello&quot;:</span> <span class="pre">&quot;World&quot;}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate"><strong>viewer_certificate</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -2615,7 +3301,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/acm_certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-acm-certificate-arn"><strong>acm_certificate_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/acm_certificate_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2624,7 +3310,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-1234-1234-abcd-123456abcdef&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/certificate"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-certificate"><strong>certificate</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/certificate" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2633,7 +3319,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-1234-1234-abcd-123456abcdef&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/certificate_source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-certificate-source"><strong>certificate_source</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/certificate_source" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2642,7 +3328,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;acm&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/minimum_protocol_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-minimum-protocol-version"><strong>minimum_protocol_version</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/minimum_protocol_version" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2651,7 +3337,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;TLSv1&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/ssl_support_method"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-ssl-support-method"><strong>ssl_support_method</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/ssl_support_method" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2660,7 +3346,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;sni-only&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-web_acl_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-web-acl-id"><strong>web_acl_id</strong></p>
 <a class="ansibleOptionLink" href="#return-web_acl_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
