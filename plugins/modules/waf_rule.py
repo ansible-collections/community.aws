@@ -19,6 +19,11 @@ author:
   - Mike Mochan (@mmochan)
   - Will Thames (@willthames)
 
+deprecated:
+  removed_in: 12.0.0
+  why: Amazon has retired the "WAF Classic" service.
+  alternative: Please use the "AWS WAF (WAFv2)" service and modules instead.
+
 options:
   name:
     description: Name of the Web Application Firewall rule.
