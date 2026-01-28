@@ -4445,7 +4445,7 @@ releases:
         ``suboptions``. (https://github.com/ansible-collections/community.aws/pull/2342).
       - cloudfront_invalidation - Added ``elements`` key to ``invalidation.invalidation_batch.paths``
         (https://github.com/ansible-collections/community.aws/pull/2354).
-      - cloudfront_invalidation - Added ``elements`` key to `invalidation.invalidation_batch.paths``
+      - cloudfront_invalidation - Added ``elements`` key to ``invalidation.invalidation_batch.paths``
         (https://github.com/ansible-collections/community.aws/pull/2354).
       release_summary: "This release includes several minor improvements and bugfixes,\ndeprecation
         notices for legacy module aliases, cloudfront_distribution return values,

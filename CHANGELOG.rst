@@ -38,7 +38,7 @@ Minor Changes
 - cloudfront_distribution - Added ``elements`` key to ``restrictions.geo_restriction`` (https://github.com/ansible-collections/community.aws/pull/2354).
 - cloudfront_distribution - move misplaced options out of ``forwarded_values`` ``suboptions``. (https://github.com/ansible-collections/community.aws/pull/2342).
 - cloudfront_invalidation - Added ``elements`` key to ``invalidation.invalidation_batch.paths`` (https://github.com/ansible-collections/community.aws/pull/2354).
-- cloudfront_invalidation - Added ``elements`` key to `invalidation.invalidation_batch.paths`` (https://github.com/ansible-collections/community.aws/pull/2354).
+- cloudfront_invalidation - Added ``elements`` key to ``invalidation.invalidation_batch.paths`` (https://github.com/ansible-collections/community.aws/pull/2354).
 
 Deprecated Features
 -------------------
