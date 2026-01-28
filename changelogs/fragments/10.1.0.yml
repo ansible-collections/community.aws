@@ -1,5 +1,0 @@
----
-release_summary: |
-  This release includes several minor improvements and bugfixes,
-  deprecation notices for legacy module aliases, cloudfront_distribution return values,  and WAF Classic modules, 
-  and documentation updates.
