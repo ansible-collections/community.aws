@@ -137,6 +137,12 @@ Bugfixes
 v10.0.0
 =======
 
+Release Summary
+---------------
+
+In this major release, the ``connection/aws_ssm`` connection plugin has been fully migrated out of this collection and into ``amazon.aws`` (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930). Playbooks or Inventory using the Fully Qualified Collection Name (FQCN) for this connection plugin should be updated to use ``amazon.aws.aws_ssm``. Additionally, ``botocore<1.31.0`` and ``boto3<1.28.0`` are no longer supported; most modules will continue to work with older versions of the AWS SDK, however, compatibility with older versions of the SDK is not guaranteed.
+
+
 Major Changes
 -------------
 
@@ -189,6 +195,12 @@ Minor Changes
 
 v9.1.0
 ======
+
+Release Summary
+---------------
+
+Preparation for the promotion of the ``aws_ssm.py`` plugin (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930) is under way in this release; this effort includes the refactoring work for methods like ``exec_command`` (https://github.com/ansible-collections/community.aws/pull/2224) as well as new methods such as ``generate_mark()`` (https://github.com/ansible-collections/community.aws/pull/2235) which generates random strings for SSM CLI delimitation.
+
 
 Minor Changes
 -------------
