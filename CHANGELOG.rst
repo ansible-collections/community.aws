@@ -10,7 +10,7 @@ v10.1.0
 Release Summary
 ---------------
 
-This release includes several minor improvements and bugfixes, deprecation notices for legacy module aliases, cloudfront_distribution return values, and WAF Classic modules, and documentation updates.
+This release includes several minor improvements and bugfixes, deprecation notices for legacy module aliases, cloudfront_distribution return values, and WAF Classic modules, in addition to documentation updates.
 
 Minor Changes
 -------------
