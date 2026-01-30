@@ -102,6 +102,11 @@ Minor Changes
 v9.1.0
 ======
 
+Release Summary
+---------------
+
+Preparation for the promotion of the ``aws_ssm.py`` plugin (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930) is under way in this release; this effort includes the refactoring work for methods like ``exec_command`` (https://github.com/ansible-collections/community.aws/pull/2224) as well as new methods such as ``generate_mark()`` (https://github.com/ansible-collections/community.aws/pull/2235) which generates random strings for SSM CLI delimitation.
+
 Minor Changes
 -------------
 
