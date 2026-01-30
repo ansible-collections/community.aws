@@ -4,6 +4,43 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v11.0.0
+=======
+
+Release Summary
+---------------
+
+This major release deprecates the WAF Classic modules (waf_condition, waf_info, waf_rule, and waf_web_acl) following Amazon's retirement of the WAF Classic service, and users should migrate to the AWS WAF (WAFv2) service and corresponding modules. This major release also updates the botocore and boto3 dependencies to version 1.35.0 and bumps awscli to version 1.34.0, removes support for Python versions earlier than 3.8, and includes minor improvements such as documentation fixes for cloudfront_distribution.
+
+Major Changes
+-------------
+
+- community.aws collection - ``awscli`` version has been bumped to 1.34.0 (https://github.com/ansible-collections/community.aws/pull/2375).
+- community.aws collection - ``botocore`` and ``boto3`` versions have been bumped to 1.35.0 (https://github.com/ansible-collections/community.aws/pull/2375).
+
+Minor Changes
+-------------
+
+- cloudfront_distribution - move misplaced options out of ``forwarded_values`` ``suboptions``. (https://github.com/ansible-collections/community.aws/pull/2342).
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- community.aws collection - Due to the AWS SDKs announcing the end of support for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/), support for Python less than 3.8 by this collection has been deprecated and will be removed in release 10.0.0. (https://github.com/ansible-collections/community.aws/pull/2304).
+
+Deprecated Features
+-------------------
+
+- waf_condition - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+- waf_info - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+- waf_rule - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+- waf_web_acl - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+
+Bugfixes
+--------
+
+- Remove ``ansible.module_utils.six`` imports to avoid warnings (https://github.com/ansible-collections/community.aws/pull/2338).
+
 v10.0.0
 =======
 
@@ -12,23 +49,22 @@ Release Summary
 
 In this major release, the ``connection/aws_ssm`` connection plugin has been fully migrated out of this collection and into ``amazon.aws`` (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930). Playbooks or Inventory using the Fully Qualified Collection Name (FQCN) for this connection plugin should be updated to use ``amazon.aws.aws_ssm``. Additionally, ``botocore<1.31.0`` and ``boto3<1.28.0`` are no longer supported; most modules will continue to work with older versions of the AWS SDK, however, compatibility with older versions of the SDK is not guaranteed.
 
-
 Major Changes
 -------------
 
-- community.aws collection - The ``community.aws`` collection has dropped support for ``botocore<1.34.0`` and ``boto3<1.34.0``. Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/amazon.aws/pull/2426).
+- community.aws collection - The community.aws collection has dropped support for ``botocore<1.34.0`` and ``boto3<1.34.0``. Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/amazon.aws/pull/2426).
 
 Breaking Changes / Porting Guide
 --------------------------------
 
 - Support for ``ansible-core<2.17`` has been dropped (https://github.com/ansible-collections/community.aws/pull/2303).
-- The ``community.aws`` collection has dropped support for ``botocore<1.31.0`` and ``boto3<1.28.0``. Most modules will continue to work with older versions of the AWS SDK.  However, compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/2195).
+- The community.aws collection has dropped support for ``botocore<1.31.0`` and ``boto3<1.28.0``. Most modules will continue to work with older versions of the AWS SDK.  However, compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/2195).
 - connection/aws_ssm - The connection plugin has been migrated from the ``community.aws`` collection. Playbooks or Inventory using the Fully Qualified Collection Name for this connection plugin should be updated to use ``amazon.aws.aws_ssm``.
 
 Deprecated Features
 -------------------
 
-- community.aws collection - Due to the AWS SDKs announcing the end of support for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.8 by this collection has been deprecated and was removed in this 10.0.0 release (https://github.com/ansible-collections/community.aws/pull/2195).
+- community.aws collection - due to the AWS SDKs announcing the end of support for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.8 by this collection has been deprecated and will removed in release 10.0.0 (https://github.com/ansible-collections/community.aws/pull/2195).
 
 v9.3.0
 ======
@@ -41,7 +77,7 @@ This release includes several improvements for the ``community.aws.aws_ssm`` con
 Minor Changes
 -------------
 
-- Bump version of ``ansible-lint`` to 25.1.2 (https://github.com/ansible-collections/community.aws/pull/2295).
+- Bump version of ansible-lint to 25.1.2 (https://github.com/ansible-collections/community.aws/pull/2295).
 - aws_ssm - Move the ``aws_ssm`` connection plugin's plugin_utils into a dedicated folder (https://github.com/ansible-collections/community.aws/pull/2279).
 - aws_ssm - Refactor S3 operations methods for improved clarity (https://github.com/ansible-collections/community.aws/pull/2275).
 - aws_ssm - Refactor connection/aws_ssm to add new TerminalManager class and move relevant methods to the new class (https://github.com/ansible-collections/community.aws/pull/2270).
@@ -71,17 +107,16 @@ Release Summary
 
 Preparation for the promotion of the ``aws_ssm.py`` plugin (https://forum.ansible.com/t/aws-ssm-connection-refactoring-plugin-promotion/39930) is under way in this release; this effort includes the refactoring work for methods like ``exec_command`` (https://github.com/ansible-collections/community.aws/pull/2224) as well as new methods such as ``generate_mark()`` (https://github.com/ansible-collections/community.aws/pull/2235) which generates random strings for SSM CLI delimitation.
 
-
 Minor Changes
 -------------
 
 - aws_ssm -  Refactor ``_init_clients`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2223).
 - aws_ssm -  Refactor ``_prepare_terminal()`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/).
-- aws_ssm -  Refactor ``exec_command`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
+- aws_ssm -  Refactor exec_command Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
+- aws_ssm - Add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
 - aws_ssm - Add the possibility to define ``aws_ssm plugin`` variable via environment variable and by default use the version found on the $PATH rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
 - dms_endpoint - Improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
 - s3_lifecycle - Support for min and max object size when applying the filter rules (https://github.com/ansible-collections/community.aws/pull/2205).
-- aws_ssm - Add function to generate random strings for SSM CLI delimitation (https://github.com/ansible-collections/community.aws/pull/2235).
 - various modules - Linting fixups (https://github.com/ansible-collections/community.aws/pull/2221).
 - waf_condition - Add missing options validation to filters (https://github.com/ansible-collections/community.aws/pull/2220).
 
@@ -89,7 +124,7 @@ Bugfixes
 --------
 
 - aws_ssm - Use ``head_bucket`` to access bucket locations in foreign AWS accounts (https://github.com/ansible-collections/community.aws/pull/1987).
-- aws_ssm - Strip Powershell ``CLIXML`` from ``stdout`` (https://github.com/ansible-collections/community.aws/issues/1952).
+- ssm - Strip Powershell ``CLIXML`` from ``stdout`` (https://github.com/ansible-collections/community.aws/issues/1952).
 
 v9.0.0
 ======

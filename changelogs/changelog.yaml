@@ -4181,3 +4181,47 @@ releases:
     - botocore.yml
     - migrate_aws_ssm.yml
     release_date: '2025-05-14'
+  11.0.0:
+    changes:
+      breaking_changes:
+      - community.aws collection - Due to the AWS SDKs announcing the end of support
+        for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/),
+        support for Python less than 3.8 by this collection has been deprecated and
+        will be removed in release 10.0.0. (https://github.com/ansible-collections/community.aws/pull/2304).
+      bugfixes:
+      - Remove ``ansible.module_utils.six`` imports to avoid warnings (https://github.com/ansible-collections/community.aws/pull/2338).
+      deprecated_features:
+      - waf_condition - The module has been deprecated as Amazon has retired the ``WAF
+        Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules
+        instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+      - waf_info - The module has been deprecated as Amazon has retired the ``WAF
+        Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules
+        instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+      - waf_rule - The module has been deprecated as Amazon has retired the ``WAF
+        Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules
+        instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+      - waf_web_acl - The module has been deprecated as Amazon has retired the ``WAF
+        Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules
+        instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
+      major_changes:
+      - community.aws collection - ``awscli`` version has been bumped to 1.34.0 (https://github.com/ansible-collections/community.aws/pull/2375).
+      - community.aws collection - ``botocore`` and ``boto3`` versions have been bumped
+        to 1.35.0 (https://github.com/ansible-collections/community.aws/pull/2375).
+      minor_changes:
+      - cloudfront_distribution - move misplaced options out of ``forwarded_values``
+        ``suboptions``. (https://github.com/ansible-collections/community.aws/pull/2342).
+      release_summary: This major release deprecates the WAF Classic modules (waf_condition,
+        waf_info, waf_rule, and waf_web_acl) following Amazon's retirement of the
+        WAF Classic service, and users should migrate to the AWS WAF (WAFv2) service
+        and corresponding modules. This major release also updates the botocore and
+        boto3 dependencies to version 1.35.0 and bumps awscli to version 1.34.0, removes
+        support for Python versions earlier than 3.8, and includes minor improvements
+        such as documentation fixes for cloudfront_distribution.
+    fragments:
+    - 11.0.0.yml
+    - 20250513-python_support.yml
+    - 20250925-sanity-fixes.yaml
+    - 2342-cloudfront-fix-doc-misplaced-options.yml
+    - 2375-bump-botocore-1.35.0.yaml
+    - deprecate-waf-classic.yml
+    release_date: '2026-02-03'
