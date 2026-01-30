@@ -112,7 +112,7 @@ Minor Changes
 
 - aws_ssm -  Refactor ``_init_clients`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2223).
 - aws_ssm -  Refactor ``_prepare_terminal()`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/).
-- aws_ssm - Refactor ``exec_command`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
+- aws_ssm -  Refactor ``exec_command`` Method for Improved Clarity and Efficiency (https://github.com/ansible-collections/community.aws/pull/2224).
 - aws_ssm - Add the possibility to define ``aws_ssm plugin`` variable via environment variable and by default use the version found on the $PATH rather than require that you provide an absolute path (https://github.com/ansible-collections/community.aws/issues/1990).
 - dms_endpoint - Improve resilience of parameter comparison (https://github.com/ansible-collections/community.aws/pull/2221).
 - s3_lifecycle - Support for min and max object size when applying the filter rules (https://github.com/ansible-collections/community.aws/pull/2205).
