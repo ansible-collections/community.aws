@@ -10,7 +10,7 @@ v11.0.0
 Release Summary
 ---------------
 
-This major release deprecates the WAF Classic modules (waf_condition, waf_info, waf_rule, and waf_web_acl) following Amazon's retirement of the WAF Classic service, and users should migrate to the AWS WAF (WAFv2) service and corresponding modules. This major release also updates the botocore and boto3 dependencies to version 1.35.0 and bumps awscli to version 1.34.0, removes support for Python versions earlier than 3.8, and includes minor improvements such as documentation fixes for cloudfront_distribution.
+This major release deprecates the WAF Classic modules (``waf_condition``, ``waf_info``, ``waf_rule``, and ``waf_web_acl``) following Amazon's retirement of the WAF Classic service, and users should migrate to the AWS WAF (WAFv2) service and corresponding modules. This major release also updates the ``botocore`` and ``boto3`` dependencies to version 1.35.0 and bumps ``awscli`` to version 1.34.0, removes support for Python versions earlier than 3.8, and includes minor improvements such as documentation fixes for ``cloudfront_distribution``.
 
 Major Changes
 -------------
