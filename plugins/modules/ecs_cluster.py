@@ -76,19 +76,6 @@ options:
         required: false
         type: bool
         default: true
-    purge_tags:
-        version_added: 10.1.0
-        description:
-            - Toggle overwriting of existing tags.
-        required: false
-        type: bool
-        default: false
-    tags:
-        description:
-          - A dictionary of tags to add or remove from the resource.
-        type: dict
-        required: false
-        version_added: 10.1.0
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -176,7 +163,7 @@ status:
     type: str
     sample: ACTIVE
 tags:
-    description: Cluster tags
+    description: Cluster tags.
     returned: always
     type: dict
     sample: {"key": "value"}
