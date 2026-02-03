@@ -1,5 +1,0 @@
-deprecated_features:
-- waf_condition - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
-- waf_info - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
-- waf_rule - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
-- waf_web_acl - The module has been deprecated as Amazon has retired the ``WAF Classic`` service. Please use the ``AWS WAF (WAFv2)`` service and modules instead. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2389).
