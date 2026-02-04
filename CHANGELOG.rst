@@ -4,6 +4,25 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v11.0.0
+=======
+
+Release Summary
+---------------
+
+This major release updates the ``botocore`` and ``boto3`` dependencies to version 1.35.0 and bumps ``awscli`` to version 1.34.0, removes support for Python versions earlier than 3.8.
+
+Major Changes
+-------------
+
+- community.aws collection - ``awscli`` version has been bumped to 1.34.0 (https://github.com/ansible-collections/community.aws/pull/2375).
+- community.aws collection - ``botocore`` and ``boto3`` versions have been bumped to 1.35.0 (https://github.com/ansible-collections/community.aws/pull/2375).
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- community.aws collection - Due to the AWS SDKs announcing the end of support for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/), support for Python less than 3.8 by this collection has been deprecated and will be removed in release 10.0.0. (https://github.com/ansible-collections/community.aws/pull/2304).
+
 v10.1.0
 =======
 
