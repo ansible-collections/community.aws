@@ -1,0 +1,235 @@
+- name: Create deployment group - Server, No Options (CHECK_MODE)
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_no_options"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    state: present
+  check_mode: true
+  register: codedeploy_deployment_group_server
+
+- name: check that deployment group was correctly created
+  assert:
+    that:
+      - codedeploy_deployment_group_server.changed
+
+- name: Create deployment group - Server, No Options
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_no_options"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    state: present
+
+- name: Create deployment group - tag sets
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    deployment_config_name: CodeDeployDefault.HalfAtATime
+    alarm_configuration:
+      enabled: True
+      ignore_poll_alarm_failure: True
+      alarm_names:
+        - "{{ tiny_prefix }}_test_alarm_1"
+        - "{{ tiny_prefix }}_test_alarm_2"
+    outdated_instances_strategy: IGNORE
+    deployment_style:
+      deployment_type: IN_PLACE
+      deployment_option: WITHOUT_TRAFFIC_CONTROL
+    auto_rollback_configuration:
+      enabled: True
+      events:
+        - DEPLOYMENT_STOP_ON_ALARM
+        - DEPLOYMENT_STOP_ON_REQUEST
+    ec2_tag_set:
+      ec2_tag_set_list:
+        - ec2_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_ec2_instance_tagset_1"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test"
+              type: KEY_AND_VALUE
+        - ec2_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_ec2_instance_tagset_2"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test"
+              type: KEY_AND_VALUE
+    on_premises_tag_set:
+      on_premises_tag_set_list:
+        - on_premises_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_instance_tagset_1"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test"
+              type: KEY_AND_VALUE
+        - on_premises_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_instance_tagset_2"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test"
+              type: KEY_AND_VALUE
+    state: present
+  register: codedeploy_deployment_group_server
+
+- name: check that deployment group was correctly created
+  assert:
+    that:
+      - codedeploy_deployment_group_server.changed
+      - codedeploy_deployment_group_server.deployment_group is defined
+      - codedeploy_deployment_group_server.deployment_group.deployment_group_name == "{{ tiny_prefix }}_dg_server_all_options"
+
+- name: update deployment group - tag sets (CHECK_MODE)
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options"
+    new_deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options_updated" # change deployment group name
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    deployment_config_name: CodeDeployDefault.AllAtOnce # change deployment config
+    alarm_configuration:
+      enabled: True
+      ignore_poll_alarm_failure: True
+      alarm_names:
+        - "{{ tiny_prefix }}_test_alarm_1"
+        - "{{ tiny_prefix }}_test_alarm_2"
+    outdated_instances_strategy: IGNORE
+    deployment_style:
+      deployment_type: IN_PLACE
+      deployment_option: WITHOUT_TRAFFIC_CONTROL
+    auto_rollback_configuration:
+      enabled: True
+      events:
+        - DEPLOYMENT_STOP_ON_ALARM
+        - DEPLOYMENT_FAILURE
+    ec2_tag_set:
+      ec2_tag_set_list:
+        - ec2_tag: # change ec2 tag set
+            - key: Name
+              value: "{{ tiny_prefix }}_ec2_instance_tagset_1_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_new_test_updated"
+              type: KEY_AND_VALUE
+        - ec2_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_ec2_instance_new_tagset_2_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_new_test_updated"
+              type: KEY_AND_VALUE
+    on_premises_tag_set:
+      on_premises_tag_set_list:
+        - on_premises_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_instance_tagset_1_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test_updated"
+              type: KEY_AND_VALUE
+        - on_premises_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_instance_tagset_2_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test_updated"
+              type: KEY_AND_VALUE
+    state: present
+  check_mode: true
+  register: codedeploy_deployment_group_server
+
+- name: check that deployment group was correctly updated
+  assert:
+    that:
+      - codedeploy_deployment_group_server.changed
+      - codedeploy_deployment_group_server.deployment_group is defined
+      - codedeploy_deployment_group_server.deployment_group.deployment_group_name == "{{ tiny_prefix }}_dg_server_all_options"
+
+- name: update deployment group - tag sets
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options"
+    new_deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options_updated" # change deployment group name
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    deployment_config_name: CodeDeployDefault.AllAtOnce # change deployment config
+    alarm_configuration:
+      enabled: True
+      ignore_poll_alarm_failure: True
+      alarm_names:
+        - "{{ tiny_prefix }}_test_alarm_1"
+        - "{{ tiny_prefix }}_test_alarm_2"
+    outdated_instances_strategy: IGNORE
+    deployment_style:
+      deployment_type: IN_PLACE
+      deployment_option: WITHOUT_TRAFFIC_CONTROL
+    auto_rollback_configuration:
+      enabled: True
+      events:
+        - DEPLOYMENT_STOP_ON_ALARM
+        - DEPLOYMENT_FAILURE
+    ec2_tag_set:
+      ec2_tag_set_list:
+        - ec2_tag: # change ec2 tag set
+            - key: Name
+              value: "{{ tiny_prefix }}_ec2_instance_tagset_1_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_new_test_updated"
+              type: KEY_AND_VALUE
+        - ec2_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_ec2_instance_new_tagset_2_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_new_test_updated"
+              type: KEY_AND_VALUE
+    on_premises_tag_set:
+      on_premises_tag_set_list:
+        - on_premises_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_instance_tagset_1_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test_updated"
+              type: KEY_AND_VALUE
+        - on_premises_tag:
+            - key: Name
+              value: "{{ tiny_prefix }}_instance_tagset_2_updated"
+              type: KEY_AND_VALUE
+            - key: Env
+              value: "{{ tiny_prefix }}_ansible_test_updated"
+              type: KEY_AND_VALUE
+    state: present
+  register: codedeploy_deployment_group_server
+
+- name: check that deployment group was correctly updated
+  assert:
+    that:
+      - codedeploy_deployment_group_server.changed
+      - codedeploy_deployment_group_server.deployment_group is defined
+      - codedeploy_deployment_group_server.deployment_group.deployment_group_name == "{{ tiny_prefix }}_dg_server_all_options_updated"
+      - codedeploy_deployment_group_server.deployment_group.deployment_config_name == "CodeDeployDefault.AllAtOnce"
+
+
+- name: delete deployment group - tag sets (CHECK_MODE)
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options_updated"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    state: absent
+  check_mode: true
+  register: codedeploy_deployment_group_server
+
+- name: check that deployment group was correctly deleted
+  assert:
+    that:
+      - codedeploy_deployment_group_server.changed
+
+- name: delete deployment group - tag sets
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_server.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_server_all_options_updated"
+    state: absent
+  register: codedeploy_deployment_group_server

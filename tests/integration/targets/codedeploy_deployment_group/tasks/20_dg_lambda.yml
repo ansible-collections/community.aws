@@ -1,0 +1,92 @@
+- name: Create deployment group - Lambda, no options(Check mode)
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_lambda.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_lambda_no_options"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    state: present
+  check_mode: true
+  register: codedeploy_deployment_group_lambda
+
+- name: check that deployment group was correctly created
+  assert:
+    that:
+      - codedeploy_deployment_group_lambda.changed
+
+- name: Create deployment group - Lambda, no options
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_lambda.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_lambda_no_options"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    deployment_style:
+      deployment_type: BLUE_GREEN
+      deployment_option: WITH_TRAFFIC_CONTROL    
+    state: present
+  register: codedeploy_deployment_group_lambda
+
+- name: Create deployment group - Lambda, all options
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_lambda.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_lambda_all_options"
+    service_role: "{{ codedeploy_service_role.iam_role.arn }}"
+    deployment_config_name: CodeDeployDefault.LambdaCanary10Percent30Minutes
+    alarm_configuration:
+      enabled: True
+      ignore_poll_alarm_failure: True
+      alarm_names:
+        - "{{ tiny_prefix }}_test_alarm_1"
+        - "{{ tiny_prefix }}_test_alarm_2"
+    auto_rollback_configuration:
+      enabled: True
+      events:
+        - DEPLOYMENT_STOP_ON_ALARM
+    deployment_style:
+      deployment_type: BLUE_GREEN
+      deployment_option: WITH_TRAFFIC_CONTROL
+    state: present
+  register: codedeploy_deployment_group_lambda
+
+- name: check that deployment group was correctly created
+  assert:
+    that:
+      - codedeploy_deployment_group_lambda.changed
+      - codedeploy_deployment_group_lambda.deployment_group is defined
+      - codedeploy_deployment_group_lambda.deployment_group.deployment_group_name == "{{ tiny_prefix }}_dg_lambda_all_options"
+
+- name: Update deployment group - Lambda, all options
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_lambda.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_lambda_all_options"
+    new_deployment_group_name: "{{ tiny_prefix }}_dg_lambda_all_options_updated"
+    deployment_config_name: CodeDeployDefault.LambdaLinear10PercentEvery1Minute
+    alarm_configuration:
+      enabled: True
+      ignore_poll_alarm_failure: True
+      alarm_names:
+        - "{{ tiny_prefix }}_test_alarm_1_updated"
+        - "{{ tiny_prefix }}_test_alarm_2_updated"
+    auto_rollback_configuration:
+      enabled: True
+      events:
+        - DEPLOYMENT_STOP_ON_ALARM
+        - DEPLOYMENT_FAILURE
+    deployment_style:
+      deployment_type: BLUE_GREEN
+      deployment_option: WITH_TRAFFIC_CONTROL
+    state: present
+  register: codedeploy_deployment_group_lambda
+
+
+- name: check that deployment group was correctly updated
+  assert:
+    that:
+      - codedeploy_deployment_group_lambda.changed
+      - codedeploy_deployment_group_lambda.deployment_group is defined
+      - codedeploy_deployment_group_lambda.deployment_group.deployment_group_name == "{{ tiny_prefix }}_dg_lambda_all_options_updated"
+      - codedeploy_deployment_group_lambda.deployment_group.deployment_config_name == "CodeDeployDefault.LambdaLinear10PercentEvery1Minute"
+
+- name: delete deployment group - Lambda
+  codedeploy_deployment_group:
+    application_name: "{{ codedeploy_application_lambda.application.application_name }}"
+    deployment_group_name: "{{ tiny_prefix }}_dg_lambda_all_options_updated"
+    state: absent
+  register: codedeploy_deployment_group_lambda

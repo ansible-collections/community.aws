@@ -1,0 +1,2 @@
+---
+codedeploy_service_role_name: "ansible-test-{{ tiny_prefix | truncate(6, True, '') }}-codedeploy-role"
