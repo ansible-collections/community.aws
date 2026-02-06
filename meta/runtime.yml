@@ -143,6 +143,19 @@ action_groups:
     - lightsail
     - lightsail_snapshot
     - lightsail_static_ip
+    - medialive_channel_placement_group_info
+    - medialive_channel_placement_group
+    - medialive_cluster_info
+    - medialive_cluster
+    - medialive_network_info
+    - medialive_network
+    - medialive_node
+    - medialive_node_info
+    - medialive_node_registration
+    - medialive_sdi_source
+    - medialive_sdi_source_info
+    - medialive_input
+    - medialive_input_info
     - mq_broker
     - mq_broker_config
     - mq_broker_info

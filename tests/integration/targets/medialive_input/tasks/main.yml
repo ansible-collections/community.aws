@@ -1,0 +1,217 @@
+---
+# Integration tests for medialive_input module
+- name: Wrap MediaLive Input tests with AWS credentials
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    set_fact:
+      ansible_python_interpreter: '{{ botocore_virtualenv_interpreter }}'
+
+  block:
+    # Setup test variables
+    - name: Set up test variables
+      ansible.builtin.set_fact:
+        input_name: "{{ resource_prefix }}-input"
+        sdi_source:
+          name_single: "{{ resource_prefix }}-sdi-source-single"
+          name_alt: "{{ resource_prefix }}-alt-sdi-source"
+          name_quad: "{{ resource_prefix }}-sdi-source-quad"
+          # sdi_source_mode: "QUADRANT"
+          # sdi_source_mode_interleave: "INTERLEAVE"
+          # quad_source_type: "QUAD"
+          # single_source_type: "SINGLE"
+        wait_timeout: 30
+
+    # Create MediaLive SDI source
+    - name: Create a single MediaLive SDI source
+      community.aws.medialive_sdi_source:
+        name: '{{ sdi_source.name_single }}'
+        type: SINGLE
+        state: present
+      register: sdi_source_result
+
+    # Test Input creation: SDI source
+    - name: Create a MediaLive Anywhere Input with SDI source
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
+        state: present
+        type: SDI
+        input_network_location: ON_PREMISES
+        sdi_sources:
+          - '{{ sdi_source_result.sdi_source.sdi_source_id }}'
+        tags:
+          AnsibleTest: '{{ resource_prefix }}-sdi_source'
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: create_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: create_result is not failed or 'TooManyRequestsException' not in (create_result.msg | default(''))
+
+    - name: Assert Input was created successfully
+      ansible.builtin.assert:
+        that:
+          - create_result is changed
+          - create_result.input is defined
+          - create_result.input.name == input_name
+          - create_result.input.input_id is defined
+          - create_result.input.arn is defined
+          - create_result.input.state == 'DETACHED'
+          - create_result.input.type == 'SDI'
+          - create_result.input.input_network_location == 'ON_PREMISES'
+          - create_result.input.sdi_sources | length == 1
+          - create_result.input.sdi_sources[0] == sdi_source_result.sdi_source.sdi_source_id
+          - create_result.input.tags.AnsibleTest is defined
+          - create_result.input.tags.AnsibleTest == resource_prefix + '-sdi_source'
+        fail_msg: "Input creation failed or returned unexpected data"
+        success_msg: "Input created successfully with expected properties"
+
+    # Store Input ID for later use
+    - name: Store Input ID
+      ansible.builtin.set_fact:
+        input_id: "{{ create_result.input.input_id }}"
+
+    # Test idempotency
+    - name: Create the same Input again (idempotency check)
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
+        state: present
+        type: SDI
+        input_network_location: ON_PREMISES
+        sdi_sources:
+          - '{{ sdi_source_result.sdi_source.sdi_source_id }}'
+        tags:
+          AnsibleTest: '{{ resource_prefix }}-sdi_source'
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: idempotency_result
+
+    - name: Assert idempotency
+      ansible.builtin.assert:
+        that:
+          - not idempotency_result.changed
+          - idempotency_result.input is defined
+          - idempotency_result.input.input_id == input_id
+        fail_msg: "Idempotency check failed - module made changes when none were expected"
+        success_msg: "Idempotency check passed"
+
+    # Test retrieval by ID
+    - name: Get Input by ID
+      community.aws.medialive_input_info:
+        id: "{{ input_id }}"
+      register: get_by_id_result
+
+    - name: Assert Input was retrieved by ID
+      ansible.builtin.assert:
+        that:
+          - not get_by_id_result.changed
+          - get_by_id_result.input is defined
+          - get_by_id_result.input.input_id == input_id
+          - get_by_id_result.input.name == input_name
+        fail_msg: "Failed to retrieve Input by ID"
+        success_msg: "Successfully retrieved Input by ID"
+
+    # Test retrieval by name
+    - name: Get Input by name
+      community.aws.medialive_input_info:
+        name: "{{ input_name }}"
+      register: get_by_name_result
+
+    - name: Assert Input was retrieved by name
+      ansible.builtin.assert:
+        that:
+          - not get_by_name_result.changed
+          - get_by_name_result.input is defined
+          - get_by_name_result.input.input_id == input_id
+          - get_by_name_result.input.name == input_name
+        fail_msg: "Failed to retrieve Input by name"
+        success_msg: "Successfully retrieved Input by name"
+
+    # Test check mode
+    - name: Test check mode - attempt to delete Input
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
+        state: absent
+      check_mode: true
+      register: check_mode_result
+
+    - name: Assert check mode works correctly
+      ansible.builtin.assert:
+        that:
+          - check_mode_result is changed
+          - (check_mode_result.input | default({})) == {}
+        fail_msg: "Check mode did not work as expected"
+        success_msg: "Check mode correctly simulated deletion"
+
+    # Test Input deletion
+    - name: Delete the Input
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
+        state: absent
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: delete_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
+
+    - name: Assert Input was deleted
+      ansible.builtin.assert:
+        that:
+          - delete_result is changed
+        fail_msg: "Input deletion failed"
+        success_msg: "Input deleted successfully"
+
+    # Test deletion idempotency
+    - name: Try to delete the Input again (idempotency check)
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
+        state: absent
+      register: delete_idempotency_result
+
+    - name: Assert delete idempotency
+      ansible.builtin.assert:
+        that:
+          - not delete_idempotency_result.changed
+        fail_msg: "Delete idempotency check failed"
+        success_msg: "Delete idempotency check passed"
+
+  # Error handling and cleanup
+  rescue:
+    - name: Capture error
+      ansible.builtin.set_fact:
+        test_failed: true
+
+    - name: Cleanup - ensure Input is deleted
+      community.aws.medialive_input:
+        name: "{{ input_name }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+      when: input_id is defined
+
+    - name: Fail with useful error message
+      ansible.builtin.fail:
+        msg: "MediaLive Input integration tests failed. See previous errors for details."
+      when: test_failed | default(false)
+
+  always:
+    - name: Ensure all test resources are cleaned up
+      block:
+        - name: Clean up Input
+          community.aws.medialive_input:
+            name: "{{ input_name }}"
+            state: absent
+            wait: false  # Don't wait in cleanup to speed up test completion
+          ignore_errors: true
+          when: input_id is defined
+
+        - name: Clean up SDI source
+          community.aws.medialive_sdi_source:
+            name: '{{ sdi_source.name_single }}'
+            state: absent
+          ignore_errors: true
+          when: sdi_source_result is defined
