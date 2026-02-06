@@ -171,6 +171,7 @@ action_groups:
     - s3_sync
     - s3_website
     - secretsmanager_secret
+    - ses_configuration_set
     - ses_identity
     - ses_identity_policy
     - ses_rule_set
