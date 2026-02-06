@@ -119,6 +119,8 @@ action_groups:
     - eks_cluster
     - eks_fargate_profile
     - eks_nodegroup
+    - eks_pod_identity_association
+    - eks_pod_identity_association_info
     - elasticache
     - elasticache_info
     - elasticache_parameter_group
