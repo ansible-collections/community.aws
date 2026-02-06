@@ -64,6 +64,17 @@
       - output is changed
       - output.name == log_bucket_2
 
+  - name: Create simple s3_bucket as third target for logs
+    s3_bucket:
+      state: present
+      name: '{{ log_bucket_3 }}'
+      object_ownership: BucketOwnerPreferred
+    register: output
+  - assert:
+      that:
+      - output is changed
+      - output.name == log_bucket_3
+
 # ============================================================
 
   - name: Enable logging (check_mode)
@@ -151,6 +162,97 @@
   - assert:
       that:
       - result is not changed
+
+# ============================================================
+
+  - name: Disable ACL on logging bucket (check_mode)
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+      acl: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Disable ACL logging bucket
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+      acl: False
+    register: result
+  - assert:
+      that:
+      - result is changed
+
+  - name: Disable ACL on logging bucket idempotency (check_mode)
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+      acl: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
+  - name: Disable ACL on logging bucket idempotency
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+      acl: False
+    register: result
+  - assert:
+      that:
+      - result is not changed
+
+  - name: Re-Enable ACL on logging bucket (check_mode)
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Re-Enable ACL logging bucket
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+    register: result
+  - assert:
+      that:
+      - result is changed
+
+  - name: Re-Enable ACL on logging bucket idempotency (check_mode)
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
+  - name: Re-Enable ACL on logging bucket idempotency
+    s3_logging:
+      state: present
+      name: '{{ test_bucket }}'
+      target_bucket: '{{ log_bucket_2 }}'
+    register: result
+  - assert:
+      that:
+      - result is not changed
+
 
 # ============================================================
 
