@@ -84,7 +84,7 @@ options:
   capabilities:
     description:
     - Capabilities allow stacks to create and modify IAM resources, which may include adding users or roles.
-    - Currently the only available values are 'CAPABILITY_IAM' and 'CAPABILITY_NAMED_IAM'. Either or both may be provided.
+    - Currently the only available values are 'CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM' and 'CAPABILITY_AUTO_EXPAND'. Either or ALL may be provided.
     - >
         The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey,
         AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition
@@ -93,6 +93,7 @@ options:
     choices:
     - 'CAPABILITY_IAM'
     - 'CAPABILITY_NAMED_IAM'
+    - 'CAPABILITY_AUTO_EXPAND'
   regions:
     description:
     - A list of AWS regions to create instances of a stack in. The I(region) parameter chooses where the Stack Set is created, and I(regions)
@@ -542,7 +543,7 @@ def main():
         template=dict(type="path"),
         template_url=dict(),
         template_body=dict(),
-        capabilities=dict(type="list", elements="str", choices=["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]),
+        capabilities=dict(type="list", elements="str", choices=["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]),
         regions=dict(type="list", elements="str"),
         accounts=dict(type="list", elements="str"),
         failure_tolerance=dict(
