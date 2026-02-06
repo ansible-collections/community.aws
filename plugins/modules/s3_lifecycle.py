@@ -88,7 +88,7 @@ options:
     description:
       - The storage class to which non-current versions are transitioned.
     default: glacier
-    choices: ['glacier', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
+    choices: ['glacier', 'glacier_ir', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
     required: false
     type: str
   noncurrent_version_transition_days:
@@ -128,7 +128,7 @@ options:
     description:
       - The storage class to transition to.
     default: glacier
-    choices: [ 'glacier', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
+    choices: [ 'glacier', 'glacier_ir', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
     type: str
   transition_date:
     description:
@@ -625,7 +625,7 @@ def destroy_lifecycle_rule(client, module):
 
 
 def main():
-    s3_storage_class = ["glacier", "onezone_ia", "standard_ia", "intelligent_tiering", "deep_archive"]
+    s3_storage_class = ["glacier", "glacier_ir" "onezone_ia", "standard_ia", "intelligent_tiering", "deep_archive"]
     argument_spec = dict(
         name=dict(required=True, type="str"),
         abort_incomplete_multipart_upload_days=dict(type="int"),
