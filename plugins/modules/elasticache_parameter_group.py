@@ -20,7 +20,7 @@ options:
     description:
       - The name of the cache parameter group family that the cache parameter group can be used with.
         Required when creating a cache parameter group.
-    choices: ['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0', 'redis6.x']
+    choices: ['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0', 'redis6.x', 'redis7']
     type: str
   name:
     description:
@@ -300,6 +300,7 @@ def main():
                 "redis4.0",
                 "redis5.0",
                 "redis6.x",
+                "redis7"
             ],
         ),
         name=dict(required=True, type="str"),
