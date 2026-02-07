@@ -96,6 +96,15 @@ options:
         type: bool
         default: false
         version_added: 4.1.0
+    wait_complete:
+        description:
+          - Whether to wait for the task to complete execution and capture container exit codes.
+          - When enabled, waits for all containers in the task to finish and includes exit codes in results.
+          - Only applicable for I(operation=run) and I(operation=start).
+          - Implies I(wait=true) to ensure task starts before waiting for completion.
+        type: bool
+        default: false
+        version_added: 4.1.0
 extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
@@ -174,6 +183,27 @@ EXAMPLES = r"""
     cluster: console-sample-app-static-cluster
     task_definition: console-sample-app-static-taskdef
     task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
+
+- name: Run a task and wait for it to complete
+  community.aws.ecs_task:
+    operation: run
+    cluster: console-sample-app-static-cluster
+    task_definition: console-sample-app-static-taskdef
+    count: 1
+    started_by: ansible_user
+    launch_type: FARGATE
+    network_configuration:
+      subnets:
+        - subnet-abcd1234
+      security_groups:
+        - sg-aaaa1111
+    wait_complete: true
+  register: task_output
+
+# Access task completion details:
+# - task_output.task[0].stopCode (e.g., "EssentialContainerExited", "TaskFailedToStart")
+# - task_output.task[0].stoppedReason (human-readable explanation)
+# - task_output.task[0].containers[0].exitCode (container exit code)
 """
 
 RETURN = r"""
@@ -212,7 +242,7 @@ task:
             returned: only when details is true
             type: str
         containers:
-            description: The container details.
+            description: The container details. When I(wait_complete=true), includes C(exitCode) for each container.
             returned: only when details is true
             type: list
             elements: dict
@@ -221,8 +251,8 @@ task:
             returned: only when details is true
             type: str
         stoppedReason:
-            description: The reason why the task was stopped.
-            returned: only when details is true
+            description: The reason why the task was stopped (e.g. "Essential container in task exited").
+            returned: when the task has stopped
             type: str
         createdAt:
             description: The timestamp of when the task was created.
@@ -239,6 +269,10 @@ task:
         launchType:
             description: The launch type on which to run your task.
             returned: always
+            type: str
+        stopCode:
+            description: The stop code indicating why the task was stopped (e.g. "EssentialContainerExited", "TaskFailedToStart").
+            returned: when the task has stopped
             type: str
 """
 
@@ -352,6 +386,39 @@ class EcsExecManager:
         account_support = self.ecs.list_account_settings(name="taskLongArnFormat", effectiveSettings=True)
         return account_support["settings"][0]["value"] == "enabled"
 
+    def wait_for_task_completion(self, cluster, task_arns):
+        """
+        Wait for tasks to complete and return detailed information.
+
+        Args:
+            cluster: The cluster name
+            task_arns: List of task ARNs to wait for
+
+        Returns:
+            List of task details including AWS's native stopCode, stoppedReason,
+            and container exitCode fields
+        """
+        # Wait for tasks to stop
+        waiter = self.ecs.get_waiter("tasks_stopped")
+        try:
+            waiter.wait(
+                tasks=task_arns,
+                cluster=cluster,
+            )
+        except botocore.exceptions.WaiterError as e:
+            self.module.fail_json_aws(e, "Timeout waiting for tasks to complete")
+
+        # Describe tasks to get complete details including exit codes
+        try:
+            response = self.ecs.describe_tasks(
+                cluster=cluster,
+                tasks=task_arns,
+            )
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, "Failed to describe completed tasks")
+
+        return response["tasks"]
+
 
 def main():
     argument_spec = dict(
@@ -367,6 +434,7 @@ def main():
         launch_type=dict(required=False, choices=["EC2", "FARGATE"]),
         tags=dict(required=False, type="dict", aliases=["resource_tags"]),
         wait=dict(required=False, default=False, type="bool"),
+        wait_complete=dict(required=False, default=False, type="bool"),
     )
 
     module = AnsibleAWSModule(
@@ -381,6 +449,9 @@ def main():
     )
 
     # Validate Inputs
+    if module.params["wait_complete"] and module.params["operation"] not in ("run", "start"):
+        module.warn("wait_complete is only supported for operation=run and operation=start, ignoring")
+
     if module.params["operation"] == "run":
         task_to_list = module.params["task_definition"]
         status_type = "RUNNING"
@@ -420,7 +491,7 @@ def main():
                 )
 
                 # Wait for task(s) to be running prior to exiting
-                if module.params["wait"]:
+                if module.params["wait"] or module.params["wait_complete"]:
                     waiter = service_mgr.ecs.get_waiter("tasks_running")
                     try:
                         waiter.wait(
@@ -428,7 +499,20 @@ def main():
                             cluster=module.params["cluster"],
                         )
                     except botocore.exceptions.WaiterError as e:
-                        module.fail_json_aws(e, "Timeout waiting for tasks to run")
+                        if module.params["wait_complete"]:
+                            # Task may have stopped before reaching RUNNING (e.g.
+                            # TaskFailedToStart).  Proceed to wait_for_task_completion
+                            # so the caller still gets stopCode/stoppedReason/exitCode.
+                            pass
+                        else:
+                            module.fail_json_aws(e, "Timeout waiting for tasks to run")
+
+                # Wait for task(s) to complete and capture exit codes
+                if module.params["wait_complete"]:
+                    tasks = service_mgr.wait_for_task_completion(
+                        module.params["cluster"],
+                        [task["taskArn"] for task in tasks],
+                    )
 
                 results["task"] = tasks
 
@@ -440,7 +524,7 @@ def main():
             results["task"] = existing
         else:
             if not module.check_mode:
-                results["task"] = service_mgr.start_task(
+                tasks = service_mgr.start_task(
                     module.params["cluster"],
                     module.params["task_definition"],
                     module.params["overrides"],
@@ -448,6 +532,29 @@ def main():
                     module.params["started_by"],
                     module.params["tags"],
                 )
+
+                # Wait for task(s) to complete and capture exit codes
+                if module.params["wait_complete"]:
+                    # First wait for tasks to be running
+                    waiter = service_mgr.ecs.get_waiter("tasks_running")
+                    try:
+                        waiter.wait(
+                            tasks=[task["taskArn"] for task in tasks],
+                            cluster=module.params["cluster"],
+                        )
+                    except botocore.exceptions.WaiterError:
+                        # Task may have stopped before reaching RUNNING (e.g.
+                        # TaskFailedToStart).  Proceed to wait_for_task_completion
+                        # so the caller still gets stopCode/stoppedReason/exitCode.
+                        pass
+
+                    # Then wait for completion
+                    tasks = service_mgr.wait_for_task_completion(
+                        module.params["cluster"],
+                        [task["taskArn"] for task in tasks],
+                    )
+
+                results["task"] = tasks
 
             results["changed"] = True
 
