@@ -268,6 +268,40 @@ options:
                 description:
                   - Service discovery registry ARN.
                 type: str
+    service_connect_configuration:
+        description:
+          - The configuration for this service to discover and connect to services, and be discovered by, and connected from, other services within a namespace.
+          - See U(https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_ServiceConnectConfiguration.html) for more details.
+          - When determining whether the service needs updating, only the fields explicitly provided are compared
+            against the existing configuration. AWS may populate additional default fields (such as C(discoveryName))
+            which are ignored for idempotency purposes. If you need to enforce a specific value for an AWS-defaulted
+            field, include it explicitly in this configuration.
+        type: dict
+        required: false
+        version_added: 7.2.0
+        suboptions:
+            enabled:
+                description:
+                  - Specifies whether to use Service Connect with this service.
+                type: bool
+                required: true
+            namespace:
+                description:
+                  - The namespace name or full Amazon Resource Name (ARN) of the AWS Cloud Map namespace for use with Service Connect.
+                type: str
+            services:
+                description:
+                  - The list of Service Connect service objects.
+                type: list
+                elements: dict
+            log_configuration:
+                description:
+                  - The log configuration for the container.
+                type: dict
+            access_log_configuration:
+                description:
+                  - The access log configuration for Service Connect.
+                type: dict
     scheduling_strategy:
         description:
           - The scheduling strategy.
@@ -277,8 +311,9 @@ options:
         type: str
     wait:
         description:
-          - Whether or not to wait for the service to be inactive.
-          - Waits only when I(state) is C(absent).
+          - Whether or not to wait for the service to reach the desired state.
+          - When I(state=present), waits for the service to be stable with tasks in the RUNNING state.
+          - When I(state=absent), waits for the service to be inactive.
         type: bool
         default: false
         version_added: 4.1.0
@@ -383,6 +418,32 @@ EXAMPLES = r"""
       Firstname: jane
       lastName: doe
     propagate_tags: SERVICE
+
+# With Service Connect configuration
+- community.aws.ecs_service:
+    state: present
+    name: service-connect-test
+    cluster: my_cluster
+    task_definition: 'my-task:1'
+    desired_count: 1
+    service_connect_configuration:
+      enabled: true
+      namespace: my-cloudmap-namespace
+      services:
+        - port_name: http
+          client_aliases:
+            - port: 80
+
+# Create service and wait for tasks to be running
+- community.aws.ecs_service:
+    state: present
+    name: my-service
+    cluster: my_cluster
+    task_definition: 'my-task:1'
+    desired_count: 2
+    wait: true
+    delay: 10
+    repeat: 30
 """
 
 RETURN = r"""
@@ -692,6 +753,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import map_complex_type
 
+from ansible_collections.community.aws.plugins.module_utils.dict import is_dict_subset
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 DEPLOYMENT_CONTROLLER_TYPE_MAP = {
@@ -786,6 +848,21 @@ class EcsServiceManager:
         if (expected["enable_execute_command"] or False) != existing.get("enableExecuteCommand", False):
             return False
 
+        # Compare service connect configuration.
+        # AWS returns serviceConnectConfiguration inside each Deployment object,
+        # not at the top-level Service.  Use the primary (first) deployment.
+        # Use a subset check because AWS may return additional default fields
+        # (e.g. discoveryName in services) that the user did not specify.
+        expected_service_connect = (
+            snake_dict_to_camel_dict(expected["service_connect_configuration"])
+            if expected.get("service_connect_configuration")
+            else {}
+        )
+        primary_deployment = (existing.get("deployments") or [{}])[0]
+        existing_service_connect = primary_deployment.get("serviceConnectConfiguration", {})
+        if not is_dict_subset(expected_service_connect, existing_service_connect, list_sort_key="portName"):
+            return False
+
         # expected is params. DAEMON scheduling strategy returns desired count equal to
         # number of instances running; don't check desired count if scheduling strat is daemon
         if expected["scheduling_strategy"] != "DAEMON":
@@ -817,6 +894,7 @@ class EcsServiceManager:
         tags,
         propagate_tags,
         enable_execute_command,
+        service_connect_configuration,
     ):
         params = dict(
             cluster=cluster_name,
@@ -840,6 +918,8 @@ class EcsServiceManager:
             params["healthCheckGracePeriodSeconds"] = health_check_grace_period_seconds
         if service_registries:
             params["serviceRegistries"] = service_registries
+        if service_connect_configuration:
+            params["serviceConnectConfiguration"] = service_connect_configuration
 
         # filter placement_constraint and left only those where value is not None
         # use-case: `distinctInstance` type should never contain `expression`, but None will fail `str` type validation
@@ -887,6 +967,7 @@ class EcsServiceManager:
         purge_placement_constraints,
         purge_placement_strategy,
         enable_execute_command,
+        service_connect_configuration,
     ):
         params = dict(
             cluster=cluster_name,
@@ -924,6 +1005,8 @@ class EcsServiceManager:
             params["desiredCount"] = desired_count
         if enable_execute_command is not None:
             params["enableExecuteCommand"] = enable_execute_command
+        if service_connect_configuration:
+            params["serviceConnectConfiguration"] = service_connect_configuration
 
         if load_balancers:
             params["loadBalancers"] = load_balancers
@@ -1006,6 +1089,7 @@ def main():
         launch_type=dict(required=False, choices=["EC2", "FARGATE"]),
         platform_version=dict(required=False, type="str"),
         service_registries=dict(required=False, type="list", default=[], elements="dict"),
+        service_connect_configuration=dict(required=False, type="dict"),
         scheduling_strategy=dict(required=False, choices=["DAEMON", "REPLICA"]),
         capacity_provider_strategy=dict(
             required=False,
@@ -1056,6 +1140,11 @@ def main():
 
     deploymentConfiguration = snake_dict_to_camel_dict(deployment_configuration)
     serviceRegistries = list(map(snake_dict_to_camel_dict, module.params["service_registries"]))
+    serviceConnectConfiguration = (
+        snake_dict_to_camel_dict(module.params["service_connect_configuration"])
+        if module.params["service_connect_configuration"]
+        else None
+    )
     capacityProviders = list(map(snake_dict_to_camel_dict, module.params["capacity_provider_strategy"]))
 
     try:
@@ -1152,21 +1241,22 @@ def main():
                     try:
                         # update required
                         response = service_mgr.update_service(
-                            module.params["name"],
-                            module.params["cluster"],
-                            task_definition,
-                            module.params["desired_count"],
-                            deploymentConfiguration,
-                            module.params["placement_constraints"],
-                            module.params["placement_strategy"],
-                            network_configuration,
-                            module.params["health_check_grace_period_seconds"],
-                            module.params["force_new_deployment"],
-                            capacityProviders,
-                            updatedLoadBalancers,
-                            module.params["purge_placement_constraints"],
-                            module.params["purge_placement_strategy"],
-                            module.params["enable_execute_command"],
+                            service_name=module.params["name"],
+                            cluster_name=module.params["cluster"],
+                            task_definition=task_definition,
+                            desired_count=module.params["desired_count"],
+                            deployment_configuration=deploymentConfiguration,
+                            placement_constraints=module.params["placement_constraints"],
+                            placement_strategy=module.params["placement_strategy"],
+                            network_configuration=network_configuration,
+                            health_check_grace_period_seconds=module.params["health_check_grace_period_seconds"],
+                            force_new_deployment=module.params["force_new_deployment"],
+                            capacity_provider_strategy=capacityProviders,
+                            load_balancers=updatedLoadBalancers,
+                            purge_placement_constraints=module.params["purge_placement_constraints"],
+                            purge_placement_strategy=module.params["purge_placement_strategy"],
+                            enable_execute_command=module.params["enable_execute_command"],
+                            service_connect_configuration=serviceConnectConfiguration,
                         )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
@@ -1174,27 +1264,28 @@ def main():
                 else:
                     try:
                         response = service_mgr.create_service(
-                            module.params["name"],
-                            module.params["cluster"],
-                            module.params["task_definition"],
-                            loadBalancers,
-                            module.params["desired_count"],
-                            clientToken,
-                            role,
-                            deploymentController,
-                            deploymentConfiguration,
-                            module.params["placement_constraints"],
-                            module.params["placement_strategy"],
-                            module.params["health_check_grace_period_seconds"],
-                            network_configuration,
-                            serviceRegistries,
-                            module.params["launch_type"],
-                            module.params["platform_version"],
-                            module.params["scheduling_strategy"],
-                            capacityProviders,
-                            module.params["tags"],
-                            module.params["propagate_tags"],
-                            module.params["enable_execute_command"],
+                            service_name=module.params["name"],
+                            cluster_name=module.params["cluster"],
+                            task_definition=module.params["task_definition"],
+                            load_balancers=loadBalancers,
+                            desired_count=module.params["desired_count"],
+                            client_token=clientToken,
+                            role=role,
+                            deployment_controller=deploymentController,
+                            deployment_configuration=deploymentConfiguration,
+                            placement_constraints=module.params["placement_constraints"],
+                            placement_strategy=module.params["placement_strategy"],
+                            health_check_grace_period_seconds=module.params["health_check_grace_period_seconds"],
+                            network_configuration=network_configuration,
+                            service_registries=serviceRegistries,
+                            launch_type=module.params["launch_type"],
+                            platform_version=module.params["platform_version"],
+                            scheduling_strategy=module.params["scheduling_strategy"],
+                            capacity_provider_strategy=capacityProviders,
+                            tags=module.params["tags"],
+                            propagate_tags=module.params["propagate_tags"],
+                            enable_execute_command=module.params["enable_execute_command"],
+                            service_connect_configuration=serviceConnectConfiguration,
                         )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
@@ -1202,6 +1293,21 @@ def main():
                 if response.get("tags", None):
                     response["tags"] = boto3_tag_list_to_ansible_dict(response["tags"])
                 results["service"] = response
+
+                # Wait for service to be stable with tasks running if wait=True
+                if module.params["wait"]:
+                    waiter = service_mgr.ecs.get_waiter("services_stable")
+                    try:
+                        waiter.wait(
+                            services=[module.params["name"]],
+                            cluster=module.params["cluster"],
+                            WaiterConfig={
+                                "Delay": module.params["delay"],
+                                "MaxAttempts": module.params["repeat"],
+                            },
+                        )
+                    except botocore.exceptions.WaiterError as e:
+                        module.fail_json_aws(e, "Timeout waiting for service to become stable with tasks running")
 
             results["changed"] = True
 

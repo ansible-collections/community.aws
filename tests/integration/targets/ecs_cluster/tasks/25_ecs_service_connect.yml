@@ -1,0 +1,225 @@
+# ============================================================
+# Integration tests for ecs_service service_connect_configuration
+# ============================================================
+
+# Service Connect requires a Cloud Map namespace.  There is no Ansible module
+# for Cloud Map, so we use the AWS CLI directly (same pattern used elsewhere
+# in this test suite, e.g. put-account-setting).
+
+- name: create Cloud Map HTTP namespace for Service Connect
+  command: >
+    aws servicediscovery create-http-namespace
+      --name {{ ecs_service_connect_namespace }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+    AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+    AWS_DEFAULT_REGION: "{{ aws_region }}"
+  register: cloudmap_namespace_create
+
+- name: extract Cloud Map namespace details
+  set_fact:
+    cloudmap_namespace_operation_id: "{{ (cloudmap_namespace_create.stdout | from_json).OperationId }}"
+
+- name: wait for Cloud Map namespace to be created
+  command: >
+    aws servicediscovery get-operation
+      --operation-id {{ cloudmap_namespace_operation_id }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+    AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+    AWS_DEFAULT_REGION: "{{ aws_region }}"
+  register: cloudmap_namespace_operation
+  retries: 30
+  delay: 10
+  until: (cloudmap_namespace_operation.stdout | from_json).Operation.Status == 'SUCCESS'
+
+- name: extract Cloud Map namespace ARN
+  set_fact:
+    cloudmap_namespace_id: "{{ (cloudmap_namespace_operation.stdout | from_json).Operation.Targets.NAMESPACE }}"
+
+# We need a task definition with a named port for Service Connect
+- name: create Fargate task definition with named port for Service Connect
+  ecs_taskdefinition:
+    containers: "{{ ecs_service_connect_task_containers }}"
+    family: "{{ ecs_task_name }}-sc"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 256
+    memory: 512
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
+    state: present
+  register: ecs_sc_task_definition
+
+- name: check that Service Connect task definition was created
+  assert:
+    that:
+      - ecs_sc_task_definition.changed
+
+# ---------------------------------------------------------
+# Test 1: Create service with service_connect_configuration
+# ---------------------------------------------------------
+- name: create ECS service with Service Connect configuration
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-sc:{{ ecs_sc_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    launch_type: FARGATE
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    service_connect_configuration:
+      enabled: true
+      namespace: "{{ ecs_service_connect_namespace }}"
+      services:
+        - port_name: http
+          client_aliases:
+            - port: 80
+  register: ecs_service_sc_create
+
+- name: assert that ECS service with Service Connect was created
+  assert:
+    that:
+      - ecs_service_sc_create.changed
+
+- name: obtain Service Connect service facts
+  ecs_service_info:
+    service: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    details: true
+  register: ecs_service_sc_info
+
+- name: assert that Service Connect configuration is applied
+  assert:
+    that:
+      - ecs_service_sc_info.services | length == 1
+      - ecs_service_sc_info.services[0].deployments | length > 0
+      - "'serviceConnectConfiguration' in ecs_service_sc_info.services[0].deployments[0]"
+      - ecs_service_sc_info.services[0].deployments[0].serviceConnectConfiguration.enabled == true
+      - ecs_service_sc_info.services[0].deployments[0].serviceConnectConfiguration.services | length == 1
+
+# ---------------------------------------------------------
+# Test 2: Idempotency - same config should not trigger change
+# ---------------------------------------------------------
+- name: recreate ECS service with same Service Connect configuration (should not change)
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-sc:{{ ecs_sc_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    launch_type: FARGATE
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    service_connect_configuration:
+      enabled: true
+      namespace: "{{ ecs_service_connect_namespace }}"
+      services:
+        - port_name: http
+          client_aliases:
+            - port: 80
+  register: ecs_service_sc_idempotent
+
+- name: assert that recreating ECS service with same Service Connect config is idempotent
+  assert:
+    that:
+      - not ecs_service_sc_idempotent.changed
+
+# ---------------------------------------------------------
+# Test 3: Update service_connect_configuration
+# ---------------------------------------------------------
+- name: update ECS service Service Connect configuration - add client alias dns_name
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-sc:{{ ecs_sc_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    launch_type: FARGATE
+    force_new_deployment: true
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    service_connect_configuration:
+      enabled: true
+      namespace: "{{ ecs_service_connect_namespace }}"
+      services:
+        - port_name: http
+          client_aliases:
+            - port: 8080
+  register: ecs_service_sc_update
+
+- name: assert that ECS service Service Connect configuration was updated
+  assert:
+    that:
+      - ecs_service_sc_update.changed
+
+# ---------------------------------------------------------
+# Test 4: Disable Service Connect
+# ---------------------------------------------------------
+- name: disable Service Connect on ECS service
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-sc:{{ ecs_sc_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    launch_type: FARGATE
+    force_new_deployment: true
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    service_connect_configuration:
+      enabled: false
+  register: ecs_service_sc_disable
+
+- name: assert that Service Connect was disabled
+  assert:
+    that:
+      - ecs_service_sc_disable.changed
+
+- name: obtain service facts after disabling Service Connect
+  ecs_service_info:
+    service: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    details: true
+  register: ecs_service_sc_disabled_info
+
+- name: assert that Service Connect is disabled in service description
+  assert:
+    that:
+      - ecs_service_sc_disabled_info.services[0].deployments | length > 0
+      - "'serviceConnectConfiguration' not in ecs_service_sc_disabled_info.services[0].deployments[0]"
+
+# ---------------------------------------------------------
+# Test 5: Delete service with Service Connect
+# ---------------------------------------------------------
+- name: delete ECS service with Service Connect
+  ecs_service:
+    state: absent
+    name: "{{ ecs_service_name }}-sc"
+    cluster: "{{ ecs_cluster_name }}"
+    force_deletion: true
+    wait: true
+  register: ecs_service_sc_delete
+
+- name: assert that ECS service with Service Connect was deleted
+  assert:
+    that:
+      - ecs_service_sc_delete.changed
