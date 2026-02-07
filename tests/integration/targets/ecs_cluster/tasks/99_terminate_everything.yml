@@ -172,6 +172,15 @@
     wait: true
   ignore_errors: true
 
+- name: remove Service Connect ECS service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}-sc"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
 - name: remove fargate ECS service
   ecs_service:
     state: absent
@@ -228,6 +237,17 @@
     state: absent
   ignore_errors: true
 
+- name: remove Service Connect ecs task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_service_connect_task_containers }}"
+    family: "{{ ecs_task_name }}-sc"
+    revision: "{{ ecs_sc_task_definition.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+  when:
+    - ecs_sc_task_definition is defined
+    - ecs_sc_task_definition.taskdefinition is defined
+
 - name: remove ecs task definition for absent with arn
   ecs_taskdefinition:
     containers: "{{ ecs_task_containers }}"
@@ -282,6 +302,18 @@
     - "{{ ecs_target_group_name }}1"
     - "{{ ecs_target_group_name }}2"
   ignore_errors: true
+
+- name: remove Cloud Map namespace for Service Connect
+  command: >
+    aws servicediscovery delete-namespace
+      --id {{ cloudmap_namespace_id }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+    AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+    AWS_DEFAULT_REGION: "{{ aws_region }}"
+  ignore_errors: true
+  when: cloudmap_namespace_id is defined
 
 - name: remove IGW
   ec2_vpc_igw:
