@@ -1,0 +1,11 @@
+---
+minor_changes:
+  - ecs_taskdefinition - Add ``state=inactive`` to deregister task definitions without deleting them
+    (https://github.com/ansible-collections/community.aws/pull/2410).
+  - ecs_taskdefinition - Add ``state=absent`` with family-only support to permanently delete all
+    revisions in a task definition family (https://github.com/ansible-collections/community.aws/pull/2410).
+bugfixes:
+  - ecs_taskdefinition - Fix ``_right_has_values_of_left`` silently ignoring list element mismatches
+    during idempotency comparison (https://github.com/ansible-collections/community.aws/pull/2410).
+  - ecs_taskdefinition - Fix invalid ``status=ALL`` parameter passed to ``ListTaskDefinitions`` API
+    when deleting all revisions in a family (https://github.com/ansible-collections/community.aws/pull/2410).

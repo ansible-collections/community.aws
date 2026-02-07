@@ -4,22 +4,28 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+# Modified from community.aws.ecs_taskdefinition to add 'deleted' state
+# for permanent task definition deletion using delete_task_definitions API
+
 DOCUMENTATION = r"""
 ---
 module: ecs_taskdefinition
 version_added: 1.0.0
 short_description: register a task definition in ecs
 description:
-    - Registers or deregisters task definitions in the Amazon Web Services (AWS) EC2 Container Service (ECS).
+    - Registers, deregisters, or deletes task definitions in the Amazon Web Services (AWS) EC2 Container Service (ECS).
 author:
     - Mark Chance (@Java1Guy)
     - Alina Buzachis (@alinabuzachis)
 options:
     state:
         description:
-            - State whether the task definition should exist or be deleted.
+            - State whether the task definition should exist, be deregistered, or be permanently deleted.
+            - C(present) - Register or update the task definition.
+            - C(inactive) - Deregister the task definition (marks as INACTIVE but retains in AWS).
+            - C(absent) - Permanently delete the task definition from AWS.
         required: true
-        choices: ['present', 'absent']
+        choices: ['present', 'inactive', 'absent']
         type: str
     arn:
         description:
@@ -34,6 +40,7 @@ options:
     revision:
         description:
             - A revision number for the task definition.
+            - When I(state=absent) and no revision is provided (only family), ALL revisions in the family will be deleted.
         required: False
         type: int
     force_create:
@@ -46,7 +53,7 @@ options:
         description:
             - A list of containers definitions.
             - See U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html) for a complete list of parameters.
-        required: True
+        required: False
         type: list
         elements: dict
         suboptions:
@@ -192,118 +199,11 @@ options:
                 description: Linux-specific modifications that are applied to the container, such as Linux kernel capabilities.
                 required: False
                 type: dict
-                suboptions:
-                    capabilities:
-                        description:
-                            - The Linux capabilities for the container that are added to or dropped from the default configuration provided by Docker.
-                        required: False
-                        type: dict
-                        suboptions:
-                            add:
-                                description:
-                                    - The Linux capabilities for the container that have been added to the default configuration provided by Docker.
-                                    - If I(launch_type=FARGATE), this parameter is not supported.
-                                required: False
-                                type: list
-                                choices: ["ALL", "AUDIT_CONTROL", "AUDIT_WRITE", "BLOCK_SUSPEND", "CHOWN", "DAC_OVERRIDE", "DAC_READ_SEARCH", "FOWNER",
-                                          "FSETID", "IPC_LOCK", "IPC_OWNER", "KILL", "LEASE", "LINUX_IMMUTABLE", "MAC_ADMIN", "MAC_OVERRIDE", "MKNOD",
-                                          "NET_ADMIN", "NET_BIND_SERVICE", "NET_BROADCAST", "NET_RAW", "SETFCAP", "SETGID", "SETPCAP", "SETUID",
-                                          "SYS_ADMIN", "SYS_BOOT", "SYS_CHROOT", "SYS_MODULE", "SYS_NICE", "SYS_PACCT", "SYS_PTRACE", "SYS_RAWIO",
-                                          "SYS_RESOURCE", "SYS_TIME", "SYS_TTY_CONFIG", "SYSLOG", "WAKE_ALARM"]
-                                elements: str
-                            drop:
-                                description:
-                                    - The Linux capabilities for the container that have been removed from the default configuration provided by Docker.
-                                required: False
-                                type: list
-                                choices: ["ALL", "AUDIT_CONTROL", "AUDIT_WRITE", "BLOCK_SUSPEND", "CHOWN", "DAC_OVERRIDE", "DAC_READ_SEARCH", "FOWNER",
-                                          "FSETID", "IPC_LOCK", "IPC_OWNER", "KILL", "LEASE", "LINUX_IMMUTABLE", "MAC_ADMIN", "MAC_OVERRIDE", "MKNOD",
-                                          "NET_ADMIN", "NET_BIND_SERVICE", "NET_BROADCAST", "NET_RAW", "SETFCAP", "SETGID", "SETPCAP", "SETUID",
-                                          "SYS_ADMIN", "SYS_BOOT", "SYS_CHROOT", "SYS_MODULE", "SYS_NICE", "SYS_PACCT", "SYS_PTRACE", "SYS_RAWIO",
-                                          "SYS_RESOURCE", "SYS_TIME", "SYS_TTY_CONFIG", "SYSLOG", "WAKE_ALARM"]
-                                elements: str
-                    devices:
-                        description:
-                            - Any host devices to expose to the container.
-                            - If I(launch_type=FARGATE), this parameter is not supported.
-                        required: False
-                        type: list
-                        elements: dict
-                        suboptions:
-                            hostPath:
-                                description: The path for the device on the host container instance.
-                                required: True
-                                type: str
-                            containerPath:
-                                description: The path inside the container at which to expose the host device.
-                                required: False
-                                type: str
-                            permissions:
-                                description: The explicit permissions to provide to the container for the device.
-                                required: False
-                                type: list
-                                elements: str
-                    initProcessEnabled:
-                        description: Run an init process inside the container that forwards signals and reaps processes.
-                        required: False
-                        type: bool
-                    sharedMemorySize:
-                        description:
-                            - The value for the size (in MiB) of the /dev/shm volume.
-                            - If I(launch_type=FARGATE), this parameter is not supported.
-                        required: False
-                        type: int
-                    tmpfs:
-                        description:
-                            - The container path, mount options, and size (in MiB) of the tmpfs mount.
-                            - If I(launch_type=FARGATE), this parameter is not supported.
-                        required: False
-                        type: list
-                        elements: dict
-                        suboptions:
-                            containerPath:
-                                description: The absolute file path where the tmpfs volume is to be mounted.
-                                required: True
-                                type: str
-                            size:
-                                description: The size (in MiB) of the tmpfs volume.
-                                required: True
-                                type: int
-                            mountOptions:
-                                description: The list of tmpfs volume mount options.
-                                required: False
-                                type: list
-                                choices: ["defaults", "ro", "rw", "suid", "nosuid", "dev", "nodev", "exec", "noexec", "sync", "async", "dirsync",
-                                          "remount", "mand", "nomand", "atime", "noatime", "diratime", "nodiratime", "bind", "rbind", "unbindable",
-                                          "runbindable", "private", "rprivate", "shared", "rshared", "slave", "rslave", "relatime", "norelatime",
-                                          "strictatime", "nostrictatime", "mode", "uid", "gid", "nr_inodes", "nr_blocks", "mpol"]
-                                elements: str
-                    maxSwap:
-                        description:
-                            - The total amount of swap memory (in MiB) a container can use.
-                            - If I(launch_type=FARGATE), this parameter is not supported.
-                        required: False
-                        type: int
-                    swappiness:
-                        description:
-                            - This allows you to tune a container's memory swappiness behavior.
-                            - If I(launch_type=FARGATE), this parameter is not supported.
-                        required: False
-                        type: int
             secrets:
                 description: The secrets to pass to the container.
                 required: False
                 type: list
                 elements: dict
-                suboptions:
-                    name:
-                        description: The value to set as the environment variable on the container.
-                        required: True
-                        type: str
-                    size:
-                        description: The secret to expose to the container.
-                        required: True
-                        type: str
             dependsOn:
                 description:
                     - The dependencies defined for container startup and shutdown.
@@ -311,16 +211,6 @@ options:
                 required: False
                 type: list
                 elements: dict
-                suboptions:
-                    containerName:
-                        description: The name of a container.
-                        type: str
-                        required: True
-                    condition:
-                        description: The dependency condition of the container.
-                        type: str
-                        required: True
-                        choices: ["start", "complete", "success", "healthy"]
             startTimeout:
                 description: Time duration (in seconds) to wait before giving up on resolving dependencies for a container.
                 required: False
@@ -378,15 +268,6 @@ options:
                 required: False
                 type: list
                 elements: dict
-                suboptions:
-                    hostname:
-                        description: The hostname to use in the /etc/hosts entry.
-                        type: str
-                        required: False
-                    ipAddress:
-                        description: The IP address to use in the /etc/hosts entry.
-                        type: str
-                        required: False
             dockerSecurityOptions:
                 description:
                     - A list of strings to provide custom labels for SELinux and AppArmor multi-level security systems.
@@ -414,111 +295,19 @@ options:
                 required: False
                 type: list
                 elements: dict
-                suboptions:
-                    name:
-                        description: The type of the ulimit.
-                        type: str
-                        required: False
-                        choices: ['core', 'cpu', 'data', 'fsize', 'locks', 'memlock', 'msgqueue', 'nice', 'nofile', 'nproc', 'rss',
-                                  'rtprio', 'rttime', 'sigpending', 'stack']
-                    softLimit:
-                        description: The soft limit for the ulimit type.
-                        type: int
-                        required: False
-                    hardLimit:
-                        description: The hard limit for the ulimit type.
-                        type: int
-                        required: False
             logConfiguration:
                 description: The log configuration specification for the container.
                 required: False
                 type: dict
-                suboptions:
-                    logDriver:
-                        description:
-                            - The log driver to use for the container.
-                            - For tasks on AWS Fargate, the supported log drivers are C(awslogs), C(splunk), and C(awsfirelens).
-                            - For tasks hosted on Amazon EC2 instances, the supported log drivers are C(awslogs), C(fluentd),
-                              C(gelf), C(json-file), C(journald), C(logentries), C(syslog), C(splunk), and C(awsfirelens).
-                        type: str
-                        required: False
-            options:
-                description: The configuration options to send to the log driver.
-                required: False
-                type: str
-            secretOptions:
-                description: The secrets to pass to the log configuration.
-                required: False
-                type: list
-                elements: dict
-                suboptions:
-                    name:
-                        description: The name of the secret.
-                        type: str
-                        required: False
-                    valueFrom:
-                        description: The secret to expose to the container.
-                        type: str
-                        required: False
             healthCheck:
                 description: The health check command and associated configuration parameters for the container.
                 required: False
                 type: dict
-                suboptions:
-                    command:
-                        description:
-                            - A string array representing the command that the container runs to determine if it is healthy.
-                            - >
-                              The string array must start with CMD to run the command arguments directly,
-                              or CMD-SHELL to run the command with the container's default shell.
-                            - An exit code of 0 indicates success, and non-zero exit code indicates failure.
-                        required: False
-                        type: list
-                        elements: str
-                    interval:
-                        description:
-                            - The time period in seconds between each health check execution.
-                            - You may specify between 5 and 300 seconds. The default value is 30 seconds.
-                        required: False
-                        type: int
-                        default: 30
-                    retries:
-                        description:
-                            - The number of times to retry a failed health check before the container is considered unhealthy.
-                            - You may specify between 1 and 10 retries. The default value is 3.
-                        required: False
-                        type: int
-                        default: 3
-                    startPeriod:
-                        description:
-                            - >
-                              The optional grace period to provide containers time to bootstrap
-                              before failed health checks count towards the maximum number of retries.
-                            - You can specify between 0 and 300 seconds. By default, the startPeriod is disabled.
-                            - >
-                              Note: If a health check succeeds within the startPeriod,
-                              then the container is considered healthy and any subsequent failures count toward the maximum number of retries.
-                        required: False
-                        type: int
-                    timeout:
-                        description:
-                            - The time period in seconds to wait for a health check to succeed before it is considered a failure.
-                            - You may specify between 2 and 60 seconds. The default value is 5.
-                        required: False
-                        type: int
-                        default: 5
             systemControls:
                 description: A list of namespaced kernel parameters to set in the container.
                 required: False
                 type: list
                 elements: dict
-                suboptions:
-                    namespace:
-                        description: The namespaced kernel parameter to set a C(value) for.
-                        type: str
-                    value:
-                        description: The value for the namespaced kernel parameter that's specified in C(namespace).
-                        type: str
             resourceRequirements:
                 description:
                     - The type and amount of a resource to assign to a container.
@@ -526,40 +315,12 @@ options:
                 required: False
                 type: list
                 elements: dict
-                suboptions:
-                    value:
-                        description: The value for the specified resource type.
-                        type: str
-                    type:
-                        description: The type of resource to assign to a container.
-                        type: str
-                        choices: ['GPU', 'InferenceAccelerator']
             firelensConfiguration:
                 description:
                     - The FireLens configuration for the container.
                     - This is used to specify and configure a log router for container logs.
                 required: False
                 type: dict
-                suboptions:
-                    type:
-                        description:
-                            - The log router to use. The valid values are C(fluentd) or C(fluentbit).
-                        required: False
-                        type: str
-                        choices:
-                            - fluentd
-                            - fluentbit
-                    options:
-                        description:
-                            - The options to use when configuring the log router.
-                            - This field is optional and can be used to specify a custom configuration
-                              file or to add additional metadata, such as the task, task definition, cluster,
-                              and container instance details to the log event.
-                            - If specified, the syntax to use is
-                              C({"enable-ecs-log-metadata":"true|false","config-file-type:"s3|file","config-file-value":"arn:aws:s3:::mybucket/fluent.conf|filepath"}).
-                            - For more information, see U(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_firelens.html#firelens-taskdef).
-                        required: False
-                        type: dict
     network_mode:
         description:
             - The Docker networking mode to use for the containers in the task.
@@ -656,49 +417,7 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 - name: Create task definition
-  community.aws.ecs_taskdefinition:
-    containers:
-      - name: simple-app
-        cpu: 10
-        essential: true
-        image: "httpd:2.4"
-        memory: 300
-        mountPoints:
-          - containerPath: /usr/local/apache2/htdocs
-            sourceVolume: my-vol
-        portMappings:
-          - containerPort: 80
-            hostPort: 80
-        logConfiguration:
-          logDriver: awslogs
-          options:
-            awslogs-group: /ecs/test-cluster-taskdef
-            awslogs-region: us-west-2
-            awslogs-stream-prefix: ecs
-      - name: busybox
-        command:
-          - >
-            /bin/sh -c "while true; do echo '<html><head><title>Amazon ECS Sample App</title></head><body><div><h1>Amazon ECS Sample App</h1>
-            <h2>Congratulations!</h2>
-            <p>Your application is now running on a container in Amazon ECS.</p>' > top; /bin/date > date ; echo '</div></body></html>' > bottom;
-            cat top date bottom > /usr/local/apache2/htdocs/index.html ; sleep 1; done"
-        cpu: 10
-        entryPoint:
-          - sh
-          - "-c"
-        essential: false
-        image: busybox
-        memory: 200
-        volumesFrom:
-          - sourceContainer: simple-app
-    volumes:
-      - name: my-vol
-    family: test-cluster-taskdef
-    state: present
-  register: task_output
-
-- name: Create task definition
-  community.aws.ecs_taskdefinition:
+  ecs_taskdefinition:
     family: nginx
     containers:
       - name: nginx
@@ -707,88 +426,22 @@ EXAMPLES = r"""
         portMappings:
           - containerPort: 8080
             hostPort: 8080
-        cpu: 512
-        memory: 1024
     state: present
 
-- name: Create task definition
-  community.aws.ecs_taskdefinition:
-    family: nginx
-    containers:
-      - name: nginx
-        essential: true
-        image: "nginx"
-        portMappings:
-          - containerPort: 8080
-            hostPort: 8080
-    launch_type: FARGATE
-    cpu: 512
-    memory: 1024
-    state: present
-    network_mode: awsvpc
+- name: Deregister task definition (marks as INACTIVE)
+  ecs_taskdefinition:
+    arn: "arn:aws:ecs:us-west-2:123456789:task-definition/my-task:1"
+    state: inactive
 
-- name: Create task definition
-  community.aws.ecs_taskdefinition:
-    family: nginx
-    containers:
-      - name: nginx
-        essential: true
-        image: "nginx"
-        portMappings:
-          - containerPort: 8080
-            hostPort: 8080
-        cpu: 512
-        memory: 1024
-        dependsOn:
-          - containerName: "simple-app"
-            condition: "start"
+- name: Permanently delete task definition
+  ecs_taskdefinition:
+    arn: "arn:aws:ecs:us-west-2:123456789:task-definition/my-task:1"
+    state: absent
 
-# Create Task Definition with Environment Variables and Secrets
-- name: Create task definition
-  community.aws.ecs_taskdefinition:
-    family: nginx
-    containers:
-      - name: nginx
-        essential: true
-        image: "nginx"
-        environment:
-          - name: "PORT"
-            value: "8080"
-        secrets:
-          # For variables stored in Secrets Manager
-          - name: "NGINX_HOST"
-            valueFrom: "arn:aws:secretsmanager:us-west-2:123456789012:secret:nginx/NGINX_HOST"
-          # For variables stored in Parameter Store
-          - name: "API_KEY"
-            valueFrom: "arn:aws:ssm:us-west-2:123456789012:parameter/nginx/API_KEY"
-    launch_type: FARGATE
-    cpu: 512
-    memory: 1GB
-    state: present
-    network_mode: awsvpc
-
-# Create Task Definition with health check
-- name: Create task definition
-  community.aws.ecs_taskdefinition:
-    family: nginx
-    containers:
-      - name: nginx
-        essential: true
-        image: "nginx"
-        portMappings:
-          - containerPort: 8080
-            hostPort: 8080
-        cpu: 512
-        memory: 1024
-        healthCheck:
-          command:
-            - CMD-SHELL
-            - /app/healthcheck.py
-          interval: 60
-          retries: 3
-          startPeriod: 15
-          timeout: 15
-    state: present
+- name: Permanently delete ALL revisions in a task definition family
+  ecs_taskdefinition:
+    family: my-task
+    state: absent
 """
 
 RETURN = r"""
@@ -906,49 +559,149 @@ class EcsTaskManager:
 
         return response["taskDefinition"]
 
-    def describe_task_definitions(self, family):
-        data = {"taskDefinitionArns": [], "nextToken": None}
-
-        def fetch():
-            # Boto3 is weird about params passed, so only pass nextToken if we have a value
-            params = {"familyPrefix": family}
-
-            if data["nextToken"]:
-                params["nextToken"] = data["nextToken"]
-
-            result = self.ecs.list_task_definitions(aws_retry=True, **params)
-            data["taskDefinitionArns"] += result["taskDefinitionArns"]
-            data["nextToken"] = result.get("nextToken", None)
-            return data["nextToken"] is not None
-
-        # Fetch all the arns, possibly across multiple pages
-        while fetch():
-            pass
+    def describe_task_definitions(self, family, status=None):
+        if isinstance(status, list):
+            arns = []
+            for s in status:
+                arns += self._list_task_definition_arns(family, status=s)
+        else:
+            arns = self._list_task_definition_arns(family, status=status)
 
         # Return the full descriptions of the task definitions, sorted ascending by revision
         return list(
             sorted(
                 [
                     self.ecs.describe_task_definition(aws_retry=True, taskDefinition=arn)["taskDefinition"]
-                    for arn in data["taskDefinitionArns"]
+                    for arn in arns
                 ],
                 key=lambda td: td["revision"],
             )
         )
 
+    def _list_task_definition_arns(self, family, status=None):
+        arns = []
+        next_token = None
+
+        while True:
+            # Boto3 is weird about params passed, so only pass nextToken if we have a value
+            params = {"familyPrefix": family}
+
+            if status:
+                params["status"] = status
+
+            if next_token:
+                params["nextToken"] = next_token
+
+            result = self.ecs.list_task_definitions(aws_retry=True, **params)
+            arns += result["taskDefinitionArns"]
+            next_token = result.get("nextToken")
+
+            if not next_token:
+                break
+
+        return arns
+
     def deregister_task(self, taskArn):
         response = self.ecs.deregister_task_definition(aws_retry=True, taskDefinition=taskArn)
         return response["taskDefinition"]
 
+    def delete_task(self, taskArn):
+        """Permanently delete a task definition using delete_task_definitions API."""
+        try:
+            response = self.ecs.delete_task_definitions(aws_retry=True, taskDefinitions=[taskArn])
+            if response.get("failures"):
+                failure = response["failures"][0]
+                self.module.fail_json(
+                    msg=f"Failed to delete task definition: {failure.get('reason', 'Unknown error')}"
+                )
+            if response.get("taskDefinitions"):
+                return response["taskDefinitions"][0]
+            return None
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Failed to delete task definition")
+
+
+def _right_has_values_of_left(left, right):
+    """Check whether a requested (left) dict matches an existing AWS (right) dict.
+
+    Used to determine if an existing ECS task definition already satisfies the
+    user's requested configuration, so a new revision can be skipped.
+
+    Rules:
+      - Every truthy value in left must equal the corresponding value in right.
+      - Falsy values in left (0, "", [], None) are ignored — treated as "not specified".
+      - Extra truthy keys in right that are absent from left cause a mismatch,
+        EXCEPT ``essential: True`` which is an ECS default.
+      - Extra falsy keys in right are ignored.
+      - List values are compared order-independently (ECS may reorder them).
+        Both lists must have the same length and every element in left must
+        appear in right.
+      - For port-mapping dicts missing a ``protocol`` key, ``protocol: "tcp"``
+        is filled in before comparison (the ECS default).
+
+    Examples (left, right -> result)::
+
+        identical dicts                                  -> True
+        right has extra truthy keys                      -> False
+        right has extra falsy keys                       -> True
+        scalar value mismatch                            -> False
+        left has key that right lacks                    -> False
+        both empty                                       -> True
+        left empty, right has truthy values              -> False
+        left has falsy value, key missing in right       -> True
+        lists same elements, same order                  -> True
+        lists same elements, different order             -> True
+        lists differ in length                           -> False
+        list element mismatch                            -> False
+        port mapping without protocol vs with tcp        -> True
+        port mapping mismatch despite protocol default   -> False
+        right has essential=True, left omits it          -> True
+        right has extra truthy non-essential key         -> False
+    """
+    # Make sure the values are equivalent for everything left has
+    for k, v in left.items():
+        if not ((not v and (k not in right or not right[k])) or (k in right and v == right[k])):
+            # We don't care about list ordering because ECS can change things
+            if isinstance(v, list) and k in right:
+                left_list = v
+                right_list = right[k] or []
+
+                if len(left_list) != len(right_list):
+                    return False
+
+                for list_val in left_list:
+                    if list_val not in right_list:
+                        # if list_val is the port mapping, the key 'protocol' may be absent (but defaults to 'tcp')
+                        # fill in that default if absent and see if it is in right_list then
+                        if isinstance(list_val, dict) and not list_val.get("protocol"):
+                            modified_list_val = dict(list_val)
+                            modified_list_val.update(protocol="tcp")
+                            if modified_list_val in right_list:
+                                continue
+                        return False
+            else:
+                return False
+
+    # Make sure right doesn't have anything that left doesn't
+    for k, v in right.items():
+        if v and k not in left:
+            # 'essential' defaults to True when not specified
+            if k == "essential" and v is True:
+                pass
+            else:
+                return False
+
+    return True
+
 
 def main():
     argument_spec = dict(
-        state=dict(required=True, choices=["present", "absent"]),
+        state=dict(required=True, choices=["present", "inactive", "absent"]),
         arn=dict(required=False, type="str"),
         family=dict(required=False, type="str"),
         revision=dict(required=False, type="int"),
         force_create=dict(required=False, default=False, type="bool"),
-        containers=dict(required=True, type="list", elements="dict"),
+        containers=dict(required=False, type="list", elements="dict"),
         network_mode=dict(
             required=False, default="bridge", choices=["default", "bridge", "host", "none", "awsvpc"], type="str"
         ),
@@ -1079,41 +832,6 @@ def main():
         else:
             existing = None
 
-            def _right_has_values_of_left(left, right):
-                # Make sure the values are equivalent for everything left has
-                for k, v in left.items():
-                    if not ((not v and (k not in right or not right[k])) or (k in right and v == right[k])):
-                        # We don't care about list ordering because ECS can change things
-                        if isinstance(v, list) and k in right:
-                            left_list = v
-                            right_list = right[k] or []
-
-                            if len(left_list) != len(right_list):
-                                return False
-
-                            for list_val in left_list:
-                                if list_val not in right_list:
-                                    # if list_val is the port mapping, the key 'protocol' may be absent (but defaults to 'tcp')
-                                    # fill in that default if absent and see if it is in right_list then
-                                    if isinstance(list_val, dict) and not list_val.get("protocol"):
-                                        modified_list_val = dict(list_val)
-                                        modified_list_val.update(protocol="tcp")
-                                        if modified_list_val in right_list:
-                                            continue
-                        else:
-                            return False
-
-                # Make sure right doesn't have anything that left doesn't
-                for k, v in right.items():
-                    if v and k not in left:
-                        # 'essential' defaults to True when not specified
-                        if k == "essential" and v is True:
-                            pass
-                        else:
-                            return False
-
-                return True
-
             def _task_definition_matches(
                 requested_volumes,
                 requested_containers,
@@ -1204,34 +922,83 @@ def main():
                 )
             results["changed"] = True
 
-    elif module.params["state"] == "absent":
-        # When de-registering a task definition, we can specify the ARN OR the family and revision.
-        if module.params["state"] == "absent":
-            if "arn" in module.params and module.params["arn"] is not None:
-                task_to_describe = module.params["arn"]
-            elif (
-                "family" in module.params
-                and module.params["family"] is not None
-                and "revision" in module.params
-                and module.params["revision"] is not None
-            ):
-                task_to_describe = module.params["family"] + ":" + str(module.params["revision"])
+    elif module.params["state"] in ("inactive", "absent"):
+        # When de-registering or deleting a task definition, we can specify the ARN OR the family and revision.
+        # For state=absent, we can also specify just the family to delete ALL revisions.
+        if "arn" in module.params and module.params["arn"] is not None:
+            task_to_describe = module.params["arn"]
+        elif (
+            "family" in module.params
+            and module.params["family"] is not None
+            and "revision" in module.params
+            and module.params["revision"] is not None
+        ):
+            task_to_describe = module.params["family"] + ":" + str(module.params["revision"])
+        elif (
+            module.params["state"] == "absent"
+            and "family" in module.params
+            and module.params["family"] is not None
+        ):
+            # Delete ALL revisions in the family
+            task_to_describe = None
+            family = module.params["family"]
+            existing_definitions = task_mgr.describe_task_definitions(family, status=["ACTIVE", "INACTIVE"])
+
+            if not existing_definitions:
+                # No task definitions in this family, nothing to do
+                results["taskdefinitions"] = []
             else:
-                module.fail_json(msg="To use task definitions, an arn or family and revision must be specified")
+                deleted_definitions = []
+                for td in existing_definitions:
+                    if td.get("status") == "DELETE_IN_PROGRESS":
+                        continue
+                    if not module.check_mode:
+                        # Must deregister (make INACTIVE) before deleting
+                        if td.get("status") == "ACTIVE":
+                            task_mgr.deregister_task(td["taskDefinitionArn"])
+                        deleted_td = task_mgr.delete_task(td["taskDefinitionArn"])
+                        if deleted_td:
+                            deleted_definitions.append(deleted_td)
+                    else:
+                        deleted_definitions.append(td)
+                    results["changed"] = True
+
+                results["taskdefinitions"] = deleted_definitions
+
+            module.exit_json(**results)
+        else:
+            module.fail_json(msg="To delete task definitions, an arn, family and revision, or family alone (for state=absent) must be specified")
 
         existing = task_mgr.describe_task(task_to_describe)
 
         if not existing:
+            # Task definition doesn't exist, nothing to do
             pass
         else:
-            # It exists, so we should delete it and mark changed. Return info about the task definition deleted
             results["taskdefinition"] = existing
-            if "status" in existing and existing["status"] == "INACTIVE":
-                results["changed"] = False
-            else:
-                if not module.check_mode:
-                    task_mgr.deregister_task(task_to_describe)
-                results["changed"] = True
+
+            if module.params["state"] == "inactive":
+                # Deregister only (marks as INACTIVE)
+                if "status" in existing and existing["status"] == "INACTIVE":
+                    results["changed"] = False
+                else:
+                    if not module.check_mode:
+                        task_mgr.deregister_task(task_to_describe)
+                    results["changed"] = True
+
+            elif module.params["state"] == "absent":
+                # Permanently delete the task definition
+                if "status" in existing and existing["status"] == "DELETE_IN_PROGRESS":
+                    results["changed"] = False
+                else:
+                    if not module.check_mode:
+                        # Must deregister (make INACTIVE) before deleting
+                        if existing.get("status") == "ACTIVE":
+                            task_mgr.deregister_task(task_to_describe)
+                        deleted_td = task_mgr.delete_task(task_to_describe)
+                        if deleted_td:
+                            results["taskdefinition"] = deleted_td
+                    results["changed"] = True
 
     module.exit_json(**results)
 

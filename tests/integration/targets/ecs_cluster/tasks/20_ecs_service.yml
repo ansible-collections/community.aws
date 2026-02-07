@@ -983,3 +983,102 @@
     containers: "{{ ecs_task_containers }}"
     arn: "{{ ecs_task_definition_absent_with_arn.taskdefinition.taskDefinitionArn }}"
     state: absent
+
+# ============================================================
+# Begin tests for deleting all revisions in a family
+# This tests that state=absent with only family deletes both
+# ACTIVE and INACTIVE revisions.
+
+- name: create first revision for family delete test
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-family-delete"
+    state: present
+  register: family_delete_rev1
+
+- name: check that first revision was created
+  assert:
+    that:
+      - family_delete_rev1 is changed
+
+- name: create second revision for family delete test (force_create to guarantee new revision)
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-family-delete"
+    force_create: true
+    state: present
+  register: family_delete_rev2
+
+- name: check that second revision was created
+  assert:
+    that:
+      - family_delete_rev2 is changed
+      - family_delete_rev2.taskdefinition.revision != family_delete_rev1.taskdefinition.revision
+
+- name: create third revision for family delete test (force_create to guarantee new revision)
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-family-delete"
+    force_create: true
+    state: present
+  register: family_delete_rev3
+
+- name: check that third revision was created
+  assert:
+    that:
+      - family_delete_rev3 is changed
+      - family_delete_rev3.taskdefinition.revision != family_delete_rev2.taskdefinition.revision
+
+- name: deregister first revision to make it INACTIVE
+  ecs_taskdefinition:
+    family: "{{ ecs_task_name }}-family-delete"
+    revision: "{{ family_delete_rev1.taskdefinition.revision }}"
+    state: inactive
+  register: family_delete_deregister_rev1
+
+- name: check that deregister changed
+  assert:
+    that:
+      - family_delete_deregister_rev1 is changed
+
+- name: deregister second revision to make it INACTIVE
+  ecs_taskdefinition:
+    family: "{{ ecs_task_name }}-family-delete"
+    revision: "{{ family_delete_rev2.taskdefinition.revision }}"
+    state: inactive
+  register: family_delete_deregister_rev2
+
+- name: check that deregister changed
+  assert:
+    that:
+      - family_delete_deregister_rev2 is changed
+
+# At this point: rev1=INACTIVE, rev2=INACTIVE, rev3=ACTIVE
+# state=absent with only family should delete all three
+
+- name: delete all revisions in family including inactive ones
+  ecs_taskdefinition:
+    family: "{{ ecs_task_name }}-family-delete"
+    state: absent
+  register: family_delete_result
+
+- name: check that all revisions were deleted
+  assert:
+    that:
+      - family_delete_result is changed
+      - family_delete_result.taskdefinitions | length == 3
+
+- name: delete all revisions in family again (idempotent)
+  ecs_taskdefinition:
+    family: "{{ ecs_task_name }}-family-delete"
+    state: absent
+  register: family_delete_result_again
+
+- name: check that family delete is idempotent
+  assert:
+    that:
+      - family_delete_result_again is not changed
+      - family_delete_result_again.taskdefinitions | length == 0
+
+# End tests for deleting all revisions in a family
+# ============================================================
