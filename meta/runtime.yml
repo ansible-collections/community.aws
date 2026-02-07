@@ -70,6 +70,8 @@ action_groups:
     - cloudfront_invalidation
     - cloudfront_origin_access_identity
     - cloudfront_response_headers_policy
+    - cloudmap_info
+    - cloudmap_namespace
     - codebuild_project
     - codecommit_repository
     - codepipeline
