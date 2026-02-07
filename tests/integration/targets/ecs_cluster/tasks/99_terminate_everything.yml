@@ -109,6 +109,16 @@
     - "{{ fargate_run_task_output_with_assign_ip }}"
     - "{{ fargate_run_task_output_with_tags_fail }}"
 
+- name: stop wait_complete long-running task
+  ecs_task:
+    task: "{{ wait_complete_long_task.task[0].taskArn }}"
+    task_definition: "{{ ecs_task_name }}-wc-long"
+    operation: stop
+    cluster: "{{ ecs_cluster_name }}"
+    wait: true
+  ignore_errors: true
+  when: wait_complete_long_task is defined
+
 - name: remove ecs service
   ecs_service:
     state: absent
@@ -236,6 +246,40 @@
     state: absent
   ignore_errors: true
 
+- name: remove wait_complete task definitions
+  ecs_taskdefinition:
+    containers: "{{ item.containers }}"
+    family: "{{ item.family }}"
+    revision: "{{ item.revision }}"
+    state: absent
+  ignore_errors: true
+  with_items:
+    - family: "{{ ecs_task_name }}-wc-ok"
+      revision: "{{ ecs_wc_ok_task_def.taskdefinition.revision }}"
+      containers:
+        - name: "{{ ecs_task_name }}-busybox"
+          image: "public.ecr.aws/docker/library/busybox:latest"
+          memory: 512
+    - family: "{{ ecs_task_name }}-wc-fail"
+      revision: "{{ ecs_wc_fail_task_def.taskdefinition.revision }}"
+      containers:
+        - name: "{{ ecs_task_name }}-busybox"
+          image: "public.ecr.aws/docker/library/busybox:latest"
+          memory: 512
+    - family: "{{ ecs_task_name }}-wc-invalid"
+      revision: "{{ ecs_wc_invalid_task_def.taskdefinition.revision }}"
+      containers:
+        - name: "{{ ecs_task_name }}-invalid"
+          image: "public.ecr.aws/docker/library/busybox:nonexistent-tag-xyz-12345"
+          memory: 512
+    - family: "{{ ecs_task_name }}-wc-long"
+      revision: "{{ ecs_wc_long_task_def.taskdefinition.revision }}"
+      containers:
+        - name: "{{ ecs_task_name }}-busybox"
+          image: "public.ecr.aws/docker/library/busybox:latest"
+          memory: 512
+  when: ecs_wc_ok_task_def is defined
+
 - name: remove load balancer
   elb_application_lb:
     name: "{{ ecs_load_balancer_name }}"
@@ -282,6 +326,15 @@
     - "{{ ecs_target_group_name }}1"
     - "{{ ecs_target_group_name }}2"
   ignore_errors: true
+
+- name: remove route table
+  ec2_vpc_route_table:
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    route_table_id: "{{ setup_route_table.route_table.id }}"
+    lookup: id
+    state: absent
+  ignore_errors: true
+  when: setup_route_table is defined
 
 - name: remove IGW
   ec2_vpc_igw:
