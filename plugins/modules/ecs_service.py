@@ -860,6 +860,11 @@ class EcsServiceManager:
         )
         primary_deployment = (existing.get("deployments") or [{}])[0]
         existing_service_connect = primary_deployment.get("serviceConnectConfiguration", {})
+        # When Service Connect is disabled, AWS omits serviceConnectConfiguration
+        # entirely from the deployment.  Treat a missing configuration as {"enabled": False}
+        # so that an explicit "enabled: false" in expected remains idempotent.
+        if expected_service_connect.get("enabled") is False and not existing_service_connect:
+            existing_service_connect = {"enabled": False}
         if not is_dict_subset(expected_service_connect, existing_service_connect, list_sort_key="portName"):
             return False
 

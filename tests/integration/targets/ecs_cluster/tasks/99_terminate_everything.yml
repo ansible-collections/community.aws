@@ -244,6 +244,9 @@
     revision: "{{ ecs_sc_task_definition.taskdefinition.revision }}"
     state: absent
   ignore_errors: true
+  when:
+    - ecs_sc_task_definition is defined
+    - ecs_sc_task_definition.taskdefinition is defined
 
 - name: remove ecs task definition for absent with arn
   ecs_taskdefinition:
