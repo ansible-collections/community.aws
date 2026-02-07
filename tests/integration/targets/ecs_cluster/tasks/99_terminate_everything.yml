@@ -236,6 +236,12 @@
     state: absent
   ignore_errors: true
 
+- name: remove ecs task definitions for family delete test
+  ecs_taskdefinition:
+    family: "{{ ecs_task_name }}-family-delete"
+    state: absent
+  ignore_errors: true
+
 - name: remove load balancer
   elb_application_lb:
     name: "{{ ecs_load_balancer_name }}"
