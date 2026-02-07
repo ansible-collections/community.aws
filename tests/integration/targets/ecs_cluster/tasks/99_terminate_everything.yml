@@ -246,39 +246,53 @@
     state: absent
   ignore_errors: true
 
-- name: remove wait_complete task definitions
+- name: remove wait_complete ok task definition
   ecs_taskdefinition:
-    containers: "{{ item.containers }}"
-    family: "{{ item.family }}"
-    revision: "{{ item.revision }}"
+    containers:
+      - name: "{{ ecs_task_name }}-busybox"
+        image: "public.ecr.aws/docker/library/busybox:latest"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-ok"
+    revision: "{{ ecs_wc_ok_task_def.taskdefinition.revision }}"
     state: absent
   ignore_errors: true
-  with_items:
-    - family: "{{ ecs_task_name }}-wc-ok"
-      revision: "{{ ecs_wc_ok_task_def.taskdefinition.revision }}"
-      containers:
-        - name: "{{ ecs_task_name }}-busybox"
-          image: "public.ecr.aws/docker/library/busybox:latest"
-          memory: 512
-    - family: "{{ ecs_task_name }}-wc-fail"
-      revision: "{{ ecs_wc_fail_task_def.taskdefinition.revision }}"
-      containers:
-        - name: "{{ ecs_task_name }}-busybox"
-          image: "public.ecr.aws/docker/library/busybox:latest"
-          memory: 512
-    - family: "{{ ecs_task_name }}-wc-invalid"
-      revision: "{{ ecs_wc_invalid_task_def.taskdefinition.revision }}"
-      containers:
-        - name: "{{ ecs_task_name }}-invalid"
-          image: "public.ecr.aws/docker/library/busybox:nonexistent-tag-xyz-12345"
-          memory: 512
-    - family: "{{ ecs_task_name }}-wc-long"
-      revision: "{{ ecs_wc_long_task_def.taskdefinition.revision }}"
-      containers:
-        - name: "{{ ecs_task_name }}-busybox"
-          image: "public.ecr.aws/docker/library/busybox:latest"
-          memory: 512
   when: ecs_wc_ok_task_def is defined
+
+- name: remove wait_complete fail task definition
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-busybox"
+        image: "public.ecr.aws/docker/library/busybox:latest"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-fail"
+    revision: "{{ ecs_wc_fail_task_def.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+  when: ecs_wc_fail_task_def is defined
+
+- name: remove wait_complete invalid task definition
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-invalid"
+        image: "public.ecr.aws/docker/library/busybox:nonexistent-tag-xyz-12345"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-invalid"
+    revision: "{{ ecs_wc_invalid_task_def.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+  when: ecs_wc_invalid_task_def is defined
+
+- name: remove wait_complete long task definition
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-busybox"
+        image: "public.ecr.aws/docker/library/busybox:latest"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-long"
+    revision: "{{ ecs_wc_long_task_def.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+  when: ecs_wc_long_task_def is defined
 
 - name: remove load balancer
   elb_application_lb:
