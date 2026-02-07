@@ -1,0 +1,201 @@
+---
+- module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+    # ============================================================
+    # Public namespace — create
+    # ============================================================
+    - name: Create public namespace
+      community.aws.cloudmap_namespace:
+        state: present
+        name: "{{ cloudmap_namespace_name }}"
+        namespace_type: public
+        description: "{{ cloudmap_description }}"
+        tags:
+          Environment: test
+          CamelCase: value
+        wait: true
+        wait_timeout: 300
+      register: create_public
+
+    - name: Assert public namespace was created
+      assert:
+        that:
+          - create_public is changed
+          - create_public.namespace.Id is defined
+          - create_public.namespace.Type == "DNS_PUBLIC"
+          - create_public.namespace.Name == cloudmap_namespace_name
+
+    # ============================================================
+    # Public namespace — idempotency
+    # ============================================================
+    - name: Create public namespace (idempotency)
+      community.aws.cloudmap_namespace:
+        state: present
+        name: "{{ cloudmap_namespace_name }}"
+        namespace_type: public
+        description: "{{ cloudmap_description }}"
+        tags:
+          Environment: test
+          CamelCase: value
+        wait: true
+      register: create_public_idem
+
+    - name: Assert public namespace was not changed
+      assert:
+        that:
+          - create_public_idem is not changed
+
+    # ============================================================
+    # cloudmap_info — query by name
+    # ============================================================
+    - name: Get namespace info by name
+      community.aws.cloudmap_info:
+        namespace_name: "{{ cloudmap_namespace_name }}"
+      register: info_by_name
+
+    - name: Assert info by name returned correct namespace
+      assert:
+        that:
+          - info_by_name.namespace.name == cloudmap_namespace_name
+          - info_by_name.namespace.type == "DNS_PUBLIC"
+          - info_by_name.namespace.id is defined
+          - info_by_name.namespace.arn is defined
+          - info_by_name.services is defined
+
+    # ============================================================
+    # cloudmap_info — query by ID
+    # ============================================================
+    - name: Get namespace info by ID
+      community.aws.cloudmap_info:
+        namespace_id: "{{ info_by_name.namespace.id }}"
+      register: info_by_id
+
+    - name: Assert info by ID returned same namespace
+      assert:
+        that:
+          - info_by_id.namespace.id == info_by_name.namespace.id
+          - info_by_id.namespace.name == cloudmap_namespace_name
+          - info_by_id.namespace.type == "DNS_PUBLIC"
+
+    # ============================================================
+    # VPC setup for private namespace
+    # ============================================================
+    - name: Create VPC for private namespace
+      amazon.aws.ec2_vpc_net:
+        name: "{{ resource_prefix }}-cloudmap-vpc"
+        cidr_block: "10.0.0.0/16"
+        state: present
+      register: vpc_result
+
+    # ============================================================
+    # Private namespace — create
+    # ============================================================
+    - name: Create private namespace
+      community.aws.cloudmap_namespace:
+        state: present
+        name: "{{ cloudmap_private_namespace_name }}"
+        namespace_type: private
+        vpc: "{{ vpc_result.vpc.id }}"
+        description: "{{ cloudmap_description }}"
+        wait: true
+        wait_timeout: 300
+      register: create_private
+
+    - name: Assert private namespace was created
+      assert:
+        that:
+          - create_private is changed
+          - create_private.namespace.Id is defined
+          - create_private.namespace.Type == "DNS_PRIVATE"
+          - create_private.namespace.Name == cloudmap_private_namespace_name
+
+    # ============================================================
+    # Private namespace — idempotency
+    # ============================================================
+    - name: Create private namespace (idempotency)
+      community.aws.cloudmap_namespace:
+        state: present
+        name: "{{ cloudmap_private_namespace_name }}"
+        namespace_type: private
+        vpc: "{{ vpc_result.vpc.id }}"
+        description: "{{ cloudmap_description }}"
+        wait: true
+      register: create_private_idem
+
+    - name: Assert private namespace was not changed
+      assert:
+        that:
+          - create_private_idem is not changed
+
+    # ============================================================
+    # Public namespace — delete
+    # ============================================================
+    - name: Delete public namespace
+      community.aws.cloudmap_namespace:
+        state: absent
+        name: "{{ cloudmap_namespace_name }}"
+        namespace_type: public
+        wait: true
+        wait_timeout: 300
+      register: delete_public
+
+    - name: Assert public namespace was deleted
+      assert:
+        that:
+          - delete_public is changed
+
+    # ============================================================
+    # Public namespace — delete idempotency
+    # ============================================================
+    - name: Delete public namespace (idempotency)
+      community.aws.cloudmap_namespace:
+        state: absent
+        name: "{{ cloudmap_namespace_name }}"
+        namespace_type: public
+      register: delete_public_idem
+
+    - name: Assert public namespace delete is idempotent
+      assert:
+        that:
+          - delete_public_idem is not changed
+
+    # ============================================================
+    # Private namespace — delete
+    # ============================================================
+    - name: Delete private namespace
+      community.aws.cloudmap_namespace:
+        state: absent
+        name: "{{ cloudmap_private_namespace_name }}"
+        namespace_type: private
+        wait: true
+        wait_timeout: 300
+      register: delete_private
+
+    - name: Assert private namespace was deleted
+      assert:
+        that:
+          - delete_private is changed
+
+    # ============================================================
+    # Delete non-existent namespace
+    # ============================================================
+    - name: Delete non-existent namespace
+      community.aws.cloudmap_namespace:
+        state: absent
+        name: "this-namespace-does-not-exist.example.com"
+        namespace_type: public
+      register: delete_nonexistent
+
+    - name: Assert deleting non-existent namespace is not changed
+      assert:
+        that:
+          - delete_nonexistent is not changed
+
+  always:
+    - name: Clean up test resources
+      include_tasks: 99_cleanup.yml
