@@ -1,0 +1,99 @@
+---
+# ==========================================
+# Delete user pool tests
+# ==========================================
+
+# ------------------------------------------
+# Delete check_mode
+# ------------------------------------------
+- name: Delete user pool - check_mode
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_pool_id }}'
+  check_mode: true
+  register: delete_check
+
+- name: Verify delete check_mode
+  assert:
+    that:
+      - delete_check is changed
+
+- name: Verify pool still exists after check_mode
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_id }}'
+  register: still_exists
+
+- name: Assert pool not deleted
+  assert:
+    that:
+      - still_exists.user_pool.id == cognito_pool_id
+
+# ------------------------------------------
+# Deletion protection blocks delete
+# ------------------------------------------
+- name: Enable deletion protection on params pool
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    deletion_protection: ACTIVE
+
+- name: Try to delete pool with deletion protection
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: delete_protected
+  ignore_errors: true
+
+- name: Verify deletion protection blocks delete
+  assert:
+    that:
+      - delete_protected is failed
+      - "'deletion protection' in delete_protected.msg"
+
+- name: Disable deletion protection for cleanup
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    deletion_protection: INACTIVE
+
+# ------------------------------------------
+# Delete by ID
+# ------------------------------------------
+- name: Delete user pool by ID
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_pool_id }}'
+  register: delete_by_id
+
+- name: Verify pool deleted
+  assert:
+    that:
+      - delete_by_id is changed
+
+# ------------------------------------------
+# Delete idempotency (already absent)
+# ------------------------------------------
+- name: Delete user pool again - idempotency
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_pool_id }}'
+  register: delete_idem
+
+- name: Verify delete idempotency
+  assert:
+    that:
+      - delete_idem is not changed
+
+# ------------------------------------------
+# Delete by name
+# ------------------------------------------
+- name: Delete params pool by name
+  cognito_user_pool:
+    state: absent
+    name: '{{ cognito_pool_name }}-params'
+  register: delete_by_name
+
+- name: Verify pool deleted by name
+  assert:
+    that:
+      - delete_by_name is changed
