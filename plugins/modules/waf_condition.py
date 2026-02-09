@@ -20,7 +20,8 @@ author:
   - Mike Mochan (@mmochan)
 
 deprecated:
-  removed_in: 12.0.0
+  # removed_in: 12.0.0
+  removed_at_date: 2026-07-01
   why: Amazon has retired the "WAF Classic" service.
   alternative: Please use the "AWS WAF (WAFv2)" service and modules instead.
 

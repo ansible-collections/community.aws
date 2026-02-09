@@ -1,4 +1,0 @@
-plugins/modules/waf_condition.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01 
-plugins/modules/waf_info.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01 
-plugins/modules/waf_rule.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01 
-plugins/modules/waf_web_acl.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01 
