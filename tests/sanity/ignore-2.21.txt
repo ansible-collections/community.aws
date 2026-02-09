@@ -1,2 +1,6 @@
 plugins/modules/cloudfront_invalidation.py validate-modules:bad-return-value-key # deprecated 'invalidation.invalidation_batch.paths.items' key kept for backward compatibility until 2026-12-16
 plugins/modules/cloudfront_distribution.py validate-modules:bad-return-value-key # deprecated 'items' keys from return value kept for backward compatibility until 2026-12-16
+plugins/modules/waf_condition.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01
+plugins/modules/waf_info.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01
+plugins/modules/waf_rule.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01
+plugins/modules/waf_web_acl.py validate-modules:deprecation-mismatch # needs to be removed in version 12.0.0 after 2026-07-01
