@@ -446,9 +446,17 @@ EXAMPLES = r"""
 
 RETURN = r"""
 taskdefinition:
-    description: a reflection of the input parameters
+    description:
+        - A reflection of the input parameters for C(state=present).
+        - The task definition that was deregistered or deleted for C(state=inactive) or single-revision C(state=absent).
     type: dict
-    returned: always
+    returned: when C(state=present), C(state=inactive), or C(state=absent) with a specific revision
+taskdefinitions:
+    description:
+        - List of all task definitions that were deleted when C(state=absent) is used with only a family name (no revision).
+    type: list
+    elements: dict
+    returned: when C(state=absent) with only family specified (deletes all revisions in the family)
 """
 
 try:
