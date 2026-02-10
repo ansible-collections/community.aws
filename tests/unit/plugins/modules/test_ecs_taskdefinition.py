@@ -7,8 +7,6 @@ from __future__ import print_function
 
 __metaclass__ = type
 
-import pytest
-
 from ansible_collections.community.aws.plugins.modules.ecs_taskdefinition import _right_has_values_of_left
 
 
