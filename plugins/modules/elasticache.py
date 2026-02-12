@@ -537,7 +537,11 @@ class ElastiCacheManager:
 class ReplicationGroupManager:
     """Handles elasticache replication group creation and destruction"""
 
-    EXIST_STATUSES = ["available", "creating", "modifying", "deleting"]
+    # These statuses mean the replication group exists (it may or may not be
+    # ready for modification).
+    EXIST_STATUSES = ["available", "creating", "modifying", "deleting", "snapshotting", "create-failed"]
+    IN_PROGRESS_STATUSES = ["creating", "modifying", "snapshotting"]
+    FAILED_STATUS = "create-failed"
 
     def __init__(
         self,
@@ -612,10 +616,14 @@ class ReplicationGroupManager:
         """Create an ElastiCache replication group"""
         if self.status == "available":
             return
-        if self.status in ["creating", "modifying"]:
+        if self.status in self.IN_PROGRESS_STATUSES:
             if self.wait:
                 self._wait_for_status("available")
             return
+        if self.status == self.FAILED_STATUS:
+            self.module.fail_json(
+                msg=f"'{self.name}' is in {self.status} status. Cannot create. Delete and recreate the replication group."
+            )
         if self.status == "deleting":
             if self.wait:
                 self._wait_for_status("gone")
@@ -674,7 +682,7 @@ class ReplicationGroupManager:
             if self.wait:
                 self._wait_for_status("gone")
             return
-        if self.status in ["creating", "modifying"]:
+        if self.status in self.IN_PROGRESS_STATUSES:
             if self.wait:
                 self._wait_for_status("available")
             else:
@@ -701,7 +709,12 @@ class ReplicationGroupManager:
         if not self.exists():
             self.module.fail_json(msg=f"'{self.name}' is {self.status}. Cannot sync.")
 
-        if self.status in ["creating", "modifying"]:
+        if self.status == self.FAILED_STATUS:
+            self.module.fail_json(
+                msg=f"'{self.name}' is in {self.status} status. Cannot sync. Delete and recreate the replication group."
+            )
+
+        if self.status in self.IN_PROGRESS_STATUSES:
             if self.wait:
                 self._wait_for_status("available")
             else:
@@ -747,7 +760,7 @@ class ReplicationGroupManager:
 
     def _wait_for_status(self, awaited_status):
         """Wait for status to change from present status to awaited_status"""
-        status_map = {"creating": "available", "modifying": "available", "deleting": "gone"}
+        status_map = {"creating": "available", "modifying": "available", "snapshotting": "available", "deleting": "gone"}
         if self.status == awaited_status:
             return
         if status_map[self.status] != awaited_status:
