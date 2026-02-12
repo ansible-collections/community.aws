@@ -975,7 +975,7 @@ def main():
 
             module.exit_json(**results)
         else:
-            module.fail_json(msg="To delete task definitions, an arn, family and revision, or family alone (for state=absent) must be specified")
+            module.fail_json(msg="To deregister or delete task definitions, an arn, family and revision, or family alone (for state=absent) must be specified")
 
         existing = task_mgr.describe_task(task_to_describe)
 
