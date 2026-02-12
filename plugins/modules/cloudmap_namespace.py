@@ -33,7 +33,7 @@ options:
         description:
           - The type of namespace.
           - Required for both I(state=present) and I(state=absent) to avoid accidentally targeting the wrong namespace when public and private namespaces share a name.
-        required: false
+        required: true
         choices: ["public", "private"]
         type: str
     description:
@@ -123,21 +123,17 @@ EXAMPLES = r"""
 
 RETURN = r"""
 namespace:
-    description: Details of the namespace operation.
-    returned: when creating or deleting a namespace
-    type: complex
+    description: Details of the namespace.
+    returned: success
+    type: dict
     contains:
-        operation_id:
-            description: The ID of the operation that can be used to track the request.
-            returned: always
-            type: str
-        namespace_id:
+        id:
             description: The ID of the namespace.
             returned: when namespace exists
             type: str
         name:
             description: The name of the namespace.
-            returned: when namespace exists
+            returned: always
             type: str
         type:
             description: The type of the namespace (DNS_PUBLIC or DNS_PRIVATE).
@@ -146,6 +142,14 @@ namespace:
         arn:
             description: The ARN of the namespace.
             returned: when namespace exists
+            type: str
+        description:
+            description: The description of the namespace.
+            returned: when available
+            type: str
+        operation_id:
+            description: The ID of the operation that can be used to track the request.
+            returned: when a create or delete operation is performed
             type: str
 """
 
@@ -316,6 +320,22 @@ class CloudMapNamespaceManager:
             # Operation is still in progress, wait before checking again
             time.sleep(5)
 
+    def format_namespace(self, namespace, operation_id=None):
+        """Format namespace data for consistent snake_case output"""
+        result = {}
+        if namespace.get("Id"):
+            result["id"] = namespace["Id"]
+        result["name"] = namespace.get("Name")
+        if namespace.get("Type"):
+            result["type"] = namespace["Type"]
+        if namespace.get("Arn"):
+            result["arn"] = namespace["Arn"]
+        if namespace.get("Description"):
+            result["description"] = namespace["Description"]
+        if operation_id:
+            result["operation_id"] = operation_id
+        return result
+
     def _format_tags(self, tags):
         """Convert Ansible tags dict to AWS tags list"""
         if not tags:
@@ -327,7 +347,7 @@ def main():
     argument_spec = dict(
         state=dict(required=True, choices=["present", "absent"]),
         name=dict(required=True, type="str"),
-        namespace_type=dict(required=False, choices=["public", "private"]),
+        namespace_type=dict(required=True, choices=["public", "private"]),
         description=dict(required=False, type="str"),
         vpc=dict(required=False, type="str"),
         properties=dict(required=False, type="dict"),
@@ -340,10 +360,6 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
-        required_if=[
-            ("state", "present", ["namespace_type"]),
-            ("state", "absent", ["namespace_type"]),
-        ],
     )
 
     state = module.params["state"]
@@ -360,13 +376,17 @@ def main():
     if state == "present" and namespace_type == "private" and not vpc:
         module.fail_json(msg="vpc is required when state=present and namespace_type=private")
 
-    # Convert properties to camelCase if provided
+    # Convert properties to PascalCase if provided
     if properties:
-        properties = snake_dict_to_camel_dict(properties)
+        properties = snake_dict_to_camel_dict(properties, capitalize_first=True)
         # snake_dict_to_camel_dict converts "soa" to "Soa", but the API expects "SOA"
         dns = properties.get("DnsProperties", {})
         if "Soa" in dns:
             dns["SOA"] = dns.pop("Soa")
+        # Normalize nested SOA properties such as TTL acronym
+        soa = dns.get("SOA")
+        if isinstance(soa, dict) and "Ttl" in soa:
+            soa["TTL"] = soa.pop("Ttl")
 
     manager = CloudMapNamespaceManager(module)
 
@@ -378,7 +398,7 @@ def main():
     if state == "present":
         if existing:
             # Namespace already exists
-            results["namespace"] = existing
+            results["namespace"] = manager.format_namespace(existing)
             results["changed"] = False
         else:
             # Create new namespace
@@ -400,7 +420,9 @@ def main():
                         operation_id, wait_timeout
                     )
                     namespace_details = manager.get_namespace(namespace_id)
-                    results["namespace"] = namespace_details
+                    results["namespace"] = manager.format_namespace(
+                        namespace_details, operation_id=operation_id
+                    )
                 else:
                     results["namespace"] = {
                         "operation_id": operation_id,
@@ -418,11 +440,9 @@ def main():
                 if wait and operation_id:
                     manager.wait_for_operation(operation_id, wait_timeout)
 
-                results["namespace"] = {
-                    "operation_id": operation_id,
-                    "namespace_id": existing["Id"],
-                    "name": name,
-                }
+                results["namespace"] = manager.format_namespace(
+                    existing, operation_id=operation_id
+                )
             results["changed"] = True
         else:
             # Namespace doesn't exist, nothing to do

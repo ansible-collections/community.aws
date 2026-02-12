@@ -337,6 +337,10 @@ def main():
         service = manager.get_service(service_id)
         if not service:
             module.fail_json(msg=f"Service with ID '{service_id}' not found")
+        if service.get("NamespaceId") != namespace_id:
+            module.fail_json(
+                msg=f"Service with ID '{service_id}' does not belong to namespace '{namespace_id}'"
+            )
         services = [service]
     elif service_name:
         service = manager.find_service_by_name(namespace_id, service_name)
