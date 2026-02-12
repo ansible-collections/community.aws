@@ -278,7 +278,7 @@ options:
             field, include it explicitly in this configuration.
         type: dict
         required: false
-        version_added: 7.2.0
+        version_added: 11.1.0
         suboptions:
             enabled:
                 description:
@@ -419,8 +419,8 @@ EXAMPLES = r"""
       lastName: doe
     propagate_tags: SERVICE
 
-# With Service Connect configuration
-- community.aws.ecs_service:
+- name: Create ECS Service with Service Connect configuration
+  community.aws.ecs_service:
     state: present
     name: service-connect-test
     cluster: my_cluster
@@ -434,8 +434,8 @@ EXAMPLES = r"""
           client_aliases:
             - port: 80
 
-# Create service and wait for tasks to be running
-- community.aws.ecs_service:
+ - name: Create service and wait for tasks to be running
+   community.aws.ecs_service:
     state: present
     name: my-service
     cluster: my_cluster
