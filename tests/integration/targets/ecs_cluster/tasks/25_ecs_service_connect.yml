@@ -33,7 +33,9 @@
   register: cloudmap_namespace_operation
   retries: 30
   delay: 10
-  until: (cloudmap_namespace_operation.stdout | from_json).Operation.Status == 'SUCCESS'
+  until: >-
+    cloudmap_namespace_operation.stdout | length > 0
+    and (cloudmap_namespace_operation.stdout | from_json).Operation.Status == 'SUCCESS'
 
 - name: extract Cloud Map namespace ARN
   set_fact:
