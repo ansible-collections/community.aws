@@ -104,7 +104,7 @@ options:
           - Implies I(wait=true) to ensure task starts before waiting for completion.
         type: bool
         default: false
-        version_added: 4.1.0
+        version_added: 11.1.0
 extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
