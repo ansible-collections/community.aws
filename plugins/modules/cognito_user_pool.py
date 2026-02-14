@@ -722,9 +722,9 @@ def main():
         user_pool_tier=dict(required=False, type="str", choices=["LITE", "ESSENTIALS", "PLUS"]),
         deletion_protection=dict(required=False, type="str", choices=["ACTIVE", "INACTIVE"]),
         mfa_configuration=dict(required=False, type="str", choices=["OFF", "ON", "OPTIONAL"]),
-        auto_verified_attributes=dict(required=False, type="list", elements="str"),
-        alias_attributes=dict(required=False, type="list", elements="str"),
-        username_attributes=dict(required=False, type="list", elements="str"),
+        auto_verified_attributes=dict(required=False, type="list", elements="str", choices=["email", "phone_number"]),
+        alias_attributes=dict(required=False, type="list", elements="str", choices=["phone_number", "email", "preferred_username"]),
+        username_attributes=dict(required=False, type="list", elements="str", choices=["phone_number", "email"]),
         username_configuration=dict(
             required=False,
             type="dict",
@@ -739,13 +739,14 @@ def main():
             options=dict(
                 password_policy=dict(
                     type="dict",
+                    no_log=False,
                     options=dict(
                         minimum_length=dict(type="int"),
                         require_uppercase=dict(type="bool"),
                         require_lowercase=dict(type="bool"),
                         require_numbers=dict(type="bool"),
                         require_symbols=dict(type="bool"),
-                        temporary_password_validity_days=dict(type="int"),
+                        temporary_password_validity_days=dict(type="int", no_log=False),
                     ),
                 ),
                 sign_in_policy=dict(
@@ -801,7 +802,7 @@ def main():
                     elements="dict",
                     options=dict(
                         priority=dict(type="int", required=True),
-                        name=dict(type="str", required=True),
+                        name=dict(type="str", required=True, choices=["verified_email", "verified_phone_number", "admin_only"]),
                     ),
                 ),
             ),

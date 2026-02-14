@@ -6,9 +6,7 @@
 """Unit tests for cognito_user_pool_client — duplicate name detection."""
 
 import pytest
-from unittest.mock import MagicMock, patch
-
-import botocore.exceptions
+from unittest.mock import MagicMock
 
 from ansible_collections.community.aws.plugins.modules.cognito_user_pool_client import (
     CognitoUserPoolClientManager,
