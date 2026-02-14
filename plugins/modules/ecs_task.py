@@ -251,8 +251,9 @@ task:
             returned: only when details is true
             type: str
         stoppedReason:
-            description: The reason why the task was stopped (e.g. "Essential container in task exited").
+            description: The reason why the task was stopped.
             returned: when the task has stopped
+            sample: Essential container in task exited
             type: str
         createdAt:
             description: The timestamp of when the task was created.
@@ -271,8 +272,9 @@ task:
             returned: always
             type: str
         stopCode:
-            description: The stop code indicating why the task was stopped (e.g. "EssentialContainerExited", "TaskFailedToStart").
+            description: The stop code indicating why the task was stopped.
             returned: when the task has stopped
+            sample: EssentialContainerExited
             type: str
 """
 
