@@ -92,16 +92,22 @@ options:
         aliases: ['resource_tags']
     wait:
         description:
-          - Whether or not to wait for the desired state.
+          - Whether to wait for the task to reach a steady state before returning.
+          - For I(operation=run) and I(operation=start), waits for the task to reach C(RUNNING) status.
+          - For I(operation=stop), waits for the task to reach C(STOPPED) status.
+          - Use I(wait_complete) instead if you need to wait for the task to finish execution
+            and capture container exit codes.
         type: bool
         default: false
         version_added: 4.1.0
     wait_complete:
         description:
           - Whether to wait for the task to complete execution and capture container exit codes.
-          - When enabled, waits for all containers in the task to finish and includes exit codes in results.
+          - Unlike I(wait), which returns as soon as the task reaches C(RUNNING) status,
+            I(wait_complete) waits for all containers in the task to finish and includes
+            their exit codes in the results.
           - Only applicable for I(operation=run) and I(operation=start).
-          - Implies I(wait=true) to ensure task starts before waiting for completion.
+          - Implies I(wait=true) to ensure the task starts before waiting for completion.
         type: bool
         default: false
         version_added: 11.1.0
