@@ -434,8 +434,8 @@ EXAMPLES = r"""
           client_aliases:
             - port: 80
 
- - name: Create service and wait for tasks to be running
-   community.aws.ecs_service:
+- name: Create service and wait for tasks to be running
+  community.aws.ecs_service:
     state: present
     name: my-service
     cluster: my_cluster
