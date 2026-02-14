@@ -850,7 +850,9 @@ class EcsServiceManager:
 
         # Compare service connect configuration.
         # AWS returns serviceConnectConfiguration inside each Deployment object,
-        # not at the top-level Service.  Use the primary (first) deployment.
+        # not at the top-level Service.  Find the PRIMARY deployment explicitly,
+        # since ECS can return multiple deployments during rollouts and the
+        # first element is not guaranteed to be the primary one.
         # Use a subset check because AWS may return additional default fields
         # (e.g. discoveryName in services) that the user did not specify.
         expected_service_connect = (
@@ -858,7 +860,11 @@ class EcsServiceManager:
             if expected.get("service_connect_configuration")
             else {}
         )
-        primary_deployment = (existing.get("deployments") or [{}])[0]
+        deployments = existing.get("deployments") or []
+        primary_deployment = next(
+            (d for d in deployments if d.get("status") == "PRIMARY"),
+            deployments[0] if deployments else {},
+        )
         existing_service_connect = primary_deployment.get("serviceConnectConfiguration", {})
         # When Service Connect is disabled, AWS omits serviceConnectConfiguration
         # entirely from the deployment.  Treat a missing configuration as {"enabled": False}
@@ -1299,22 +1305,24 @@ def main():
                     response["tags"] = boto3_tag_list_to_ansible_dict(response["tags"])
                 results["service"] = response
 
-                # Wait for service to be stable with tasks running if wait=True
-                if module.params["wait"]:
-                    waiter = service_mgr.ecs.get_waiter("services_stable")
-                    try:
-                        waiter.wait(
-                            services=[module.params["name"]],
-                            cluster=module.params["cluster"],
-                            WaiterConfig={
-                                "Delay": module.params["delay"],
-                                "MaxAttempts": module.params["repeat"],
-                            },
-                        )
-                    except botocore.exceptions.WaiterError as e:
-                        module.fail_json_aws(e, "Timeout waiting for service to become stable with tasks running")
-
             results["changed"] = True
+
+        # Wait for service to be stable with tasks running if wait=True.
+        # This runs regardless of whether this invocation made changes, so that
+        # callers can use wait: true to block until a prior deployment converges.
+        if module.params["wait"] and not module.check_mode:
+            waiter = service_mgr.ecs.get_waiter("services_stable")
+            try:
+                waiter.wait(
+                    services=[module.params["name"]],
+                    cluster=module.params["cluster"],
+                    WaiterConfig={
+                        "Delay": module.params["delay"],
+                        "MaxAttempts": module.params["repeat"],
+                    },
+                )
+            except botocore.exceptions.WaiterError as e:
+                module.fail_json_aws(e, "Timeout waiting for service to become stable with tasks running")
 
     elif module.params["state"] == "absent":
         if not existing:
