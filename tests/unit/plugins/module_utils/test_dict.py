@@ -1,6 +1,8 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+import pytest
+
 from ansible_collections.community.aws.plugins.module_utils.dict import is_dict_subset
 
 
@@ -141,14 +143,13 @@ class TestListSortKey:
 
 
 class TestScalarAndTypeMismatch:
-    def test_scalar_equality(self):
-        assert is_dict_subset(42, 42) is True
+    def test_scalar_raises_value_error(self):
+        with pytest.raises(ValueError, match="got int and int"):
+            is_dict_subset(42, 42)
 
-    def test_scalar_inequality(self):
-        assert is_dict_subset(42, 43) is False
-
-    def test_string_equality(self):
-        assert is_dict_subset("hello", "hello") is True
+    def test_string_raises_value_error(self):
+        with pytest.raises(ValueError, match="got str and str"):
+            is_dict_subset("hello", "hello")
 
     def test_none_values(self):
         assert is_dict_subset({"a": None}, {"a": None, "b": 1}) is True
@@ -158,8 +159,9 @@ class TestScalarAndTypeMismatch:
         # break on this edge case.
         assert is_dict_subset({"a": True}, {"a": True}) is True
 
-    def test_dict_expected_vs_non_dict_existing(self):
-        assert is_dict_subset({"a": 1}, "not a dict") is False
+    def test_non_dict_existing_raises_value_error(self):
+        with pytest.raises(ValueError, match="got dict and str"):
+            is_dict_subset({"a": 1}, "not a dict")
 
     def test_list_expected_vs_non_list_existing(self):
         assert is_dict_subset({"a": [1]}, {"a": "not a list"}) is False
