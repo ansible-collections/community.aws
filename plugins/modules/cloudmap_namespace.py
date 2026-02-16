@@ -32,7 +32,8 @@ options:
     namespace_type:
         description:
           - The type of namespace.
-          - Required for both I(state=present) and I(state=absent) to avoid accidentally targeting the wrong namespace when public and private namespaces share a name.
+          - Required for both I(state=present) and I(state=absent) to avoid accidentally targeting the wrong
+            namespace when public and private namespaces share a name.
         required: true
         choices: ["public", "private"]
         type: str
@@ -93,8 +94,8 @@ extends_documentation_fragment:
 """
 
 EXAMPLES = r"""
-# Create a public DNS namespace
-- cloudmap_namespace:
+- name: Create a public DNS namespace
+  cloudmap_namespace:
     state: present
     name: example.com
     namespace_type: public
@@ -102,8 +103,8 @@ EXAMPLES = r"""
     tags:
       Environment: production
 
-# Create a private DNS namespace and wait for it to be available
-- cloudmap_namespace:
+- name: Create a private DNS namespace and wait for it to be available
+  cloudmap_namespace:
     state: present
     name: internal.example.com
     namespace_type: private
@@ -114,8 +115,8 @@ EXAMPLES = r"""
     tags:
       Environment: production
 
-# Delete a namespace
-- cloudmap_namespace:
+- name: Delete a namespace
+  cloudmap_namespace:
     state: absent
     name: example.com
     namespace_type: public
