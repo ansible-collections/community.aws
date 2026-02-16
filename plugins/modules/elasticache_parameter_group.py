@@ -20,6 +20,7 @@ options:
     description:
       - The name of the cache parameter group family that the cache parameter group can be used with.
         Required when creating a cache parameter group.
+      - The values C(memcached1.6), C(valkey7), and C(valkey8) were added in release C(10.1.0).
     choices:
       [
         'memcached1.4',

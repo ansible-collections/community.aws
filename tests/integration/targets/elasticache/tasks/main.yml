@@ -218,13 +218,14 @@
       elasticache:
         name: "{{ elasticache_valkey_test_name }}"
         replication_group: true
-        replication_group_description: "Valkey replication group for integration tests"
+        replication_group_options:
+          replication_group_description: "Valkey replication group for integration tests"
+          num_cache_clusters: 1
+          transit_encryption_enabled: false
         engine: valkey
         node_type: cache.t3.micro
         cache_port: "{{ elasticache_redis_port }}"
         cache_subnet_group: "{{ elasticache_subnet_group_name }}"
-        num_cache_clusters: 1
-        transit_encryption_enabled: false
         security_group_ids:
           - "{{ elasticache_valkey_sg.group_id }}"
         state: present

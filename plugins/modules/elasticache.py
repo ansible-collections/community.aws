@@ -55,51 +55,67 @@ options:
       - Whether to manage a replication group instead of a cache cluster.
     type: bool
     default: false
-  replication_group_description:
+    version_added: 10.1.0
+  replication_group_options:
     description:
-      - Description for the replication group.
-      - Required when I(replication_group=true) and I(state=present).
-    type: str
-  num_cache_clusters:
-    description:
-      - The number of cache clusters in the replication group.
-      - Only used when I(replication_group=true).
-    type: int
-  replicas_per_node_group:
-    description:
-      - The number of replica nodes in each node group (shard) for the replication group.
-      - Only used when I(replication_group=true).
-    type: int
-  num_node_groups:
-    description:
-      - The number of node groups (shards) for the replication group.
-      - Only used when I(replication_group=true).
-    type: int
-  automatic_failover:
-    description:
-      - Whether automatic failover is enabled for the replication group.
-      - Only used when I(replication_group=true).
-    type: bool
-  multi_az_enabled:
-    description:
-      - Whether Multi-AZ is enabled for the replication group.
-      - Only used when I(replication_group=true).
-    type: bool
-  transit_encryption_enabled:
-    description:
-      - Whether in-transit encryption is enabled for the replication group.
-      - Only used when I(replication_group=true).
-    type: bool
-  cluster_mode:
-    description:
-      - Cluster mode setting for the replication group (for example, C(enabled) or C(disabled)).
-      - Only used when I(replication_group=true).
-    type: str
-  retain_primary_cluster:
-    description:
-      - Whether to retain the primary cluster when deleting a replication group.
-      - Only used when I(replication_group=true).
-    type: bool
+      - Additional options used when I(replication_group=true).
+    type: dict
+    version_added: 10.1.0
+    suboptions:
+      replication_group_description:
+        description:
+          - Description for the replication group.
+          - Required when I(replication_group=true) and I(state=present).
+        type: str
+        version_added: 10.1.0
+      num_cache_clusters:
+        description:
+          - The number of cache clusters in the replication group.
+          - Only used when I(replication_group=true).
+        type: int
+        version_added: 10.1.0
+      replicas_per_node_group:
+        description:
+          - The number of replica nodes in each node group (shard) for the replication group.
+          - Only used when I(replication_group=true).
+        type: int
+        version_added: 10.1.0
+      num_node_groups:
+        description:
+          - The number of node groups (shards) for the replication group.
+          - Only used when I(replication_group=true).
+        type: int
+        version_added: 10.1.0
+      automatic_failover:
+        description:
+          - Whether automatic failover is enabled for the replication group.
+          - Only used when I(replication_group=true).
+        type: bool
+        version_added: 10.1.0
+      multi_az_enabled:
+        description:
+          - Whether Multi-AZ is enabled for the replication group.
+          - Only used when I(replication_group=true).
+        type: bool
+        version_added: 10.1.0
+      transit_encryption_enabled:
+        description:
+          - Whether in-transit encryption is enabled for the replication group.
+          - Only used when I(replication_group=true).
+        type: bool
+        version_added: 10.1.0
+      cluster_mode:
+        description:
+          - Cluster mode setting for the replication group (for example, C(enabled) or C(disabled)).
+          - Only used when I(replication_group=true).
+        type: str
+        version_added: 10.1.0
+      retain_primary_cluster:
+        description:
+          - Whether to retain the primary cluster when deleting a replication group.
+          - Only used when I(replication_group=true).
+        type: bool
+        version_added: 10.1.0
   cache_port:
     description:
       - The port number on which each of the cache nodes will accept
@@ -185,10 +201,11 @@ EXAMPLES = r"""
     name: "test-valkey-rg"
     state: present
     replication_group: true
-    replication_group_description: "Valkey test replication group"
+    replication_group_options:
+      replication_group_description: "Valkey test replication group"
+      num_cache_clusters: 1
     engine: valkey
     node_type: cache.t3.micro
-    num_cache_clusters: 1
 """
 
 from time import sleep
@@ -842,15 +859,20 @@ def main():
         node_type=dict(default="cache.t2.small"),
         num_nodes=dict(default=1, type="int"),
         replication_group=dict(default=False, type="bool"),
-        replication_group_description=dict(type="str"),
-        num_cache_clusters=dict(type="int"),
-        replicas_per_node_group=dict(type="int"),
-        num_node_groups=dict(type="int"),
-        automatic_failover=dict(type="bool"),
-        multi_az_enabled=dict(type="bool"),
-        transit_encryption_enabled=dict(type="bool"),
-        cluster_mode=dict(type="str"),
-        retain_primary_cluster=dict(type="bool"),
+        replication_group_options=dict(
+            type="dict",
+            options=dict(
+                replication_group_description=dict(type="str"),
+                num_cache_clusters=dict(type="int"),
+                replicas_per_node_group=dict(type="int"),
+                num_node_groups=dict(type="int"),
+                automatic_failover=dict(type="bool"),
+                multi_az_enabled=dict(type="bool"),
+                transit_encryption_enabled=dict(type="bool"),
+                cluster_mode=dict(type="str"),
+                retain_primary_cluster=dict(type="bool"),
+            ),
+        ),
         # alias for compat with the original PR 1950
         cache_parameter_group=dict(default="", aliases=["parameter_group"]),
         cache_port=dict(type="int"),
@@ -881,15 +903,16 @@ def main():
     hard_modify = module.params["hard_modify"]
     cache_parameter_group = module.params["cache_parameter_group"]
     replication_group = module.params["replication_group"]
-    replication_group_description = module.params["replication_group_description"]
-    num_cache_clusters = module.params["num_cache_clusters"]
-    replicas_per_node_group = module.params["replicas_per_node_group"]
-    num_node_groups = module.params["num_node_groups"]
-    automatic_failover = module.params["automatic_failover"]
-    multi_az_enabled = module.params["multi_az_enabled"]
-    transit_encryption_enabled = module.params["transit_encryption_enabled"]
-    cluster_mode = module.params["cluster_mode"]
-    retain_primary_cluster = module.params["retain_primary_cluster"]
+    replication_group_options = module.params["replication_group_options"] or {}
+    replication_group_description = replication_group_options.get("replication_group_description")
+    num_cache_clusters = replication_group_options.get("num_cache_clusters")
+    replicas_per_node_group = replication_group_options.get("replicas_per_node_group")
+    num_node_groups = replication_group_options.get("num_node_groups")
+    automatic_failover = replication_group_options.get("automatic_failover")
+    multi_az_enabled = replication_group_options.get("multi_az_enabled")
+    transit_encryption_enabled = replication_group_options.get("transit_encryption_enabled")
+    cluster_mode = replication_group_options.get("cluster_mode")
+    retain_primary_cluster = replication_group_options.get("retain_primary_cluster")
 
     if cache_subnet_group and cache_security_groups:
         module.fail_json(msg="Can't specify both cache_subnet_group and cache_security_groups")
@@ -900,11 +923,19 @@ def main():
         if len(name) > 40:
             module.fail_json(msg="'name' must be 40 characters or fewer when replication_group is true")
         if state == "present" and not replication_group_description:
-            module.fail_json(msg="'replication_group_description' is required when replication_group is true")
+            module.fail_json(
+                msg="'replication_group_options.replication_group_description' is required when replication_group is true"
+            )
         if state == "rebooted":
             module.fail_json(msg="state 'rebooted' is not supported when replication_group is true")
         if state == "present" and not (num_cache_clusters or num_node_groups):
-            module.fail_json(msg="replication groups require 'num_cache_clusters' or 'num_node_groups'")
+            module.fail_json(
+                msg=(
+                    "replication groups require "
+                    "'replication_group_options.num_cache_clusters' or "
+                    "'replication_group_options.num_node_groups'"
+                )
+            )
     else:
         if engine not in ["redis", "memcached"]:
             module.fail_json(msg="When replication_group is false, engine must be 'redis' or 'memcached'")
