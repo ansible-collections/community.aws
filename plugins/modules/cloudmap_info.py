@@ -7,7 +7,7 @@
 DOCUMENTATION = r"""
 ---
 module: cloudmap_info
-version_added: 1.0.0
+version_added: 11.1.0
 short_description: Retrieve information about AWS Cloud Map services and instances
 description:
   - Retrieves information about AWS Cloud Map namespaces, services, and instances.
@@ -55,23 +55,24 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 # Get all services and instances in a namespace by ID
-- cloudmap_info:
+- name: Get all services and instances in a namespace by ID
+  community.aws cloudmap_info:
     namespace_id: ns-abcdef1234567890
   register: cloudmap_info
 
-# Get all services and instances in a namespace by name
-- cloudmap_info:
+- name: Get all services and instances in a namespace by name
+  community.aws.cloudmap_info:
     namespace_name: my-ecs-cluster
   register: cloudmap_info
 
-# Get instances for a specific service
-- cloudmap_info:
+- name: Get instances for a specific service
+  community.aws.cloudmap_info:
     namespace_name: my-ecs-cluster
     service_name: api
   register: api_service_info
 
-# Get only service information without instances
-- cloudmap_info:
+- name: Get only service information without instances
+  community.aws.cloudmap_info:
     namespace_name: my-ecs-cluster
     include_instances: false
   register: services_only
