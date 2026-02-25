@@ -659,19 +659,19 @@ plugin_routing:
     ec2_transit_gateway:
       redirect: amazon.aws.ec2_transit_gateway
     waf_condition:
-      deprecation:
+      tombstone:
         removal_version: 12.0.0
         warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     waf_info:
-      deprecation:
+      tombstone:
         removal_version: 12.0.0
         warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     waf_rule:
-      deprecation:
+      tombstone:
         removal_version: 12.0.0
         warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     waf_web_acl:
-      deprecation:
+      tombstone:
         removal_version: 12.0.0
         warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
   module_utils:
