@@ -55,10 +55,6 @@ action_groups:
     - aws_ssm_parameter_store
     - aws_step_functions_state_machine
     - aws_step_functions_state_machine_execution
-    - aws_waf_condition
-    - aws_waf_info
-    - aws_waf_rule
-    - aws_waf_web_acl
     - batch_compute_environment
     - batch_job_definition
     - batch_job_queue
@@ -184,10 +180,6 @@ action_groups:
     - stepfunctions_state_machine_execution
     - storagegateway_info
     - sts_session_token
-    - waf_condition
-    - waf_info
-    - waf_rule
-    - waf_web_acl
     - wafv2_ip_set
     - wafv2_ip_set_info
     - wafv2_resources
@@ -413,25 +405,21 @@ plugin_routing:
         warning_text: the community.aws.aws_step_functions_state_machine_execution alias has been deprecated. Please update your tasks to use community.aws.stepfunctions_state_machine_execution.
       redirect: community.aws.stepfunctions_state_machine_execution
     aws_waf_condition:
-      deprecation:
-        removal_date: "2027-01-01"
-        warning_text: the community.aws.aws_waf_condition alias has been deprecated. Please update your tasks to use community.aws.waf_condition.
-      redirect: community.aws.waf_condition
+      tombstone:
+        removal_version: 12.0.0
+        warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     aws_waf_info:
-      deprecation:
-        removal_date: "2027-01-01"
-        warning_text: the community.aws.aws_waf_info alias has been deprecated. Please update your tasks to use community.aws.waf_info.
-      redirect: community.aws.waf_info
+      tombstone:
+        removal_version: 12.0.0
+        warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     aws_waf_rule:
-      deprecation:
-        removal_date: "2027-01-01"
-        warning_text: the community.aws.aws_waf_rule alias has been deprecated. Please update your tasks to use community.aws.waf_rule.
-      redirect: community.aws.waf_rule
+      tombstone:
+        removal_version: 12.0.0
+        warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     aws_waf_web_acl:
-      deprecation:
-        removal_date: "2027-01-01"
-        warning_text: the community.aws.aws_waf_web_acl alias has been deprecated. Please update your tasks to use community.aws.waf_web_acl.
-      redirect: community.aws.waf_web_acl
+      tombstone:
+        removal_version: 12.0.0
+        warning_text: Amazon has retired the `WAF Classic` service.  Please use the `AWS WAF (WAFv2)` service and modules instead.
     cloudtrail:
       deprecation:
         removal_date: "2027-01-01"
