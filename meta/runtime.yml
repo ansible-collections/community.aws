@@ -103,6 +103,8 @@ action_groups:
     - ec2_metric_alarm
     - ec2_scaling_policy
     - ec2_snapshot_copy
+    - ec2_vpc_managed_prefix_list
+    - ec2_vpc_managed_prefix_list_info
     - ec2_win_password
     - ecs_attribute
     - ecs_cluster
