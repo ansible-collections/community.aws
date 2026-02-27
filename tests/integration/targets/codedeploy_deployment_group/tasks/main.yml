@@ -1,0 +1,16 @@
+---
+- module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+    - include_tasks: 01_create_requirements.yml
+    - include_tasks: 10_dg_servers.yml
+    - include_tasks: 20_dg_lambda.yml
+
+
+    # ============================================================
+  always:
+    - include_tasks: 99_terminate_resources.yml
