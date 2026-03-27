@@ -8,7 +8,7 @@ DOCUMENTATION = r"""
 name: dynamodb_query
 author:
   - Timur Gadiev (@tgadiev)
-version_added: 11.0.0
+version_added: 11.3.0
 short_description: Query AWS DynamoDB table
 description:
   - This lookup plugin allows you to query AWS DynamoDB tables and retrieve items.
