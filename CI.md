@@ -2,7 +2,7 @@
 
 ## AWS Testing
 
-GitHub Actions are used to run the CI for the community.aws collection. The workflows used for the CI can be found in the [.github/workflows](.github/workflows) directory.
+GitHub Actions are used to run the CI for the `community.aws` collection. The workflows used for the CI can be found in the [.github/workflows](.github/workflows) directory.
 
 ### PR Testing Workflows
 
