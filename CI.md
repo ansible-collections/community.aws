@@ -16,7 +16,7 @@ The following tests run on every pull request:
 | [Unit tests](.github/workflows/unit.yml) | Executes unit test cases | See compatibility table below | devel, milestone, stable-2.17, stable-2.18, stable-2.19, stable-2.20 |
 | [Galaxy Importer](.github/workflows/galaxy-importer.yml) | Validates collection can be imported by Galaxy | 3.12 | latest |
 
-**Note:** Integration tests are not currently part of the automated CI pipeline for community.aws. Integration tests must be run locally with AWS credentials.
+**Note:** Integration tests currently run via a Zuul build.
 
 ### Python Version Compatibility by ansible-core Version
 
