@@ -10,8 +10,8 @@ The following tests run on every pull request:
 
 | Job | Description | Python Versions | ansible-core Versions |
 | --- | ----------- | --------------- | --------------------- |
-| [Changelog](.github/workflows/changelog_and_linters.yml) | Checks for the presence of changelog fragments | 3.12 | devel |
-| [Linters](.github/workflows/changelog_and_linters.yml) | Runs `black`, `isort`, `flynt`, `flake8`, and `ansible-lint` via tox | 3.12 | devel |
+| [Changelog](.github/workflows/changelog_and_linters.yml) | Checks for the presence of changelog fragments | 3.12 | N/A |
+| [Linters](.github/workflows/changelog_and_linters.yml) | Runs `black`, `isort`, `flynt`, `flake8`, and `ansible-lint` via tox | 3.10 | 2.17 |
 | [Sanity](.github/workflows/sanity.yml) | Runs ansible sanity checks | See compatibility table below | devel, milestone, stable-2.17, stable-2.18, stable-2.19, stable-2.20 |
 | [Unit tests](.github/workflows/unit.yml) | Executes unit test cases | See compatibility table below | devel, milestone, stable-2.17, stable-2.18, stable-2.19, stable-2.20 |
 | [Galaxy Importer](.github/workflows/galaxy-importer.yml) | Validates collection can be imported by Galaxy | 3.12 | latest |
