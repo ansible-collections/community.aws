@@ -244,14 +244,7 @@ from ansible.utils.display import Display
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
-try:
-    from ansible_collections.amazon.aws.plugins.plugin_utils.lookup import AWSLookupBase
-
-    HAS_AWS_LOOKUP_BASE = True
-except ImportError:
-    HAS_AWS_LOOKUP_BASE = False
-    # Fallback to standard LookupBase
-    AWSLookupBase = LookupBase
+from ansible_collections.amazon.aws.plugins.plugin_utils.lookup import AWSLookupBase
 
 display = Display()
 
@@ -278,11 +271,7 @@ class LookupModule(AWSLookupBase):
                 display.vvv(f"Using AWS_PROFILE from environment: {aws_profile_env}")
 
         # Call parent class run() which handles AWS SDK requirements and sets options
-        if HAS_AWS_LOOKUP_BASE:
-            super().run(terms, variables, **kwargs)
-        else:
-            # Fallback if AWSLookupBase is not available
-            self.set_options(var_options=variables, direct=kwargs)
+        super().run(terms, variables, **kwargs)
 
         # Get plugin options
         table_name = self.get_option("table_name")
