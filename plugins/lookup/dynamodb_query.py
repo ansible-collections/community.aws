@@ -321,12 +321,6 @@ class LookupModule(AWSLookupBase):
             catch_extra_error_codes=["ProvisionedThroughputExceededException", "RequestLimitExceeded"]
         )
 
-        if not HAS_AWS_LOOKUP_BASE:
-            raise AnsibleError(
-                "The dynamodb_query lookup plugin requires amazon.aws collection version 8.2.0 or later "
-                "(for AWSLookupBase support). Please upgrade the amazon.aws collection."
-            )
-
         client = self.client("dynamodb", retry_decorator=retry_decorator)
 
         # Debug output
