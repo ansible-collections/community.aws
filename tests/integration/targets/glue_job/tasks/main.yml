@@ -25,7 +25,6 @@
               Effect: Allow
               Principal:
                 Service: glue.amazonaws.com
-        create_instance_profile: false
         managed_policies:
           - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 
