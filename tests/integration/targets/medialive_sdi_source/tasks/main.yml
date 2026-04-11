@@ -1,0 +1,341 @@
+---
+# Integration tests for medialive_sdi_source module
+- name: Wrap MediaLive sdi source tests with AWS credentials
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    set_fact:
+      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+  block:
+    # Setup test variables
+    - name: Set up test variables
+      ansible.builtin.set_fact:
+        single_sdi_source_name: "{{ resource_prefix }}-sdi-source-single"
+        alt_sdi_source_name: "{{ resource_prefix }}-alt-sdi-source"
+        quad_sdi_source_name: "{{ resource_prefix }}-sdi-source-quad"
+        sdi_source_mode: "QUADRANT"
+        sdi_source_mode_interleave: "INTERLEAVE"
+        quad_source_type: "QUAD"
+        single_source_type: "SINGLE"
+
+    # Create MediaLive SDI source
+    - name: Create a single MediaLive SDI source
+      community.aws.medialive_sdi_source:
+        name: '{{ single_sdi_source_name }}'
+        type: '{{ single_source_type }}'
+        state: present
+      register: create_single_result
+
+    - name: Assert source was created successfully
+      ansible.builtin.assert:
+        that:
+          - create_single_result.changed == true
+          - create_single_result.sdi_source is defined
+          - create_single_result.sdi_source.name == single_sdi_source_name
+          - create_single_result.sdi_source.type == single_source_type
+          - create_single_result.sdi_source.state == "IDLE"
+          - create_single_result.sdi_source.arn is defined
+        fail_msg: "Single source creation failed or returned unexpected data"
+        success_msg: "Single source created successfully with expected properties"
+      when: create_single_result is defined and create_single_result.sdi_source is defined
+
+    - name: Capture sdi_source_id
+      ansible.builtin.set_fact:
+        sdi_source_id: '{{ create_single_result.sdi_source.sdi_source_id }}'
+
+    - name: Create the same source again (idempotency check)
+      community.aws.medialive_sdi_source:
+        name: '{{ single_sdi_source_name }}'
+        type: '{{ single_source_type }}'
+        state: present
+      register: idempotency_result
+      when: sdi_source_id is defined
+
+    - name: Assert idempotency result
+      ansible.builtin.assert:
+        that:
+          - idempotency_result.changed == false
+          - idempotency_result.sdi_source is defined
+          - idempotency_result.sdi_source.name == single_sdi_source_name
+          - idempotency_result.sdi_source.type == single_source_type
+          - idempotency_result.sdi_source.state == "IDLE"
+          - idempotency_result.sdi_source.arn is defined
+        fail_msg: "Idempotency check failed"
+        success_msg: "Idempotency check passed"
+      when: idempotency_result is defined and idempotency_result.sdi_source is defined
+
+    # Create quad
+    - name: Create a quad MediaLive SDI source
+      community.aws.medialive_sdi_source:
+        name: '{{ quad_sdi_source_name }}'
+        mode: '{{ sdi_source_mode }}'
+        type: '{{ quad_source_type }}'
+        state: present
+      register: create_quad_result
+
+    - name: Assert quad source was created successfully
+      ansible.builtin.assert:
+        that:
+          - create_quad_result.changed == true
+          - create_quad_result.sdi_source is defined
+          - create_quad_result.sdi_source.name == quad_sdi_source_name
+          - create_quad_result.sdi_source.type == quad_source_type
+          - create_quad_result.sdi_source.mode == sdi_source_mode
+          - create_quad_result.sdi_source.state == "IDLE"
+          - create_quad_result.sdi_source.arn is defined
+        fail_msg: "Quad source creation failed or returned unexpected data"
+        success_msg: "Quad source created successfully with expected properties"
+      when: create_quad_result is defined and create_quad_result.sdi_source is defined
+
+    - name: Create the quad source again (idempotency check)
+      community.aws.medialive_sdi_source:
+        name: '{{ quad_sdi_source_name }}'
+        mode: '{{ sdi_source_mode }}'
+        type: '{{ quad_source_type }}'
+        state: present
+      register: idempotency_quad_result
+      when: create_quad_result is defined
+
+    - name: Assert idempotency result
+      ansible.builtin.assert:
+        that:
+          - idempotency_quad_result.changed == false
+          - idempotency_quad_result.sdi_source is defined
+          - idempotency_quad_result.sdi_source.name == quad_sdi_source_name
+          - idempotency_quad_result.sdi_source.type == quad_source_type
+          - idempotency_quad_result.sdi_source.mode == sdi_source_mode
+          - idempotency_quad_result.sdi_source.state == "IDLE"
+          - idempotency_quad_result.sdi_source.arn is defined
+        fail_msg: "Idempotency check failed"
+        success_msg: "Idempotency check passed"
+      when: idempotency_quad_result is defined and idempotency_quad_result.sdi_source is defined
+
+    # Get sdi source by its id
+    - name: Get SDI source by its ID
+      community.aws.medialive_sdi_source_info:
+        id:  '{{ sdi_source_id }}'
+      register: get_by_id_result
+      when: sdi_source_id is defined
+
+    - name: Assert get by id result
+      ansible.builtin.assert:
+        that:
+          - get_by_id_result is defined
+          - get_by_id_result.sdi_source is defined
+          - get_by_id_result.sdi_source.name == single_sdi_source_name
+          - get_by_id_result.sdi_source.type == single_source_type
+          - get_by_id_result.sdi_source.state == "IDLE"
+          - get_by_id_result.sdi_source.arn is defined
+        fail_msg: "Get by ID failed or returned unexpected data"
+        success_msg: "Get by ID passed"
+      when: get_by_id_result is defined and get_by_id_result.sdi_source is defined
+
+    # Get SDI source by its name
+    - name: Get SDI source by its name
+      community.aws.medialive_sdi_source_info:
+        name: '{{ single_sdi_source_name }}'
+      register: get_by_name_result
+      when: sdi_source_id is defined
+
+    - name: Assert get by name result
+      ansible.builtin.assert:
+        that:
+          - get_by_name_result is defined
+          - get_by_name_result.sdi_source is defined
+          - get_by_name_result.sdi_source.name == single_sdi_source_name
+          - get_by_name_result.sdi_source.sdi_source_id == sdi_source_id
+          - get_by_name_result.sdi_source.type == single_source_type
+          - get_by_name_result.sdi_source.state == "IDLE"
+          - get_by_name_result.sdi_source.arn is defined
+        fail_msg: "Get by name failed or returned unexpected data"
+        success_msg: "Get by name passed"
+      when: get_by_name_result is defined and sdi_source_id is defined and get_by_name_result.sdi_source is defined
+
+    # Update SDI source
+    - name: Update SDI source name by its ID
+      community.aws.medialive_sdi_source:
+        id: '{{ sdi_source_id }}'
+        name: '{{ alt_sdi_source_name }}'
+        state: present
+      register: update_result
+      when: sdi_source_id is defined
+
+    - name: Assert update result
+      ansible.builtin.assert:
+        that:
+          - update_result.changed == true
+          - update_result.sdi_source is defined
+          - update_result.sdi_source.name == alt_sdi_source_name
+          - update_result.sdi_source.type == single_source_type
+          - update_result.sdi_source.state == "IDLE"
+          - update_result.sdi_source.arn is defined
+        fail_msg: "Update failed or returned unexpected data"
+        success_msg: "Update passed"
+      when: update_result is defined and update_result.sdi_source is defined
+
+    - name: Update the same source again (idempotency check)
+      community.aws.medialive_sdi_source:
+        id: '{{ sdi_source_id }}'
+        name: '{{ alt_sdi_source_name }}'
+        state: present
+      register: idempotency_update_result
+      when: sdi_source_id is defined
+
+    - name: Assert idempotency update result
+      ansible.builtin.assert:
+        that:
+          - idempotency_update_result.changed == false
+          - idempotency_update_result.sdi_source is defined
+          - idempotency_update_result.sdi_source.name == alt_sdi_source_name
+          - idempotency_update_result.sdi_source.type == single_source_type
+          - idempotency_update_result.sdi_source.state == "IDLE"
+          - idempotency_update_result.sdi_source.arn is defined
+        fail_msg: "Idempotency update check failed"
+        success_msg: "Idempotency update check passed"
+      when: idempotency_update_result is defined and idempotency_update_result.sdi_source is defined
+
+    - name: Update SDI source mode by its name
+      community.aws.medialive_sdi_source:
+        name: '{{ quad_sdi_source_name }}'
+        type: '{{ quad_source_type }}'
+        mode: '{{ sdi_source_mode_interleave }}'
+        state: present
+      register: mode_update_result
+      when: create_quad_result is defined
+
+    - name: Assert update result
+      ansible.builtin.assert:
+        that:
+          - mode_update_result.changed == true
+          - mode_update_result.sdi_source is defined
+          - mode_update_result.sdi_source.name == quad_sdi_source_name
+          - mode_update_result.sdi_source.type == quad_source_type
+          - mode_update_result.sdi_source.mode == sdi_source_mode_interleave
+          - mode_update_result.sdi_source.state == "IDLE"
+          - mode_update_result.sdi_source.arn is defined
+        fail_msg: "SDI mode update failed or returned unexpected data"
+        success_msg: "SDI mode update passed"
+      when: mode_update_result is defined and mode_update_result.sdi_source is defined
+
+    - name: Update the same source again (idempotency check)
+      community.aws.medialive_sdi_source:
+        name: '{{ quad_sdi_source_name }}'
+        type: '{{ quad_source_type }}'
+        mode: '{{ sdi_source_mode_interleave }}'
+        state: present
+      register: idempotency_mode_update_result
+      when: create_quad_result is defined
+
+    - name: Assert idempotency update result
+      ansible.builtin.assert:
+        that:
+          - idempotency_mode_update_result.changed == false
+          - idempotency_mode_update_result.sdi_source is defined
+          - idempotency_mode_update_result.sdi_source.name == quad_sdi_source_name
+          - idempotency_mode_update_result.sdi_source.type == quad_source_type
+          - idempotency_mode_update_result.sdi_source.mode == sdi_source_mode_interleave
+          - idempotency_mode_update_result.sdi_source.state == "IDLE"
+          - idempotency_mode_update_result.sdi_source.arn is defined
+        fail_msg: "Idempotency update check failed"
+        success_msg: "Idempotency update check passed"
+      when: idempotency_mode_update_result is defined and idempotency_mode_update_result.sdi_source is defined
+
+    # Delete SDI source
+    - name: Delete SDI source by ID
+      community.aws.medialive_sdi_source:
+        id: '{{ sdi_source_id }}'
+        state: absent
+      register: delete_result
+      when: sdi_source_id is defined
+
+    - name: Assert delete result
+      ansible.builtin.assert:
+        that:
+          - delete_result.changed == true
+          - delete_result.sdi_source is defined
+          - delete_result.sdi_source.name == alt_sdi_source_name
+          - delete_result.sdi_source.type == single_source_type
+          - delete_result.sdi_source.state == "DELETED"
+          - delete_result.sdi_source.arn is defined
+        fail_msg: "Delete failed or returned unexpected data"
+        success_msg: "Delete passed"
+      when: delete_result is defined and delete_result.sdi_source is defined
+
+    - name: Try to delete the source again (idempotency check)
+      community.aws.medialive_sdi_source:
+        id: '{{ sdi_source_id }}'
+        state: absent
+      register: idempotency_delete_result
+      when: sdi_source_id is defined
+
+    - name: Assert idempotency delete result
+      ansible.builtin.assert:
+        that:
+          - idempotency_delete_result.changed == false
+          - idempotency_delete_result.sdi_source is defined
+          - idempotency_delete_result.sdi_source.name == alt_sdi_source_name
+          - idempotency_delete_result.sdi_source.type == single_source_type
+          - idempotency_delete_result.sdi_source.state == "DELETED"
+          - idempotency_delete_result.sdi_source.arn is defined
+        fail_msg: "Idempotency delete check failed"
+        success_msg: "Idempotency delete check passed"
+      when: idempotency_delete_result is defined and idempotency_delete_result.sdi_source is defined
+
+    - name: Delete SDI source by name
+      community.aws.medialive_sdi_source:
+        name: '{{ quad_sdi_source_name }}'
+        state: absent
+      register: delete_by_name_result
+      when: create_quad_result is defined
+
+    - name: Assert delete by name result
+      ansible.builtin.assert:
+        that:
+          - delete_by_name_result.changed == true
+          - delete_by_name_result.sdi_source is defined
+          - delete_by_name_result.sdi_source.name == quad_sdi_source_name
+          - delete_by_name_result.sdi_source.type == quad_source_type
+          - delete_by_name_result.sdi_source.state == "DELETED"
+          - delete_by_name_result.sdi_source.arn is defined
+        fail_msg: "Delete failed or returned unexpected data"
+        success_msg: "Delete passed"
+      when: delete_by_name_result is defined and delete_by_name_result.sdi_source is defined
+
+    - name: Try to delete the source again (idempotency check)
+      community.aws.medialive_sdi_source:
+        name: '{{ quad_sdi_source_name }}'
+        state: absent
+      register: idempotency_delete_by_name_result
+      when: create_single_result is defined
+
+    - name: Assert idempotency delete by name result
+      ansible.builtin.assert:
+        that:
+          - idempotency_delete_by_name_result.changed == false
+          - idempotency_delete_by_name_result.sdi_source is defined
+          - idempotency_delete_by_name_result.sdi_source == {}
+        fail_msg: "Idempotency delete check failed"
+        success_msg: "Idempotency delete check passed"
+      when: idempotency_delete_by_name_result is defined and idempotency_delete_by_name_result.sdi_source is defined
+
+  # Error handling and cleanup
+  rescue:
+    - name: Capture error
+      ansible.builtin.set_fact:
+        test_failed: true
+
+    - name: Clean up
+      ansible.builtin.include_tasks: cleanup.yml
+
+    - name: Fail with useful error message
+      ansible.builtin.fail:
+        msg: "MediaLive SDI source integration tests failed. See previous errors for details."
+      when: test_failed | default(false)
+
+  always:
+    - name: Ensure all test resources are cleaned up
+      ansible.builtin.include_tasks: cleanup.yml
