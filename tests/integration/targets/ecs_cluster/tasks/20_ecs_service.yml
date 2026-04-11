@@ -113,7 +113,7 @@
 - name: force_new_deployment should work without providing a task_definition
   ecs_service:
     state: present
-    force_new_deployment: yes
+    force_new_deployment: true
     name: "{{ ecs_service_name }}"
     cluster: "{{ ecs_cluster_name }}"
     desired_count: 1
@@ -150,7 +150,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
   register: ecs_service_network_without_awsvpc_task
   ignore_errors: true
 
@@ -234,7 +234,7 @@
         containerName: "{{ ecs_task_name }}"
         containerPort: "{{ ecs_task_container_port }}"
     role: "{{ ecs_service_role_name }}"
-    enable_execute_command: True
+    enable_execute_command: true
   register: ecs_service_execute
 
 - name: check that ECS service changed
@@ -318,7 +318,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
   register: create_ecs_service_with_vpc
 
 - name: assert that network configuration is correct
@@ -581,7 +581,7 @@
     scheduling_strategy: "REPLICA"
     placement_constraints:
       - type: memberOf
-        expression: 'attribute:ecs.instance-type == t3.micro'
+        expression: "attribute:ecs.instance-type == t3.micro"
     desired_count: 1
     state: present
   register: ecs_service_update_constraints
@@ -790,7 +790,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
       assign_public_ip: true
   register: ecs_fargate_service_network_with_awsvpc
 
@@ -811,7 +811,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
       assign_public_ip: true
     started_by: ansible_user
     # wait: true
@@ -856,7 +856,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
       assign_public_ip: true
     started_by: ansible_user
   register: fargate_run_task_output_with_tags_fail
@@ -869,6 +869,7 @@
 
 - name: enable taskLongArnFormat
   command: aws ecs put-account-setting --name taskLongArnFormat --value enabled
+  changed_when: false
   environment:
     AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -888,7 +889,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
       assign_public_ip: true
     started_by: ansible_user
   register: fargate_run_task_output_with_tags
@@ -903,7 +904,7 @@
     network_configuration:
       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
       security_groups:
-        - '{{ setup_sg.group_id }}'
+        - "{{ setup_sg.group_id }}"
       assign_public_ip: false
     started_by: ansible_user
   register: fargate_run_task_output_with_assign_ip

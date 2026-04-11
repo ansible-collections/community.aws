@@ -1,0 +1,3 @@
+minor_changes:
+  - ecs_cluster - Add ``tags`` option to add or update tags to a cluster (https://github.com/ansible-collections/community.aws/pull/2347).
+  - ecs_cluster - Add `purge_tags` option to remove tags from a cluster (https://github.com/ansible-collections/community.aws/pull/2347).
