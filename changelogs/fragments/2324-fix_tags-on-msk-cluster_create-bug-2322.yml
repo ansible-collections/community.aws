@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - msk_cluster - Fix tags on cluster creation (https://github.com/ansible-collections/community.aws/pull/2324).
