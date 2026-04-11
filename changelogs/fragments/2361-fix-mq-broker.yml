@@ -1,0 +1,2 @@
+bugfixes:
+  - ``mq_broker``- Fix original integration tests and module failing when selecting the RabbitMQ engine type. (https://github.com/ansible-collections/community.aws/pull/2361).
