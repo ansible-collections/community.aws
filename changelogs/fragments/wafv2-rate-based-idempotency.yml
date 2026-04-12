@@ -1,0 +1,2 @@
+bugfixes:
+  - wafv2_web_acl - Fixed idempotency issue where rules with rate_based_statement would always show as changed when evaluation_window_sec was not explicitly specified due to AWS returning the default value of 300 (https://github.com/ansible-collections/community.aws/pull/2427).
