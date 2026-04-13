@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - ecs_task - Add ``wait_complete`` parameter to wait for tasks to stop and return container
+    exit codes after ``run`` or ``start`` operations (https://github.com/ansible-collections/community.aws/pull/2409).
