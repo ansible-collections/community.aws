@@ -547,6 +547,108 @@
         that:
           - out is not changed
 
+    #####################################################
+    # Test ByteMatch and RateBasedStatement idempotency
+    #####################################################
+    - name: Create web ACL with ByteMatch and RateBased rules
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-test-idempotency"
+        state: present
+        scope: REGIONAL
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: no
+        rules:
+          - name: byte-match-rule
+            priority: 1
+            action:
+              block: {}
+            statement:
+              byte_match_statement:
+                search_string: "badbot"
+                field_to_match:
+                  single_header:
+                    name: user-agent
+                text_transformations:
+                  - type: LOWERCASE
+                    priority: 0
+                positional_constraint: CONTAINS
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: no
+              metric_name: byte-match
+          - name: rate-limit-rule
+            priority: 2
+            action:
+              block: {}
+            statement:
+              rate_based_statement:
+                limit: 2000
+                aggregate_key_type: IP
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: no
+              metric_name: rate-limit
+      register: out
+
+    - name: Verify creation
+      assert:
+        that:
+          - out is changed
+
+    - name: Re-run same configuration (test idempotency)
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-test-idempotency"
+        state: present
+        scope: REGIONAL
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: no
+        rules:
+          - name: byte-match-rule
+            priority: 1
+            action:
+              block: {}
+            statement:
+              byte_match_statement:
+                search_string: "badbot"
+                field_to_match:
+                  single_header:
+                    name: user-agent
+                text_transformations:
+                  - type: LOWERCASE
+                    priority: 0
+                positional_constraint: CONTAINS
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: no
+              metric_name: byte-match
+          - name: rate-limit-rule
+            priority: 2
+            action:
+              block: {}
+            statement:
+              rate_based_statement:
+                limit: 2000
+                aggregate_key_type: IP
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: no
+              metric_name: rate-limit
+      register: out
+
+    - name: Verify idempotency (no changes)
+      assert:
+        that:
+          - out is not changed
+
+    - name: Cleanup idempotency test ACL
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-test-idempotency"
+        state: absent
+        scope: REGIONAL
+      ignore_errors: true
+
   always:
     ###################################
     # always delete wafv2 components
