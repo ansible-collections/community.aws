@@ -5,7 +5,6 @@ import pytest
 
 from ansible_collections.community.aws.plugins.module_utils.dict import is_dict_subset
 
-
 # ---------------------------------------------------------------------------
 # Basic dict subset checks
 # ---------------------------------------------------------------------------
