@@ -49,3 +49,13 @@ ecs_fargate_task_containers:
 ecs_taskdefinition_placement_constraints:
   - type: memberOf
     expression: 'attribute:ecs.instance-type == t3.micro'
+ecs_service_connect_namespace: "{{ resource_prefix }}-sc-ns"
+ecs_service_connect_task_containers:
+- name: "{{ ecs_task_name }}"
+  image: "{{ ecs_task_image_path }}"
+  essential: true
+  portMappings:
+  - containerPort: "{{ ecs_task_container_port }}"
+    hostPort: "{{ ecs_task_container_port }}"
+    name: http
+    protocol: tcp

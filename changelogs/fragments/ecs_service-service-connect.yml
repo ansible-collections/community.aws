@@ -1,0 +1,10 @@
+---
+minor_changes:
+  - ecs_service - Add ``service_connect_configuration`` parameter for creating and updating ECS services
+    with AWS Service Connect (https://github.com/ansible-collections/community.aws/pull/2408).
+  - ecs_service - Extend ``wait`` parameter to support ``state=present`` using the ``services_stable``
+    waiter (https://github.com/ansible-collections/community.aws/pull/2408).
+bugfixes:
+  - ecs_service - Convert positional args to keyword args at ``create_service`` and ``update_service``
+    call sites to prevent silent breakage on parameter reordering
+    (https://github.com/ansible-collections/community.aws/pull/2408).
