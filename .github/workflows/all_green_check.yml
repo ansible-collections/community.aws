@@ -22,21 +22,17 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   changelog-and-linters:
     uses: ./.github/workflows/changelog_and_linters.yml  # use the callable changelog_and_linters job to run tests
-  sanity:
-    uses: ./.github/workflows/sanity.yml  # use the callable sanity job to run tests
-  units:
-    uses: ./.github/workflows/units.yml  # use the callable units job to run tests
+  ansible-test:
+    uses: ./.github/workflows/ansible-test.yml  # use the callable ansible-test workflow to run sanity and unit tests
   all_green:
     if: ${{ always() }}
     needs:
       - changelog-and-linters
-      - sanity
-      - units
+      - ansible-test
     runs-on: ubuntu-latest
     steps:
       - run: >-
           python -c "assert set([
           '${{ needs.changelog-and-linters.result }}',
-          '${{ needs.sanity.result }}',
-          '${{ needs.units.result }}'
+          '${{ needs.ansible-test.result }}'
           ]) == {'success'}"
