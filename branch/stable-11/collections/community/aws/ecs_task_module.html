@@ -420,7 +420,26 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 <p><em class="ansible-option-versionadded">added in community.aws 4.1.0</em></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Whether or not to wait for the desired state.</p>
+<td><div class="ansible-option-cell"><p>Whether to wait for the task to reach a steady state before returning.</p>
+<p>For <em>operation=run</em> and <em>operation=start</em>, waits for the task to reach <code class="docutils literal notranslate"><span class="pre">RUNNING</span></code> status.</p>
+<p>For <em>operation=stop</em>, waits for the task to reach <code class="docutils literal notranslate"><span class="pre">STOPPED</span></code> status.</p>
+<p>Use <em>wait_complete</em> instead if you need to wait for the task to finish execution and capture container exit codes.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait_complete"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-parameter-wait-complete"><strong>wait_complete</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait_complete" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+<p><em class="ansible-option-versionadded">added in community.aws 11.1.0</em></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether to wait for the task to complete execution and capture container exit codes.</p>
+<p>Unlike <em>wait</em>, which returns as soon as the task reaches <code class="docutils literal notranslate"><span class="pre">RUNNING</span></code> status, <em>wait_complete</em> waits for all containers in the task to finish and includes their exit codes in the results.</p>
+<p>Only applicable for <em>operation=run</em> and <em>operation=start</em>.</p>
+<p>Implies <em>wait=true</em> to ensure the task starts before waiting for completion.</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><strong><span class="pre">false</span></strong></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -514,6 +533,27 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
 <span class="w">    </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
 <span class="w">    </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run a task and wait for it to complete</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
+<span class="w">    </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
+<span class="w">    </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span>
+<span class="w">    </span><span class="nt">launch_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span>
+<span class="w">    </span><span class="nt">network_configuration</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">subnets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span>
+<span class="w">      </span><span class="nt">security_groups</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span>
+<span class="w">    </span><span class="nt">wait_complete</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span>
+
+<span class="c1"># Access task completion details:</span>
+<span class="c1"># - task_output.task[0].stopCode (e.g., &quot;EssentialContainerExited&quot;, &quot;TaskFailedToStart&quot;)</span>
+<span class="c1"># - task_output.task[0].stoppedReason (human-readable explanation)</span>
+<span class="c1"># - task_output.task[0].containers[0].exitCode (container exit code)</span>
 </pre></div>
 </div>
 </section>
@@ -555,7 +595,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <div class="ansibleOptionAnchor" id="return-task/containers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-return-task-containers"><strong>containers</strong></p>
 <a class="ansibleOptionLink" href="#return-task/containers" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The container details.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The container details. When <em>wait_complete=true</em>, includes <code class="docutils literal notranslate"><span class="pre">exitCode</span></code> for each container.</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> only when details is true</p>
 </div></td>
 </tr>
@@ -616,6 +656,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-task/stopCode"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-return-task-stopcode"><strong>stopCode</strong></p>
+<a class="ansibleOptionLink" href="#return-task/stopCode" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The stop code indicating why the task was stopped.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when the task has stopped</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;EssentialContainerExited&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-task/stoppedAt"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-return-task-stoppedat"><strong>stoppedAt</strong></p>
 <a class="ansibleOptionLink" href="#return-task/stoppedAt" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -623,15 +672,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> only when details is true</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-task/stoppedReason"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-return-task-stoppedreason"><strong>stoppedReason</strong></p>
 <a class="ansibleOptionLink" href="#return-task/stoppedReason" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The reason why the task was stopped.</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> only when details is true</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when the task has stopped</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Essential</span> <span class="pre">container</span> <span class="pre">in</span> <span class="pre">task</span> <span class="pre">exited&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-task/taskArn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-return-task-taskarn"><strong>taskArn</strong></p>
 <a class="ansibleOptionLink" href="#return-task/taskArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -639,7 +689,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-task/taskDefinitionArn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-task-module-return-task-taskdefinitionarn"><strong>taskDefinitionArn</strong></p>
 <a class="ansibleOptionLink" href="#return-task/taskDefinitionArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
