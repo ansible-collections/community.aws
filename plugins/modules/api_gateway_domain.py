@@ -32,7 +32,7 @@ options:
     description:
       - Set allowed TLS versions through AWS defined policies. Currently only C(TLS_1_0) and C(TLS_1_2) are available.
     default: TLS_1_2
-    choices: ['TLS_1_0', 'TLS_1_2']
+    choices: ['TLS_1_0', 'TLS_1_2', 'SecurityPolicy_TLS13_1_3_2025_09', 'SecurityPolicy_TLS13_1_3_FIPS_2025_09', 'SecurityPolicy_TLS13_1_2_PFS_PQ_2025_09', 'SecurityPolicy_TLS13_1_2_FIPS_PQ_2025_09', 'SecurityPolicy_TLS13_1_2_FIPS_PFS_PQ_2025_09', 'SecurityPolicy_TLS13_1_2_PQ_2025_09', 'SecurityPolicy_TLS13_1_2_2021_06', 'SecurityPolicy_TLS13_2025_EDGE', 'SecurityPolicy_TLS12_PFS_2025_EDGE', 'SecurityPolicy_TLS12_2018_EDGE']
     type: str
   endpoint_type:
     description:
@@ -305,7 +305,24 @@ def main():
     argument_spec = dict(
         domain_name=dict(type="str", required=True),
         certificate_arn=dict(type="str", required=True),
-        security_policy=dict(type="str", default="TLS_1_2", choices=["TLS_1_0", "TLS_1_2"]),
+        security_policy=dict(
+            type="str",
+            default="TLS_1_2",
+            choices=[
+                "SecurityPolicy_TLS12_2018_EDGE",
+                "SecurityPolicy_TLS12_PFS_2025_EDGE",
+                "SecurityPolicy_TLS13_1_2_2021_06",
+                "SecurityPolicy_TLS13_1_2_FIPS_PFS_PQ_2025_09",
+                "SecurityPolicy_TLS13_1_2_FIPS_PQ_2025_09",
+                "SecurityPolicy_TLS13_1_2_PFS_PQ_2025_09",
+                "SecurityPolicy_TLS13_1_2_PQ_2025_09",
+                "SecurityPolicy_TLS13_1_3_2025_09",
+                "SecurityPolicy_TLS13_1_3_FIPS_2025_09",
+                "SecurityPolicy_TLS13_2025_EDGE",
+                "TLS_1_0",
+                "TLS_1_2",
+            ],
+        ),
         endpoint_type=dict(type="str", default="EDGE", choices=["EDGE", "REGIONAL", "PRIVATE"]),
         domain_mappings=dict(type="list", required=True, elements="dict"),
         state=dict(type="str", default="present", choices=["present", "absent"]),
