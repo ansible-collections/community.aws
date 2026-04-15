@@ -648,6 +648,18 @@ options:
                 type: str
                 required: false
                 choices: ['LINUX', 'WINDOWS_SERVER_2019_FULL', 'WINDOWS_SERVER_2019_CORE', 'WINDOWS_SERVER_2022_FULL', 'WINDOWS_SERVER_2022_CORE']
+    ephemeral_storage:
+        version_added: 8.2.0
+        description:
+            - The amount of ephemeral storage to allocate for the task.
+            - This parameter is only supported for tasks hosted on Fargate using platform version 1.4.0 or later (Linux) or 1.0.0 or later (Windows).
+        required: false
+        type: dict
+        suboptions:
+            size:
+                description: The total amount, in GiB, of ephemeral storage to set for the task.
+                type: int
+                required: true
 extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
@@ -726,6 +738,8 @@ EXAMPLES = r"""
     memory: 1024
     state: present
     network_mode: awsvpc
+    ephemeral_storage:
+      size: 30
 
 - name: Create task definition
   community.aws.ecs_taskdefinition:
@@ -836,6 +850,7 @@ class EcsTaskManager:
         memory,
         placement_constraints,
         runtime_platform,
+        ephemeral_storage,
     ):
         validated_containers = []
 
@@ -898,6 +913,8 @@ class EcsTaskManager:
             params["placementConstraints"] = placement_constraints
         if runtime_platform:
             params["runtimePlatform"] = runtime_platform
+        if ephemeral_storage:
+            params["ephemeralStorage"] = {"sizeInGiB": ephemeral_storage["size"]}
 
         try:
             response = self.ecs.register_task_definition(aws_retry=True, **params)
@@ -981,6 +998,13 @@ def main():
                     ],
                 ),
             ),
+        ),
+        ephemeral_storage=dict(
+            required=False,
+            type="dict",
+            options=dict(
+                size=dict(required=True, type="int")
+            )
         ),
     )
 
@@ -1201,6 +1225,7 @@ def main():
                     module.params["memory"],
                     module.params["placement_constraints"],
                     module.params["runtime_platform"],
+                    module.params["ephemeral_storage"],
                 )
             results["changed"] = True
 
