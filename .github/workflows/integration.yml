@@ -36,7 +36,7 @@ jobs:
 
       - name: list changes for pull request
         id: compute
-        uses: ansible/cloud-content-ci-automation/.github/actions/ansible_test_splitter@main
+        uses: ansible/cloud-content-ci-automation/.github/actions/ansible_test_splitter@0b891487c4170ef856f02313c66cb1c776814c42
         with:
           collections_to_test: "${{ env.source_dir}}"
           total_jobs: 24
@@ -65,14 +65,14 @@ jobs:
 
       - name: Read job targets
         id: read-targets
-        uses: ansible/cloud-content-ci-automation/.github/actions/ansible_read_targets@main
+        uses: ansible/cloud-content-ci-automation/.github/actions/ansible_read_targets@0b891487c4170ef856f02313c66cb1c776814c42
         with:
           job_id: "${{ matrix.job-id }}"
           all_targets: "${{ env.all_targets }}"
 
       - name: Build and install the source collection
         id: install-collection
-        uses: ansible-network/github_actions/.github/actions/build_install_collection@main
+        uses: ansible-network/github_actions/.github/actions/build_install_collection@446d4586bcde8bf6e1a9c085983bf172b59bd7b2
         with:
           install_python_dependencies: false
           source_path: ${{ env.source_dir }}
@@ -87,10 +87,10 @@ jobs:
         working-directory: ${{ env.source_dir }}
 
       # Generate AWS temporary credentials used to run tests
-      - uses: ansible/ansible-test-auth@v1
+      - uses: ansible/ansible-test-auth@008750a5bf07124c3ab86d30d73d7319d7518f36
 
       - name: Run integration tests
-        uses: ansible-network/github_actions/.github/actions/ansible_test_integration@main
+        uses: ansible-network/github_actions/.github/actions/ansible_test_integration@446d4586bcde8bf6e1a9c085983bf172b59bd7b2
         with:
           collection_path: ${{ steps.install-collection.outputs.collection_path }}
           python_version: ${{ env.python_version }}
