@@ -1,0 +1,96 @@
+---
+
+- name: Integration testing for the cloudfront_cache_policy module
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+
+    - name: Create a simple cache policy
+      cloudfront_cache_policy:
+        name: "{{ resource_prefix }}-my-cache-policy"
+        comment: Created by Ansible test
+        default_ttl: 86400
+        min_ttl: 1
+        max_ttl: 31536000
+        parameters_in_cache_key_and_forwarded_to_origin:
+          enable_accept_encoding_gzip: false
+          enable_accept_encoding_brotli: false
+          headers_config:
+            header_behavior: none
+          cookies_config:
+            cookie_behavior: none
+          query_strings_config:
+            query_string_behavior: none
+        state: present
+      register: create_result
+
+    - name: Assert creation without errors and return values
+      assert:
+        that:
+          - create_result is changed
+          - create_result is not failed
+          - create_result.cache_policy.cache_policy_config.name == "{{ resource_prefix }}-my-cache-policy"
+
+    - name: Update existing policy with more complicated configuration
+      cloudfront_cache_policy:
+        name: "{{ resource_prefix }}-my-cache-policy"
+        comment: Created by Ansible test
+        default_ttl: 86400
+        min_ttl: 1
+        max_ttl: 31536000
+        parameters_in_cache_key_and_forwarded_to_origin:
+          enable_accept_encoding_gzip: true
+          enable_accept_encoding_brotli: true
+          headers_config:
+            header_behavior: whitelist
+            headers:
+              items:
+                - accept
+                - accept-language
+                - host
+                - user-agent
+          cookies_config:
+            cookie_behavior: whitelist
+            cookies:
+              items:
+                - my-cookie
+          query_strings_config:
+            query_string_behavior: whitelist
+            query_strings:
+              items:
+                - my-query-string
+        state: present
+      register: update_result
+
+    - name: Assert update and updated return values
+      assert:
+        that:
+          - update_result is changed
+          - update_result.cache_policy.cache_policy_config.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_gzip == true
+          - update_result.cache_policy.cache_policy_config.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_brotli == true
+
+    - name: Ensure policy is deleted
+      cloudfront_cache_policy:
+        name: "{{ resource_prefix }}-my-cache-policy"
+        comment: Created by Ansible test
+        state: absent
+      register: delete_result
+
+    - name: Assert deletion without errors
+      assert:
+        that:
+          - delete_result is changed
+          - delete_result is not failed
+          - delete_result.cache_policy is undefined
+
+  always:
+
+    - name: Ensure policy is deleted
+      cloudfront_cache_policy:
+        name: "{{ resource_prefix }}-my-cache-policy"
+        state: absent
+      ignore_errors: true
