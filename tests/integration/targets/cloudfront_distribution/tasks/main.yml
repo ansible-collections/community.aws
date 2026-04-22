@@ -709,9 +709,9 @@
       that:
         - not cf_oai_info.changed
         - cf_oai_info.cloudfront is defined
-        - cf_oai_info.cloudfront.origin_access_identity is defined
-        - cf_oai_info.cloudfront.origin_access_identity.CloudFrontOriginAccessIdentity.Id == _origin_access_id.cloud_front_origin_access_identity.id
-        - cf_oai_info.cloudfront.origin_access_identity.CloudFrontOriginAccessIdentity.CloudFrontOriginAccessIdentityConfig.Comment == "this is a sample origin access identity"
+        - _origin_access_id.cloud_front_origin_access_identity.id in cf_oai_info.cloudfront
+        - cf_oai_info.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentity.Id == _origin_access_id.cloud_front_origin_access_identity.id
+        - cf_oai_info.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentity.CloudFrontOriginAccessIdentityConfig.Comment == "this is a sample origin access identity"
 
   - name: get origin access identity config
     cloudfront_distribution_info:
@@ -724,8 +724,9 @@
       that:
         - not cf_oai_config.changed
         - cf_oai_config.cloudfront is defined
-        - cf_oai_config.cloudfront.origin_access_identity_configuration is defined
-        - cf_oai_config.cloudfront.origin_access_identity_configuration.Comment == "this is a sample origin access identity"
+        - _origin_access_id.cloud_front_origin_access_identity.id in cf_oai_config.cloudfront
+        - cf_oai_config.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentityConfig is defined
+        - cf_oai_config.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentityConfig.Comment == "this is a sample origin access identity"
 
   - name: list origin access identities
     cloudfront_distribution_info:
@@ -738,7 +739,7 @@
         - not cf_oai_list.changed
         - cf_oai_list.cloudfront is defined
         - cf_oai_list.cloudfront.origin_access_identities is defined
-        - cf_oai_list.cloudfront.origin_access_identities.CloudFrontOriginAccessIdentityList.Items | selectattr('Id', 'equalto', _origin_access_id.cloud_front_origin_access_identity.id) | list | length == 1
+        - cf_oai_list.cloudfront.origin_access_identities | selectattr('Id', 'equalto', _origin_access_id.cloud_front_origin_access_identity.id) | list | length == 1
 
   - name: update distribution to use cache_policy_id and origin_request_policy_id
     cloudfront_distribution:
@@ -770,7 +771,7 @@
         - cf_all_lists.cloudfront.origin_access_identities is defined
         - cf_all_lists.cloudfront.streaming_distributions is defined
         - distribution_id in cf_all_lists.cloudfront.distributions
-        - cf_all_lists.cloudfront.origin_access_identities.CloudFrontOriginAccessIdentityList.Items | selectattr('Id', 'equalto', _origin_access_id.cloud_front_origin_access_identity.id) | list | length == 1
+        - cf_all_lists.cloudfront.origin_access_identities | selectattr('Id', 'equalto', _origin_access_id.cloud_front_origin_access_identity.id) | list | length == 1
 
   always:
   # TEARDOWN STARTS HERE
@@ -780,6 +781,22 @@
       state: absent
       force: true
     ignore_errors: true
+
+  - name: wait for distributions to finish deploying before cleanup
+    cloudfront_distribution_info:
+      distribution: true
+      distribution_id: "{{ item }}"
+    register: _dist_status
+    until: >-
+      item not in _dist_status.cloudfront or
+      _dist_status.cloudfront[item].Distribution.Status == 'Deployed'
+    retries: 60
+    delay: 10
+    ignore_errors: true
+    loop:
+      - '{{ cf_second_distribution.id | default("") }}'
+      - '{{ cf_distribution.id | default("") }}'
+    when: item != ""
 
   - name: clean up cloudfront distribution
     cloudfront_distribution:
