@@ -349,7 +349,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <div class="ansibleOptionAnchor" id="parameter-rules/action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-action"><strong>action</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rules/action" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Wether a rule is blocked, allowed or counted.</p>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether a rule is blocked, allowed, counted, uses CAPTCHA, or uses Challenge.</p>
+<p>Mutually exclusive with <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-override-action"><span class="std std-ref"><span class="pre">rules.override_action</span></span></a></strong></code>.</p>
+<p>Required for normal rules. Not used for managed rule group reference statements.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -360,27 +362,39 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rules/override_action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-override-action"><strong>override_action</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rules/override_action" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Override action for rule group reference statements.</p>
+<p>Can override the rule group evaluation result.</p>
+<p>Mutually exclusive with <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-action"><span class="std std-ref"><span class="pre">rules.action</span></span></a></strong></code>.</p>
+<p>Required when using managed rule group statements.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rules/priority"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-priority"><strong>priority</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rules/priority" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The rule priority</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rules/statement"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-statement"><strong>statement</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rules/statement" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Rule configuration.</p>
+<p>Defines the AWS WAF processing logic for the rule.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rules/visibility_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-rules-visibility-config"><strong>visibility_config</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rules/visibility_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Visibility of single wafv2 rule.</p>
+<p>Enables CloudWatch metrics and web request sample collection.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-sampled_requests"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-sampled-requests"><strong>sampled_requests</strong></p>
 <a class="ansibleOptionLink" href="#parameter-sampled_requests" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -392,7 +406,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-scope"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-scope"><strong>scope</strong></p>
 <a class="ansibleOptionLink" href="#parameter-scope" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -404,7 +418,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-secret-key"><span id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
@@ -418,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p>The <em>aws_secret_access_key</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-session-token"><span id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-aws-session-token"></span><strong>session_token</strong></p>
 <a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token</span></p>
@@ -430,7 +444,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p>The <em>session_token</em> and <em>profile</em> options are mutually exclusive.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -442,7 +456,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div>
 <div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-tags"><span id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-resource-tags"></span><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
@@ -452,7 +466,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p>If the <code class="ansible-option docutils literal notranslate"><strong><a class="reference internal" href="#ansible-collections-community-aws-wafv2-web-acl-module-parameter-tags"><span class="std std-ref"><span class="pre">tags</span></span></a></strong></code> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -550,6 +564,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <span class="w">          </span><span class="nt">rate_based_statement</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1500</span>
 <span class="w">            </span><span class="nt">aggregate_key_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IP</span>
+<span class="w">            </span><span class="nt">evaluation_window_sec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span><span class="w">  </span><span class="c1"># Time window in seconds (60, 120, 300, or 600). Default is 300.</span>
 <span class="w">            </span><span class="nt">scope_down_statement</span><span class="p">:</span>
 <span class="w">              </span><span class="nt">or_statement</span><span class="p">:</span>
 <span class="w">                </span><span class="nt">statements</span><span class="p">:</span>
@@ -643,6 +658,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-association_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-association-config"><strong>association_config</strong></p>
+<a class="ansibleOptionLink" href="#return-association_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Customised request body size inspection limits for associated resources</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> When configured on the web ACL</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;request_body&quot;:</span> <span class="pre">{&quot;cloudfront&quot;:</span> <span class="pre">{&quot;default_size_inspection_limit&quot;:</span> <span class="pre">&quot;KB_16&quot;}}}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-capacity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-capacity"><strong>capacity</strong></p>
 <a class="ansibleOptionLink" href="#return-capacity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -651,7 +675,25 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">140</span></code></p>
 </div></td>
 </tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-captcha_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-captcha-config"><strong>captcha_config</strong></p>
+<a class="ansibleOptionLink" href="#return-captcha_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Default CAPTCHA configuration for the web ACL</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> When configured on the web ACL</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;immunity_time_property&quot;:</span> <span class="pre">{&quot;immunity_time&quot;:</span> <span class="pre">300}}</span></code></p>
+</div></td>
+</tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-challenge_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-challenge-config"><strong>challenge_config</strong></p>
+<a class="ansibleOptionLink" href="#return-challenge_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Default challenge configuration for the web ACL</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> When configured on the web ACL</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;immunity_time_property&quot;:</span> <span class="pre">{&quot;immunity_time&quot;:</span> <span class="pre">300}}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-custom_response_bodies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-custom-response-bodies"><strong>custom_response_bodies</strong></p>
 <a class="ansibleOptionLink" href="#return-custom_response_bodies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -660,7 +702,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;too_many_requests&quot;:</span> <span class="pre">{&quot;content&quot;:</span> <span class="pre">&quot;{</span> <span class="pre">message:</span> <span class="pre">\&quot;Your</span> <span class="pre">request</span> <span class="pre">has</span> <span class="pre">been</span> <span class="pre">blocked</span> <span class="pre">due</span> <span class="pre">to</span> <span class="pre">too</span> <span class="pre">many</span> <span class="pre">HTTP</span> <span class="pre">requests</span> <span class="pre">coming</span> <span class="pre">from</span> <span class="pre">your</span> <span class="pre">IP\&quot;</span> <span class="pre">}&quot;,</span> <span class="pre">&quot;content_type&quot;:</span> <span class="pre">&quot;APPLICATION_JSON&quot;}}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-default_action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-default-action"><strong>default_action</strong></p>
 <a class="ansibleOptionLink" href="#return-default_action" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -669,13 +711,40 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;allow&quot;:</span> <span class="pre">{}}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-description"><strong>description</strong></p>
 <a class="ansibleOptionLink" href="#return-description" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Description of the web acl</p>
 <p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> Always, as long as the web acl exists</p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Some</span> <span class="pre">web</span> <span class="pre">acl</span> <span class="pre">description&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-id"><strong>id</strong></p>
+<a class="ansibleOptionLink" href="#return-id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Unique identifier for the web acl</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> Always, as long as the web acl exists</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;c3261c16-f284-4417-8330-2937b59aab88&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-label_namespace"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-label-namespace"><strong>label_namespace</strong></p>
+<a class="ansibleOptionLink" href="#return-label_namespace" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Label namespace for the web acl</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> Always, as long as the web acl exists</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;awswaf:966509639900:webacl:my-web-acl:&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-managed_by_firewall_manager"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-managed-by-firewall-manager"><strong>managed_by_firewall_manager</strong></p>
+<a class="ansibleOptionLink" href="#return-managed_by_firewall_manager" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether the web acl is managed by AWS Firewall Manager</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> Always, as long as the web acl exists</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -697,6 +766,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-token_domains"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-token-domains"><strong>token_domains</strong></p>
+<a class="ansibleOptionLink" href="#return-token_domains" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Domains configured for web request token acceptance</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> When configured on the web ACL</p>
+<p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;example.com&quot;,</span> <span class="pre">&quot;subdomain.example.com&quot;]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-visibility_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-wafv2-web-acl-module-return-visibility-config"><strong>visibility_config</strong></p>
 <a class="ansibleOptionLink" href="#return-visibility_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
