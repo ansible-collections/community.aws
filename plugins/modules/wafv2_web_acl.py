@@ -73,15 +73,26 @@ options:
           type: int
         action:
           description:
-            - Wether a rule is blocked, allowed or counted.
+            - Whether a rule is blocked, allowed, counted, uses CAPTCHA, or uses Challenge.
+            - Mutually exclusive with O(rules.override_action).
+            - Required for normal rules. Not used for managed rule group reference statements.
+          type: dict
+        override_action:
+          description:
+            - Override action for rule group reference statements.
+            - Can override the rule group evaluation result.
+            - Mutually exclusive with O(rules.action).
+            - Required when using managed rule group statements.
           type: dict
         visibility_config:
           description:
             - Visibility of single wafv2 rule.
+            - Enables CloudWatch metrics and web request sample collection.
           type: dict
         statement:
           description:
             - Rule configuration.
+            - Defines the AWS WAF processing logic for the rule.
           type: dict
     custom_response_bodies:
       description:
@@ -176,6 +187,7 @@ EXAMPLES = r"""
           rate_based_statement:
             limit: 1500
             aggregate_key_type: IP
+            evaluation_window_sec: 300  # Time window in seconds (60, 120, 300, or 600). Default is 300.
             scope_down_statement:
               or_statement:
                 statements:
@@ -300,6 +312,51 @@ custom_response_bodies:
       content_type: APPLICATION_JSON
       content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
   returned: Always, as long as the web acl exists
+id:
+  description: Unique identifier for the web acl
+  sample: c3261c16-f284-4417-8330-2937b59aab88
+  type: str
+  returned: Always, as long as the web acl exists
+label_namespace:
+  description: Label namespace for the web acl
+  sample: 'awswaf:966509639900:webacl:my-web-acl:'
+  type: str
+  returned: Always, as long as the web acl exists
+managed_by_firewall_manager:
+  description: Whether the web acl is managed by AWS Firewall Manager
+  sample: false
+  type: bool
+  returned: Always, as long as the web acl exists
+captcha_config:
+  description: Default CAPTCHA configuration for the web ACL
+  type: dict
+  returned: When configured on the web ACL
+  sample:
+    immunity_time_property:
+      immunity_time: 300
+challenge_config:
+  description: Default challenge configuration for the web ACL
+  type: dict
+  returned: When configured on the web ACL
+  sample:
+    immunity_time_property:
+      immunity_time: 300
+token_domains:
+  description: Domains configured for web request token acceptance
+  type: list
+  elements: str
+  returned: When configured on the web ACL
+  sample:
+    - example.com
+    - subdomain.example.com
+association_config:
+  description: Customised request body size inspection limits for associated resources
+  type: dict
+  returned: When configured on the web ACL
+  sample:
+    request_body:
+      cloudfront:
+        default_size_inspection_limit: KB_16
 visibility_config:
   description: Visibility config of the web acl
   returned: Always, as long as the web acl exists
