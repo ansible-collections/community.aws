@@ -26,7 +26,7 @@
       state: present
       name: '{{ test_bucket }}'
     register: result
-    ignore_errors: yes
+    ignore_errors: true
   - assert:
       that:
       - result is failed
@@ -290,14 +290,14 @@
     s3_bucket:
       name: '{{ test_bucket }}'
       state: absent
-    ignore_errors: yes
+    ignore_errors: true
   - name: Delete first bucket containing logs
     s3_bucket:
       name: '{{ log_bucket_1 }}'
       state: absent
-    ignore_errors: yes
+    ignore_errors: true
   - name: Delete second bucket containing logs
     s3_bucket:
       name: '{{ log_bucket_2 }}'
       state: absent
-    ignore_errors: yes
+    ignore_errors: true
