@@ -1,3 +1,5 @@
+cloud/aws
+
 # reason: missing-policy
 # AWS Config will test that it's able to deliver using its assumed role.
 # Either we'll need to grant the role global access to S3/SNS/SQS or we'll need
@@ -5,8 +7,6 @@
 # reason: serial
 # Only one Config Recorder per region per account is permitted
 unsupported
-
-cloud/aws
 
 config_aggregation_authorization
 config_aggregator

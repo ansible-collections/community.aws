@@ -1,6 +1,6 @@
 disabled
-
 # Modules that do not have test suites
+
 application_scaling_policy
 batch_compute_environment
 batch_job_definition

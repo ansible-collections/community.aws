@@ -1,3 +1,5 @@
+cloud/aws
+
 # reason: slow
 #
 # The duration of the tasks below was obtained from a single test job.
@@ -18,7 +20,4 @@
 #   30 minutes to enable and enforce HTTPS on the domain endpoint.
 #    3 minutes to enable auto-tune option.
 #   45 minutes to delete cluster.
-
 disabled
-
-cloud/aws
