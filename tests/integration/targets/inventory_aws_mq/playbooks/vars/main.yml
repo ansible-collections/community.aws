@@ -1,5 +1,5 @@
 ---
-broker_name: "{{ resource_prefix }}-activemq"
+broker_name: "ansible-test-{{ tiny_prefix }}-activemq"
 engine: "ACTIVEMQ"
 resource_tags:
   workload_type: other
