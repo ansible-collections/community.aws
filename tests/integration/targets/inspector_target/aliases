@@ -1,4 +1,6 @@
 time=6m
+
+cloud/aws
+
 # reason: trying to create target: An error occurred (AccessDeniedException) when calling the CreateResourceGroup operation
 disabled
-cloud/aws

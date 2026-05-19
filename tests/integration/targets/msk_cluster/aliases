@@ -1,5 +1,6 @@
-# reason: integration tests are too slow
-disabled
+time=46m
 
 cloud/aws
-time=46m
+
+# reason: integration tests are too slow
+disabled

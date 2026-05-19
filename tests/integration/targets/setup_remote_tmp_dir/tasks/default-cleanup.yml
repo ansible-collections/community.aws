@@ -1,5 +1,6 @@
-- name: delete temporary directory
-  file:
+---
+- name: Delete temporary directory
+  ansible.builtin.file:
     path: "{{ remote_tmp_dir }}"
     state: absent
-  no_log: yes
+  no_log: true
