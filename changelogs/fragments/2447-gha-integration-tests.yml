@@ -1,0 +1,6 @@
+minor_changes:
+  - route53_wait - make ``skipped`` and ``invocation`` keys optional in result validation to support modern Ansible loop structures (https://github.com/ansible-collections/community.aws/pull/2447).
+trivial:
+  - integration tests - fix resource naming for GitHub Actions by using ``tiny_prefix`` where resources exceed AWS service character limits (https://github.com/ansible-collections/community.aws/pull/2447).
+  - integration tests - standardise test infrastructure (aliases and meta files) following amazon.aws patterns (https://github.com/ansible-collections/community.aws/pull/2447).
+  - integration tests - synchronise setup_* helper roles from amazon.aws including OpenSSH 9.5 compatibility fix (https://github.com/ansible-collections/community.aws/pull/2447).

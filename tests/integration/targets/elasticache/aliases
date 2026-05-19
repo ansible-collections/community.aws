@@ -1,6 +1,8 @@
-# Sometimes hit AWS capacity issues - InsufficientCacheClusterCapacity
-# https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ErrorMessages.html#ErrorMessages.INSUFFICIENT_CACHE_CLUSTER_CAPACITY
+cloud/aws
+
 unstable
 
-cloud/aws
+# Sometimes hit AWS capacity issues - InsufficientCacheClusterCapacity
+# https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ErrorMessages.html#ErrorMessages.INSUFFICIENT_CACHE_CLUSTER_CAPACITY
+
 elasticache_info

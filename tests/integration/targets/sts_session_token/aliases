@@ -1,4 +1,5 @@
-# To use sts_session_token you need a user, CI uses an assumed role.
+cloud/aws
+
 unsupported
 
-cloud/aws
+# To use sts_session_token you need a user, CI uses an assumed role.
