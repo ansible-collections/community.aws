@@ -1,3 +1,4 @@
+---
 # (c) 2014, James Laska <jlaska@ansible.com>
 
 # This file is part of Ansible
@@ -15,57 +16,73 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-- name: create a temp dir
-  tempfile:
+- name: Create a temp dir
+  ansible.builtin.tempfile:
     state: directory
   register: sshkey_dir
   tags:
     - prepare
 
-- name: ensure script is available
-  copy:
+- name: Ensure script is available
+  ansible.builtin.copy:
     src: ec2-fingerprint.py
-    dest: '{{ sshkey_dir.path }}/ec2-fingerprint.py'
-    mode: 0700
+    dest: "{{ sshkey_dir.path }}/ec2-fingerprint.py"
+    mode: "0700"
   tags:
     - prepare
 
 - name: Set location of SSH keys
-  set_fact:
-    sshkey: '{{ sshkey_dir.path }}/key_one'
-    another_sshkey: '{{ sshkey_dir.path }}/key_two'
-    sshkey_pub: '{{ sshkey_dir.path }}/key_one.pub'
-    another_sshkey_pub: '{{ sshkey_dir.path }}/key_two.pub'
+  ansible.builtin.set_fact:
+    sshkey: "{{ sshkey_dir.path }}/key_one"
+    another_sshkey: "{{ sshkey_dir.path }}/key_two"
+    sshkey_pub: "{{ sshkey_dir.path }}/key_one.pub"
+    another_sshkey_pub: "{{ sshkey_dir.path }}/key_two.pub"
 
-- name: generate sshkey
-  shell: echo 'y' | ssh-keygen -P '' -f '{{ sshkey }}'
+# Because some older OSes don't like the Elliptic Curve keys we'll stick to 4096 bit RSA for now
+- name: Generate sshkey (4096 bit RSA)
+  ansible.builtin.command: ssh-keygen -t rsa -b 4096 -P '' -f '{{ sshkey }}'
+  args:
+    creates: '{{ sshkey }}'
   tags:
     - prepare
 
-- name: record fingerprint
-  shell: '{{ sshkey_dir.path }}/ec2-fingerprint.py {{ sshkey_pub }}'
+# AWS uses a custom MD5 checksum for its RSA keys (rather than the modern default of a base64 encoded sha256 hash)
+- name: Record fingerprint
+  ansible.builtin.command: "{{ sshkey_dir.path }}/ec2-fingerprint.py {{ sshkey_pub }}"
+  changed_when: false
   register: fingerprint
   tags:
     - prepare
 
-- name: generate another_sshkey
-  shell: echo 'y' | ssh-keygen -P '' -f {{ another_sshkey }}
+# With OpenSSH 9.5 the default changed to ED25519, to avoid confusing issues when running locally vs
+# in CI, we set the default
+- name: Generate another_sshkey (ED25519)
+  ansible.builtin.command: ssh-keygen -t ed25519 -P '' -f {{ another_sshkey }}
+  args:
+    creates: '{{ another_sshkey }}'
   tags:
     - prepare
 
-- name: record another fingerprint
-  shell: '{{ sshkey_dir.path }}/ec2-fingerprint.py {{ another_sshkey_pub }}'
+# When adding support for ED25519 Amazon stuck to the newer default of base64 encoded sha256 hashes, this means we can
+# ask ssh-keygen for the fingerprint, but we'll explicitly ask for the sha256 version just in case the default changes
+- name: Record another fingerprint
+  ansible.builtin.command: "ssh-keygen -l -E sha256 -f {{ another_sshkey_pub }}"
+  changed_when: false
   register: another_fingerprint
   tags:
     - prepare
 
-- name: set facts for future roles
-  set_fact:
+- name: Set facts for future roles
+  ansible.builtin.set_fact:
     # Public SSH keys (OpenSSH format)
+    # - 4096 bit RSA (broad support)
     key_material: "{{ lookup('file', sshkey_pub) }}"
+    # - ED25519 (modern, not supported by some older services/OSes)
     another_key_material: "{{ lookup('file', another_sshkey_pub) }}"
-    # AWS 'fingerprint' (md5digest)
-    fingerprint: '{{ fingerprint.stdout }}'
-    another_fingerprint: '{{ another_fingerprint.stdout }}'
+    # AWS Format fingerprints
+    # - RSA: MD5sum based
+    fingerprint: "{{ fingerprint.stdout }}"
+    # - ED25519: AWS pad the base64 output (technically correct), ssh-keygen truncates the output
+    another_fingerprint: "{{ another_fingerprint.stdout[11:54] }}="
   tags:
     - prepare

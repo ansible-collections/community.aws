@@ -200,31 +200,31 @@
       route53:
         state: absent
         zone: '{{ zone_one }}'
-        record: '{{ item.Name }}'
-        type: '{{ item.Type }}'
-        value: '{{ item.ResourceRecords | map(attribute="Value") | join(",") }}'
-        weight: '{{ item.Weight | default(omit) }}'
-        identifier: '{{ item.SetIdentifier }}'
+        record: '{{ item.name }}'
+        type: '{{ item.type }}'
+        value: '{{ item.resource_records | map(attribute="value") | join(",") }}'
+        weight: '{{ item.weight | default(omit) }}'
+        identifier: '{{ item.set_identifier }}'
         region: '{{ omit }}'
       ignore_errors: true
-      loop: '{{ z1_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA",
+      loop: '{{ z1_records.resource_record_sets | selectattr("type", "in", ["A", "AAAA",
         "CNAME", "CAA"]) | list }}'
       when:
-      - '"ResourceRecords" in item'
-      - '"SetIdentifier" in item'
+      - '"resource_records" in item'
+      - '"set_identifier" in item'
 
     - name: Loop over A/AAAA/CNAME records and delete them
       route53:
         state: absent
         zone: '{{ zone_one }}'
-        record: '{{ item.Name }}'
-        type: '{{ item.Type }}'
-        value: '{{ item.ResourceRecords | map(attribute="Value") | join(",") }}'
+        record: '{{ item.name }}'
+        type: '{{ item.type }}'
+        value: '{{ item.resource_records | map(attribute="value") | join(",") }}'
       ignore_errors: true
-      loop: '{{ z1_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA",
+      loop: '{{ z1_records.resource_record_sets | selectattr("type", "in", ["A", "AAAA",
         "CNAME", "CAA"]) | list }}'
       when:
-      - '"ResourceRecords" in item'
+      - '"resource_records" in item'
 
   - name: Delete test zone one {{ zone_one }}
     route53_zone:

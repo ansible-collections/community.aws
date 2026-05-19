@@ -110,15 +110,16 @@ WAIT_RETRY = 5  # how many seconds to wait between propagation status polls
 def detect_task_results(results):
     if "results" in results:
         # This must be the registered result of a loop of route53 tasks
-        for key in ("changed", "msg", "skipped"):
+        for key in ("changed", "msg"):
             if key not in results:
                 raise ValueError(f"missing {key} key")
+        # skipped is optional - not present if nothing was skipped
         if not isinstance(results["results"], list):
             raise ValueError("results is present, but not a list")
         for index, result in enumerate(results["results"]):
             if not isinstance(result, dict):
                 raise ValueError(f"result {index + 1} is not a dictionary")
-            for key in ("changed", "failed", "ansible_loop_var", "invocation"):
+            for key in ("changed", "failed"):
                 if key not in result:
                     raise ValueError(f"missing {key} key for result {index + 1}")
             yield f" for result #{index + 1}", result

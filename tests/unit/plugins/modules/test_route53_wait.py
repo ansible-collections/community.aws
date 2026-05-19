@@ -164,6 +164,22 @@ DETECT_TASK_RESULTS_DATA = [
             ),
         ],
     ],
+    # Test with skipped key omitted (modern Ansible when nothing skipped)
+    [
+        {
+            "changed": True,
+            "msg": "All items completed",
+            "results": [
+                _MULTI_RESULT_SUCCESS,
+            ],
+        },
+        [
+            (
+                " for result #1",
+                _MULTI_RESULT_SUCCESS,
+            ),
+        ],
+    ],
 ]
 
 
@@ -193,33 +209,27 @@ DETECT_TASK_RESULTS_FAIL_DATA = [
     ],
     [
         {"results": None, "changed": True, "msg": "foo"},
-        "missing skipped key",
-        [],
-    ],
-    [
-        {"results": None, "changed": True, "msg": "foo", "skipped": False},
         "results is present, but not a list",
         [],
     ],
     [
-        {"results": [None], "changed": True, "msg": "foo", "skipped": False},
+        {"results": [None], "changed": True, "msg": "foo"},
         "result 1 is not a dictionary",
         [],
     ],
     [
-        {"results": [{}], "changed": True, "msg": "foo", "skipped": False},
+        {"results": [{}], "changed": True, "msg": "foo"},
         "missing changed key for result 1",
         [],
     ],
     [
         {
-            "results": [{"changed": True, "failed": False, "ansible_loop_var": "item", "invocation": {}}, {}],
+            "results": [{"changed": True, "failed": False}, {}],
             "changed": True,
             "msg": "foo",
-            "skipped": False,
         },
         "missing changed key for result 2",
-        [(" for result #1", {"changed": True, "failed": False, "ansible_loop_var": "item", "invocation": {}})],
+        [(" for result #1", {"changed": True, "failed": False})],
     ],
 ]
 
