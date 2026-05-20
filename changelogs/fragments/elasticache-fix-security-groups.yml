@@ -1,0 +1,2 @@
+bugfixes:
+  - elasticache - Fix ``KeyError`` when checking security groups during cluster modification for VPC-based clusters, and ensure security group changes are properly applied on update (https://github.com/ansible-collections/community.aws/issues/661).
