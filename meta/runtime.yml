@@ -86,6 +86,7 @@ action_groups:
     - dynamodb_table_info
     - dynamodb_ttl
     - ec2_ami_copy
+    - ec2_ami_fast_launch_info
     - ec2_asg
     - ec2_asg_info
     - ec2_asg_lifecycle_hook

@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - ec2_ami_fast_launch_info - new module to gather information about EC2 Fast Launch enabled AMIs
+    (https://github.com/ansible-collections/community.aws/pull/REPLACE_PR_NUMBER).
