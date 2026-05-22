@@ -33,3 +33,28 @@
       include_tasks: broker_cleanup.yml
 
     - include_tasks: env_cleanup.yml
+
+- name: run amazon RabbitMQ Specific tests
+  module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      aws_region: "{{ aws_region }}"
+  collections:
+    - amazon.aws
+
+  block:
+    - name: set up environment for testing.
+      include_tasks: env_setup.yml
+    - name: set subnet and security group
+      set_fact:
+        broker_subnet_ids: "{{ testing_subnet_a.subnet.id }}"
+        broker_sg_ids: "{{ testing_sg.group_id }}"
+    - name: run broker tests
+      include_tasks: broker_rmq_tests.yml
+  always:
+    - name: cleanup broker
+      include_tasks: broker_cleanup.yml
+
+    - include_tasks: env_cleanup.yml
