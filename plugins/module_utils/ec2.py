@@ -4,6 +4,11 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from copy import deepcopy
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Union
+from typing import Optional
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
@@ -16,6 +21,24 @@ from ansible_collections.amazon.aws.plugins.module_utils.transformation import a
 from ansible_collections.community.aws.plugins.module_utils.base import BaseResourceManager
 from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
 from ansible_collections.community.aws.plugins.module_utils.base import Boto3Mixin
+
+@AWSRetry.jittered_backoff()
+def describe_lgw_route_table_associations(
+    client, **params: Dict[str, Union[List[str], bool, List[Dict[str, Union[str, List[str]]]]]]
+) -> List[Dict[str, Any]]:
+    paginator = client.get_paginator("describe_local_gateway_route_table_vpc_associations")
+    return paginator.paginate(**params).build_full_result()["LocalGatewayRouteTableVpcAssociations"]
+
+@AWSRetry.jittered_backoff()
+def create_lgw_route_table_association(client, lgw_route_table_id: str, vpc_id: str) -> Dict[str, Any]:
+    params = {"LocalGatewayRouteTableId": lgw_route_table_id,
+              "VpcId": vpc_id}
+    return client.create_local_gateway_route_table_vpc_association(**params)["LocalGatewayRouteTableVpcAssociation"]
+
+@AWSRetry.jittered_backoff()
+def delete_lgw_route_table_association(client, lgw_route_table_vpc_association_id: str) -> bool:
+    client.delete_local_gateway_route_table_vpc_association(LocalGatewayRouteTableVpcAssociationId=lgw_route_table_vpc_association_id)
+    return True
 
 
 class Ec2WaiterFactory(BaseWaiterFactory):
