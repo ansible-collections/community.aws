@@ -1,0 +1,39 @@
+---
+- name: Cleanup - ensure node is deleted
+  community.aws.medialive_node:
+    name: "{{ node_name }}"
+    cluster_id: "{{ cluster_id }}"
+    state: absent
+  ignore_errors: true
+  when: node_id is defined
+
+- name: Cleanup - ensure cluster is deleted
+  community.aws.medialive_cluster:
+    name: "{{ cluster_name }}"
+    state: absent
+    wait: true
+  ignore_errors: true
+  when: cluster_id is defined
+
+- name: Cleanup - ensure network is deleted
+  community.aws.medialive_network:
+    name: "{{ network_name }}"
+    state: absent
+  ignore_errors: true
+  when: network_id is defined
+
+- name: Cleanup - ensure role is deleted
+  amazon.aws.iam_role:
+    name: '{{ instance_role_name }}'
+    state: absent
+    wait: true
+  ignore_errors: true
+  when: instance_role_arn is defined
+
+- name: Cleanup - ensure role policy is deleted
+  amazon.aws.iam_managed_policy:
+    name: '{{ instance_role_policy_name }}'
+    state: absent
+    wait: true
+  ignore_errors: true
+  when: instance_role_policy_arn is defined

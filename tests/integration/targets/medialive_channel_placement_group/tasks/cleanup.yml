@@ -1,0 +1,32 @@
+---
+- name: Cleanup - ensure channel placement group is deleted
+  community.aws.medialive_channel_placement_group:
+    id: "{{ cpg_id }}"
+    cluster_id: "{{ cluster_id }}"
+    state: absent
+    wait: true
+  ignore_errors: true
+  when: cpg_id is defined
+
+- name: Cleanup - ensure cluster is deleted
+  community.aws.medialive_cluster:
+    id: "{{ cluster_id }}"
+    state: absent
+    wait: true
+  ignore_errors: true
+  when: cluster_id is defined
+
+- name: Cleanup - ensure network is deleted
+  community.aws.medialive_network:
+    id: "{{ network_id }}"
+    state: absent
+  ignore_errors: true
+  when: network_id is defined
+
+- name: Cleanup - ensure role is deleted
+  amazon.aws.iam_role:
+    name: '{{ instance_role_name }}'
+    state: absent
+    wait: true
+  ignore_errors: true
+  when: instance_role_arn is defined
