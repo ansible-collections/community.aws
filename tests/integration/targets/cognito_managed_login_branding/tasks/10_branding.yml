@@ -1,0 +1,448 @@
+---
+# ============================================================
+# cognito_managed_login_branding tests
+# ============================================================
+
+# --- Create - check_mode ---
+- name: Create branding - check_mode
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: true
+  check_mode: true
+  register: create_check
+
+- name: Verify check_mode create reports changed
+  assert:
+    that:
+      - create_check is changed
+      - create_check.branding.client_id == cognito_client_id
+
+- name: Verify branding was NOT actually created
+  cognito_managed_login_branding:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+  register: verify_not_created
+
+- name: Confirm no branding existed
+  assert:
+    that:
+      - verify_not_created is not changed
+
+# --- Validate create without any content params fails ---
+- name: Attempt create with no use_cognito_provided_values and no settings - should fail
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+  register: no_params_create
+  ignore_errors: true
+
+- name: Verify omitting all content params fails with clear message
+  assert:
+    that:
+      - no_params_create is failed
+      - "'Cannot create managed login branding without content' in no_params_create.msg"
+
+# --- Validate create with empty settings dict fails ---
+- name: Attempt create with empty settings dict - should fail
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings: {}
+  register: empty_settings_create
+  ignore_errors: true
+
+- name: Verify empty settings dict fails with clear message
+  assert:
+    that:
+      - empty_settings_create is failed
+      - "'Cannot create managed login branding without content' in empty_settings_create.msg"
+
+# --- Create with Cognito defaults ---
+- name: Create branding with cognito provided values
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: true
+  register: create_result
+
+- name: Verify branding was created
+  assert:
+    that:
+      - create_result is changed
+      - create_result.branding.managed_login_branding_id is defined
+      - create_result.branding.user_pool_id == cognito_user_pool_id
+
+- name: Save branding ID
+  set_fact:
+    cognito_branding_id: '{{ create_result.branding.managed_login_branding_id }}'
+
+# --- Create idempotency ---
+- name: Create branding with cognito provided values - idempotent
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: true
+  register: create_idempotent
+
+- name: Verify create idempotency
+  assert:
+    that:
+      - create_idempotent is not changed
+
+# --- Validate use_cognito_provided_values=false without settings fails on transition ---
+# Branding currently uses cognito defaults; switching to custom without content is invalid.
+- name: Attempt transition from cognito defaults to custom without settings - should fail
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: false
+  register: disable_no_settings
+  ignore_errors: true
+
+- name: Verify transition without content fails
+  assert:
+    that:
+      - disable_no_settings is failed
+      - "'requires settings and/or assets' in disable_no_settings.msg"
+
+# --- Validate use_cognito_provided_values=true with settings fails ---
+- name: Attempt use_cognito_provided_values true with settings - should fail
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: true
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  register: true_with_settings
+  ignore_errors: true
+
+- name: Verify use_cognito_provided_values true with settings fails
+  assert:
+    that:
+      - true_with_settings is failed
+      - "'mutually exclusive' in true_with_settings.msg"
+
+# --- Fail on nonexistent managed_login_branding_id ---
+- name: Update nonexistent branding ID - should fail
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    managed_login_branding_id: 'a0000000-0000-4000-a000-000000000000'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  register: nonexistent_branding
+  ignore_errors: true
+
+- name: Verify nonexistent branding ID fails
+  assert:
+    that:
+      - nonexistent_branding is failed
+      - "'not found' in nonexistent_branding.msg"
+
+# --- Reject assets with both bytes and resource_id ---
+- name: Attempt asset with both bytes and resource_id - should fail
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    assets:
+      - category: FORM_LOGO
+        color_mode: LIGHT
+        extension: PNG
+        bytes: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+        resource_id: "some-resource-id"
+  register: both_bytes_and_resource
+  ignore_errors: true
+
+- name: Verify assets with both bytes and resource_id fails
+  assert:
+    that:
+      - both_bytes_and_resource is failed
+      - "'mutually exclusive' in both_bytes_and_resource.msg"
+
+# --- Update - check_mode ---
+- name: Update branding - check_mode
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  check_mode: true
+  register: update_check
+
+- name: Verify check_mode update reports changed
+  assert:
+    that:
+      - update_check is changed
+
+- name: Verify branding was NOT actually updated
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: true
+  register: verify_not_updated
+
+- name: Confirm branding still matches cognito defaults
+  assert:
+    that:
+      - verify_not_updated is not changed
+
+# --- Update with custom settings ---
+- name: Update branding with custom settings
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  register: update_result
+
+- name: Verify branding was updated
+  assert:
+    that:
+      - update_result is changed
+
+# --- Settings update idempotency ---
+- name: Update branding with same settings - idempotent
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  register: update_idempotent
+
+- name: Verify settings update idempotency
+  assert:
+    that:
+      - update_idempotent is not changed
+
+# --- use_cognito_provided_values=false is a no-op on existing custom branding ---
+# When branding already uses custom settings, specifying use_cognito_provided_values=false
+# without payload (e.g. as a role default) should be idempotent, not an error.
+- name: use_cognito_provided_values false without payload on existing custom branding - no-op
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: false
+  register: false_noop
+
+- name: Verify use_cognito_provided_values false on custom branding is idempotent
+  assert:
+    that:
+      - false_noop is not changed
+
+# --- Update with asset bytes ---
+- name: Update branding with asset bytes
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+    assets:
+      - category: FORM_LOGO
+        color_mode: LIGHT
+        extension: PNG
+        bytes: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+  register: asset_upload
+
+- name: Verify asset upload succeeded
+  assert:
+    that:
+      - asset_upload is changed
+      - asset_upload.branding.assets | length > 0
+
+# --- return_merged_resources ---
+- name: Read branding with return_merged_resources
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+    return_merged_resources: true
+  register: merged_result
+
+- name: Verify merged result is not changed but has settings
+  assert:
+    that:
+      - merged_result is not changed
+      - merged_result.branding.settings is defined
+
+# --- Lookup by managed_login_branding_id ---
+- name: Read branding by managed_login_branding_id
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    managed_login_branding_id: '{{ cognito_branding_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  register: by_id_result
+
+- name: Verify lookup by branding ID
+  assert:
+    that:
+      - by_id_result is not changed
+      - by_id_result.branding.managed_login_branding_id == cognito_branding_id
+
+# ============================================================
+# cognito_managed_login_branding_info tests
+# ============================================================
+
+# --- Info lookup by client_id ---
+- name: Get branding info by client_id
+  cognito_managed_login_branding_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+  register: info_by_client
+
+- name: Verify info by client_id
+  assert:
+    that:
+      - info_by_client is not changed
+      - info_by_client.branding.managed_login_branding_id == cognito_branding_id
+      - info_by_client.branding.user_pool_id == cognito_user_pool_id
+
+# --- Info lookup by branding ID ---
+- name: Get branding info by managed_login_branding_id
+  cognito_managed_login_branding_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    managed_login_branding_id: '{{ cognito_branding_id }}'
+  register: info_by_id
+
+- name: Verify info by branding ID
+  assert:
+    that:
+      - info_by_id is not changed
+      - info_by_id.branding.managed_login_branding_id == cognito_branding_id
+
+# --- Info with return_merged_resources ---
+- name: Get branding info with merged resources
+  cognito_managed_login_branding_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    return_merged_resources: true
+  register: info_merged
+
+- name: Verify merged info
+  assert:
+    that:
+      - info_merged is not changed
+      - info_merged.branding.settings is defined
+
+# --- Info for nonexistent client — should fail ---
+- name: Get branding info for nonexistent client — should fail
+  cognito_managed_login_branding_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: 'nonexistent123456'
+  register: info_nonexistent
+  ignore_errors: true
+
+- name: Verify nonexistent client info fails
+  assert:
+    that:
+      - info_nonexistent is failed
+
+# --- Delete - check_mode ---
+- name: Delete branding - check_mode
+  cognito_managed_login_branding:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+  check_mode: true
+  register: delete_check
+
+- name: Verify check_mode delete reports changed
+  assert:
+    that:
+      - delete_check is changed
+
+- name: Verify branding was NOT actually deleted
+  cognito_managed_login_branding:
+    state: present
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    settings:
+      components:
+        primaryButton:
+          lightMode:
+            defaults:
+              backgroundColor: "0972d3ff"
+  register: verify_not_deleted
+
+- name: Confirm branding still exists
+  assert:
+    that:
+      - verify_not_deleted is not changed
+
+# --- Delete with use_cognito_provided_values=false (role-default scenario) ---
+- name: Delete branding with use_cognito_provided_values false
+  cognito_managed_login_branding:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+    use_cognito_provided_values: false
+  register: delete_result
+
+- name: Verify delete
+  assert:
+    that:
+      - delete_result is changed
+
+# --- Delete idempotency ---
+- name: Delete branding again - idempotent
+  cognito_managed_login_branding:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+  register: delete_idempotent
+
+- name: Verify delete idempotency
+  assert:
+    that:
+      - delete_idempotent is not changed

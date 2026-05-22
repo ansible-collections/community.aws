@@ -1,0 +1,209 @@
+---
+# ==========================================
+# Update user pool tests
+# ==========================================
+
+# ------------------------------------------
+# Update check_mode
+# ------------------------------------------
+- name: Update user pool - check_mode
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_id }}'
+    deletion_protection: ACTIVE
+  check_mode: true
+  register: update_check
+
+- name: Verify update check_mode
+  assert:
+    that:
+      - update_check is changed
+
+- name: Verify check_mode did not actually change pool
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_id }}'
+  register: after_check
+
+- name: Verify deletion_protection unchanged after check_mode
+  assert:
+    that:
+      - after_check.user_pool.deletion_protection != "ACTIVE"
+
+# ------------------------------------------
+# Partial update - single field
+# ------------------------------------------
+- name: Update deletion_protection
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_id }}'
+    deletion_protection: ACTIVE
+  register: update_dp
+
+- name: Verify deletion_protection updated
+  assert:
+    that:
+      - update_dp is changed
+      - update_dp.user_pool.deletion_protection == "ACTIVE"
+
+- name: Verify with cognito_user_pool_info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_id }}'
+  register: dp_info
+
+- name: Verify deletion_protection in info
+  assert:
+    that:
+      - dp_info.user_pool.deletion_protection == "ACTIVE"
+
+# ------------------------------------------
+# Update idempotency
+# ------------------------------------------
+- name: Update deletion_protection - idempotency
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_id }}'
+    deletion_protection: ACTIVE
+  register: update_idem
+
+- name: Verify update idempotency
+  assert:
+    that:
+      - update_idem is not changed
+
+# ------------------------------------------
+# Verify unspecified fields preserved
+# ------------------------------------------
+- name: Update deletion_protection on params pool
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    deletion_protection: ACTIVE
+  register: update_field
+
+- name: Verify update changed
+  assert:
+    that:
+      - update_field is changed
+
+- name: Verify password policy preserved after update
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: preserved_info
+
+- name: Assert password policy and other fields were not reset
+  assert:
+    that:
+      - preserved_info.user_pool.policies.password_policy.minimum_length == 12
+      - preserved_info.user_pool.policies.password_policy.require_uppercase == true
+      - preserved_info.user_pool.deletion_protection == "ACTIVE"
+      - "'email' in preserved_info.user_pool.auto_verified_attributes"
+
+- name: Reset deletion_protection for cleanup
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    deletion_protection: INACTIVE
+
+# ------------------------------------------
+# Partial nested update — verify deep merge
+# ------------------------------------------
+- name: Update only minimum_length inside password_policy
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    policies:
+      password_policy:
+        minimum_length: 14
+  register: nested_update
+
+- name: Verify nested update changed
+  assert:
+    that:
+      - nested_update is changed
+
+- name: Read pool after partial nested update
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: nested_info
+
+- name: Assert sibling keys preserved during partial nested update
+  assert:
+    that:
+      - nested_info.user_pool.policies.password_policy.minimum_length == 14
+      - nested_info.user_pool.policies.password_policy.require_uppercase == true
+      - nested_info.user_pool.policies.password_policy.require_lowercase == true
+      - nested_info.user_pool.policies.password_policy.require_numbers == true
+      - nested_info.user_pool.policies.password_policy.require_symbols == false
+      - nested_info.user_pool.deletion_protection == "INACTIVE"
+      - "'email' in nested_info.user_pool.auto_verified_attributes"
+
+- name: Partial nested update — idempotency
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    policies:
+      password_policy:
+        minimum_length: 14
+  register: nested_idem
+
+- name: Verify partial nested update idempotency
+  assert:
+    that:
+      - nested_idem is not changed
+
+# Restore original value
+- name: Restore minimum_length to 12
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    policies:
+      password_policy:
+        minimum_length: 12
+
+# ------------------------------------------
+# Fail when explicit user_pool_id not found
+# ------------------------------------------
+- name: Attempt state=present with non-existent user_pool_id
+  cognito_user_pool:
+    state: present
+    user_pool_id: 'eu-west-1_DOESNOTEXIST'
+    deletion_protection: INACTIVE
+  register: bogus_id_result
+  ignore_errors: true
+
+- name: Verify failure on non-existent user_pool_id
+  assert:
+    that:
+      - bogus_id_result is failed
+      - "'not found' in bogus_id_result.msg"
+
+# ------------------------------------------
+# Create-only param warning on update (no error)
+# ------------------------------------------
+- name: Specify create-only param on existing pool
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_id }}'
+    username_attributes:
+      - email
+  register: create_only_result
+
+- name: Verify no failure on create-only param
+  assert:
+    that:
+      - create_only_result is succeeded
+
+# ------------------------------------------
+# Disable deletion protection (needed for cleanup)
+# ------------------------------------------
+- name: Disable deletion_protection for cleanup
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_id }}'
+    deletion_protection: INACTIVE
+  register: disable_dp
+
+- name: Verify deletion_protection disabled
+  assert:
+    that:
+      - disable_dp is changed
