@@ -372,6 +372,7 @@ def prepare_create_options(module):
             "ClientSubnets": module.params["subnets"],
             "InstanceType": module.params["instance_type"],
         },
+        "Tags": module.params["tags"],
     }
 
     if module.params["security_groups"] and len(module.params["security_groups"]) != 0:
@@ -599,7 +600,7 @@ def create_or_update_cluster(client, module):
                 if module.params["wait"]:
                     wait_for_cluster_state(client, module, arn=cluster["ClusterArn"], state="ACTIVE")
 
-    changed |= update_cluster_tags(client, module, response["ClusterArn"])
+        changed |= update_cluster_tags(client, module, response["ClusterArn"])
 
     return changed, response
 
