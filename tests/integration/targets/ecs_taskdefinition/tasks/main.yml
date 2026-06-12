@@ -1,0 +1,5 @@
+---
+- block:
+    - include_tasks: ephemeral_storage.yml
+  always:
+    - include_tasks: cleanup.yml
