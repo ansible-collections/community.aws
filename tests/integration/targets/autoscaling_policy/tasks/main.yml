@@ -153,6 +153,52 @@
           - result.changed
           - result.adjustment_type == "PercentChangeInCapacity"
 
+    - name: Update Step Scaling policy with float bounds
+      autoscaling_policy:
+        name: "{{ resource_prefix }}_stepscaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        policy_type: StepScaling
+        metric_aggregation: Maximum
+        step_adjustments:
+        - upper_bound: 10.5
+          scaling_adjustment: 50
+        - lower_bound: 10.5
+          upper_bound: 30.75
+          scaling_adjustment: 75
+        - lower_bound: 30.75
+          scaling_adjustment: 100
+        adjustment_type: "PercentChangeInCapacity"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == resource_prefix ~ '_stepscaling_policy'
+          - result.changed
+
+    - name: Update Step Scaling policy with float bounds (idempotency)
+      autoscaling_policy:
+        name: "{{ resource_prefix }}_stepscaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        policy_type: StepScaling
+        metric_aggregation: Maximum
+        step_adjustments:
+        - upper_bound: 10.5
+          scaling_adjustment: 50
+        - lower_bound: 10.5
+          upper_bound: 30.75
+          scaling_adjustment: 75
+        - lower_bound: 30.75
+          scaling_adjustment: 100
+        adjustment_type: "PercentChangeInCapacity"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == resource_prefix ~ '_stepscaling_policy'
+          - not result.changed
+
     - name: Remove Step Scaling policy
       autoscaling_policy:
         name: "{{ resource_prefix }}_stepscaling_policy"
