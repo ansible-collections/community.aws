@@ -55,6 +55,14 @@
       principal: elasticloadbalancing.amazonaws.com
       source_arn: "{{ elb_target_group.target_group_arn }}"
 
+  - name: wait for lambda function to be active
+    lambda_info:
+      name: "{{ lambda_name }}"
+    register: lambda_state
+    until: lambda_state.functions[0].state == "Active"
+    retries: 30
+    delay: 2
+
   - name: add lambda to elb target
     elb_target_group:
       name: "{{ elb_target_group_name }}"
