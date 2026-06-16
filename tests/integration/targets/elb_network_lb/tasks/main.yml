@@ -38,10 +38,10 @@
         Created_By: "{{ resource_prefix }}"
         Public: "{{ item.public }}"
     with_items:
-      - cidr: "{{ subnet_b_cidr }}"
+      - cidr: "{{ subnet_c_cidr }}"
         az: "a"
         public: False
-      - cidr: "{{ subnet_c_cidr }}"
+      - cidr: "{{ subnet_d_cidr }}"
         az: "b"
         public: False
     register: subnets

@@ -1,5 +1,8 @@
 unique_id: "ansible-test-{{ tiny_prefix }}"
 
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.200.0/22
+
 # IP address for IP-type target group testing
 # Uses RFC 1918 private range with randomisation to avoid conflicts
 test_target_ip: "192.168.{{ 256 | random(seed=resource_prefix) }}.32"
