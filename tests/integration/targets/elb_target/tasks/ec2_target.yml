@@ -477,7 +477,7 @@
         wait: false
         modify_targets: true
         targets:
-          - Id: 192.168.178.32
+          - Id: "{{ test_target_ip }}"
             Port: 443
             AvailabilityZone: all
       register: result

@@ -1,5 +1,9 @@
 unique_id: "ansible-test-{{ tiny_prefix }}"
 
+# IP address for IP-type target group testing
+# Uses RFC 1918 private range with randomisation to avoid conflicts
+test_target_ip: "192.168.{{ 256 | random(seed=resource_prefix) }}.32"
+
 # Defaults used by the lambda based test
 
 lambda_role_name: '{{ unique_id }}-elb-target'
