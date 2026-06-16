@@ -3,9 +3,13 @@ web_acl_name: '{{ tiny_prefix }}-web-acl'
 rule_group_name: '{{ tiny_prefix }}-rule-group'
 alb_name: "my-alb-{{ tiny_prefix }}"
 tg_name: "my-tg-{{ tiny_prefix }}"
+
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr_base: '10.{{ 256 | random(seed=resource_prefix) }}.228'
+
 cidr:
-  main: 10.228.228.0/22
-  a: 10.228.228.0/24
-  b: 10.228.229.0/24
-  c: 10.228.230.0/24
-  d: 10.228.231.0/24
+  main: '{{ vpc_cidr_base }}.0/22'
+  a: '{{ vpc_cidr_base }}.0/24'
+  b: '{{ vpc_cidr_base }}.1/24'
+  c: '{{ vpc_cidr_base }}.2/24'
+  d: '{{ vpc_cidr_base }}.3/24'
