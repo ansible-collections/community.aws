@@ -9,13 +9,16 @@ tags:
   foo: bar
   env: test
 
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr_base: "10.{{ 256 | random(seed=resource_prefix) }}.0"
+
 eks_subnets:
   - zone: a
-    cidr: 10.0.1.0/24
+    cidr: "{{ vpc_cidr_base }}.0/24"
     type: private
     tag: internal-elb
   - zone: b
-    cidr: 10.0.2.0/24
+    cidr: "{{ vpc_cidr_base }}.1/24"
     type: public
     tag: elb
 

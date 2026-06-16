@@ -101,7 +101,7 @@
           cidr_ip: 0.0.0.0/0
         - proto: all
           ports: 80
-          cidr_ip: 10.228.228.0/22
+          cidr_ip: "{{ vpc_cidr }}"
     register: sec_group
 
   - name: create a target group for testing

@@ -2,3 +2,7 @@
 # defaults file for ec2_asg_lifecycle_hook
 # Amazon Linux 2 AMI 2019.06.12 (HVM), GP2 Volume Type
 load_balancer_name: "{{ tiny_prefix }}-lb"
+
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.77.0/24
+subnet_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.77.0/24
