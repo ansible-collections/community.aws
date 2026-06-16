@@ -371,7 +371,7 @@
 
 - name: remove setup VPC
   ec2_vpc_net:
-    cidr_block: 10.0.0.0/16
+    cidr_block: "{{ vpc_cidr }}"
     state: absent
     name: '{{ resource_prefix }}_ecs_cluster'
   ignore_errors: true

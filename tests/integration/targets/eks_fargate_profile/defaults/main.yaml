@@ -10,15 +10,15 @@ tags:
   env: test
 
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr_base: "10.{{ 256 | random(seed=resource_prefix) }}.0"
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.156.0/22
 
 eks_subnets:
   - zone: a
-    cidr: "{{ vpc_cidr_base }}.0/24"
+    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.156.0/24"
     type: private
     tag: internal-elb
   - zone: b
-    cidr: "{{ vpc_cidr_base }}.1/24"
+    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.157.0/24"
     type: public
     tag: elb
 

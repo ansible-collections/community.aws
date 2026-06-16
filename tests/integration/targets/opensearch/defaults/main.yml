@@ -1,5 +1,5 @@
 ---
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.0.0/16
-subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.77.0/24
-subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.78.0/24
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.180.0/22
+subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.181.0/24
+subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.182.0/24

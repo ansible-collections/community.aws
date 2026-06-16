@@ -3,14 +3,14 @@ eks_nodegroup_name_a: "ng-template-{{ tiny_prefix }}-a"
 eks_nodegroup_name_lt: "ng-template-{{ tiny_prefix }}-lt"
 
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr_base: "10.{{ 256 | random(seed=resource_prefix) }}.0"
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.220.0/22
 
 eks_subnets:
   - zone: a
-    cidr: "{{ vpc_cidr_base }}.0/24"
+    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.220.0/24"
     type: private
   - zone: b
-    cidr: "{{ vpc_cidr_base }}.1/24"
+    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.221.0/24"
     type: public
 
 eks_nodegroup_ami_type: "AL2_x86_64"

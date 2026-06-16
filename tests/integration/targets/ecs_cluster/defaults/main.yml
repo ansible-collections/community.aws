@@ -1,8 +1,9 @@
 ecs_cluster_name: "{{ resource_prefix }}"
 
 # VPC CIDR allocation - randomised to avoid conflicts
-subnet_a_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.1.0/24"
-subnet_b_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.2.0/24"
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.232.0/22
+subnet_a_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.232.0/24"
+subnet_b_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.233.0/24"
 
 user_data: |
   #!/bin/bash

@@ -1,9 +1,9 @@
 ---
 vpc_name: "{{ resource_prefix }}"
-vpc_cidr: '10.{{ 256 | random(seed=resource_prefix) }}.0.0/16'
+vpc_cidr: '10.{{ 256 | random(seed=resource_prefix) }}.184.0/22'
 vpc_subnets:
-  - '10.{{ 256 | random(seed=resource_prefix) }}.100.0/24'
-  - '10.{{ 256 | random(seed=resource_prefix) }}.101.0/24'
+  - '10.{{ 256 | random(seed=resource_prefix) }}.185.0/24'
+  - '10.{{ 256 | random(seed=resource_prefix) }}.186.0/24'
 vpc_subnet_name_prefix: "{{ resource_prefix }}"
 
 msk_config_name: "{{ resource_prefix }}-msk-cluster"

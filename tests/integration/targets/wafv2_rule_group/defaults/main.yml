@@ -5,11 +5,11 @@ alb_name: "my-alb-{{ tiny_prefix }}"
 tg_name: "my-tg-{{ tiny_prefix }}"
 
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr_base: '10.{{ 256 | random(seed=resource_prefix) }}.228'
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.160.0/22
 
 cidr:
-  main: '{{ vpc_cidr_base }}.0/22'
-  a: '{{ vpc_cidr_base }}.0/24'
-  b: '{{ vpc_cidr_base }}.1/24'
-  c: '{{ vpc_cidr_base }}.2/24'
-  d: '{{ vpc_cidr_base }}.3/24'
+  main: '{{ vpc_cidr }}'
+  a: '10.{{ 256 | random(seed=resource_prefix) }}.160.0/24'
+  b: '10.{{ 256 | random(seed=resource_prefix) }}.161.0/24'
+  c: '10.{{ 256 | random(seed=resource_prefix) }}.162.0/24'
+  d: '10.{{ 256 | random(seed=resource_prefix) }}.163.0/24'

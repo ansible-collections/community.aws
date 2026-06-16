@@ -7,13 +7,13 @@ asg_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 
 vpc_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 vpc_seed: '{{ resource_prefix }}'
-vpc_cidr: '10.{{ 256 | random(seed=vpc_seed) }}.0.0/16'
+vpc_cidr: '10.{{ 256 | random(seed=vpc_seed) }}.252.0/22'
 
 rtb_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 sg_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 lc_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 
 subnet_az: '{{ ec2_availability_zone_names[0] }}'
-subnet_cidr: '10.{{ 256 | random(seed=vpc_seed) }}.157.0/24'
-subnet_startswith: '10.{{ 256 | random(seed=vpc_seed) }}.157.'
+subnet_cidr: '10.{{ 256 | random(seed=vpc_seed) }}.252.0/24'
+subnet_startswith: '10.{{ 256 | random(seed=vpc_seed) }}.252.'
 subnet_name: '{{ tiny_prefix }}-{{ resource_sufix }}'

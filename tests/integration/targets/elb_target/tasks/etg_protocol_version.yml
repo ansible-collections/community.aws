@@ -7,7 +7,7 @@
       ec2_vpc_net:
         name: "{{ resource_prefix }}-etg-protocol-version-vpc"
         state: present
-        cidr_block: "10.{{ 256 | random(seed=resource_prefix) }}.0.0/16"
+        cidr_block: "{{ vpc_cidr }}"
         tags:
           Name: "{{ resource_prefix }}-etg-protocol-version-vpc"
           Description: "Created by ansible-test"
@@ -63,7 +63,7 @@
     - name: remove testing VPC
       ec2_vpc_net:
         name: "{{ resource_prefix }}-etg-protocol-version-vpc"
-        cidr_block: "10.{{ 256 | random(seed=resource_prefix) }}.0.0/16"
+        cidr_block: "{{ vpc_cidr }}"
         state: absent
       register: removed
       retries: 10

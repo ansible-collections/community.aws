@@ -7,8 +7,8 @@ tg_name: "nlb-{{ tiny_prefix }}"
 tg_tcpudp_name: "nlb-tcp-udp-{{ tiny_prefix }}"
 
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.228.0/22
-subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.228.0/24
-subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.229.0/24
-subnet_c_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.230.0/24
-subnet_d_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.231.0/24
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.204.0/22
+subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.204.0/24
+subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.205.0/24
+subnet_c_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.206.0/24
+subnet_d_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.207.0/24

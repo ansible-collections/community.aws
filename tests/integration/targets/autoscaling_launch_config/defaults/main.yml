@@ -6,6 +6,6 @@ ec2_instance_type: t2.micro
 alarm_prefix: "ansible-test"
 
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.32.0/23
-subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.32.0/24
-subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.33.0/24
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.248.0/23
+subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.248.0/24
+subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.249.0/24

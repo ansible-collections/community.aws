@@ -1,7 +1,15 @@
 ---
+web_acl_name: '{{ tiny_prefix }}-web-acl'
+rule_group_name: '{{ tiny_prefix }}-rule-group'
+alb_name: "my-alb-{{ tiny_prefix }}"
+tg_name: "my-tg-{{ tiny_prefix }}"
+
 # VPC CIDR allocation - randomised to avoid conflicts
-vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.228.0/22
-subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.228.0/24
-subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.229.0/24
-subnet_c_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.230.0/24
-subnet_d_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.231.0/24
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.164.0/22
+
+cidr:
+  main: '{{ vpc_cidr }}'
+  a: 10.{{ 256 | random(seed=resource_prefix) }}.164.0/24
+  b: 10.{{ 256 | random(seed=resource_prefix) }}.165.0/24
+  c: 10.{{ 256 | random(seed=resource_prefix) }}.166.0/24
+  d: 10.{{ 256 | random(seed=resource_prefix) }}.167.0/24
