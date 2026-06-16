@@ -1,12 +1,16 @@
 eks_cluster_name: "{{ resource_prefix }}"
 eks_cluster_short_name: "{{ lookup('password', '/dev/null chars=ascii_lowercase length=5') }}"
+
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr_base: "10.{{ 256 | random(seed=resource_prefix) }}.0"
+
 eks_subnets:
   - zone: a
-    cidr: 10.0.1.0/24
+    cidr: "{{ vpc_cidr_base }}.0/24"
   - zone: b
-    cidr: 10.0.2.0/24
+    cidr: "{{ vpc_cidr_base }}.1/24"
   - zone: c
-    cidr: 10.0.3.0/24
+    cidr: "{{ vpc_cidr_base }}.2/24"
 
 eks_security_groups:
   - name: "{{ eks_cluster_name }}-control-plane-sg"
