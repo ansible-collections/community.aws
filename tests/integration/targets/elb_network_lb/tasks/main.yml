@@ -62,7 +62,7 @@
         az: "a"
         public: True
         vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','0::/64') }}"
-      - cidr: 10.228.229.0/24
+      - cidr: "{{ subnet_b_cidr }}"
         az: "b"
         public: True
         vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','1::/64') }}"
@@ -207,7 +207,7 @@
       until: remove_subnet is success
       with_items:
         - cidr: "{{ subnet_a_cidr }}"
-        - cidr: 10.228.229.0/24
+        - cidr: "{{ subnet_b_cidr }}"
         - cidr: "{{ subnet_b_cidr }}"
         - cidr: "{{ subnet_c_cidr }}"
       ignore_errors: yes

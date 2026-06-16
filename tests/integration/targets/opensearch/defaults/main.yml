@@ -1,2 +1,5 @@
 ---
-# defaults file for opensearch tests
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.0.0/16
+subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.77.0/24
+subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.78.0/24

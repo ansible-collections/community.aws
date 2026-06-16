@@ -1,0 +1,5 @@
+---
+# VPC CIDR allocation - randomised to avoid conflicts
+# Note: route53_wait previously used 192.0.2.0/24 (TEST-NET-1)
+# Changed to randomised 10.x allocation for consistency
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.2.0/24
