@@ -364,9 +364,9 @@
     state: absent
   with_items:
     - zone: a
-      cidr: 10.0.1.0/24
+      cidr: "{{ subnet_a_cidr }}"
     - zone: b
-      cidr: 10.0.2.0/24
+      cidr: "{{ subnet_b_cidr }}"
   ignore_errors: true
 
 - name: remove setup VPC
