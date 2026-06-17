@@ -4485,4 +4485,4 @@ releases:
     fragments:
     - 10.1.1-release-summary.yml
     - 2355-float-stepscaling-bounds.yml
-    release_date: '2026-06-17'
+    release_date: '2026-06-18'
