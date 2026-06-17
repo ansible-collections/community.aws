@@ -274,6 +274,8 @@ def fetch_rules(client, module, name):
     try:
         current_lifecycle = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)
         current_lifecycle_rules = normalize_boto3_result(current_lifecycle["Rules"])
+        # Normalize all rules to use Filter format (convert old Prefix format)
+        current_lifecycle_rules = [normalize_rule_format(rule) for rule in current_lifecycle_rules]
     except is_boto3_error_code("NoSuchLifecycleConfiguration"):
         current_lifecycle_rules = []
     except (
@@ -282,6 +284,38 @@ def fetch_rules(client, module, name):
     ) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
     return current_lifecycle_rules
+
+
+# Helper function to normalize rule format (convert old Prefix format to Filter format)
+def normalize_rule_format(rule):
+    """Convert old S3 lifecycle rule format (Prefix directly) to new format (Filter object)"""
+    normalized_rule = deepcopy(rule)
+    # If rule has Prefix directly (old format) but no Filter, convert it
+    if "Prefix" in normalized_rule and "Filter" not in normalized_rule:
+        prefix = normalized_rule.pop("Prefix", "")
+        normalized_rule["Filter"] = {"Prefix": prefix}
+    # If rule has Filter but it's empty or missing Prefix, ensure it has the right structure
+    elif "Filter" in normalized_rule:
+        if not isinstance(normalized_rule["Filter"], dict):
+            normalized_rule["Filter"] = {"Prefix": ""}
+        elif "Prefix" not in normalized_rule["Filter"] and "And" not in normalized_rule["Filter"]:
+            normalized_rule["Filter"]["Prefix"] = ""
+    # If neither Prefix nor Filter exists, add empty Filter
+    elif "Filter" not in normalized_rule:
+        normalized_rule["Filter"] = {"Prefix": ""}
+    return normalized_rule
+
+
+# Helper function to get filter from rule (handles both old and new formats)
+def get_rule_filter(rule):
+    """Extract filter from rule, handling both old (Prefix) and new (Filter) formats"""
+    if "Filter" in rule:
+        return rule["Filter"]
+    elif "Prefix" in rule:
+        # Old format - convert to Filter format
+        return {"Prefix": rule["Prefix"]}
+    else:
+        return {"Prefix": ""}
 
 
 # Helper function to deeply compare filters
@@ -399,15 +433,19 @@ def compare_and_update_configuration(client, module, current_lifecycle_rules, ru
     lifecycle_configuration = dict(Rules=[])
     changed = False
     appended = False
+    matched_existing_rule = None
     # If current_lifecycle_obj is not None then we have rules to compare, otherwise just add the rule
     if current_lifecycle_rules:
         # If rule ID exists, use that for comparison otherwise compare based on prefix
         for existing_rule in current_lifecycle_rules:
+            # Get filters from both rules (handles both old and new formats)
+            rule_filter = get_rule_filter(rule)
+            existing_rule_filter = get_rule_filter(existing_rule)
             if rule.get("ID") == existing_rule.get("ID") and not filters_are_equal(
-                rule.get("Filter"), existing_rule.get("Filter")
+                rule_filter, existing_rule_filter
             ):
                 existing_rule.pop("ID")
-            elif rule_id is None and filters_are_equal(rule.get("Filter"), existing_rule.get("Filter")):
+            elif rule_id is None and filters_are_equal(rule_filter, existing_rule_filter):
                 existing_rule.pop("ID")
             if rule.get("ID") == existing_rule.get("ID"):
                 changed_, appended_ = update_or_append_rule(
@@ -415,8 +453,58 @@ def compare_and_update_configuration(client, module, current_lifecycle_rules, ru
                 )
                 changed = changed_ or changed
                 appended = appended_ or appended
+                matched_existing_rule = existing_rule
             else:
                 lifecycle_configuration["Rules"].append(existing_rule)
+
+        # If nothing appended and rule_id is provided, try to match by filter and rule content
+        # This handles the case where existing rules have auto-generated IDs
+        if not appended and rule_id is not None:
+            rule_filter = get_rule_filter(rule)
+            rule_without_id = deepcopy(rule)
+            rule_without_id.pop("ID", None)
+            matching_rule = None
+            
+            # Find the first matching rule by filter and content
+            for existing_rule in current_lifecycle_rules:
+                # Skip if we already processed this rule
+                if existing_rule == matched_existing_rule:
+                    continue
+                # Get filters from both rules (handles both old and new formats)
+                existing_rule_filter = get_rule_filter(existing_rule)
+                # Check if filter matches and rule content is similar
+                if filters_are_equal(rule_filter, existing_rule_filter):
+                    # Compare rule content (expiration, status, etc.) without ID
+                    existing_rule_without_id = deepcopy(existing_rule)
+                    existing_rule_without_id.pop("ID", None)
+                    
+                    # If rules are similar, this is our matching rule
+                    if compare_rule(rule_without_id, existing_rule_without_id, purge_transitions):
+                        matching_rule = existing_rule
+                        break
+            
+            # If we found a matching rule, update it and remove all other duplicates
+            if matching_rule is not None:
+                # Remove ALL rules that match the filter and content from lifecycle_configuration
+                # We'll add back the updated version with the correct ID
+                filtered_rules = []
+                for r in lifecycle_configuration["Rules"]:
+                    r_filter = get_rule_filter(r)
+                    r_without_id = deepcopy(r)
+                    r_without_id.pop("ID", None)
+                    # Keep the rule only if it doesn't match our filter and content
+                    if not (filters_are_equal(r_filter, rule_filter) and 
+                           compare_rule(rule_without_id, r_without_id, purge_transitions)):
+                        filtered_rules.append(r)
+                lifecycle_configuration["Rules"] = filtered_rules
+                
+                # Update the matching rule with the provided ID
+                rule["ID"] = rule_id
+                changed_, appended_ = update_or_append_rule(
+                    rule, matching_rule, purge_transitions, lifecycle_configuration
+                )
+                changed = changed_ or changed
+                appended = appended_ or appended
 
         # If nothing appended then append now as the rule must not exist
         if not appended:
@@ -462,14 +550,15 @@ def compare_and_remove_rule(current_lifecycle_rules, rule_id=None, prefix=None):
     # If an ID exists, use that otherwise compare based on prefix
     if rule_id is not None:
         for existing_rule in current_lifecycle_rules:
-            if rule_id == existing_rule["ID"]:
+            if rule_id == existing_rule.get("ID"):
                 # We're not keeping the rule (i.e. deleting) so mark as changed
                 changed = True
             else:
                 lifecycle_configuration["Rules"].append(existing_rule)
     else:
         for existing_rule in current_lifecycle_rules:
-            if prefix == existing_rule["Filter"].get("Prefix", ""):
+            existing_rule_filter = get_rule_filter(existing_rule)
+            if prefix == existing_rule_filter.get("Prefix", ""):
                 # We're not keeping the rule (i.e. deleting) so mark as changed
                 changed = True
             else:
