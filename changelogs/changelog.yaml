@@ -4486,6 +4486,7 @@ releases:
     - 10.1.1-release-summary.yml
     - 2355-float-stepscaling-bounds.yml
     release_date: '2026-06-18'
+<<<<<<< HEAD
   11.0.0:
     changes:
       breaking_changes:
@@ -4506,3 +4507,5 @@ releases:
     - 20260202-bump-version-to-12dev.yml
     - 2375-bump-botocore-1.35.0.yaml
     release_date: '2026-02-04'
+=======
+>>>>>>> a57dde975 (Release prep community.aws 10.1.1 (#2459))
