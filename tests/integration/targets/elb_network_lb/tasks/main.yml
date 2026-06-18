@@ -20,6 +20,15 @@
       state: present
     register: vpc
 
+  - name: set VPC IPv6 CIDR fact
+    ansible.builtin.set_fact:
+      vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block }}"
+
+  - name: set IPv6 subnet CIDRs
+    ansible.builtin.set_fact:
+      subnet_ipv6_a: '{{ vpc_ipv6_cidr | ansible.utils.ipaddr("0") | ansible.utils.ipsubnet(64, 0) }}'
+      subnet_ipv6_b: '{{ vpc_ipv6_cidr | ansible.utils.ipaddr("0") | ansible.utils.ipsubnet(64, 1) }}'
+
   - name: create internet gateway
     ec2_vpc_igw:
       vpc_id: "{{ vpc.vpc.id }}"
@@ -61,11 +70,11 @@
       - cidr: "{{ subnet_a_cidr }}"
         az: "a"
         public: True
-        vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','0::/64') }}"
+        vpc_ipv6_cidr: "{{ subnet_ipv6_a }}"
       - cidr: "{{ subnet_b_cidr }}"
         az: "b"
         public: True
-        vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','1::/64') }}"
+        vpc_ipv6_cidr: "{{ subnet_ipv6_b }}"
 
   - ec2_vpc_subnet_info:
       filters:
