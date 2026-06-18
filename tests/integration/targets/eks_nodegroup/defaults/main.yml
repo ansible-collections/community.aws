@@ -7,10 +7,10 @@ vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.220.0/22
 
 eks_subnets:
   - zone: a
-    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.220.0/24"
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
     type: private
   - zone: b
-    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.221.0/24"
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
     type: public
 
 eks_nodegroup_ami_type: "AL2_x86_64"

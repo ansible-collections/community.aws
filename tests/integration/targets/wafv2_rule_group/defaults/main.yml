@@ -9,7 +9,7 @@ vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.160.0/22
 
 cidr:
   main: '{{ vpc_cidr }}'
-  a: '10.{{ 256 | random(seed=resource_prefix) }}.160.0/24'
-  b: '10.{{ 256 | random(seed=resource_prefix) }}.161.0/24'
-  c: '10.{{ 256 | random(seed=resource_prefix) }}.162.0/24'
-  d: '10.{{ 256 | random(seed=resource_prefix) }}.163.0/24'
+  a: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+  b: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
+  c: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 2) }}"
+  d: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 3) }}"

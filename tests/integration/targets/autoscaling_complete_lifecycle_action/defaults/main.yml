@@ -14,6 +14,6 @@ sg_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 lc_name: '{{ tiny_prefix }}-{{ resource_sufix }}'
 
 subnet_az: '{{ ec2_availability_zone_names[0] }}'
-subnet_cidr: '10.{{ 256 | random(seed=vpc_seed) }}.252.0/24'
-subnet_startswith: '10.{{ 256 | random(seed=vpc_seed) }}.252.'
+subnet_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+subnet_startswith: "{{ (subnet_cidr.split('.')[:3] + ['']) | join('.') }}"
 subnet_name: '{{ tiny_prefix }}-{{ resource_sufix }}'

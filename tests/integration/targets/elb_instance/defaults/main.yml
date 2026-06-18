@@ -5,8 +5,8 @@ elb_name_1: 'ansible-test-{{ tiny_prefix }}-1'
 elb_name_2: 'ansible-test-{{ tiny_prefix }}-2'
 
 vpc_cidr: '10.{{ 256 | random(seed=resource_prefix) }}.208.0/22'
-subnet_cidr_1: '10.{{ 256 | random(seed=resource_prefix) }}.209.0/24'
-subnet_cidr_2: '10.{{ 256 | random(seed=resource_prefix) }}.210.0/24'
+subnet_cidr_1: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+subnet_cidr_2: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
 
 instance_name_1: 'ansible-test-{{ tiny_prefix }}-elb-instance-1'
 instance_name_2: 'ansible-test-{{ tiny_prefix }}-elb-instance-2'

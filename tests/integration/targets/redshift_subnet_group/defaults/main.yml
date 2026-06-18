@@ -8,10 +8,10 @@ subnet_name_c: '{{ resource_prefix }}-c'
 subnet_name_d: '{{ resource_prefix }}-d'
 
 vpc_cidr: '10.{{ 256 | random(seed=resource_prefix) }}.176.0/22'
-subnet_cidr_a: '10.{{ 256 | random(seed=resource_prefix) }}.176.0/24'
-subnet_cidr_b: '10.{{ 256 | random(seed=resource_prefix) }}.177.0/24'
-subnet_cidr_c: '10.{{ 256 | random(seed=resource_prefix) }}.178.0/24'
-subnet_cidr_d: '10.{{ 256 | random(seed=resource_prefix) }}.179.0/24'
+subnet_cidr_a: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+subnet_cidr_b: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
+subnet_cidr_c: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 2) }}"
+subnet_cidr_d: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 3) }}"
 
 subnet_zone_a: '{{ ec2_availability_zone_names[0] }}'
 subnet_zone_b: '{{ ec2_availability_zone_names[1] }}'

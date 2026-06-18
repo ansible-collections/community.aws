@@ -6,11 +6,11 @@ vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.224.0/22
 
 eks_subnets:
   - zone: a
-    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.224.0/24"
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
   - zone: b
-    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.225.0/24"
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
   - zone: c
-    cidr: "10.{{ 256 | random(seed=resource_prefix) }}.226.0/24"
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 2) }}"
 
 eks_security_groups:
   - name: "{{ eks_cluster_name }}-control-plane-sg"

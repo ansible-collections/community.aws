@@ -5,7 +5,7 @@ vpc_name: "{{ resource_prefix }}-vpc"
 
 # VPC CIDR allocation - randomised to avoid conflicts
 vpc_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.192.0/22"
-subnet_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.193.0/24"
+subnet_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
 
 sg_name: "{{resource_prefix}}-sg"
 tags:

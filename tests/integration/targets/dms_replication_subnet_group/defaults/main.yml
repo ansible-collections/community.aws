@@ -3,5 +3,5 @@ dms_role_role_name: dms-vpc-role
 
 # VPC CIDR allocation - randomised to avoid conflicts
 vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.236.0/23
-subnet_a_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.236.16/28
-subnet_b_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.236.32/28
+subnet_a_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(28, 0) }}"
+subnet_b_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(28, 1) }}"

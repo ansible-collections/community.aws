@@ -5,4 +5,4 @@ load_balancer_name: "{{ tiny_prefix }}-lb"
 
 # VPC CIDR allocation - randomised to avoid conflicts
 vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.244.0/24
-subnet_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.244.0/24
+subnet_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
