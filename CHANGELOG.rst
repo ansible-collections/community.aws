@@ -4,6 +4,19 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v10.1.1
+=======
+
+Release Summary
+---------------
+
+This patch release includes a bugfix for the autoscaling_policy module.
+
+Bugfixes
+--------
+
+- autoscaling_policy - allow float type for ``step_adjustments`` ``lower_bound`` and ``upper_bound`` parameters (https://github.com/ansible-collections/community.aws/issues/2355)
+
 v10.1.0
 =======
 
