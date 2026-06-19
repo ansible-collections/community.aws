@@ -14,7 +14,7 @@
     - name: Create VPC for use in testing
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
-        cidr_block: 10.55.77.0/24
+        cidr_block: "{{ vpc_cidr }}"
         tenancy: default
       register: testing_vpc
 
@@ -22,7 +22,7 @@
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{ testing_vpc.vpc.id }}"
-        cidr: 10.55.77.0/24
+        cidr: "{{ vpc_cidr }}"
         az: "{{ aws_region }}a"
         resource_tags:
           Name: "{{ resource_prefix }}-subnet"
@@ -318,7 +318,7 @@
       ec2_vpc_subnet:
         state: absent
         vpc_id: "{{ testing_vpc.vpc.id }}"
-        cidr: 10.55.77.0/24
+        cidr: "{{ vpc_cidr }}"
       register: removed
       until: removed is not failed
       ignore_errors: yes
@@ -327,7 +327,7 @@
     - name: Remove the VPC
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
-        cidr_block: 10.55.77.0/24
+        cidr_block: "{{ vpc_cidr }}"
         state: absent
       register: removed
       until: removed is not failed

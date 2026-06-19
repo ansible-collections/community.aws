@@ -56,13 +56,13 @@
   ec2_vpc_subnet:
     state: absent
     vpc_id: "{{ vpc_id }}"
-    cidr: 10.55.77.0/24
+    cidr: "{{ subnet_a_cidr }}"
 
 - name: Delete subnet_2
   ec2_vpc_subnet:
     state: absent
     vpc_id: "{{ vpc_id }}"
-    cidr: 10.55.78.0/24
+    cidr: "{{ subnet_b_cidr }}"
 
 - name: Collect info about routing tables
   ec2_vpc_route_table_info:
@@ -87,6 +87,6 @@
 - name: Delete VPC for use in testing
   ec2_vpc_net:
     name: "{{ vpc_name }}"
-    cidr_block: 10.55.0.0/16
+    cidr_block: "{{ vpc_cidr }}"
     purge_cidrs: true
     state: absent

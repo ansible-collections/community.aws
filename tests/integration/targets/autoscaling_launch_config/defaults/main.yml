@@ -4,3 +4,8 @@ ec2_instance_name: '{{ resource_prefix }}-node'
 ec2_instance_owner: 'integration-run-{{ resource_prefix }}'
 ec2_instance_type: t2.micro
 alarm_prefix: "ansible-test"
+
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.248.0/23
+subnet_a_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+subnet_b_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"

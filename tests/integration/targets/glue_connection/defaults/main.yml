@@ -1,0 +1,4 @@
+---
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.196.0/23
+subnet_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"

@@ -1,70 +1,40 @@
 ---
 - name: test elb_target_group with target_type = alb
   block:
-    - name: set up testing VPC
-      ec2_vpc_net:
-        name: "{{ resource_prefix }}-vpc"
-        state: present
-        cidr_block: 20.0.0.0/16
-        tags:
-          Name: "{{ resource_prefix }}-vpc"
-          Description: "Created by ansible-test"
-      register: vpc
+    - name: set up VPC and networking infrastructure
+      include_role:
+        name: setup_ec2_instance_env
+      vars:
+        ec2_instance_test_name: elb_target_alb
+        vpc_name: "{{ resource_prefix }}-vpc-alb"
+        vpc_seed: "{{ resource_prefix }}-elb-target-alb"
 
-    - name: set up testing internet gateway
+    - name: create testing internet gateway
       ec2_vpc_igw:
-        vpc_id: "{{ vpc.vpc.id }}"
+        vpc_id: "{{ testing_vpc.vpc.id }}"
         state: present
       register: igw
 
-    - name: set up testing subnet
-      ec2_vpc_subnet:
-        state: present
-        vpc_id: "{{ vpc.vpc.id }}"
-        cidr: 20.0.0.0/18
-        az: "{{ aws_region }}a"
-        resource_tags:
-          Name: "{{ resource_prefix }}-subnet"
-      register: subnet_1
-
-    - name: set up testing subnet
-      ec2_vpc_subnet:
-        state: present
-        vpc_id: "{{ vpc.vpc.id }}"
-        cidr: 20.0.64.0/18
-        az: "{{ aws_region }}b"
-        resource_tags:
-          Name: "{{ resource_prefix }}-subnet"
-      register: subnet_2
-
     - name: create routing rules
       ec2_vpc_route_table:
-        vpc_id: "{{ vpc.vpc.id }}"
+        vpc_id: "{{ testing_vpc.vpc.id }}"
         tags:
           created: "{{ resource_prefix }}-route"
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{ igw.gateway_id }}"
         subnets:
-          - "{{ subnet_1.subnet.id }}"
-          - "{{ subnet_2.subnet.id }}"
+          - "{{ testing_subnet_a.subnet.id }}"
+          - "{{ testing_subnet_b.subnet.id }}"
       register: route_table
 
-    - name: create testing security group
-      ec2_security_group:
-        name: "{{ resource_prefix }}-sg"
-        description: a security group for ansible tests
-        vpc_id: "{{ vpc.vpc.id }}"
-        rules:
-          - proto: tcp
-            from_port: 80
-            to_port: 80
-            cidr_ip: 0.0.0.0/0
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 0.0.0.0/0
-      register: sg
+    # Alias variables for compatibility with existing test code
+    - name: set compatibility variables
+      set_fact:
+        vpc: "{{ testing_vpc }}"
+        subnet_1: "{{ testing_subnet_a }}"
+        subnet_2: "{{ testing_subnet_b }}"
+        # sg is already set by setup_ec2_instance_env
 
     - name: set up testing target group for NLB (type=alb)
       elb_target_group:
@@ -154,52 +124,18 @@
     until: removed is not failed
     ignore_errors: true
 
-  - name: remove testing subnet
-    ec2_vpc_subnet:
-      state: absent
-      vpc_id: "{{ vpc.vpc.id }}"
-      cidr: 20.0.0.0/18
-      az: "{{ aws_region }}a"
-    register: removed
-    retries: 10
-    until: removed is not failed
+  - name: wait for load balancer ENIs to be deleted after LB removal
+    amazon.aws.ec2_eni_info:
+      filters:
+        vpc-id: "{{ testing_vpc.vpc.id }}"
+        description: "ELB*"
+    register: lb_enis
+    until: lb_enis.network_interfaces | length == 0
+    retries: 60
+    delay: 5
     ignore_errors: true
 
-  - name: remove testing subnet
-    ec2_vpc_subnet:
-      state: absent
-      vpc_id: "{{ vpc.vpc.id }}"
-      cidr: 20.0.64.0/18
-      az: "{{ aws_region }}b"
-    register: removed
-    retries: 10
-    until: removed is not failed
-    ignore_errors: true
-
-  - name: remove testing security group
-    ec2_security_group:
-      state: absent
-      name: "{{ resource_prefix }}-sg"
-    register: removed
-    retries: 10
-    until: removed is not failed
-    ignore_errors: true
-
-  - name: remove testing internet gateway
-    ec2_vpc_igw:
-      vpc_id: "{{ vpc.vpc.id }}"
-      state: absent
-    register: removed
-    retries: 2
-    until: removed is not failed
-    ignore_errors: true
-
-  - name: remove testing VPC
-    ec2_vpc_net:
-      name: "{{ resource_prefix }}-vpc"
-      cidr_block: 20.0.0.0/16
-      state: absent
-    register: removed
-    retries: 2
-    until: removed is not failed
-    ignore_errors: true
+  - name: cleanup VPC and associated resources
+    include_role:
+      name: setup_ec2_instance_env
+      tasks_from: cleanup
