@@ -364,14 +364,14 @@
     state: absent
   with_items:
     - zone: a
-      cidr: 10.0.1.0/24
+      cidr: "{{ subnet_a_cidr }}"
     - zone: b
-      cidr: 10.0.2.0/24
+      cidr: "{{ subnet_b_cidr }}"
   ignore_errors: true
 
 - name: remove setup VPC
   ec2_vpc_net:
-    cidr_block: 10.0.0.0/16
+    cidr_block: "{{ vpc_cidr }}"
     state: absent
     name: '{{ resource_prefix }}_ecs_cluster'
   ignore_errors: true
