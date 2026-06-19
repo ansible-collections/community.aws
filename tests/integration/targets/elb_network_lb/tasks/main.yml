@@ -14,11 +14,20 @@
 
   - name: create VPC
     ec2_vpc_net:
-      cidr_block: 10.228.228.0/22
+      cidr_block: "{{ vpc_cidr }}"
       name: "{{ resource_prefix }}_vpc"
       ipv6_cidr: true
       state: present
     register: vpc
+
+  - name: set VPC IPv6 CIDR fact
+    ansible.builtin.set_fact:
+      vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block }}"
+
+  - name: set IPv6 subnet CIDRs
+    ansible.builtin.set_fact:
+      subnet_ipv6_a: '{{ vpc_ipv6_cidr | ansible.utils.ipaddr("0") | ansible.utils.ipsubnet(64, 0) }}'
+      subnet_ipv6_b: '{{ vpc_ipv6_cidr | ansible.utils.ipaddr("0") | ansible.utils.ipsubnet(64, 1) }}'
 
   - name: create internet gateway
     ec2_vpc_igw:
@@ -38,10 +47,10 @@
         Created_By: "{{ resource_prefix }}"
         Public: "{{ item.public }}"
     with_items:
-      - cidr: 10.228.230.0/24
+      - cidr: "{{ subnet_c_cidr }}"
         az: "a"
         public: False
-      - cidr: 10.228.231.0/24
+      - cidr: "{{ subnet_d_cidr }}"
         az: "b"
         public: False
     register: subnets
@@ -58,14 +67,14 @@
         Name: '{{ item.public|ternary(''public'', ''private'') }}-{{ item.az }}'
         Created_By: "{{ resource_prefix }}"
     with_items:
-      - cidr: 10.228.228.0/24
+      - cidr: "{{ subnet_a_cidr }}"
         az: "a"
         public: True
-        vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','0::/64') }}"
-      - cidr: 10.228.229.0/24
+        vpc_ipv6_cidr: "{{ subnet_ipv6_a }}"
+      - cidr: "{{ subnet_b_cidr }}"
         az: "b"
         public: True
-        vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','1::/64') }}"
+        vpc_ipv6_cidr: "{{ subnet_ipv6_b }}"
 
   - ec2_vpc_subnet_info:
       filters:
@@ -101,7 +110,7 @@
           cidr_ip: 0.0.0.0/0
         - proto: all
           ports: 80
-          cidr_ip: 10.228.228.0/22
+          cidr_ip: "{{ vpc_cidr }}"
     register: sec_group
 
   - name: create a target group for testing
@@ -206,10 +215,10 @@
       delay: 5
       until: remove_subnet is success
       with_items:
-        - cidr: 10.228.228.0/24
-        - cidr: 10.228.229.0/24
-        - cidr: 10.228.230.0/24
-        - cidr: 10.228.231.0/24
+        - cidr: "{{ subnet_a_cidr }}"
+        - cidr: "{{ subnet_b_cidr }}"
+        - cidr: "{{ subnet_b_cidr }}"
+        - cidr: "{{ subnet_c_cidr }}"
       ignore_errors: yes
 
     - name: destroy internet gateway
@@ -226,7 +235,7 @@
 
     - name: destroy VPC
       ec2_vpc_net:
-        cidr_block: 10.228.228.0/22
+        cidr_block: "{{ vpc_cidr }}"
         name: "{{ resource_prefix }}_vpc"
         state: absent
       register: remove_vpc

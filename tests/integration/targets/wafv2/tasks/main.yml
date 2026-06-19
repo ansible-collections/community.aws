@@ -159,10 +159,10 @@
       delay: 5
       until: remove_subnet is success
       with_items:
-      - cidr: 10.228.228.0/24
-      - cidr: 10.228.229.0/24
-      - cidr: 10.228.230.0/24
-      - cidr: 10.228.231.0/24
+      - cidr: "{{ subnet_a_cidr }}"
+      - cidr: "{{ subnet_b_cidr }}"
+      - cidr: "{{ subnet_c_cidr }}"
+      - cidr: "{{ subnet_d_cidr }}"
       ignore_errors: true
 
     - name: destroy internet gateway
@@ -179,7 +179,7 @@
 
     - name: destroy VPC
       ec2_vpc_net:
-        cidr_block: 10.228.228.0/22
+        cidr_block: "{{ vpc_cidr }}"
         name: '{{ resource_prefix }}_vpc'
         state: absent
       register: remove_vpc

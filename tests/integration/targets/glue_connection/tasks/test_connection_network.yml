@@ -9,7 +9,7 @@
     - name: Create VPC
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
-        cidr_block: 10.22.32.0/23
+        cidr_block: "{{ vpc_cidr }}"
         tags:
           Name: Ansible ec2_instance Testing VPC
         tenancy: default
@@ -18,7 +18,7 @@
     - name: Create default subnet in zone A
       ec2_vpc_subnet:
         az: "{{ aws_region }}a"
-        cidr: 10.22.32.0/24
+        cidr: "{{ subnet_cidr }}"
         vpc_id: "{{ glue_vpc.vpc.id }}"
         resource_tags:
           Name: "{{ resource_prefix }}-subnet-a"
@@ -324,7 +324,7 @@
     - name: Delete default subnet in zone A
       ec2_vpc_subnet:
         az: "{{ aws_region }}a"
-        cidr: 10.22.32.0/24
+        cidr: "{{ subnet_cidr }}"
         vpc_id: "{{ glue_vpc.vpc.id }}"
         state: absent
       register: glue_subnet_a
@@ -332,6 +332,6 @@
     - name: Delete VPC
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
-        cidr_block: 10.22.32.0/23
+        cidr_block: "{{ vpc_cidr }}"
         state: absent
       ignore_errors: true

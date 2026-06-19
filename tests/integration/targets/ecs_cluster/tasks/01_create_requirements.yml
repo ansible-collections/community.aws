@@ -36,7 +36,7 @@
 
 - name: create a VPC to work in
   ec2_vpc_net:
-    cidr_block: 10.0.0.0/16
+    cidr_block: "{{ vpc_cidr }}"
     state: present
     name: '{{ resource_prefix }}_ecs_cluster'
     resource_tags:
@@ -61,9 +61,9 @@
   register: setup_subnet
   with_items:
     - zone: a
-      cidr: 10.0.1.0/24
+      cidr: "{{ subnet_a_cidr }}"
     - zone: b
-      cidr: 10.0.2.0/24
+      cidr: "{{ subnet_b_cidr }}"
 
 - name: create an internet gateway so that ECS agents can talk to ECS
   ec2_vpc_igw:

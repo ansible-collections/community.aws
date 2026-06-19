@@ -19,7 +19,7 @@
   block:
   - name: create VPC
     ec2_vpc_net:
-      cidr_block: 192.0.2.0/24
+      cidr_block: "{{ vpc_cidr }}"
       name: '{{ resource_prefix }}_vpc'
       state: present
     register: vpc
@@ -237,7 +237,7 @@
 
   - name: destroy VPC
     ec2_vpc_net:
-      cidr_block: 192.0.2.0/24
+      cidr_block: "{{ vpc_cidr }}"
       name: '{{ resource_prefix }}_vpc'
       state: absent
     register: remove_vpc

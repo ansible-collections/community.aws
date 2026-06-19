@@ -1,1 +1,5 @@
 efs_name: "ansible-test-{{ tiny_prefix }}"
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.228.0/23
+subnet_a_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+subnet_b_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
