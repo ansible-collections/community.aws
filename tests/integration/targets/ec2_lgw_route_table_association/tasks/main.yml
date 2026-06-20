@@ -1,0 +1,186 @@
+---
+- name: ec2_lgw_route_table_association integration tests
+  module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+    # ============================================================
+    - name: Create a VPC
+      amazon.aws.ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        state: present
+        cidr_block: "{{ vpc_cidr }}"
+        tags:
+          Description: Created by ansible-test
+      register: vpc_result
+
+    - name: Use set fact for vpc ids
+      ansible.builtin.set_fact:
+        vpc_id: "{{ vpc_result.vpc.id }}"
+    # ==================================================================
+    - name: Create Local Gateway Route Table VPC Association - check_mode
+      community.aws.ec2_lgw_route_table_association:
+        state: present
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso_check_mode
+      check_mode: true
+
+    - name: Assert check_mode result - no lgw_rt_association creation
+      ansible.builtin.assert:
+        that:
+          - lgw_rt_asso_check_mode.changed
+          - not lgw_rt_asso_check_mode.failed
+
+    - name: Create Local Gateway Route Table VPC Association
+      community.aws.ec2_lgw_route_table_association:
+        state: present
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso
+
+    - name: Use set fact for lgw_rt_asso id
+      ansible.builtin.set_fact:
+        lgw_rt_asso_id: "{{ lgw_rt_asso.result.LocalGatewayRouteTableVpcAssociationId }}"
+
+    - name: Assert result - lgw_rt_association creation
+      ansible.builtin.assert:
+        that:
+          - lgw_rt_asso.changed
+          - lgw_rt_asso.result.VpcId == vpc_id
+
+    - name: Test idempotence
+      community.aws.ec2_lgw_route_table_association:
+        state: present
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso
+
+    - name: Assert idempotence result - no change
+      ansible.builtin.assert:
+        that:
+          - not lgw_rt_asso.changed
+          - lgw_rt_asso.result.LocalGatewayRouteTableVpcAssociationId == lgw_rt_asso_id
+
+    # ============================================================
+    - name: Get local gateway route table associations by ID
+      community.aws.ec2_lgw_route_table_association_info:
+        lgw_route_table_vpc_association_id: "{{ lgw_rt_asso_id }}"
+      register: lgw_rt_asso_info
+      check_mode: true
+
+    - name: Verify expected facts by ID
+      vars:
+        lgw_rt_asso_details: "{{ lgw_rt_asso_info.result[0] }}"
+      ansible.builtin.assert:
+        that:
+          - '"LocalGatewayId" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableArn" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableId" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableVpcAssociationId" in lgw_rt_asso_details'
+          - '"OwnerId" in lgw_rt_asso_details'
+          - '"VpcId" in lgw_rt_asso_details'
+          - '"State" in lgw_rt_asso_details'
+          - lgw_rt_asso_details.LocalGatewayRouteTableVpcAssociationId == lgw_rt_asso_id
+          - lgw_rt_asso_details.VpcId == vpc_id
+          - lgw_rt_asso_details.LocalGatewayRouteTableId == lgw_route_table_id
+
+    - name: Get local gateway route table associations by VPC ID
+      community.aws.ec2_lgw_route_table_association_info:
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso_info
+      check_mode: true
+
+    - name: Verify expected facts by VPC ID
+      vars:
+        lgw_rt_asso_details: "{{ lgw_rt_asso_info.result[0] }}"
+      ansible.builtin.assert:
+        that:
+          - '"LocalGatewayId" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableArn" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableId" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableVpcAssociationId" in lgw_rt_asso_details'
+          - '"OwnerId" in lgw_rt_asso_details'
+          - '"VpcId" in lgw_rt_asso_details'
+          - '"State" in lgw_rt_asso_details'
+          - lgw_rt_asso_details.LocalGatewayRouteTableVpcAssociationId == lgw_rt_asso_id
+          - lgw_rt_asso_details.VpcId == vpc_id
+          - lgw_rt_asso_details.LocalGatewayRouteTableId == lgw_route_table_id
+
+    - name: Get local gateway route table associations by Local Gateway Route Table ID and VPC ID
+      community.aws.ec2_lgw_route_table_association_info:
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso_info
+      check_mode: true
+
+    - name: Verify expected facts by Local Gateway Route Table ID and VPC ID
+      vars:
+        lgw_rt_asso_details: "{{ lgw_rt_asso_info.result[0] }}"
+      ansible.builtin.assert:
+        that:
+          - '"LocalGatewayId" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableArn" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableId" in lgw_rt_asso_details'
+          - '"LocalGatewayRouteTableVpcAssociationId" in lgw_rt_asso_details'
+          - '"OwnerId" in lgw_rt_asso_details'
+          - '"VpcId" in lgw_rt_asso_details'
+          - '"State" in lgw_rt_asso_details'
+          - lgw_rt_asso_details.LocalGatewayRouteTableVpcAssociationId == lgw_rt_asso_id
+          - lgw_rt_asso_details.VpcId == vpc_id
+          - lgw_rt_asso_details.LocalGatewayRouteTableId == lgw_route_table_id
+
+    # ============================================================
+    - name: Delete Local Gateway Route Table VPC Association - check_mode
+      community.aws.ec2_lgw_route_table_association:
+        state: absent
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso_check_mode
+      check_mode: true
+
+    - name: Assert check_mode result - no lgw_rt_association deletion
+      ansible.builtin.assert:
+        that:
+          - lgw_rt_asso_check_mode.changed
+          - not lgw_rt_asso_check_mode.failed
+
+    - name: Delete Local Gateway Route Table VPC Association
+      community.aws.ec2_lgw_route_table_association:
+        state: absent
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso
+
+    - name: Assert result - lgw_rt_association deletion
+      ansible.builtin.assert:
+        that:
+          - lgw_rt_asso.changed
+
+    - name: Test idempotence deletion
+      community.aws.ec2_lgw_route_table_association:
+        state: absent
+        lgw_route_table_id: "{{ lgw_route_table_id }}"
+        vpc_id: "{{ vpc_id }}"
+      register: lgw_rt_asso
+
+    - name: Assert idempotence result - no change on deletion
+      ansible.builtin.assert:
+        that:
+          - not lgw_rt_asso.changed
+
+# ============================================================
+  always:
+    - name: Delete vpc
+      amazon.aws.ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        state: absent
+        cidr_block: "{{ vpc_cidr }}"
+      register: result
+      retries: 10
+      delay: 5
+      until: result is not failed
+      ignore_errors: true
