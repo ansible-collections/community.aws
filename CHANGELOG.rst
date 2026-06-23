@@ -23,6 +23,19 @@ Breaking Changes / Porting Guide
 
 - community.aws collection - Due to the AWS SDKs announcing the end of support for Python less than 3.8 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/), support for Python less than 3.8 by this collection has been deprecated and will be removed in release 10.0.0. (https://github.com/ansible-collections/community.aws/pull/2304).
 
+v10.1.1
+=======
+
+Release Summary
+---------------
+
+This patch release includes a bugfix for the autoscaling_policy module.
+
+Bugfixes
+--------
+
+- autoscaling_policy - allow float type for ``step_adjustments`` ``lower_bound`` and ``upper_bound`` parameters (https://github.com/ansible-collections/community.aws/issues/2355)
+
 v10.1.0
 =======
 

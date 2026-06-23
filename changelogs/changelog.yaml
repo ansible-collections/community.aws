@@ -4473,6 +4473,19 @@ releases:
     - deprecate-old-module-names.yml
     - deprecate-waf-classic.yml
     release_date: '2026-02-03'
+  10.1.1:
+    changes:
+      release_summary: 'This patch release includes a bugfix for the autoscaling_policy
+        module.
+
+        '
+      bugfixes:
+      - autoscaling_policy - allow float type for ``step_adjustments`` ``lower_bound``
+        and ``upper_bound`` parameters (https://github.com/ansible-collections/community.aws/issues/2355)
+    fragments:
+    - 10.1.1-release-summary.yml
+    - 2355-float-stepscaling-bounds.yml
+    release_date: '2026-06-18'
   11.0.0:
     changes:
       breaking_changes:
