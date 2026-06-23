@@ -1,0 +1,279 @@
+---
+- name: Test ephemeral storage configuration for ECS task definitions
+  block:
+    - name: Create task definition with ephemeral storage (check mode)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 25
+        state: present
+      check_mode: true
+      register: task_def_ephemeral_check
+
+    - name: Verify task definition creation (check mode)
+      assert:
+        that:
+          - task_def_ephemeral_check is changed
+          - task_def_ephemeral_check is not failed
+
+    - name: Create task definition with ephemeral storage
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 25
+        state: present
+      register: task_def_ephemeral_create
+
+    - name: Verify task definition creation
+      assert:
+        that:
+          - task_def_ephemeral_create is changed
+          - task_def_ephemeral_create is not failed
+          - task_def_ephemeral_create.taskdefinition.ephemeralStorage.sizeInGiB == 25
+
+    - name: Create task definition with ephemeral storage again (idempotency check mode)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 25
+        state: present
+      check_mode: true
+      register: task_def_ephemeral_idem_check
+
+    - name: Verify task definition idempotency (check mode)
+      assert:
+        that:
+          - task_def_ephemeral_idem_check is not changed
+          - task_def_ephemeral_idem_check is not failed
+
+    - name: Create task definition with ephemeral storage again (idempotency)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 25
+        state: present
+      register: task_def_ephemeral_idem
+
+    - name: Verify task definition idempotency
+      assert:
+        that:
+          - task_def_ephemeral_idem is not changed
+          - task_def_ephemeral_idem is not failed
+          - task_def_ephemeral_idem.taskdefinition.ephemeralStorage.sizeInGiB == 25
+
+    - name: Modify task definition ephemeral storage (check mode)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 30
+        state: present
+      check_mode: true
+      register: task_def_ephemeral_modify_check
+
+    - name: Verify task definition modification (check mode)
+      assert:
+        that:
+          - task_def_ephemeral_modify_check is changed
+          - task_def_ephemeral_modify_check is not failed
+
+    - name: Modify task definition ephemeral storage
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 30
+        state: present
+      register: task_def_ephemeral_modify
+
+    - name: Verify task definition modification
+      assert:
+        that:
+          - task_def_ephemeral_modify is changed
+          - task_def_ephemeral_modify is not failed
+          - task_def_ephemeral_modify.taskdefinition.ephemeralStorage.sizeInGiB == 30
+
+    - name: Modify task definition ephemeral storage again (idempotency check mode)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 30
+        state: present
+      check_mode: true
+      register: task_def_ephemeral_modify_idem_check
+
+    - name: Verify task definition modification idempotency (check mode)
+      assert:
+        that:
+          - task_def_ephemeral_modify_idem_check is not changed
+          - task_def_ephemeral_modify_idem_check is not failed
+
+    - name: Modify task definition ephemeral storage again (idempotency)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        ephemeral_storage:
+          size: 30
+        state: present
+      register: task_def_ephemeral_modify_idem
+
+    - name: Verify task definition modification idempotency
+      assert:
+        that:
+          - task_def_ephemeral_modify_idem is not changed
+          - task_def_ephemeral_modify_idem is not failed
+          - task_def_ephemeral_modify_idem.taskdefinition.ephemeralStorage.sizeInGiB == 30
+
+    - name: Create task definition without ephemeral storage (backwards compatibility)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-no-ephemeral"
+        containers:
+          - name: "{{ ecs_task_container_name }}"
+            image: "{{ ecs_task_image }}"
+            cpu: 256
+            memory: 512
+            essential: true
+        launch_type: FARGATE
+        cpu: 256
+        memory: 512
+        network_mode: awsvpc
+        state: present
+      register: task_def_no_ephemeral
+
+    - name: Verify task definition without ephemeral storage
+      assert:
+        that:
+          - task_def_no_ephemeral is changed
+          - task_def_no_ephemeral is not failed
+          - task_def_no_ephemeral.taskdefinition.ephemeralStorage is not defined
+
+    - name: Delete task definition with ephemeral storage (check mode)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        revision: "{{ task_def_ephemeral_modify.taskdefinition.revision }}"
+        state: absent
+      check_mode: true
+      register: task_def_ephemeral_delete_check
+
+    - name: Verify task definition deletion (check mode)
+      assert:
+        that:
+          - task_def_ephemeral_delete_check is changed
+          - task_def_ephemeral_delete_check is not failed
+
+    - name: Delete task definition with ephemeral storage
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-ephemeral"
+        revision: "{{ task_def_ephemeral_modify.taskdefinition.revision }}"
+        state: absent
+      register: task_def_ephemeral_delete
+
+    - name: Verify task definition deletion
+      assert:
+        that:
+          - task_def_ephemeral_delete is changed
+          - task_def_ephemeral_delete is not failed
+
+    - name: Delete non-existent task definition (check mode)
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-nonexistent"
+        revision: 1
+        state: absent
+      check_mode: true
+      register: task_def_nonexistent_delete_check
+
+    - name: Verify non-existent task definition deletion (check mode)
+      assert:
+        that:
+          - task_def_nonexistent_delete_check is not changed
+          - task_def_nonexistent_delete_check is not failed
+
+    - name: Delete non-existent task definition
+      community.aws.ecs_taskdefinition:
+        family: "{{ ecs_task_family_name }}-nonexistent"
+        revision: 1
+        state: absent
+      register: task_def_nonexistent_delete
+
+    - name: Verify non-existent task definition deletion
+      assert:
+        that:
+          - task_def_nonexistent_delete is not changed
+          - task_def_nonexistent_delete is not failed
