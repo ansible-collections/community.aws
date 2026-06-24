@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - cloudfront_distribution - Add support for new TLS protocol versions ``TLSv1.2_2025`` and ``TLSv1.3_2025`` in viewer certificate minimum protocol version options (https://github.com/ansible-collections/community.aws/pull/2348).
