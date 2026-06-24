@@ -1,0 +1,29 @@
+- name: create broker with specific parameters
+  mq_broker:
+    broker_name: "{{ broker_name }}"
+    security_groups: "{{ broker_sg_ids.split(',') }}"
+    subnet_ids: "{{ broker_subnet_ids.split(',') }}"
+    storage_type: "EBS"
+    engine_type: "RABBITMQ"
+    engine_version: "3.13"
+    tags: "{{ tags }}"
+    wait: true
+  register: result
+- set_fact:
+    broker_id: "{{ result.broker['broker_id'] }}"
+- name: get broker details by id
+  mq_broker_info:
+    broker_id: "{{ broker_id }}"
+  register: result_c1
+- name: verify creation result
+  assert:
+    fail_msg: broker creation failed
+    that:
+    # change state is from previous operation:
+      - ( result.changed | bool )
+      - result_c1.broker['broker_id'] == broker_id
+      - result_c1.broker['broker_name'] == broker_name
+      - result_c1.broker['broker_state'] == 'RUNNING'
+      - ( result_c1.broker['storage_type'] | upper ) == 'EBS'
+      - result_c1.broker['tags'] == tags
+  when: not ansible_check_mode
