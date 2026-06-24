@@ -1,0 +1,20 @@
+---
+- name: 'cognito_user_pool_client integration tests'
+  collections:
+    - amazon.aws
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+
+  block:
+    - include_tasks: 01_prerequisites.yml
+    - include_tasks: 10_user_pool_info.yml
+    - include_tasks: 20_user_pool_client.yml
+    - include_tasks: 25_user_pool_client_info.yml
+    - include_tasks: 30_additional_params.yml
+
+  always:
+    - include_tasks: 99_cleanup.yml
