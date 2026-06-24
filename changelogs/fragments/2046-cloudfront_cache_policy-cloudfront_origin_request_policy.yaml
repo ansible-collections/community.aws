@@ -1,0 +1,2 @@
+minor_changes:
+  - "Added ``cloudfront_cache_policy`` and ``cloudfront_origin_request_policy`` modules (https://github.com/ansible-collections/community.aws/pull/2046)."
