@@ -105,7 +105,6 @@ options:
       - The password used to access a password protected server.
       - Must be specified along with I(transit_encryption_enabled=true).
     type: str
-    no_log: true
   snapshot_retention_limit:
     description:
       - The number of days for which ElastiCache retains automatic snapshots.
@@ -114,12 +113,12 @@ options:
   snapshot_window:
     description:
       - The daily time range (in UTC) during which ElastiCache begins taking a daily snapshot.
-      - Example: C(05:00-09:00).
+      - 'Example: C(05:00-09:00).'
     type: str
   preferred_maintenance_window:
     description:
       - Specifies the weekly time range during which system maintenance can occur.
-      - Format: C(ddd:hh24:mi-ddd:hh24:mi), e.g. C(sun:05:00-sun:09:00).
+      - 'Format: C(ddd:hh24:mi-ddd:hh24:mi), e.g. C(sun:05:00-sun:09:00).'
     type: str
   port:
     description:
