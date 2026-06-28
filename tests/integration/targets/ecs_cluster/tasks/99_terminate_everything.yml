@@ -245,6 +245,7 @@
     revision: "{{ ecs_task_definition_absent_with_arn.taskdefinition.revision }}"
     state: absent
   ignore_errors: true
+  when: ecs_task_definition_absent_with_arn is defined
 
 - name: remove tagging test ecs task definition
   ecs_taskdefinition:
