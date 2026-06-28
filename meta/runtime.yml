@@ -118,6 +118,7 @@ action_groups:
     - elasticache
     - elasticache_info
     - elasticache_parameter_group
+    - elasticache_replication_group
     - elasticache_snapshot
     - elasticache_subnet_group
     - elasticbeanstalk_app
