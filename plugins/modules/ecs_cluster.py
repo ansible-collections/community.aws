@@ -363,6 +363,7 @@ def main():
                                         add_tags, tag_name_key_name="key", tag_value_key_name="value"
                                     ),
                                 )
+                            results["cluster"] = cluster_mgr.describe_cluster(module.params["name"])
                         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                             module.fail_json_aws(e, msg="Failed to update tags on cluster")
                     results["changed"] = True
