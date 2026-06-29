@@ -90,7 +90,7 @@ options:
           - If I(tags) is not set, tags will not be modified, even if I(purge_tags=true).
         required: false
         type: bool
-        default: false
+        default: true
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -265,6 +265,21 @@ class EcsClusterManager:
         return self.ecs.delete_cluster(cluster=clusterName)
 
 
+def ensure_tags(ecs_client, resource_arn, current_tags, desired_tags, purge_tags, check_mode):
+    add_tags, remove = compare_aws_tags(current_tags, desired_tags, purge_tags=purge_tags)
+    if not (add_tags or remove):
+        return False
+    if not check_mode:
+        if remove:
+            ecs_client.untag_resource(resourceArn=resource_arn, tagKeys=remove)
+        if add_tags:
+            ecs_client.tag_resource(
+                resourceArn=resource_arn,
+                tags=ansible_dict_to_boto3_tag_list(add_tags, tag_name_key_name="key", tag_value_key_name="value"),
+            )
+    return True
+
+
 def main():
     argument_spec = dict(
         state=dict(required=True, choices=["present", "absent", "has_instances"]),
@@ -284,7 +299,7 @@ def main():
             ),
         ),
         tags=dict(required=False, type="dict"),
-        purge_tags=dict(required=False, type="bool", default=False),
+        purge_tags=dict(required=False, type="bool", default=True),
     )
     required_together = [["state", "name"]]
 
@@ -350,23 +365,13 @@ def main():
             if tags is not None:
                 cluster_arn = existing["clusterArn"]
                 current_tags = boto3_tag_list_to_ansible_dict(existing.get("tags", []))
-                add_tags, remove = compare_aws_tags(current_tags, tags, purge_tags=purge_tags)
-                if add_tags or remove:
-                    if not module.check_mode:
-                        try:
-                            if remove:
-                                cluster_mgr.ecs.untag_resource(resourceArn=cluster_arn, tagKeys=remove)
-                            if add_tags:
-                                cluster_mgr.ecs.tag_resource(
-                                    resourceArn=cluster_arn,
-                                    tags=ansible_dict_to_boto3_tag_list(
-                                        add_tags, tag_name_key_name="key", tag_value_key_name="value"
-                                    ),
-                                )
+                try:
+                    if ensure_tags(cluster_mgr.ecs, cluster_arn, current_tags, tags, purge_tags, module.check_mode):
+                        if not module.check_mode:
                             results["cluster"] = cluster_mgr.describe_cluster(module.params["name"])
-                        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                            module.fail_json_aws(e, msg="Failed to update tags on cluster")
-                    results["changed"] = True
+                        results["changed"] = True
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    module.fail_json_aws(e, msg="Failed to update tags on cluster")
         else:
             if not module.check_mode:
                 # doesn't exist. create it.
