@@ -1,0 +1,2 @@
+minor_changes:
+  - elasticache_serverless - new module to create, update, and delete ElastiCache Serverless caches (https://github.com/ansible-collections/community.aws/issues/2121).
