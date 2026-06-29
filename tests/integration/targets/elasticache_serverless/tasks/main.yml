@@ -1,0 +1,301 @@
+---
+- name: elasticache_serverless integration tests
+  collections:
+    - amazon.aws
+  module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+
+  block:
+    # ============================================================
+    # Setup: VPC and subnets
+
+    - name: create VPC
+      ec2_vpc_net:
+        name: "{{ resource_prefix }}-vpc"
+        cidr_block: "10.{{ 256 | random(seed=resource_prefix) }}.0.0/16"
+        state: present
+      register: setup_vpc
+
+    - name: create subnet A
+      ec2_vpc_subnet:
+        vpc_id: "{{ setup_vpc.vpc.id }}"
+        cidr: "{{ setup_vpc.vpc.cidr_block | ansible.utils.ipsubnet(24, 0) }}"
+        az: "{{ aws_region }}a"
+        state: present
+      register: setup_subnet_a
+
+    - name: create subnet B
+      ec2_vpc_subnet:
+        vpc_id: "{{ setup_vpc.vpc.id }}"
+        cidr: "{{ setup_vpc.vpc.cidr_block | ansible.utils.ipsubnet(24, 1) }}"
+        az: "{{ aws_region }}b"
+        state: present
+      register: setup_subnet_b
+
+    - name: create security group
+      ec2_security_group:
+        name: "{{ resource_prefix }}-sg"
+        description: "ansible elasticache_serverless test"
+        vpc_id: "{{ setup_vpc.vpc.id }}"
+        state: present
+      register: setup_sg
+
+    # ============================================================
+    # Create
+
+    - name: create serverless cache (check mode)
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: present
+        engine: redis
+        subnet_ids:
+          - "{{ setup_subnet_a.subnet.id }}"
+          - "{{ setup_subnet_b.subnet.id }}"
+        security_group_ids:
+          - "{{ setup_sg.group_id }}"
+        tags:
+          TagOne: value_one
+      register: result
+      check_mode: true
+
+    - name: assert check mode reports change
+      assert:
+        that:
+          - result.changed
+
+    - name: create serverless cache
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: present
+        engine: redis
+        subnet_ids:
+          - "{{ setup_subnet_a.subnet.id }}"
+          - "{{ setup_subnet_b.subnet.id }}"
+        security_group_ids:
+          - "{{ setup_sg.group_id }}"
+        tags:
+          TagOne: value_one
+      register: result
+
+    - name: assert cache created
+      assert:
+        that:
+          - result.changed
+          - result.serverless_cache.serverless_cache_name == cache_name
+          - result.serverless_cache.status == 'available'
+          - result.serverless_cache.engine == 'redis'
+
+    # ============================================================
+    # Idempotency
+
+    - name: create serverless cache again (idempotency)
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: present
+        engine: redis
+        subnet_ids:
+          - "{{ setup_subnet_a.subnet.id }}"
+          - "{{ setup_subnet_b.subnet.id }}"
+        security_group_ids:
+          - "{{ setup_sg.group_id }}"
+        tags:
+          TagOne: value_one
+      register: result
+
+    - name: assert no change on idempotent run
+      assert:
+        that:
+          - not result.changed
+
+    # ============================================================
+    # Update tags
+
+    - name: add a tag
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: present
+        tags:
+          TagOne: value_one
+          TagTwo: value_two
+        purge_tags: false
+      register: result
+
+    - name: assert tag added
+      assert:
+        that:
+          - result.changed
+
+    - name: purge tags down to one
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: present
+        tags:
+          TagOne: value_one
+        purge_tags: true
+      register: result
+
+    - name: assert tag purged
+      assert:
+        that:
+          - result.changed
+
+    # ============================================================
+    # Delete
+
+    - name: delete serverless cache (check mode)
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: absent
+      register: result
+      check_mode: true
+
+    - name: assert check mode reports change
+      assert:
+        that:
+          - result.changed
+
+    - name: delete serverless cache
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: absent
+      register: result
+
+    - name: assert cache deleted
+      assert:
+        that:
+          - result.changed
+
+    - name: delete serverless cache again (idempotency)
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: absent
+      register: result
+
+    - name: assert no change when already absent
+      assert:
+        that:
+          - not result.changed
+
+    # ============================================================
+    # Valkey engine
+
+    - name: create valkey serverless cache (check mode)
+      community.aws.elasticache_serverless:
+        name: "{{ valkey_cache_name }}"
+        state: present
+        engine: valkey
+        subnet_ids:
+          - "{{ setup_subnet_a.subnet.id }}"
+          - "{{ setup_subnet_b.subnet.id }}"
+        security_group_ids:
+          - "{{ setup_sg.group_id }}"
+        tags:
+          TagOne: value_one
+      register: result
+      check_mode: true
+
+    - name: assert check mode reports change for valkey
+      assert:
+        that:
+          - result.changed
+
+    - name: create valkey serverless cache
+      community.aws.elasticache_serverless:
+        name: "{{ valkey_cache_name }}"
+        state: present
+        engine: valkey
+        subnet_ids:
+          - "{{ setup_subnet_a.subnet.id }}"
+          - "{{ setup_subnet_b.subnet.id }}"
+        security_group_ids:
+          - "{{ setup_sg.group_id }}"
+        tags:
+          TagOne: value_one
+      register: result
+
+    - name: assert valkey cache created
+      assert:
+        that:
+          - result.changed
+          - result.serverless_cache.serverless_cache_name == valkey_cache_name
+          - result.serverless_cache.status == 'available'
+          - result.serverless_cache.engine == 'valkey'
+
+    - name: create valkey serverless cache again (idempotency)
+      community.aws.elasticache_serverless:
+        name: "{{ valkey_cache_name }}"
+        state: present
+        engine: valkey
+        subnet_ids:
+          - "{{ setup_subnet_a.subnet.id }}"
+          - "{{ setup_subnet_b.subnet.id }}"
+        security_group_ids:
+          - "{{ setup_sg.group_id }}"
+        tags:
+          TagOne: value_one
+      register: result
+
+    - name: assert no change on idempotent valkey run
+      assert:
+        that:
+          - not result.changed
+
+    - name: delete valkey serverless cache
+      community.aws.elasticache_serverless:
+        name: "{{ valkey_cache_name }}"
+        state: absent
+      register: result
+
+    - name: assert valkey cache deleted
+      assert:
+        that:
+          - result.changed
+
+  always:
+    - name: delete serverless cache (cleanup)
+      community.aws.elasticache_serverless:
+        name: "{{ cache_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: delete valkey serverless cache (cleanup)
+      community.aws.elasticache_serverless:
+        name: "{{ valkey_cache_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: delete security group
+      ec2_security_group:
+        name: "{{ resource_prefix }}-sg"
+        state: absent
+        vpc_id: "{{ setup_vpc.vpc.id }}"
+      ignore_errors: true
+      when: setup_vpc is defined
+
+    - name: delete subnet A
+      ec2_vpc_subnet:
+        vpc_id: "{{ setup_vpc.vpc.id }}"
+        cidr: "{{ setup_subnet_a.subnet.cidr_block }}"
+        state: absent
+      ignore_errors: true
+      when: setup_subnet_a is defined
+
+    - name: delete subnet B
+      ec2_vpc_subnet:
+        vpc_id: "{{ setup_vpc.vpc.id }}"
+        cidr: "{{ setup_subnet_b.subnet.cidr_block }}"
+        state: absent
+      ignore_errors: true
+      when: setup_subnet_b is defined
+
+    - name: delete VPC
+      ec2_vpc_net:
+        name: "{{ resource_prefix }}-vpc"
+        cidr_block: "{{ setup_vpc.vpc.cidr_block }}"
+        state: absent
+      ignore_errors: true
+      when: setup_vpc is defined
