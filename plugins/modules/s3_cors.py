@@ -103,9 +103,29 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.policy import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+
+
+def normalize_cors_rules(rules):
+    """Normalize CORS rules for comparison by sorting lists within each rule."""
+    if not rules:
+        return []
+
+    normalized = []
+    for rule in rules:
+        norm_rule = {}
+        for key, value in rule.items():
+            # Sort list values for consistent comparison
+            if isinstance(value, list):
+                norm_rule[key] = sorted(value)
+            else:
+                norm_rule[key] = value
+        normalized.append(norm_rule)
+
+    # Sort rules by a consistent key (e.g., allowed_origins as a string representation)
+    return sorted(normalized, key=lambda x: str(sorted(x.items())))
 
 
 def create_or_update_bucket_cors(connection, module):
@@ -119,11 +139,12 @@ def create_or_update_bucket_cors(connection, module):
         current_camel_rules = []
 
     new_camel_rules = snake_dict_to_camel_dict(rules, capitalize_first=True)
-    # compare_policies() takes two dicts and makes them hashable for comparison
-    if compare_policies(new_camel_rules, current_camel_rules):
+
+    # Compare normalized rules
+    if normalize_cors_rules(new_camel_rules) != normalize_cors_rules(current_camel_rules):
         changed = True
 
-    if changed:
+    if changed and not module.check_mode:
         try:
             connection.put_bucket_cors(Bucket=name, CORSConfiguration={"CORSRules": new_camel_rules})
         except (BotoCoreError, ClientError) as e:
@@ -136,11 +157,24 @@ def destroy_bucket_cors(connection, module):
     name = module.params.get("name")
     changed = False
 
+    # Check if CORS configuration exists
     try:
-        connection.delete_bucket_cors(Bucket=name)
+        connection.get_bucket_cors(Bucket=name)
+        # CORS exists, so we need to delete it
         changed = True
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg=f"Unable to delete CORS for bucket {name}")
+    except is_boto3_error_code("NoSuchCORSConfiguration"):
+        # Bucket has no CORS configuration, nothing to delete
+        changed = False
+    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+        # Some other error occurred
+        module.fail_json_aws(e, msg=f"Unable to get CORS configuration for bucket {name}")
+
+    # Only delete if CORS exists and not in check mode
+    if changed and not module.check_mode:
+        try:
+            connection.delete_bucket_cors(Bucket=name)
+        except (BotoCoreError, ClientError) as e:
+            module.fail_json_aws(e, msg=f"Unable to delete CORS for bucket {name}")
 
     module.exit_json(changed=changed)
 
@@ -152,7 +186,7 @@ def main():
         state=dict(type="str", choices=["present", "absent"], required=True),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
     client = module.client("s3")
 
