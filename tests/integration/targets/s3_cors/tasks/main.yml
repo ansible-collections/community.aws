@@ -26,14 +26,14 @@
       name: '{{ test_bucket }}'
     register: output
 
-  - name: Assert bucket was created
+  - name: Assert bucket was created properly
     assert:
       that:
         - output is changed
         - output.name == test_bucket
 
   # ============================================================
-  # Test state=present - Create CORS rules
+  # Test Create CORS rules (state = present)
   # ============================================================
 
   - name: Create CORS rules (check_mode)
