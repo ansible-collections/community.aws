@@ -1,8 +1,8 @@
 ---
 bugfixes:
-  - s3_cors - Added support for check_mode operation (https://github.com/ansible-collections/community.aws/pull/XXXX).
-  - s3_cors - Fixed idempotency issue in ``state=absent`` where the module always reported changes even when no CORS configuration existed (https://github.com/ansible-collections/community.aws/pull/XXXX).
-  - s3_cors - Fixed CORS rule comparison logic by replacing IAM policy comparison with CORS-specific normalization to ensure accurate change detection (https://github.com/ansible-collections/community.aws/pull/XXXX).
+  - s3_cors - Added support for check_mode operation (https://github.com/ansible-collections/community.aws/pull/2471).
+  - s3_cors - Fixed idempotency issue in ``state=absent`` where the module always reported changes even when no CORS configuration existed (https://github.com/ansible-collections/community.aws/pull/2471).
+  - s3_cors - Fixed CORS rule comparison logic by replacing IAM policy comparison with CORS-specific normalization to ensure accurate change detection (https://github.com/ansible-collections/community.aws/pull/2471).
 
 tests:
-  - s3_cors - Added comprehensive integration tests covering create, update, delete operations with check_mode and idempotency validation (https://github.com/ansible-collections/community.aws/pull/XXXX).
+  - s3_cors - Added comprehensive integration tests covering create, update, delete operations with check_mode and idempotency validation (https://github.com/ansible-collections/community.aws/pull/2471).
