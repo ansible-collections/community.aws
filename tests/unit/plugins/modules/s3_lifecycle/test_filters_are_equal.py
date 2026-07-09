@@ -5,7 +5,7 @@
 
 import pytest
 
-from ansible_collections.community.aws.plugins.modules.s3_lifecycle import filters_are_equal
+from ansible_collections.community.aws.plugins.modules.s3_bucket_lifecycle import filters_are_equal
 
 
 @pytest.mark.parametrize(

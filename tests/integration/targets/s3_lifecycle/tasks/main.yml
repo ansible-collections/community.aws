@@ -8,7 +8,7 @@
       secret_key: '{{ aws_secret_key }}'
       session_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
-    s3_lifecycle:
+    community.aws.s3_bucket_lifecycle:
       wait: true
   block:
 
@@ -26,7 +26,7 @@
           - not output.requester_pays
   # ============================================================
     - name: Create a number of policies and check if all of them are created
-      community.aws.s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: "{{ item }}"
         expiration_days: 10
@@ -44,7 +44,7 @@
           - (output.results | last).rules | length == 3
   # ============================================================
     - name: Remove previously created policies and check if all of them are removed
-      community.aws.s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: "{{ item }}"
         expiration_days: 10
@@ -62,7 +62,7 @@
           - (output.results | last).rules | length == 0
   # ============================================================
     - name: Create a lifecycle policy
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         expiration_days: 300
         prefix: ''
@@ -73,7 +73,7 @@
           - output is changed
   # ============================================================
     - name: Create a lifecycle policy (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         expiration_days: 300
       register: output
@@ -83,7 +83,7 @@
           - output is not changed
   # ============================================================
     - name: Create a second lifecycle policy
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 30
         prefix: /something
@@ -94,7 +94,7 @@
           - output is changed
   # ============================================================
     - name: Create a second lifecycle policy (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 30
         prefix: /something
@@ -105,7 +105,7 @@
           - output is not changed
   # ============================================================
     - name: Disable the second lifecycle policy
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         status: disabled
         transition_days: 30
@@ -117,7 +117,7 @@
           - output is changed
   # ============================================================
     - name: Disable the second lifecycle policy (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         status: disabled
         transition_days: 30
@@ -129,7 +129,7 @@
           - output is not changed
   # ============================================================
     - name: Re-enable the second lifecycle policy
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         status: enabled
         transition_days: 300
@@ -141,7 +141,7 @@
           - output is changed
   # ============================================================
     - name: Re-enable the second lifecycle policy (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         status: enabled
         transition_days: 300
@@ -153,7 +153,7 @@
           - output is not changed
   # ============================================================
     - name: Delete the second lifecycle policy
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         state: absent
         prefix: /something
@@ -164,7 +164,7 @@
           - output is changed
   # ============================================================
     - name: Delete the second lifecycle policy (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         state: absent
         prefix: /something
@@ -175,7 +175,7 @@
           - output is not changed
   # ============================================================
     - name: Create a second lifecycle policy, with infrequent access
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 30
         storage_class: standard_ia
@@ -187,7 +187,7 @@
           - output is changed
   # ============================================================
     - name: Create a second lifecycle policy, with infrequent access (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         storage_class: standard_ia
         transition_days: 30
@@ -199,7 +199,7 @@
           - output is not changed
   # ============================================================
     - name: Create a second lifecycle policy, with glacier
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
@@ -210,7 +210,7 @@
           - output is changed
   # ============================================================
     - name: Create a second lifecycle policy, with glacier (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
@@ -221,7 +221,7 @@
           - output is not changed
   # ============================================================
     - name: Create a lifecycle policy, with glacier and transition_days to 0
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 0
         storage_class: glacier
@@ -233,7 +233,7 @@
           - output is changed
   # ============================================================
     - name: Create a lifecycle policy, with glacier and transition_days to 0 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 0
         storage_class: glacier
@@ -245,7 +245,7 @@
           - output is not changed
   # ============================================================
     - name: Create a lifecycle policy with infrequent access
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 30
         storage_class: standard_ia
@@ -253,7 +253,7 @@
       register: output
 
     - name: Create a second lifecycle policy, with glacier
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
@@ -261,7 +261,7 @@
       register: output
 
     - name: Create a lifecycle policy with infrequent access (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         storage_class: standard_ia
         transition_days: 30
@@ -274,7 +274,7 @@
           - output is not changed
 
     - name: Create a second lifecycle policy, with glacier (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
@@ -286,7 +286,7 @@
           - output is not changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent expiration
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 300
         prefix: /something
@@ -297,7 +297,7 @@
           - output is changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent expiration
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 300
         prefix: /something
@@ -308,7 +308,7 @@
           - output is not changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transition
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_transition_days: 300
         prefix: /something
@@ -319,7 +319,7 @@
           - output is changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions and expirations
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_transition_days: 300
         prefix: /something
@@ -330,7 +330,7 @@
           - output is not changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transition
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_transition_days: 300
         noncurrent_version_storage_class: standard_ia
@@ -342,7 +342,7 @@
           - output is changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions and expirations
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_storage_class: standard_ia
         noncurrent_version_transition_days: 300
@@ -354,7 +354,7 @@
           - output is not changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_transitions:
           - transition_days: 30
@@ -371,7 +371,7 @@
           - output is changed
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_transitions:
           - transition_days: 30
@@ -389,7 +389,7 @@
 
   # ============================================================
     - name: Create a lifecycle policy, with abort_incomplete_multipart_upload
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         abort_incomplete_multipart_upload_days: 1
         prefix: /something
@@ -401,7 +401,7 @@
 
   # ============================================================
     - name: Create a lifecycle policy, with abort_incomplete_multipart_upload (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         abort_incomplete_multipart_upload_days: 1
         prefix: /something
@@ -413,7 +413,7 @@
 
   # ============================================================
     - name: Create a lifecycle policy, with expired_object_delete_marker
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         expire_object_delete_marker: True
         prefix: /something
@@ -424,7 +424,7 @@
           - output is changed
 
     - name: Create a lifecycle policy, with expired_object_delete_marker  (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         expire_object_delete_marker: True
         prefix: /something
@@ -436,7 +436,7 @@
 
   # ============================================================
     - name: Update lifecycle policy, with noncurrent_version_expiration_days
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 5
         prefix: /something
@@ -447,7 +447,7 @@
           - output is changed
 
     - name: Update lifecycle policy, with noncurrent_version_expiration_days (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 5
         prefix: /something
@@ -459,7 +459,7 @@
 
   # ============================================================
     - name: Update lifecycle policy, with noncurrent_version_keep_newer
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 10
         noncurrent_version_keep_newer: 6
@@ -471,7 +471,7 @@
           - output is changed
 
     - name: Update lifecycle policy, with noncurrent_version_keep_newer (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 10
         noncurrent_version_keep_newer: 6
@@ -486,7 +486,7 @@
   # test all the examples
   # Configure a lifecycle rule on a bucket to expire (delete) items with a prefix of /logs/ after 30 days
     - name: example 1
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         expiration_days: 30
         prefix: /logs/
@@ -498,7 +498,7 @@
           - output is changed
 
     - name: example 1 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         expiration_days: 30
         prefix: /logs/
@@ -511,7 +511,7 @@
 
     # Configure a lifecycle rule to transition all items with a prefix of /logs/ to glacier after 7 days and then delete after 90 days
     - name: example 2
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 7
         expiration_days: 90
@@ -524,7 +524,7 @@
           - output is changed
 
     - name: example 2 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_days: 7
         expiration_days: 90
@@ -540,7 +540,7 @@
     # Note that midnight GMT must be specified.
     # Be sure to quote your date strings
     - name: example 3
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_date: "2020-12-30T00:00:00.000Z"
         expiration_date: "2030-12-30T00:00:00.000Z"
@@ -553,7 +553,7 @@
           - output is changed
 
     - name: example 3 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         transition_date: "2020-12-30T00:00:00.000Z"
         expiration_date: "2030-12-30T00:00:00.000Z"
@@ -567,7 +567,7 @@
 
     # Disable the rule created above
     - name: example 4
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /logs/
         status: disabled
@@ -578,7 +578,7 @@
           - output is changed
 
     - name: example 4 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /logs/
         status: disabled
@@ -590,7 +590,7 @@
 
     # Delete the lifecycle rule created above
     - name: example 5
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /logs/
         state: absent
@@ -600,7 +600,7 @@
           - output is changed
 
     - name: example 5 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /logs/
         state: absent
@@ -611,7 +611,7 @@
 
     # Configure a lifecycle rule to transition all backup files older than 31 days in /backups/ to standard infrequent access class.
     - name: example 6
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /backups/
         storage_class: standard_ia
@@ -624,7 +624,7 @@
           - output is changed
 
     - name: example 6 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /backups/
         storage_class: standard_ia
@@ -638,7 +638,7 @@
 
     # Configure a lifecycle rule to transition files to infrequent access after 30 days and glacier after 90
     - name: example 7
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /other_logs/
         state: present
@@ -654,7 +654,7 @@
           - output is changed
 
     - name: example 7 (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
         prefix: /other_logs/
         state: present
@@ -671,7 +671,7 @@
 
     # Check create and delete lifecycle policy with an empty prefix
     - name: Create rule with no prefix
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: empty-prefix
         state: present
@@ -683,7 +683,7 @@
           - output is changed
 
     - name: Delete rule with no prefix
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: empty-prefix
         state: absent
@@ -696,7 +696,7 @@
 
     # Check create and delete lifecycle policy with minimum and maximum object size (with prefix)
     - name: Create rule with minimum and maximum object size
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: minimum-object-size-prefix
         prefix: /something/
@@ -711,7 +711,7 @@
           - output is changed
     
     - name: Create rule with minimum object size (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: minimum-object-size-prefix
         prefix: /something/
@@ -726,7 +726,7 @@
           - output is not changed
 
     - name: Delete rule with minimum and maximum object size
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: minimum-object-size-prefix
         prefix: /something/
@@ -742,7 +742,7 @@
 
     # Check create and delete lifecycle policy with minimum and maximum object size (no prefix)
     - name: Create rule with minimum and maximum object size
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: minimum-object-size-noprefix
         minimum_object_size: 100
@@ -756,7 +756,7 @@
           - output is changed
     
     - name: Create rule with minimum object size (idempotency)
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: minimum-object-size-noprefix
         minimum_object_size: 100
@@ -770,7 +770,7 @@
           - output is not changed
 
     - name: Delete rule with minimum and maximum object size
-      s3_lifecycle:
+      community.aws.s3_bucket_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: minimum-object-size-noprefix
         minimum_object_size: 100
