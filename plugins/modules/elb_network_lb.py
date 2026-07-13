@@ -60,14 +60,17 @@ options:
                 Type:
                     description: The type of action.
                     type: str
+                    required: true
                 TargetGroupArn:
                     description:
                       - The Amazon Resource Name (ARN) of the target group.
+                      - Required if I(TargetGroupName) is not specified.
                       - Mutually exclusive with I(TargetGroupName).
                     type: str
                 TargetGroupName:
                     description:
                       - The name of the target group.
+                      - Required if I(TargetGroupArn) is not specified.
                       - Mutually exclusive with I(TargetGroupArn).
         AlpnPolicy:
             description:
