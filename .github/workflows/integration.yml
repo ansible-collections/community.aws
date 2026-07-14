@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Retrieve pull request base ref
         id: retrieve-pr-info
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const pr = await github.rest.pulls.get({
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the source collection (on issue comment)
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           path: "${{ env.source_dir }}"
           fetch-depth: 0
@@ -55,7 +55,7 @@ jobs:
         if: ${{ github.event_name == 'issue_comment' }}
 
       - name: Checkout the source collection (on other triggering method)
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           path: "${{ env.source_dir }}"
           fetch-depth: 0
@@ -89,20 +89,20 @@ jobs:
     name: "${{ matrix.job-id }}"
     steps:
       - name: Checkout the source collection (on issue comment)
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           path: "${{ env.source_dir }}"
           ref: ${{ needs.retrieve-pr-info.outputs.head_ref }}
         if: ${{ github.event_name == 'issue_comment' }}
 
       - name: Checkout the source collection (on other triggering method)
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           path: "${{ env.source_dir }}"
         if: ${{ github.event_name != 'issue_comment' }}
 
       - name: Checkout the amazon.aws collection need to run tests.
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: ansible-collections/amazon.aws
           ref: ${{ needs.retrieve-pr-info.outputs.base_ref }}
@@ -118,7 +118,7 @@ jobs:
       - uses: ansible/ansible-test-auth@008750a5bf07124c3ab86d30d73d7319d7518f36
 
       - name: Run integration tests
-        uses: ansible-community/ansible-test-gh-action@d3a8ec7a59694e25e210fcd44738910149537f0e
+        uses: ansible-community/ansible-test-gh-action@6ded727edb598e670ac056a8e680ca4050bac0a3
         with:
           ansible-core-version: ${{ env.ansible_version }}
           origin-python-version: ${{ env.python_version }}
