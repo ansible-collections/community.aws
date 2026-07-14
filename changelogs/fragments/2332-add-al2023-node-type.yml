@@ -1,0 +1,2 @@
+minor_fixes:
+  - eks_nodegroup - add support for the AL2023 nodegroup in options for the eks nodegroup. (https://github.com/ansible-collections/community.aws/pull/2332)
