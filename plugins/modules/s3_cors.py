@@ -156,7 +156,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
-def normalize_cors_rules(rules: list[dict] | None) -> list[dict]:
+def normalize_cors_rules(rules):
     """Normalize CORS rules for deterministic comparison.
 
     Sorts list values within each rule (e.g., AllowedOrigins, AllowedMethods) and
