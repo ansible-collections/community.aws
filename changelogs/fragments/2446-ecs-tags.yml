@@ -1,0 +1,4 @@
+minor_changes:
+  - ecs_cluster - add ``tags`` and ``purge_tags`` support (https://github.com/ansible-collections/community.aws/pull/2446).
+  - ecs_service - add ``purge_tags`` support and fix tag reconciliation to operate independently of service updates (https://github.com/ansible-collections/community.aws/pull/2446).
+  - ecs_taskdefinition - add ``tags`` and ``purge_tags`` support, including in-place tag reconciliation for existing revisions (https://github.com/ansible-collections/community.aws/pull/2446).
