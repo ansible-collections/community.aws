@@ -1,0 +1,4 @@
+cloud/aws
+
+ec2_vpc_managed_prefix_list
+ec2_vpc_managed_prefix_list_info
