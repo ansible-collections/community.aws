@@ -80,7 +80,7 @@ jobs:
       amazon_dir: "./amazon_aws"
       all_targets: "${{ needs.splitter.outputs.targets }}"
       ansible_version: milestone
-      python_version: 3.12
+      python_version: 3.13
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -133,5 +133,5 @@ jobs:
             community.crypto
             ansible.windows
             ${{ env.amazon_dir }}
-          pre-test-cmd: |
+          pre-test-cmd: >-
             python3 -m pip install -r tests/integration/requirements.txt -r tests/integration/constraints.txt
