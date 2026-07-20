@@ -1,3 +1,3 @@
 minor_changes:
-  - s3_lifecycle - Add ``glacier_ir`` as a valid storage class for lifecycle transitions.
-  - s3_sync - Add ``GLACIER_IR`` as a valid storage class.
+  - s3_lifecycle - Add ``glacier_ir`` as a valid storage class for lifecycle transitions (https://github.com/ansible-collections/community.aws/pull/2362).
+  - s3_sync - Add ``GLACIER_IR`` as a valid storage class (https://github.com/ansible-collections/community.aws/pull/2362).
