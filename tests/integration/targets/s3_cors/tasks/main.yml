@@ -21,7 +21,7 @@
   # ============================================================
 
   - name: Create simple s3_bucket for CORS testing
-    s3_bucket:
+    amazon.aws.s3_bucket:
       state: present
       name: '{{ test_bucket }}'
     register: output
@@ -37,7 +37,7 @@
   # ============================================================
 
   - name: Create CORS rules (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -61,7 +61,7 @@
         - result is changed
 
   - name: Create CORS rules
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -88,7 +88,7 @@
         - result.rules[0].allowed_methods == ['GET', 'POST']
 
   - name: Create CORS rules idempotency (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -112,7 +112,7 @@
         - result is not changed
 
   - name: Create CORS rules idempotency
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -139,7 +139,7 @@
   # ============================================================
 
   - name: Update CORS rules - change max_age_seconds (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -163,7 +163,7 @@
         - result is changed
 
   - name: Update CORS rules - change max_age_seconds
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -187,7 +187,7 @@
         - result.rules[0].max_age_seconds == 60000
 
   - name: Update CORS rules idempotency (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -211,7 +211,7 @@
         - result is not changed
 
   - name: Update CORS rules idempotency
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -238,7 +238,7 @@
   # ============================================================
 
   - name: Add multiple CORS rules (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -266,7 +266,7 @@
         - result is changed
 
   - name: Add multiple CORS rules
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -294,7 +294,7 @@
         - result.rules | length == 2
 
   - name: Add multiple CORS rules idempotency (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -322,7 +322,7 @@
         - result is not changed
 
   - name: Add multiple CORS rules idempotency
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -353,7 +353,7 @@
   # ============================================================
 
   - name: Set CORS with wildcard origin (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -373,7 +373,7 @@
         - result is changed
 
   - name: Set CORS with wildcard origin
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -394,7 +394,7 @@
         - result.rules[0].allowed_origins == ['*']
 
   - name: Set CORS with wildcard origin idempotency (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -414,7 +414,7 @@
         - result is not changed
 
   - name: Set CORS with wildcard origin idempotency
-    s3_cors:
+    community.aws.s3_cors:
       state: present
       name: '{{ test_bucket }}'
       rules:
@@ -437,7 +437,7 @@
   # ============================================================
 
   - name: Remove CORS rules (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: absent
       name: '{{ test_bucket }}'
     register: result
@@ -449,7 +449,7 @@
         - result is changed
 
   - name: Remove CORS rules
-    s3_cors:
+    community.aws.s3_cors:
       state: absent
       name: '{{ test_bucket }}'
     register: result
@@ -460,7 +460,7 @@
         - result is changed
 
   - name: Remove CORS rules idempotency (check_mode)
-    s3_cors:
+    community.aws.s3_cors:
       state: absent
       name: '{{ test_bucket }}'
     register: result
@@ -472,7 +472,7 @@
         - result is not changed
 
   - name: Remove CORS rules idempotency
-    s3_cors:
+    community.aws.s3_cors:
       state: absent
       name: '{{ test_bucket }}'
     register: result
@@ -488,13 +488,13 @@
 
   always:
     - name: Remove CORS configuration
-      s3_cors:
+      community.aws.s3_cors:
         name: '{{ test_bucket }}'
         state: absent
       ignore_errors: true
 
     - name: Delete test bucket
-      s3_bucket:
+      amazon.aws.s3_bucket:
         name: '{{ test_bucket }}'
         state: absent
         force: true

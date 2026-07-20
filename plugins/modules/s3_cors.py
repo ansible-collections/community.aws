@@ -120,12 +120,12 @@ changed:
   sample: true
 name:
   description: Name of the S3 bucket.
-  returned: when I(state=present)
+  returned: when O(state=present)
   type: str
   sample: 'bucket-name'
 rules:
   description: CORS rules applied to the bucket.
-  returned: when I(state=present)
+  returned: when O(state=present)
   type: list
   sample: [
      {
