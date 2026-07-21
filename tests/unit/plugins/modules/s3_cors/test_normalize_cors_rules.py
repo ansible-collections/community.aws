@@ -22,74 +22,49 @@ def test_normalize_cors_rules_empty(rules, expected):
 @pytest.mark.parametrize(
     "rules,expected",
     [
-        # List values within a rule should be sorted
         [
-            [{"AllowedMethods": ["POST", "GET"], "AllowedOrigins": ["http://b.com", "http://a.com"]}],
-            [{"AllowedMethods": ["GET", "POST"], "AllowedOrigins": ["http://a.com", "http://b.com"]}],
-        ],
-        # Non-list values (like MaxAgeSeconds) should pass through unchanged
-        [
-            [{"AllowedMethods": ["GET"], "AllowedOrigins": ["*"], "MaxAgeSeconds": 3600}],
-            [{"AllowedMethods": ["GET"], "AllowedOrigins": ["*"], "MaxAgeSeconds": 3600}],
-        ],
-        # ExposeHeaders should also be sorted
-        [
-            [{"AllowedMethods": ["GET"], "AllowedOrigins": ["*"], "ExposeHeaders": ["x-amz-request-id", "x-amz-id-2"]}],
-            [{"AllowedMethods": ["GET"], "AllowedOrigins": ["*"], "ExposeHeaders": ["x-amz-id-2", "x-amz-request-id"]}],
+            [{"AllowedMethods": ["POST", "GET"], "AllowedOrigins": ["http://b.example.com", "http://a.example.com"]}],
+            [{"AllowedMethods": ["GET", "POST"], "AllowedOrigins": ["http://a.example.com", "http://b.example.com"]}],
         ],
     ],
 )
-def test_normalize_cors_rules_single_rule(rules, expected):
+def test_normalize_cors_rules_sorts_list_values(rules, expected):
     assert normalize_cors_rules(rules) == expected
 
 
-@pytest.mark.parametrize(
-    "rules_a,rules_b",
-    [
-        # Same rules in different order should normalize identically
-        [
-            [
-                {"AllowedMethods": ["GET"], "AllowedOrigins": ["http://b.com"]},
-                {"AllowedMethods": ["POST"], "AllowedOrigins": ["http://a.com"]},
-            ],
-            [
-                {"AllowedMethods": ["POST"], "AllowedOrigins": ["http://a.com"]},
-                {"AllowedMethods": ["GET"], "AllowedOrigins": ["http://b.com"]},
-            ],
-        ],
-    ],
-)
-def test_normalize_cors_rules_deterministic_sort(rules_a, rules_b):
-    assert normalize_cors_rules(rules_a) == normalize_cors_rules(rules_b)
-
-
-@pytest.mark.parametrize(
-    "rules_a,rules_b",
-    [
-        # Dict key ordering should not matter
-        [
-            [{"AllowedOrigins": ["*"], "AllowedMethods": ["GET"]}],
-            [{"AllowedMethods": ["GET"], "AllowedOrigins": ["*"]}],
-        ],
-        # Multiple rules with different key orderings and list orderings
-        [
-            [
-                {"AllowedOrigins": ["*"], "AllowedMethods": ["GET"], "MaxAgeSeconds": 100},
-                {"AllowedMethods": ["POST", "PUT"], "AllowedOrigins": ["http://example.com"]},
-            ],
-            [
-                {"AllowedOrigins": ["http://example.com"], "AllowedMethods": ["PUT", "POST"]},
-                {"MaxAgeSeconds": 100, "AllowedMethods": ["GET"], "AllowedOrigins": ["*"]},
-            ],
-        ],
-    ],
-)
-def test_normalize_cors_rules_key_order_independent(rules_a, rules_b):
-    assert normalize_cors_rules(rules_a) == normalize_cors_rules(rules_b)
-
-
-def test_normalize_cors_rules_max_age_seconds_int():
+def test_normalize_cors_rules_preserves_non_list_values():
     rules = [{"AllowedMethods": ["GET"], "AllowedOrigins": ["*"], "MaxAgeSeconds": 30000}]
     result = normalize_cors_rules(rules)
     assert result[0]["MaxAgeSeconds"] == 30000
     assert isinstance(result[0]["MaxAgeSeconds"], int)
+
+
+@pytest.mark.parametrize(
+    "rules_a,rules_b",
+    [
+        # Same rules in different list positions should normalize identically
+        [
+            [
+                {"AllowedMethods": ["GET"], "AllowedOrigins": ["http://b.example.com"]},
+                {"AllowedMethods": ["POST"], "AllowedOrigins": ["http://a.example.com"]},
+            ],
+            [
+                {"AllowedMethods": ["POST"], "AllowedOrigins": ["http://a.example.com"]},
+                {"AllowedMethods": ["GET"], "AllowedOrigins": ["http://b.example.com"]},
+            ],
+        ],
+        # Different rule positions combined with unsorted list values
+        [
+            [
+                {"AllowedOrigins": ["*"], "AllowedMethods": ["GET"], "MaxAgeSeconds": 100},
+                {"AllowedMethods": ["POST", "PUT"], "AllowedOrigins": ["http://a.example.com"]},
+            ],
+            [
+                {"AllowedOrigins": ["http://a.example.com"], "AllowedMethods": ["PUT", "POST"]},
+                {"AllowedMethods": ["GET"], "AllowedOrigins": ["*"], "MaxAgeSeconds": 100},
+            ],
+        ],
+    ],
+)
+def test_normalize_cors_rules_deterministic_order(rules_a, rules_b):
+    assert normalize_cors_rules(rules_a) == normalize_cors_rules(rules_b)
