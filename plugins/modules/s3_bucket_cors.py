@@ -139,8 +139,9 @@ def delete_bucket_cors_configuration(module, client):
     if module.check_mode:
         return True
 
-    delete_bucket_cors(client, name)
-    return True
+    result = delete_bucket_cors(client, name)
+    # If result is False, configuration didn't exist (race condition - already deleted)
+    return result is not False
 
 
 def main():

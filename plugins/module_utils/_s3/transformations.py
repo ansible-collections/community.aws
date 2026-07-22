@@ -140,9 +140,15 @@ def normalize_website_configuration(website_config):
         website_config: Website configuration dictionary from AWS API (CamelCase)
 
     Returns:
-        Normalized website configuration dictionary with snake_case keys
+        Normalized website configuration dictionary with snake_case keys,
+        with ResponseMetadata stripped
     """
-    return boto3_resource_to_ansible_dict(website_config, transform_tags=False)
+    if not website_config:
+        return website_config
+    normalized = boto3_resource_to_ansible_dict(website_config, transform_tags=False)
+    # Strip response_metadata after normalization (it's now snake_case)
+    normalized.pop("response_metadata", None)
+    return normalized
 
 
 def normalize_metrics_configuration(config):
