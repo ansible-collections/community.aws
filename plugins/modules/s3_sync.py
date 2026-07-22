@@ -101,6 +101,7 @@ options:
     - 'ONEZONE_IA'
     - 'INTELLIGENT_TIERING'
     - 'GLACIER'
+    - 'GLACIER_IR'
     - 'DEEP_ARCHIVE'
     - 'OUTPOSTS'
     default: 'STANDARD'
@@ -496,6 +497,7 @@ def main():
                 "ONEZONE_IA",
                 "INTELLIGENT_TIERING",
                 "GLACIER",
+                "GLACIER_IR",
                 "DEEP_ARCHIVE",
                 "OUTPOSTS",
             ],
