@@ -72,40 +72,45 @@ EXAMPLES = r"""
 """
 
 RETURN = r"""
-gateway.customer_gateways:
-    description: details about the gateway that was created.
+gateway:
+    description: details about the customer gateway that was created.
     returned: success
     type: complex
     contains:
-        bgp_asn:
-            description: The Border Gateway Autonomous System Number.
-            returned: when exists and gateway is available.
-            sample: 65123
-            type: str
-        customer_gateway_id:
-            description: gateway id assigned by amazon.
-            returned: when exists and gateway is available.
-            sample: cgw-cb6386a2
-            type: str
-        ip_address:
-            description: ip address of your gateway device.
-            returned: when exists and gateway is available.
-            sample: 1.2.3.4
-            type: str
-        state:
-            description: state of gateway.
-            returned: when gateway exists and is available.
-            sample: available
-            type: str
-        tags:
-            description: Any tags on the gateway.
-            returned: when gateway exists and is available, and when tags exist.
-            type: list
-        type:
-            description: encryption type.
-            returned: when gateway exists and is available.
-            sample: ipsec.1
-            type: str
+        customer_gateways:
+            description: details about the gateway that was created.
+            returned: success
+            type: complex
+            contains:
+                bgp_asn:
+                    description: The Border Gateway Autonomous System Number.
+                    returned: when exists and gateway is available.
+                    sample: 65123
+                    type: str
+                customer_gateway_id:
+                    description: gateway id assigned by amazon.
+                    returned: when exists and gateway is available.
+                    sample: cgw-cb6386a2
+                    type: str
+                ip_address:
+                    description: ip address of your gateway device.
+                    returned: when exists and gateway is available.
+                    sample: 1.2.3.4
+                    type: str
+                state:
+                    description: state of gateway.
+                    returned: when gateway exists and is available.
+                    sample: available
+                    type: str
+                tags:
+                    description: Any tags on the gateway.
+                    returned: when gateway exists and is available, and when tags exist.
+                    type: list
+                type:
+                    description: encryption type.
+                    returned: when gateway exists and is available.
+                    sample: ipsec.1
+                    type: str
 """
 
 try:

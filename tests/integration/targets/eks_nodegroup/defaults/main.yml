@@ -1,13 +1,16 @@
 eks_cluster_name: "{{ resource_prefix }}"
-eks_nodegroup_name_a: "ng-template-{{ resource_prefix }}-a"
-eks_nodegroup_name_lt: "ng-template-{{ resource_prefix }}-lt"
+eks_nodegroup_name_a: "ng-template-{{ tiny_prefix }}-a"
+eks_nodegroup_name_lt: "ng-template-{{ tiny_prefix }}-lt"
+
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.220.0/22
 
 eks_subnets:
   - zone: a
-    cidr: 10.0.1.0/24
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
     type: private
   - zone: b
-    cidr: 10.0.2.0/24
+    cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 1) }}"
     type: public
 
 eks_nodegroup_ami_type: "AL2_x86_64"

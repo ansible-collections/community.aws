@@ -1,9 +1,12 @@
 ---
 # default files for mq_*
-broker_name: '{{resource_prefix}}-mq'
+broker_name: 'ansible-test-{{ tiny_prefix }}-mq'
 vpc_name: "{{ resource_prefix }}-vpc"
-vpc_cidr: "10.0.0.0/16"
-subnet_cidr: "10.0.1.0/24"
+
+# VPC CIDR allocation - randomised to avoid conflicts
+vpc_cidr: "10.{{ 256 | random(seed=resource_prefix) }}.192.0/22"
+subnet_cidr: "{{ vpc_cidr | ansible.utils.ipsubnet(24, 0) }}"
+
 sg_name: "{{resource_prefix}}-sg"
 tags:
   workload_type: other

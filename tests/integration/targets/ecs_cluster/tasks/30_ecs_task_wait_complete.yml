@@ -1,0 +1,221 @@
+---
+# Integration tests for ecs_task wait_complete feature
+#
+# Tests:
+# 1. wait_complete=true with a short-lived Fargate task (exit code 0)
+# 2. wait_complete=true with a task that exits non-zero (exit code 42)
+# 3. wait_complete=true with a task that fails to start (WaiterError graceful handling)
+# 4. wait_complete=true with operation=stop (warns but proceeds)
+
+### Setup: Route table for Fargate internet access (image pulls)
+
+- name: add default route to IGW for Fargate container image pulls
+  ec2_vpc_route_table:
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+    tags:
+      Name: "{{ resource_prefix }}_ecs_cluster-rt"
+    state: present
+  register: setup_route_table
+
+### Setup: Task definitions for wait_complete tests
+
+- name: create task definition for wait_complete success test (exit 0)
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-busybox"
+        image: "public.ecr.aws/docker/library/busybox:latest"
+        essential: true
+        command:
+          - "sh"
+          - "-c"
+          - "echo hello && exit 0"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-ok"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 256
+    memory: 512
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
+    state: present
+  register: ecs_wc_ok_task_def
+
+- name: create task definition for wait_complete non-zero exit test (exit 42)
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-busybox"
+        image: "public.ecr.aws/docker/library/busybox:latest"
+        essential: true
+        command:
+          - "sh"
+          - "-c"
+          - "exit 42"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-fail"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 256
+    memory: 512
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
+    state: present
+  register: ecs_wc_fail_task_def
+
+- name: create task definition with invalid image for TaskFailedToStart test
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-invalid"
+        image: "public.ecr.aws/docker/library/busybox:nonexistent-tag-xyz-12345"
+        essential: true
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-invalid"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 256
+    memory: 512
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
+    state: present
+  register: ecs_wc_invalid_task_def
+
+- name: create long-running task definition for stop test
+  ecs_taskdefinition:
+    containers:
+      - name: "{{ ecs_task_name }}-busybox"
+        image: "public.ecr.aws/docker/library/busybox:latest"
+        essential: true
+        command:
+          - "sh"
+          - "-c"
+          - "sleep 300"
+        memory: 512
+    family: "{{ ecs_task_name }}-wc-long"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 256
+    memory: 512
+    execution_role_arn: "{{ iam_execution_role.iam_role.arn }}"
+    state: present
+  register: ecs_wc_long_task_def
+
+### Test 1: wait_complete with successful task (exit code 0)
+
+- name: run Fargate task with wait_complete (exit 0)
+  ecs_task:
+    operation: run
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-wc-ok"
+    launch_type: FARGATE
+    count: 1
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    started_by: ansible_wait_complete_test
+    wait_complete: true
+  register: wait_complete_exit_0
+
+- name: assert wait_complete task completed with exit code 0
+  assert:
+    that:
+      - wait_complete_exit_0.changed
+      - wait_complete_exit_0.task | length == 1
+      - wait_complete_exit_0.task[0].lastStatus == "STOPPED"
+      - wait_complete_exit_0.task[0].stopCode == "EssentialContainerExited"
+      - "'Essential container in task exited' in wait_complete_exit_0.task[0].stoppedReason"
+      - wait_complete_exit_0.task[0].containers | length >= 1
+      - wait_complete_exit_0.task[0].containers[0].exitCode == 0
+
+### Test 2: wait_complete with non-zero exit code
+
+- name: run Fargate task with wait_complete (exit 42)
+  ecs_task:
+    operation: run
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-wc-fail"
+    launch_type: FARGATE
+    count: 1
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    started_by: ansible_wait_complete_test
+    wait_complete: true
+  register: wait_complete_exit_42
+
+- name: assert wait_complete task completed with exit code 42
+  assert:
+    that:
+      - wait_complete_exit_42.changed
+      - wait_complete_exit_42.task | length == 1
+      - wait_complete_exit_42.task[0].lastStatus == "STOPPED"
+      - wait_complete_exit_42.task[0].stopCode == "EssentialContainerExited"
+      - wait_complete_exit_42.task[0].containers[0].exitCode == 42
+
+### Test 3: wait_complete with TaskFailedToStart (WaiterError graceful handling)
+# Uses a nonexistent image tag to force CannotPullContainerError.
+# The tasks_running waiter will raise WaiterError (failure acceptor for STOPPED),
+# which our code catches and proceeds to wait_for_task_completion.
+
+- name: run Fargate task with wait_complete and invalid image
+  ecs_task:
+    operation: run
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-wc-invalid"
+    launch_type: FARGATE
+    count: 1
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    started_by: ansible_wait_complete_test
+    wait_complete: true
+  register: wait_complete_failed_start
+
+- name: assert wait_complete handles TaskFailedToStart gracefully
+  assert:
+    that:
+      - wait_complete_failed_start.changed
+      - wait_complete_failed_start.task | length == 1
+      - wait_complete_failed_start.task[0].lastStatus == "STOPPED"
+      - wait_complete_failed_start.task[0].stopCode == "TaskFailedToStart"
+      - "'CannotPullContainerError' in wait_complete_failed_start.task[0].stoppedReason"
+
+### Test 4: wait_complete with operation=stop (warns but proceeds)
+# wait_complete is only meaningful for run/start. The module should warn
+# but still execute the stop normally.
+
+- name: run long-running Fargate task
+  ecs_task:
+    operation: run
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-wc-long"
+    launch_type: FARGATE
+    count: 1
+    network_configuration:
+      subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+      security_groups:
+        - '{{ setup_sg.group_id }}'
+      assign_public_ip: true
+    started_by: ansible_wait_complete_test
+    wait: true
+  register: wait_complete_long_task
+
+- name: stop task with wait_complete (should warn but succeed)
+  ecs_task:
+    operation: stop
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-wc-long"
+    task: "{{ wait_complete_long_task.task[0].taskArn }}"
+    wait_complete: true
+    wait: true
+  register: wait_complete_stop_result
+
+- name: assert stop with wait_complete succeeded
+  assert:
+    that:
+      - wait_complete_stop_result.changed

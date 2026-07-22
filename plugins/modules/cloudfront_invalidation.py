@@ -103,13 +103,26 @@ invalidation:
           type: complex
           contains:
             items:
-              description: A list of the paths that you want to invalidate.
+              description:
+                - A list of the paths that you want to invalidate.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(invalidation.invalidation_batch.paths.elements) instead.
               returned: always
               type: list
               sample:
               - /testpathtwo/test2.js
               - /testpathone/test1.css
               - /testpaththree/test3.ss
+            elements:
+              description:
+                - A list of the paths that you want to invalidate.
+              returned: always
+              type: list
+              sample:
+              - /testpathtwo/test2.js
+              - /testpathone/test1.css
+              - /testpaththree/test3.ss
+              version_added: 10.1.0
             quantity:
               description: The number of objects that you want to invalidate.
               returned: always
@@ -261,6 +274,11 @@ def main():
     valid_target_paths = validation_mgr.validate_invalidation_batch(target_paths, caller_reference)
     valid_pascal_target_paths = snake_dict_to_camel_dict(valid_target_paths, True)
     result, changed = service_mgr.create_invalidation(distribution_id, valid_pascal_target_paths)
+
+    # Duplicate 'Invalidation.InvalidationBatch.Paths.Items' to 'Invalidation.InvalidationBatch.Paths.Elements'
+    result["Invalidation"]["InvalidationBatch"]["Paths"]["Elements"] = result["Invalidation"]["InvalidationBatch"][
+        "Paths"
+    ]["Items"]
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
 

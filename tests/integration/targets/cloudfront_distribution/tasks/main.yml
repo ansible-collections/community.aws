@@ -25,11 +25,77 @@
   - set_fact:
       distribution_id: '{{ cf_distribution.id }}'
 
+  # cloudfront_distribution_info tests - test early to fail fast
+  - name: get distribution info by distribution_id
+    cloudfront_distribution_info:
+      distribution: true
+      distribution_id: "{{ distribution_id }}"
+    register: cf_info_by_id
+
+  - name: ensure distribution info was returned
+    assert:
+      that:
+        - not cf_info_by_id.changed
+        - cf_info_by_id.cloudfront is defined
+        - distribution_id in cf_info_by_id.cloudfront
+        - cf_info_by_id.cloudfront[distribution_id].Distribution.Id == distribution_id
+        - cf_info_by_id.cloudfront[distribution_id].Distribution.Status is defined
+        - cf_info_by_id.cloudfront.result is defined
+        - cf_info_by_id.cloudfront.result.Distribution.Id == distribution_id
+
+  - name: get distribution config by distribution_id
+    cloudfront_distribution_info:
+      distribution_config: true
+      distribution_id: "{{ distribution_id }}"
+    register: cf_config_by_id
+
+  - name: ensure distribution config was returned
+    assert:
+      that:
+        - not cf_config_by_id.changed
+        - cf_config_by_id.cloudfront is defined
+        - distribution_id in cf_config_by_id.cloudfront
+        - cf_config_by_id.cloudfront[distribution_id].DistributionConfig is defined
+        - cf_config_by_id.cloudfront[distribution_id].DistributionConfig.Origins is defined
+        - cf_config_by_id.cloudfront.result is defined
+        - cf_config_by_id.cloudfront.result.DistributionConfig is defined
+
+  - name: list all distributions
+    cloudfront_distribution_info:
+      list_distributions: true
+    register: cf_list
+
+  - name: ensure distribution list contains our distribution
+    assert:
+      that:
+        - not cf_list.changed
+        - cf_list.cloudfront is defined
+        - cf_list.cloudfront.distributions is defined
+        - distribution_id in cf_list.cloudfront.distributions
+        - cf_list.cloudfront.distributions[distribution_id].Id == distribution_id
+
+  - name: get summary of all cloudfront resources
+    cloudfront_distribution_info:
+      summary: true
+    register: cf_summary
+
+  - name: ensure summary was returned
+    assert:
+      that:
+        - not cf_summary.changed
+        - cf_summary.cloudfront is defined
+        - cf_summary.cloudfront.summary is defined
+        - cf_summary.cloudfront.summary.distributions is defined
+        - cf_summary.cloudfront.summary.distributions | selectattr('Id', 'equalto', distribution_id) | list | length == 1
+
   - name: ensure that default value of 'enabled' is 'true'
     assert:
       that:
         - cf_distribution.changed
         - cf_distribution.enabled
+        # ensure dict keys for deprecation
+        - '"items" in cf_distribution.origins'
+        - '"elements" in cf_distribution.origins'
 
   - name: ensure that default value of 'ipv6_enabled' is 'false'
     assert:
@@ -167,8 +233,8 @@
     assert:
       that:
         - update_origin_origin_shield.changed
-        - update_origin_origin_shield.origins['items'][0].origin_shield.enabled
-        - update_origin_origin_shield.origins['items'][0].origin_shield.origin_shield_region == aws_region
+        - update_origin_origin_shield.origins['elements'][0].origin_shield.enabled
+        - update_origin_origin_shield.origins['elements'][0].origin_shield.origin_shield_region == aws_region
 
   # TODO: fix module idempotency issue
   # - name: enable origin Origin Shield again to test idempotency
@@ -188,8 +254,8 @@
   #   assert:
   #     that:
   #       - not update_origin_origin_shield_idempotency.changed
-  #       - update_origin_origin_shield_idempotency.origins['items'][0].origin_shield.enabled
-  #       - update_origin_origin_shield_idempotency.origins['items'][0].origin_shield.origin_shield_region == '{{ aws_region }}'
+  #       - update_origin_origin_shield_idempotency.origins['elements'][0].origin_shield.enabled
+  #       - update_origin_origin_shield_idempotency.origins['elements'][0].origin_shield.origin_shield_region == '{{ aws_region }}'
 
   - name: disable origin Origin Shield
     cloudfront_distribution:
@@ -207,7 +273,7 @@
     assert:
       that:
         - update_origin_origin_shield_disable.changed
-        - not update_origin_origin_shield_disable.origins['items'][0].origin_shield.enabled
+        - not update_origin_origin_shield_disable.origins['elements'][0].origin_shield.enabled
 
   - name: update restrictions
     cloudfront_distribution:
@@ -455,7 +521,7 @@
     assert:
       that:
         # - not reverse_cache_behaviors.changed
-        - reverse_cache_behaviors.cache_behaviors|length == 2
+        - reverse_cache_behaviors.cache_behaviors.elements|length == 2
 
   - name: reverse some cache behaviors properly
     cloudfront_distribution:
@@ -471,7 +537,7 @@
     assert:
       that:
         - reverse_cache_behaviors_with_purge.changed
-        - reverse_cache_behaviors_with_purge.cache_behaviors|length == 2
+        - reverse_cache_behaviors_with_purge.cache_behaviors.elements|length == 2
 
   - name: update origin that changes target id (failure expected)
     cloudfront_distribution:
@@ -526,7 +592,7 @@
       that:
         - item.s3_origin_config.origin_access_identity.startswith('origin-access-identity/cloudfront/')
     when: "'s3_origin_config' in item"
-    loop: "{{ update_origin_to_s3.origins['items'] }}"
+    loop: "{{ update_origin_to_s3.origins['elements'] }}"
 
   - name: update origin to remove s3 origin access identity
     cloudfront_distribution:
@@ -543,7 +609,7 @@
       that:
         - not item.s3_origin_config.origin_access_identity
     when: "'s3_origin_config' in item"
-    loop: "{{ update_origin_to_s3_without_origin_access.origins['items'] }}"
+    loop: "{{ update_origin_to_s3_without_origin_access.origins['elements'] }}"
 
   - name: delete the s3 bucket
     s3_bucket:
@@ -630,7 +696,50 @@
       that:
         - result.changed
         - result.origins['quantity'] > 0
-        - result.origins['items'] | selectattr('s3_origin_config', 'defined') | map(attribute='s3_origin_config') | selectattr('origin_access_identity', 'eq', origin_access_identity) | list | length == 1
+        - result.origins['elements'] | selectattr('s3_origin_config', 'defined') | map(attribute='s3_origin_config') | selectattr('origin_access_identity', 'eq', origin_access_identity) | list | length == 1
+
+  - name: get origin access identity info
+    cloudfront_distribution_info:
+      origin_access_identity: true
+      origin_access_identity_id: "{{ _origin_access_id.cloud_front_origin_access_identity.id }}"
+    register: cf_oai_info
+
+  - name: ensure origin access identity info was returned
+    assert:
+      that:
+        - not cf_oai_info.changed
+        - cf_oai_info.cloudfront is defined
+        - _origin_access_id.cloud_front_origin_access_identity.id in cf_oai_info.cloudfront
+        - cf_oai_info.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentity.Id == _origin_access_id.cloud_front_origin_access_identity.id
+        - cf_oai_info.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentity.CloudFrontOriginAccessIdentityConfig.Comment == "this is a sample origin access identity"
+
+  - name: get origin access identity config
+    cloudfront_distribution_info:
+      origin_access_identity_config: true
+      origin_access_identity_id: "{{ _origin_access_id.cloud_front_origin_access_identity.id }}"
+    register: cf_oai_config
+
+  - name: ensure origin access identity config was returned
+    assert:
+      that:
+        - not cf_oai_config.changed
+        - cf_oai_config.cloudfront is defined
+        - _origin_access_id.cloud_front_origin_access_identity.id in cf_oai_config.cloudfront
+        - cf_oai_config.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentityConfig is defined
+        - cf_oai_config.cloudfront[_origin_access_id.cloud_front_origin_access_identity.id].CloudFrontOriginAccessIdentityConfig.Comment == "this is a sample origin access identity"
+
+  - name: list origin access identities
+    cloudfront_distribution_info:
+      list_origin_access_identities: true
+    register: cf_oai_list
+
+  - name: ensure origin access identity list contains our OAI
+    assert:
+      that:
+        - not cf_oai_list.changed
+        - cf_oai_list.cloudfront is defined
+        - cf_oai_list.cloudfront.origin_access_identities is defined
+        - cf_oai_list.cloudfront.origin_access_identities | selectattr('Id', 'equalto', _origin_access_id.cloud_front_origin_access_identity.id) | list | length == 1
 
   - name: update distribution to use cache_policy_id and origin_request_policy_id
     cloudfront_distribution:
@@ -648,6 +757,22 @@
         - update_distribution_with_cache_policies.default_cache_behavior.cache_policy_id == '658327ea-f89d-4fab-a63d-7e88639e58f6'
         - update_distribution_with_cache_policies.default_cache_behavior.origin_request_policy_id == '88a5eaf4-2fd4-4709-b370-b4c650ea3fcf'
 
+  - name: get all lists using all_lists parameter
+    cloudfront_distribution_info:
+      all_lists: true
+    register: cf_all_lists
+
+  - name: ensure all lists were returned
+    assert:
+      that:
+        - not cf_all_lists.changed
+        - cf_all_lists.cloudfront is defined
+        - cf_all_lists.cloudfront.distributions is defined
+        - cf_all_lists.cloudfront.origin_access_identities is defined
+        - cf_all_lists.cloudfront.streaming_distributions is defined
+        - distribution_id in cf_all_lists.cloudfront.distributions
+        - cf_all_lists.cloudfront.origin_access_identities | selectattr('Id', 'equalto', _origin_access_id.cloud_front_origin_access_identity.id) | list | length == 1
+
   always:
   # TEARDOWN STARTS HERE
   - name: delete the s3 bucket
@@ -656,6 +781,22 @@
       state: absent
       force: true
     ignore_errors: true
+
+  - name: wait for distributions to finish deploying before cleanup
+    cloudfront_distribution_info:
+      distribution: true
+      distribution_id: "{{ item }}"
+    register: _dist_status
+    until: >-
+      item not in _dist_status.cloudfront or
+      _dist_status.cloudfront[item].Distribution.Status == 'Deployed'
+    retries: 60
+    delay: 10
+    ignore_errors: true
+    loop:
+      - '{{ cf_second_distribution.id | default("") }}'
+      - '{{ cf_distribution.id | default("") }}'
+    when: item != ""
 
   - name: clean up cloudfront distribution
     cloudfront_distribution:

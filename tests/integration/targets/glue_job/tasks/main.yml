@@ -25,7 +25,6 @@
               Effect: Allow
               Principal:
                 Service: glue.amazonaws.com
-        create_instance_profile: false
         managed_policies:
           - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 
@@ -37,7 +36,7 @@
         default_arguments:
           "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
-        glue_version: "2.0"
+        glue_version: "4.0"
         role: "{{ glue_job_role_name }}"
         tags:
           Environment: Test
@@ -60,7 +59,7 @@
         default_arguments:
           "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
-        glue_version: "2.0"
+        glue_version: "4.0"
         role: "{{ glue_job_role_name }}"
         tags:
           Environment: Test
@@ -100,7 +99,7 @@
         default_arguments:
           "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
-        glue_version: "2.0"
+        glue_version: "4.0"
         role: "{{ glue_job_role_name }}"
         tags:
           Environment: Test
@@ -142,7 +141,7 @@
         default_arguments:
           "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
-        glue_version: "2.0"
+        glue_version: "4.0"
         role: "{{ glue_job_role_name }}"
         tags:
           Environment: Test
@@ -183,7 +182,7 @@
         default_arguments:
           "--TempDir": "{{ glue_job_temp_dir }}subfolder/"
         description: "{{ glue_job_description }}"
-        glue_version: "0.9"
+        glue_version: "5.0"
         role: "{{ glue_job_role_name }}"
         tags:
           Environment: Test
@@ -223,7 +222,7 @@
         default_arguments:
           "--TempDir": "{{ glue_job_temp_dir }}subfolder/"
         description: "{{ glue_job_description }}"
-        glue_version: "0.9"
+        glue_version: "5.0"
         role: "{{ glue_job_role_name }}"
         tags:
           Environment: Test

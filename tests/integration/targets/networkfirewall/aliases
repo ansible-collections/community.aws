@@ -1,7 +1,7 @@
 cloud/aws
+
 # reason: slow
 unsupported
-
 # Takes around 45 minutes: deletion of resources has to be serial and is
 # painfully slow
 slow

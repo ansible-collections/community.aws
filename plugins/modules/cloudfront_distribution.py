@@ -741,20 +741,71 @@ active_trusted_signers:
       type: int
       sample: 1
     items:
-      description: Number of trusted signers.
+      description:
+        - A list of trusted signers.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(active_trusted_signers.elements) instead.
       returned: when there are trusted signers
       type: list
       sample:
       - key_pair_id
+    elements:
+      description: A list of trusted signers.
+      returned: when there are trusted signers
+      type: list
+      version_added: 10.1.0
+      sample:
+      - key_pair_id
+active_trusted_key_groups:
+  description:
+    - This field contains a list of key groups and the public keys in each key group that CloudFront
+      can use to verify the signatures of signed URLs or signed cookies.
+  returned: always
+  type: complex
+  contains:
+    enabled:
+      description:
+        - This field is true if any of the key groups have public keys that CloudFront can use to verify
+          the signatures of signed URLs and signed cookies. If not, this field is false.
+      returned: always
+      type: bool
+      sample: false
+    quantity:
+      description: Number of key groups.
+      returned: always
+      type: int
+      sample: 1
+    items:
+      description:
+        - A list of key groups.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(active_trusted_key_groups.elements) instead.
+      returned: when there are trusted signers
+      type: list
+    elements:
+      description: A list of key groups.
+      returned: when there are trusted signers
+      type: list
+      version_added: 10.1.0
 aliases:
   description: Aliases that refer to the distribution.
   returned: always
   type: complex
   contains:
     items:
+      description:
+        - List of aliases.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(aliases.elements) instead.
+      returned: always
+      type: list
+      sample:
+      - test.example.com
+    elements:
       description: List of aliases.
       returned: always
       type: list
+      version_added: 10.1.0
       sample:
       - test.example.com
     quantity:
@@ -773,7 +824,10 @@ cache_behaviors:
   type: complex
   contains:
     items:
-      description: List of cache behaviors.
+      description:
+        - List of cache behaviors.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(cache_behaviors.elements) instead.
       returned: always
       type: complex
       contains:
@@ -800,7 +854,10 @@ cache_behaviors:
                   type: int
                   sample: 2
             items:
-              description: List of methods allowed by the cache behavior.
+              description:
+                - List of methods allowed by the cache behavior.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(cache_behaviors.elements.allowed_methods.elements) instead.
               returned: always
               type: list
               sample:
@@ -847,7 +904,10 @@ cache_behaviors:
                       type: int
                       sample: 1
                     items:
-                      description: List of cookies to forward.
+                      description:
+                        - List of cookies to forward.
+                        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                          Use RV(cache_behaviors.elements.forwarded_values.cookies.whitelisted_names.elements) instead.
                       returned: when list is not empty
                       type: list
                       sample: my_cookie
@@ -862,7 +922,10 @@ cache_behaviors:
                   type: int
                   sample: 1
                 items:
-                  description: List of headers to vary on.
+                  description:
+                    - List of headers to vary on.
+                    - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                      Use RV(cache_behaviors.elements.forwarded_values.headers.elements) instead.
                   returned: when list is not empty
                   type: list
                   sample:
@@ -883,7 +946,10 @@ cache_behaviors:
                   type: int
                   sample: 1
                 items:
-                  description: List of query string cache keys to use in cache lookups.
+                  description:
+                    - List of query string cache keys to use in cache lookups.
+                    - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                      Use RV(cache_behaviors.elements.forwarded_values.query_string_cache_keys.elements) instead.
                   returned: when list is not empty
                   type: list
                   sample:
@@ -898,6 +964,187 @@ cache_behaviors:
               type: int
               sample: 1
             items:
+              description:
+                - List of lambda function associations.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(cache_behaviors.elements.lambda_function_associations.elements) instead.
+              returned: when list is not empty
+              type: list
+              sample:
+              - lambda_function_arn: arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function
+                event_type: viewer-response
+        max_ttl:
+          description: Maximum Time to Live.
+          returned: always
+          type: int
+          sample: 31536000
+        min_ttl:
+          description: Minimum Time to Live.
+          returned: always
+          type: int
+          sample: 0
+        path_pattern:
+          description: Path pattern that determines this cache behavior.
+          returned: always
+          type: str
+          sample: /path/to/files/*
+        smooth_streaming:
+          description: Whether smooth streaming is enabled.
+          returned: always
+          type: bool
+          sample: false
+        target_origin_id:
+          description: ID of origin reference by this cache behavior.
+          returned: always
+          type: str
+          sample: origin_abcd
+        trusted_signers:
+          description: Trusted signers.
+          returned: always
+          type: complex
+          contains:
+            enabled:
+              description: Whether trusted signers are enabled for this cache behavior.
+              returned: always
+              type: bool
+              sample: false
+            quantity:
+              description: Count of trusted signers.
+              returned: always
+              type: int
+              sample: 1
+        viewer_protocol_policy:
+          description: Policy of how to handle http/https.
+          returned: always
+          type: str
+          sample: redirect-to-https
+    elements:
+      description: List of cache behaviors.
+      returned: always
+      type: complex
+      version_added: 10.1.0
+      contains:
+        allowed_methods:
+          description: Methods allowed by the cache behavior.
+          returned: always
+          type: complex
+          contains:
+            cached_methods:
+              description: Methods cached by the cache behavior.
+              returned: always
+              type: complex
+              contains:
+                elements:
+                  description: List of cached methods.
+                  returned: always
+                  type: list
+                  sample:
+                  - HEAD
+                  - GET
+                quantity:
+                  description: Count of cached methods.
+                  returned: always
+                  type: int
+                  sample: 2
+            elements:
+              description: List of methods allowed by the cache behavior.
+              returned: always
+              type: list
+              sample:
+              - HEAD
+              - GET
+            quantity:
+              description: Count of methods allowed by the cache behavior.
+              returned: always
+              type: int
+              sample: 2
+        compress:
+          description: Whether compression is turned on for the cache behavior.
+          returned: always
+          type: bool
+          sample: false
+        default_ttl:
+          description: Default Time to Live of the cache behavior.
+          returned: always
+          type: int
+          sample: 86400
+        forwarded_values:
+          description: Values forwarded to the origin for this cache behavior.
+          returned: always
+          type: complex
+          contains:
+            cookies:
+              description: Cookies to forward to the origin.
+              returned: always
+              type: complex
+              contains:
+                forward:
+                  description: Which cookies to forward to the origin for this cache behavior.
+                  returned: always
+                  type: str
+                  sample: none
+                whitelisted_names:
+                  description: The names of the cookies to forward to the origin for this cache behavior.
+                  returned: when I(forward=whitelist)
+                  type: complex
+                  contains:
+                    quantity:
+                      description: Count of cookies to forward.
+                      returned: always
+                      type: int
+                      sample: 1
+                    elements:
+                      description: List of cookies to forward.
+                      returned: when list is not empty
+                      type: list
+                      sample: my_cookie
+            headers:
+              description: Which headers are used to vary on cache retrievals.
+              returned: always
+              type: complex
+              contains:
+                quantity:
+                  description: Count of headers to vary on.
+                  returned: always
+                  type: int
+                  sample: 1
+                elements:
+                  description: List of headers to vary on.
+                  returned: when list is not empty
+                  type: list
+                  sample:
+                  - Host
+            query_string:
+              description: Whether the query string is used in cache lookups.
+              returned: always
+              type: bool
+              sample: false
+            query_string_cache_keys:
+              description: Which query string keys to use in cache lookups.
+              returned: always
+              type: complex
+              contains:
+                quantity:
+                  description: Count of query string cache keys to use in cache lookups.
+                  returned: always
+                  type: int
+                  sample: 1
+                elements:
+                  description: List of query string cache keys to use in cache lookups.
+                  returned: when list is not empty
+                  type: list
+                  sample:
+        lambda_function_associations:
+          description: Lambda function associations for a cache behavior.
+          returned: always
+          type: complex
+          contains:
+            quantity:
+              description: Count of lambda function associations.
+              returned: always
+              type: int
+              sample: 1
+            elements:
               description: List of lambda function associations.
               returned: when list is not empty
               type: list
@@ -971,9 +1218,38 @@ custom_error_responses:
   type: complex
   contains:
     items:
+      description:
+        - List of custom error responses.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(custom_error_responses.elements) instead.
+      returned: always
+      type: complex
+      contains:
+        error_caching_min_ttl:
+          description: Minimum time to cache this error response.
+          returned: always
+          type: int
+          sample: 300
+        error_code:
+          description: Origin response code that triggers this error response.
+          returned: always
+          type: int
+          sample: 500
+        response_code:
+          description: Response code to return to the requester.
+          returned: always
+          type: str
+          sample: '500'
+        response_page_path:
+          description: Path that contains the error page to display.
+          returned: always
+          type: str
+          sample: /errors/5xx.html
+    elements:
       description: List of custom error responses.
       returned: always
       type: complex
+      version_added: 10.1.0
       contains:
         error_caching_min_ttl:
           description: Minimum time to cache this error response.
@@ -1016,9 +1292,20 @@ default_cache_behavior:
           type: complex
           contains:
             items:
+              description:
+                - List of cached methods.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(default_cache_behavior.allowed_methods.cached_methods.elements) instead.
+              returned: always
+              type: list
+              sample:
+              - HEAD
+              - GET
+            elements:
               description: List of cached methods.
               returned: always
               type: list
+              version_added: 10.1.0
               sample:
               - HEAD
               - GET
@@ -1028,9 +1315,20 @@ default_cache_behavior:
               type: int
               sample: 2
         items:
+          description:
+            - List of methods allowed by the cache behavior.
+            - This return value has been deprecated and will be removed in a release after 2026-12-16.
+              Use RV(default_cache_behavior.allowed_methods.elements) instead.
+          returned: always
+          type: list
+          sample:
+          - HEAD
+          - GET
+        elements:
           description: List of methods allowed by the cache behavior.
           returned: always
           type: list
+          version_added: 10.1.0
           sample:
           - HEAD
           - GET
@@ -1079,6 +1377,15 @@ default_cache_behavior:
                   returned: when list is not empty
                   type: list
                   sample: my_cookie
+                elements:
+                  description:
+                    - List of cookies to forward.
+                    - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                      Use RV(default_cache_behavior.forwarded_values.cookies.whitelisted_names.elements) instead.
+                  returned: when list is not empty
+                  version_added: 10.1.0
+                  type: list
+                  sample: my_cookie
         headers:
           description: Which headers are used to vary on cache retrievals.
           returned: always
@@ -1090,9 +1397,19 @@ default_cache_behavior:
               type: int
               sample: 1
             items:
+              description:
+                - List of headers to vary on.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(default_cache_behavior.forwarded_values.headers.elements) instead.
+              returned: when list is not empty
+              type: list
+              sample:
+              - Host
+            elements:
               description: List of headers to vary on.
               returned: when list is not empty
               type: list
+              version_added: 10.1.0
               sample:
               - Host
         query_string:
@@ -1111,10 +1428,17 @@ default_cache_behavior:
               type: int
               sample: 1
             items:
+              description:
+                - List of query string cache keys to use in cache lookups.
+                - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                  Use RV(default_cache_behavior.forwarded_values.query_string_cache_keys.elements) instead.
+              returned: when list is not empty
+              type: list
+            elements:
               description: List of query string cache keys to use in cache lookups.
               returned: when list is not empty
               type: list
-              sample:
+              version_added: 10.1.0
     lambda_function_associations:
       description: Lambda function associations for a cache behavior.
       returned: always
@@ -1126,9 +1450,20 @@ default_cache_behavior:
           type: int
           sample: 1
         items:
+          description:
+            - List of lambda function associations.
+            - This return value has been deprecated and will be removed in a release after 2026-12-16.
+              Use RV(default_cache_behavior.lambda_function_associations.elements) instead.
+          returned: when list is not empty
+          type: list
+          sample:
+          - lambda_function_arn: arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function
+            event_type: viewer-response
+        elements:
           description: List of lambda function associations.
           returned: when list is not empty
           type: list
+          version_added: 10.1.0
           sample:
           - lambda_function_arn: arn:aws:lambda:123456789012:us-east-1/lambda/lambda-function
             event_type: viewer-response
@@ -1254,7 +1589,10 @@ origins:
   type: complex
   contains:
     items:
-      description: List of origins.
+      description:
+        - List of origins.
+        - This return value has been deprecated and will be removed in a release after 2026-12-16.
+          Use RV(origins.elements) instead.
       returned: always
       type: complex
       contains:
@@ -1304,6 +1642,123 @@ origins:
               type: complex
               contains:
                 items:
+                  description:
+                    - List of SSL protocols.
+                    - This return value has been deprecated and will be removed in a release after 2026-12-16.
+                      Use RV(origins.elements.custom_origin_config.origin_ssl_protocols.elements) instead.
+                  returned: always
+                  type: list
+                  sample:
+                  - TLSv1
+                  - TLSv1.1
+                  - TLSv1.2
+                quantity:
+                  description: Count of SSL protocols.
+                  returned: always
+                  type: int
+                  sample: 3
+        domain_name:
+          description: Domain name of the origin.
+          returned: always
+          type: str
+          sample: test-origin.example.com
+        id:
+          description: ID of the origin.
+          returned: always
+          type: str
+          sample: test-origin.example.com
+        origin_path:
+          description: Subdirectory to prefix the request from the S3 or HTTP origin.
+          returned: always
+          type: str
+          sample: ''
+        connection_attempts:
+          description: The number of times that CloudFront attempts to connect to the origin.
+          returned: always
+          type: int
+          sample: 3
+        connection_timeout:
+          description: The number of seconds that CloudFront waits when trying to establish a connection to the origin.
+          returned: always
+          type: int
+          sample: 10
+        origin_shield:
+          description: Configuration of the origin Origin Shield.
+          returned: always
+          type: complex
+          contains:
+            enabled:
+              description: Whether Origin Shield is enabled or not.
+              returned: always
+              type: bool
+              sample: false
+            origin_shield_region:
+              description: Which region is used by Origin Shield.
+              returned: when enabled is true
+              type: str
+              sample: us-east-1
+          version_added: 6.0.0
+        s3_origin_config:
+          description: Origin access identity configuration for S3 Origin.
+          returned: when s3_origin_access_identity_enabled is true
+          type: dict
+          contains:
+            origin_access_identity:
+              type: str
+              description: The origin access id as a path.
+              sample: origin-access-identity/cloudfront/EXAMPLEID
+    elements:
+      description: List of origins.
+      returned: always
+      version_added: 10.1.0
+      type: complex
+      contains:
+        custom_headers:
+          description: Custom headers passed to the origin.
+          returned: always
+          type: complex
+          contains:
+            quantity:
+              description: Count of headers.
+              returned: always
+              type: int
+              sample: 1
+        custom_origin_config:
+          description: Configuration of the origin.
+          returned: always
+          type: complex
+          contains:
+            http_port:
+              description: Port on which HTTP is listening.
+              returned: always
+              type: int
+              sample: 80
+            https_port:
+              description: Port on which HTTPS is listening.
+              returned: always
+              type: int
+              sample: 443
+            origin_keepalive_timeout:
+              description: Keep-alive timeout.
+              returned: always
+              type: int
+              sample: 5
+            origin_protocol_policy:
+              description: Policy of which protocols are supported.
+              returned: always
+              type: str
+              sample: https-only
+            origin_read_timeout:
+              description: Timeout for reads to the origin.
+              returned: always
+              type: int
+              sample: 30
+            origin_ssl_protocols:
+              description: SSL protocols allowed by the origin.
+              returned: always
+              type: complex
+              contains:
+                elements:
                   description: List of SSL protocols.
                   returned: always
                   type: list
@@ -1392,9 +1847,18 @@ restrictions:
           type: int
           sample: 1
         items:
+          description:
+            - List of country codes allowed or disallowed.
+            - This return value has been deprecated and will be removed in a release after 2026-12-16.
+              Use RV(restrictions.geo_restriction.elements) instead.
+          returned: always
+          type: list
+          sample: xy
+        elements:
           description: List of country codes allowed or disallowed.
           returned: always
           type: list
+          version_added: 10.1.0
           sample: xy
         restriction_type:
           description: Type of restriction.
@@ -2388,6 +2852,80 @@ class CloudFrontValidationManager(object):
             self.module.fail_json_aws(e, msg=f"Error getting distribution {distribution_id}")
 
 
+def duplicate_keys_for_deprecation(result):
+    """
+    Rename all dict 'items' keys to 'elements'
+    """
+    for t in (
+        "active_trusted_signers.elements",
+        "active_trusted_key_groups.elements",
+        "distribution_config.aliases.elements",
+        "distribution_config.cache_behaviors.elements",
+        "distribution_config.custom_error_responses.elements",
+        "distribution_config.default_cache_behavior.allowed_methods.cached_methods.elements",
+        "distribution_config.default_cache_behavior.allowed_methods.elements",
+        "distribution_config.default_cache_behavior.forwarded_values.cookies.whitelisted_names.elements",
+        "distribution_config.default_cache_behavior.forwarded_values.headers.elements",
+        "distribution_config.default_cache_behavior.forwarded_values.query_string_cache_keys.elements",
+        "distribution_config.default_cache_behavior.lambda_function_associations.elements",
+        "distribution_config.origins.elements",
+        "distribution_config.restrictions.geo_restriction.elements",
+    ):
+        keys = t.split(".")
+        copy_result = result
+        while True:
+            try:
+                if len(keys) == 1:
+                    copy_result["elements"] = copy_result["items"]
+                    break
+                copy_result = copy_result[keys.pop(0)]
+            except KeyError:
+                # The result does contain the key, skipping it
+                break
+
+    # Origins
+    for i in result.get("distribution_config", {}).get("origins", {}).get("elements", []):
+        try:
+            items = i["custom_origin_config"]["origin_ssl_protocols"]["items"]
+            i["elements"] = items
+            del i["custom_origin_config"]["origin_ssl_protocols"]["items"]
+        except KeyError:
+            pass
+
+    # Cache behaviors
+    for i in result.get("distribution_config", {}).get("cache_behaviors", {}).get("elements", []):
+        try:
+            i["allowed_methods"]["elements"] = i["allowed_methods"]["items"]
+            del i["allowed_methods"]["items"]
+        except KeyError:
+            pass
+
+        try:
+            i["lambda_function_associations"]["elements"] = i["lambda_function_associations"]["items"]
+            del i["lambda_function_associations"]["items"]
+        except KeyError:
+            pass
+        try:
+            i["forwarded_values"]["cookies"]["whitelisted_names"]["elements"] = i["forwarded_values"]["cookies"][
+                "whitelisted_names"
+            ]["items"]
+            del i["forwarded_values"]["cookies"]["whitelisted_names"]["items"]
+        except KeyError:
+            pass
+        try:
+            i["forwarded_values"]["headers"]["elements"] = i["forwarded_values"]["headers"]["items"]
+            del i["forwarded_values"]["headers"]["items"]
+        except KeyError:
+            pass
+        try:
+            i["forwarded_values"]["query_string_cache_keys"]["elements"] = i["forwarded_values"][
+                "query_string_cache_keys"
+            ]["items"]
+            del i["forwarded_values"]["query_string_cache_keys"]["items"]
+        except KeyError:
+            pass
+
+
 def main():
     argument_spec = dict(
         state=dict(choices=["present", "absent"], default="present"),
@@ -2538,6 +3076,7 @@ def main():
         config["CallerReference"] = validation_mgr.validate_caller_reference(caller_reference)
         result = create_distribution(client, module, config, ansible_dict_to_boto3_tag_list(tags or {}))
         result = camel_dict_to_snake_dict(result)
+        duplicate_keys_for_deprecation(result)
         result["tags"] = list_tags_for_resource(client, module, result["arn"])
 
     if delete:
@@ -2550,6 +3089,7 @@ def main():
         )
         # e_tag = distribution['ETag']
         result = delete_distribution(client, module, distribution)
+        result.pop("ResponseMetadata", None)
 
     if update:
         changed = config != distribution["Distribution"]["DistributionConfig"]
@@ -2561,6 +3101,7 @@ def main():
         distribution["Distribution"]["DistributionConfig"]["tags"] = existing_tags
         changed |= update_tags(client, module, existing_tags, tags, purge_tags, result["ARN"])
         result = camel_dict_to_snake_dict(result)
+        duplicate_keys_for_deprecation(result)
         result["distribution_config"]["tags"] = config["tags"] = list_tags_for_resource(client, module, result["arn"])
         result["diff"] = dict()
         diff = recursive_diff(distribution["Distribution"]["DistributionConfig"], config)

@@ -1,0 +1,6 @@
+---
+breaking_changes:
+- waf_condition - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+- waf_info - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+- waf_rule - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+- waf_web_acl - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).

@@ -14,7 +14,7 @@
     - name: Create VPC for testing
       ec2_vpc_net:
         name: "{{ efs_name }}-vpc"
-        cidr_block: 10.22.32.0/23
+        cidr_block: "{{ vpc_cidr }}"
         tags:
           Name: Ansible ec2_instance Testing VPC
         tenancy: default
@@ -24,7 +24,7 @@
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{ testing_vpc.vpc.id }}"
-        cidr: 10.22.32.0/24
+        cidr: "{{ subnet_a_cidr }}"
         az: "{{ aws_region }}a"
         resource_tags:
           Name: "{{ efs_name }}-subnet-a"
@@ -34,7 +34,7 @@
       ec2_vpc_subnet:
         state: present
         vpc_id: "{{ testing_vpc.vpc.id }}"
-        cidr: 10.22.33.0/24
+        cidr: "{{ subnet_b_cidr }}"
         az: "{{ aws_region }}b"
         resource_tags:
           Name: "{{ efs_name }}-subnet-b"
@@ -589,7 +589,7 @@
       ec2_vpc_subnet:
         state: absent
         vpc_id: "{{ testing_vpc.vpc.id }}"
-        cidr: 10.22.32.0/24
+        cidr: "{{ subnet_a_cidr }}"
         az: "{{ aws_region }}a"
         resource_tags:
           Name: "{{ efs_name }}-subnet-a"
@@ -602,7 +602,7 @@
       ec2_vpc_subnet:
         state: absent
         vpc_id: "{{ testing_vpc.vpc.id }}"
-        cidr: 10.22.33.0/24
+        cidr: "{{ subnet_b_cidr }}"
         az: "{{ aws_region }}b"
         resource_tags:
           Name: "{{ efs_name }}-subnet-b"
@@ -614,7 +614,7 @@
     - name: remove the VPC
       ec2_vpc_net:
         name: "{{ efs_name }}-vpc"
-        cidr_block: 10.22.32.0/23
+        cidr_block: "{{ vpc_cidr }}"
         state: absent
       register: removed
       until: removed is not failed
