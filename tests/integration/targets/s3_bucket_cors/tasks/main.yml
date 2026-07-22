@@ -1,0 +1,526 @@
+---
+# Integration tests for s3_bucket_cors
+#
+# Notes:
+# - s3_bucket_cors manages CORS configuration for S3 buckets
+# - Tests cover state=present (create/update) and state=absent (remove)
+# - Check mode and idempotency are tested for all operations
+#
+- module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  collections:
+    - amazon.aws
+  block:
+
+  # ============================================================
+  # Setup - Create test bucket
+  # ============================================================
+
+  - name: Create simple s3_bucket for CORS testing
+    amazon.aws.s3_bucket:
+      state: present
+      name: '{{ test_bucket }}'
+    register: output
+
+  - name: Assert bucket was created properly
+    assert:
+      that:
+        - output is changed
+        - output.name == test_bucket
+
+  # ============================================================
+  # Test Create CORS rules (state = present)
+  # ============================================================
+
+  - name: Create CORS rules (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 30000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Create CORS rules
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 30000
+    register: result
+
+  - name: Assert CORS rules were created
+    assert:
+      that:
+        - result is changed
+        - result.name == test_bucket
+        - result.rules | length == 1
+        - result.rules[0].allowed_origins == ['http://www.example.com']
+        - result.rules[0].allowed_methods == ['GET', 'POST']
+
+  - name: Get CORS configuration with s3_bucket_cors_info
+    community.aws.s3_bucket_cors_info:
+      name: '{{ test_bucket }}'
+    register: cors_info
+
+  - name: Assert CORS info matches configured state
+    assert:
+      that:
+        - cors_info.cors_rules | length == 1
+        - cors_info.cors_rules[0].allowed_origins == ['http://www.example.com']
+        - cors_info.cors_rules[0].allowed_methods == ['GET', 'POST']
+        - cors_info.cors_rules[0].allowed_headers == ['Authorization']
+        - cors_info.cors_rules[0].expose_headers == ['x-amz-server-side-encryption', 'x-amz-request-id']
+        - cors_info.cors_rules[0].max_age_seconds == 30000
+
+  - name: Create CORS rules idempotency (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 30000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Create CORS rules idempotency
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 30000
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Update CORS rules
+  # ============================================================
+
+  - name: Update CORS rules - change max_age_seconds (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 60000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update CORS rules - change max_age_seconds
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 60000
+    register: result
+
+  - name: Assert CORS rules were updated
+    assert:
+      that:
+        - result is changed
+        - result.rules[0].max_age_seconds == 60000
+
+  - name: Update CORS rules idempotency (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 60000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update CORS rules idempotency
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          expose_headers:
+            - x-amz-server-side-encryption
+            - x-amz-request-id
+          max_age_seconds: 60000
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Multiple CORS rules
+  # ============================================================
+
+  - name: Add multiple CORS rules (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          max_age_seconds: 60000
+        - allowed_origins:
+            - https://www.example.org
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Add multiple CORS rules
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          max_age_seconds: 60000
+        - allowed_origins:
+            - https://www.example.org
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+
+  - name: Assert multiple CORS rules were created
+    assert:
+      that:
+        - result is changed
+        - result.rules | length == 2
+
+  - name: Add multiple CORS rules idempotency (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          max_age_seconds: 60000
+        - allowed_origins:
+            - https://www.example.org
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Add multiple CORS rules idempotency
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - http://www.example.com
+          allowed_methods:
+            - GET
+            - POST
+          allowed_headers:
+            - Authorization
+          max_age_seconds: 60000
+        - allowed_origins:
+            - https://www.example.org
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Wildcard origins
+  # ============================================================
+
+  - name: Set CORS with wildcard origin (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - '*'
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Set CORS with wildcard origin
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - '*'
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+
+  - name: Assert wildcard CORS rule was created
+    assert:
+      that:
+        - result is changed
+        - result.rules | length == 1
+        - result.rules[0].allowed_origins == ['*']
+
+  - name: Set CORS with wildcard origin idempotency (check_mode)
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - '*'
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Set CORS with wildcard origin idempotency
+    community.aws.s3_bucket_cors:
+      state: present
+      name: '{{ test_bucket }}'
+      rules:
+        - allowed_origins:
+            - '*'
+          allowed_methods:
+            - GET
+          allowed_headers:
+            - '*'
+          max_age_seconds: 3000
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=absent - Remove CORS rules
+  # ============================================================
+
+  - name: Remove CORS rules (check_mode)
+    community.aws.s3_bucket_cors:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Remove CORS rules
+    community.aws.s3_bucket_cors:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+
+  - name: Assert CORS rules were removed
+    assert:
+      that:
+        - result is changed
+
+  - name: Get CORS configuration after deletion
+    community.aws.s3_bucket_cors_info:
+      name: '{{ test_bucket }}'
+    register: cors_info
+
+  - name: Assert CORS info shows no configuration
+    assert:
+      that:
+        - cors_info.cors_rules | length == 0
+
+  - name: Remove CORS rules idempotency (check_mode)
+    community.aws.s3_bucket_cors:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Remove CORS rules idempotency
+    community.aws.s3_bucket_cors:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+
+  - name: Assert idempotency - no change (bucket has no CORS)
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Cleanup
+  # ============================================================
+
+  always:
+    - name: Remove CORS configuration
+      community.aws.s3_bucket_cors:
+        name: '{{ test_bucket }}'
+        state: absent
+      ignore_errors: true
+
+    - name: Delete test bucket
+      amazon.aws.s3_bucket:
+        name: '{{ test_bucket }}'
+        state: absent
+        force: true
+      ignore_errors: true

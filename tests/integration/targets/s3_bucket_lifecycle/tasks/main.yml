@@ -1,5 +1,5 @@
 ---
-- name: 's3_lifecycle integration tests'
+- name: 's3_bucket_lifecycle integration tests'
   collections:
     - amazon.aws
   module_defaults:
@@ -61,6 +61,19 @@
         that:
           - (output.results | last).rules | length == 0
   # ============================================================
+    - name: Create a lifecycle policy (check_mode)
+      community.aws.s3_bucket_lifecycle:
+        name: '{{ bucket_name }}'
+        expiration_days: 300
+        prefix: ''
+      check_mode: yes
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+
+  # ============================================================
     - name: Create a lifecycle policy
       community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
@@ -71,6 +84,30 @@
     - assert:
         that:
           - output is changed
+
+    - name: Get lifecycle configuration with s3_bucket_lifecycle_info
+      community.aws.s3_bucket_lifecycle_info:
+        name: '{{ bucket_name }}'
+      register: lifecycle_info
+
+    - name: Assert lifecycle info matches configured state
+      assert:
+        that:
+          - lifecycle_info.lifecycle_rules | length >= 1
+          - lifecycle_info.lifecycle_rules | selectattr('expiration', 'defined') | list | length >= 1
+
+  # ============================================================
+    - name: Create a lifecycle policy idempotency (check_mode)
+      community.aws.s3_bucket_lifecycle:
+        name: '{{ bucket_name }}'
+        expiration_days: 300
+      check_mode: yes
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+
   # ============================================================
     - name: Create a lifecycle policy (idempotency)
       community.aws.s3_bucket_lifecycle:
@@ -104,6 +141,20 @@
         that:
           - output is not changed
   # ============================================================
+    - name: Disable the second lifecycle policy (check_mode)
+      community.aws.s3_bucket_lifecycle:
+        name: '{{ bucket_name }}'
+        status: disabled
+        transition_days: 30
+        prefix: /something
+      check_mode: yes
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+
+  # ============================================================
     - name: Disable the second lifecycle policy
       community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
@@ -115,6 +166,32 @@
     - assert:
         that:
           - output is changed
+
+    - name: Get lifecycle configuration after disabling policy
+      community.aws.s3_bucket_lifecycle_info:
+        name: '{{ bucket_name }}'
+      register: lifecycle_info
+
+    - name: Assert lifecycle info shows disabled policy
+      assert:
+        that:
+          - lifecycle_info.lifecycle_rules | length >= 1
+          - lifecycle_info.lifecycle_rules | selectattr('status', 'equalto', 'Disabled') | list | length >= 1
+
+  # ============================================================
+    - name: Disable the second lifecycle policy idempotency (check_mode)
+      community.aws.s3_bucket_lifecycle:
+        name: '{{ bucket_name }}'
+        status: disabled
+        transition_days: 30
+        prefix: /something
+      check_mode: yes
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+
   # ============================================================
     - name: Disable the second lifecycle policy (idempotency)
       community.aws.s3_bucket_lifecycle:
@@ -152,6 +229,19 @@
         that:
           - output is not changed
   # ============================================================
+    - name: Delete the second lifecycle policy (check_mode)
+      community.aws.s3_bucket_lifecycle:
+        name: '{{ bucket_name }}'
+        state: absent
+        prefix: /something
+      check_mode: yes
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+
+  # ============================================================
     - name: Delete the second lifecycle policy
       community.aws.s3_bucket_lifecycle:
         name: '{{ bucket_name }}'
@@ -162,6 +252,30 @@
     - assert:
         that:
           - output is changed
+
+    - name: Get lifecycle configuration after deleting policy
+      community.aws.s3_bucket_lifecycle_info:
+        name: '{{ bucket_name }}'
+      register: lifecycle_info
+
+    - name: Assert lifecycle info reflects deletion
+      assert:
+        that:
+          - lifecycle_info.lifecycle_rules | selectattr('filter.prefix', 'defined') | selectattr('filter.prefix', 'equalto', '/something') | list | length == 0
+
+  # ============================================================
+    - name: Delete the second lifecycle policy idempotency (check_mode)
+      community.aws.s3_bucket_lifecycle:
+        name: '{{ bucket_name }}'
+        state: absent
+        prefix: /something
+      check_mode: yes
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+
   # ============================================================
     - name: Delete the second lifecycle policy (idempotency)
       community.aws.s3_bucket_lifecycle:
