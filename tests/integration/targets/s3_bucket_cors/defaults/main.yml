@@ -1,0 +1,2 @@
+---
+test_bucket: '{{ tiny_prefix }}-s3-bucket-cors'

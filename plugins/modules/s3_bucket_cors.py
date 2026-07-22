@@ -6,12 +6,13 @@
 
 DOCUMENTATION = r"""
 ---
-module: s3_cors
+module: s3_bucket_cors
 version_added: 1.0.0
 short_description: Manage CORS for S3 buckets in AWS
 description:
   - Manage CORS for S3 buckets in AWS.
   - Prior to release 5.0.0 this module was called C(community.aws.aws_s3_cors).
+  - Since release 11.1.0 the preferred name is C(community.aws.s3_bucket_cors), C(community.aws.s3_cors) remains as an alias.
     The usage did not change.
 author:
   - "Oyvind Saltvik (@fivethreeo)"
@@ -95,54 +96,52 @@ rules:
     ]
 """
 
-try:
-    from botocore.exceptions import BotoCoreError
-    from botocore.exceptions import ClientError
-except ImportError:
-    pass  # Handled by AnsibleAWSModule
-
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.policy import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.s3 import AnsibleS3Error
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.s3 import delete_bucket_cors
+from ansible_collections.community.aws.plugins.module_utils.s3 import get_bucket_cors
+from ansible_collections.community.aws.plugins.module_utils.s3 import put_bucket_cors
 
 
-def create_or_update_bucket_cors(connection, module):
+def create_or_update_bucket_cors(module, client):
+    """Create or update bucket CORS configuration."""
     name = module.params.get("name")
     rules = module.params.get("rules", [])
-    changed = False
 
-    try:
-        current_camel_rules = connection.get_bucket_cors(Bucket=name)["CORSRules"]
-    except ClientError:
-        current_camel_rules = []
-
+    current_camel_rules = get_bucket_cors(client, name)
     new_camel_rules = snake_dict_to_camel_dict(rules, capitalize_first=True)
+
     # compare_policies() takes two dicts and makes them hashable for comparison
-    if compare_policies(new_camel_rules, current_camel_rules):
-        changed = True
+    if not compare_policies(new_camel_rules, current_camel_rules):
+        return False
 
-    if changed:
-        try:
-            connection.put_bucket_cors(Bucket=name, CORSConfiguration={"CORSRules": new_camel_rules})
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg=f"Unable to update CORS for bucket {name}")
+    if module.check_mode:
+        return True
 
-    module.exit_json(changed=changed, name=name, rules=rules)
+    put_bucket_cors(client, name, new_camel_rules)
+    return True
 
 
-def destroy_bucket_cors(connection, module):
+def delete_bucket_cors_configuration(module, client):
+    """Delete bucket CORS configuration."""
     name = module.params.get("name")
-    changed = False
 
-    try:
-        connection.delete_bucket_cors(Bucket=name)
-        changed = True
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg=f"Unable to delete CORS for bucket {name}")
+    current_camel_rules = get_bucket_cors(client, name)
 
-    module.exit_json(changed=changed)
+    # Check if already absent
+    if not current_camel_rules:
+        return False
+
+    if module.check_mode:
+        return True
+
+    result = delete_bucket_cors(client, name)
+    # If result is False, configuration didn't exist (race condition - already deleted)
+    return result is not False
 
 
 def main():
@@ -152,16 +151,20 @@ def main():
         state=dict(type="str", choices=["present", "absent"], required=True),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
-    client = module.client("s3")
+    try:
+        client = module.client("s3")
+        state = module.params.get("state")
 
-    state = module.params.get("state")
+        if state == "present":
+            changed = create_or_update_bucket_cors(module, client)
+        else:  # absent
+            changed = delete_bucket_cors_configuration(module, client)
 
-    if state == "present":
-        create_or_update_bucket_cors(client, module)
-    elif state == "absent":
-        destroy_bucket_cors(client, module)
+        module.exit_json(changed=changed, name=module.params["name"], rules=module.params.get("rules", []))
+    except AnsibleS3Error as e:
+        module.fail_json_aws_error(e)
 
 
 if __name__ == "__main__":

@@ -159,7 +159,16 @@ action_groups:
     - redshift_info
     - redshift_subnet_group
     - route53_wait
+    - s3_bucket_cors
+    - s3_bucket_cors_info
+    - s3_bucket_lifecycle
+    - s3_bucket_lifecycle_info
+    - s3_bucket_metrics_configuration
+    - s3_bucket_metrics_configuration_info
     - s3_bucket_notification
+    - s3_bucket_notification_info
+    - s3_bucket_website
+    - s3_bucket_website_info
     - s3_cors
     - s3_lifecycle
     - s3_logging
@@ -606,6 +615,14 @@ plugin_routing:
       redirect: amazon.aws.route53_zone
     s3_bucket_info:
       redirect: amazon.aws.s3_bucket_info
+    s3_cors:
+      redirect: community.aws.s3_bucket_cors
+    s3_lifecycle:
+      redirect: community.aws.s3_bucket_lifecycle
+    s3_metrics_configuration:
+      redirect: community.aws.s3_bucket_metrics_configuration
+    s3_website:
+      redirect: community.aws.s3_bucket_website
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
     ec2_vpc_egress_igw:

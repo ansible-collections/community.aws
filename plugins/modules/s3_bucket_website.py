@@ -6,11 +6,12 @@
 
 DOCUMENTATION = r"""
 ---
-module: s3_website
+module: s3_bucket_website
 version_added: 1.0.0
 short_description: Configure an s3 bucket as a website
 description:
   - Configure an s3 bucket as a website
+  - Since release 11.1.0 the preferred name is C(community.aws.s3_bucket_website), C(community.aws.s3_website) remains as an alias.
 author:
   - Rob White (@wimnat)
 options:
@@ -158,141 +159,83 @@ routing_rules:
 
 import time
 
-try:
-    import botocore
-except ImportError:
-    pass  # Handled by AnsibleAWSModule
-
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.s3 import AnsibleS3Error
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.s3 import create_website_configuration
+from ansible_collections.community.aws.plugins.module_utils.s3 import delete_bucket_website
+from ansible_collections.community.aws.plugins.module_utils.s3 import get_bucket_website
+from ansible_collections.community.aws.plugins.module_utils.s3 import normalize_website_configuration
+from ansible_collections.community.aws.plugins.module_utils.s3 import put_bucket_website
 
 
-def _create_redirect_dict(url):
-    redirect_dict = {}
-    url_split = url.split(":")
-
-    # Did we split anything?
-    if len(url_split) == 2:
-        redirect_dict["Protocol"] = url_split[0]
-        redirect_dict["HostName"] = url_split[1].replace("//", "")
-    elif len(url_split) == 1:
-        redirect_dict["HostName"] = url_split[0]
-    else:
-        raise ValueError("Redirect URL appears invalid")
-
-    return redirect_dict
-
-
-def _create_website_configuration(suffix, error_key, redirect_all_requests):
-    website_configuration = {}
-
-    if error_key is not None:
-        website_configuration["ErrorDocument"] = {"Key": error_key}
-
-    if suffix is not None:
-        website_configuration["IndexDocument"] = {"Suffix": suffix}
-
-    if redirect_all_requests is not None:
-        website_configuration["RedirectAllRequestsTo"] = _create_redirect_dict(redirect_all_requests)
-
-    return website_configuration
-
-
-def enable_or_update_bucket_as_website(client_connection, resource_connection, module):
+def create_or_update_bucket_website(module, client):
+    """Create or update bucket website configuration."""
     bucket_name = module.params.get("name")
     redirect_all_requests = module.params.get("redirect_all_requests")
+
     # If redirect_all_requests is set then don't use the default suffix that has been set
     if redirect_all_requests is not None:
         suffix = None
     else:
         suffix = module.params.get("suffix")
     error_key = module.params.get("error_key")
-    changed = False
 
-    try:
-        bucket_website = resource_connection.BucketWebsite(bucket_name)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to get bucket")
+    website_config = get_bucket_website(client, bucket_name)
 
-    try:
-        website_config = client_connection.get_bucket_website(Bucket=bucket_name)
-    except is_boto3_error_code("NoSuchWebsiteConfiguration"):
-        website_config = None
-    except (
-        botocore.exceptions.ClientError,
-        botocore.exceptions.BotoCoreError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Failed to get website configuration")
+    # Check if update needed
+    needs_update = False
 
-    if website_config is None:
-        try:
-            bucket_website.put(
-                WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests)
-            )
-            changed = True
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Failed to set bucket website configuration")
-        except ValueError as e:
-            module.fail_json(msg=str(e))
+    if not website_config:
+        needs_update = True
     else:
         try:
-            if (
-                (suffix is not None and website_config["IndexDocument"]["Suffix"] != suffix)
-                or (error_key is not None and website_config["ErrorDocument"]["Key"] != error_key)
-                or (
-                    redirect_all_requests is not None
-                    and website_config["RedirectAllRequestsTo"] != _create_redirect_dict(redirect_all_requests)
-                )
-            ):
-                try:
-                    bucket_website.put(
-                        WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests)
-                    )
-                    changed = True
-                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                    module.fail_json_aws(e, msg="Failed to update bucket website configuration")
-        except KeyError:
-            try:
-                bucket_website.put(
-                    WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests)
-                )
-                changed = True
-            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                module.fail_json_aws(e, msg="Failed to update bucket website configuration")
-        except ValueError as e:
-            module.fail_json(msg=str(e))
+            # Compare against what the new configuration would be
+            new_configuration = create_website_configuration(suffix, error_key, redirect_all_requests)
+            # Normalize both to snake_case for comparison, and strip ResponseMetadata
+            current_normalized = normalize_website_configuration(website_config)
+            new_normalized = normalize_website_configuration(new_configuration)
+            if current_normalized != new_normalized:
+                needs_update = True
+        except (KeyError, ValueError):
+            # If config is malformed, update it
+            needs_update = True
 
-        # Wait 5 secs before getting the website_config again to give it time to update
-        time.sleep(5)
+    if not needs_update:
+        return False
 
-    website_config = client_connection.get_bucket_website(Bucket=bucket_name)
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(website_config))
+    if module.check_mode:
+        return True
+
+    try:
+        new_config = create_website_configuration(suffix, error_key, redirect_all_requests)
+        put_bucket_website(client, bucket_name, new_config)
+    except ValueError as e:
+        module.fail_json(msg=str(e))
+
+    # Wait 5 secs before returning to give it time to update
+    time.sleep(5)
+    return True
 
 
-def disable_bucket_as_website(client_connection, module):
-    changed = False
+def delete_bucket_website_configuration(module, client):
+    """Delete bucket website configuration."""
     bucket_name = module.params.get("name")
 
-    try:
-        client_connection.get_bucket_website(Bucket=bucket_name)
-    except is_boto3_error_code("NoSuchWebsiteConfiguration"):
-        module.exit_json(changed=changed)
-    except (
-        botocore.exceptions.ClientError,
-        botocore.exceptions.BotoCoreError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Failed to get bucket website")
+    website_config = get_bucket_website(client, bucket_name)
 
-    try:
-        client_connection.delete_bucket_website(Bucket=bucket_name)
-        changed = True
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to delete bucket website")
+    # Check if already absent
+    if not website_config:
+        return False
 
-    module.exit_json(changed=changed)
+    if module.check_mode:
+        return True
+
+    result = delete_bucket_website(client, bucket_name)
+    # If result is False, configuration didn't exist (race condition - already deleted)
+    return result is not False
 
 
 def main():
@@ -306,6 +249,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        supports_check_mode=True,
         mutually_exclusive=[
             ["redirect_all_requests", "suffix"],
             ["redirect_all_requests", "error_key"],
@@ -313,17 +257,19 @@ def main():
     )
 
     try:
-        client_connection = module.client("s3")
-        resource_connection = module.resource("s3")
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to connect to AWS")
+        client = module.client("s3")
+        state = module.params.get("state")
 
-    state = module.params.get("state")
+        if state == "present":
+            changed = create_or_update_bucket_website(module, client)
+        else:  # absent
+            changed = delete_bucket_website_configuration(module, client)
 
-    if state == "present":
-        enable_or_update_bucket_as_website(client_connection, resource_connection, module)
-    elif state == "absent":
-        disable_bucket_as_website(client_connection, module)
+        # Get final config for return value
+        website_config = get_bucket_website(client, module.params["name"])
+        module.exit_json(changed=changed, **camel_dict_to_snake_dict(website_config))
+    except AnsibleS3Error as e:
+        module.fail_json_aws_error(e)
 
 
 if __name__ == "__main__":
