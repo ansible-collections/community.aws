@@ -11,11 +11,11 @@ These wrappers will eventually be contributed to amazon.aws.
 
 from __future__ import annotations
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import normalize_boto3_result
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.s3 import S3ErrorHandler
+
+from ansible_collections.community.aws.plugins.module_utils._s3.common import S3ErrorHandler
 
 # Intended for general use / re-import
 # pylint: disable=unused-import,useless-import-alias
@@ -94,10 +94,7 @@ def get_bucket_website(client, bucket_name):
     Returns:
         Website configuration dictionary, or {} if no configuration exists
     """
-    try:
-        return client.get_bucket_website(Bucket=bucket_name)
-    except is_boto3_error_code("NoSuchWebsiteConfiguration"):
-        return {}
+    return client.get_bucket_website(Bucket=bucket_name)
 
 
 @S3ErrorHandler.common_error_handler("put bucket website configuration")
@@ -127,7 +124,7 @@ def delete_bucket_website(client, bucket_name):
     return client.delete_bucket_website(Bucket=bucket_name)
 
 
-@S3ErrorHandler.list_error_handler("get bucket CORS configuration", {})
+@S3ErrorHandler.list_error_handler("get bucket CORS configuration", [])
 @AWSRetry.jittered_backoff(max_delay=120, catch_extra_error_codes=["OperationAborted"])
 def get_bucket_cors(client, bucket_name):
     """
@@ -138,7 +135,7 @@ def get_bucket_cors(client, bucket_name):
         bucket_name: Name of the S3 bucket
 
     Returns:
-        CORS configuration dictionary, or {} if no configuration exists
+        List of CORS rules, or [] if no configuration exists
     """
     result = client.get_bucket_cors(Bucket=bucket_name)
     return result.get("CORSRules", [])
@@ -185,11 +182,8 @@ def get_bucket_metrics_configuration(client, bucket_name, metrics_id):
     Returns:
         Metrics configuration dictionary, or {} if not found
     """
-    try:
-        response = client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=metrics_id)
-        return response.get("MetricsConfiguration", {})
-    except is_boto3_error_code("NoSuchConfiguration"):
-        return {}
+    response = client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=metrics_id)
+    return response.get("MetricsConfiguration", {})
 
 
 @S3ErrorHandler.common_error_handler("put bucket metrics configuration")
@@ -220,10 +214,7 @@ def delete_bucket_metrics_configuration(client, bucket_name, metrics_id):
         bucket_name: Name of the S3 bucket
         metrics_id: ID of the metrics configuration
     """
-    try:
-        return client.delete_bucket_metrics_configuration(Bucket=bucket_name, Id=metrics_id)
-    except is_boto3_error_code("NoSuchConfiguration"):
-        return None
+    return client.delete_bucket_metrics_configuration(Bucket=bucket_name, Id=metrics_id)
 
 
 @S3ErrorHandler.list_error_handler("get bucket lifecycle configuration", {"Rules": []})
@@ -239,11 +230,8 @@ def get_bucket_lifecycle_configuration(client, bucket_name):
     Returns:
         Lifecycle configuration dictionary, or {"Rules": []} if not configured
     """
-    try:
-        result = client.get_bucket_lifecycle_configuration(Bucket=bucket_name)
-        return normalize_boto3_result(result)
-    except is_boto3_error_code("NoSuchLifecycleConfiguration"):
-        return {"Rules": []}
+    result = client.get_bucket_lifecycle_configuration(Bucket=bucket_name)
+    return normalize_boto3_result(result)
 
 
 @S3ErrorHandler.common_error_handler("put bucket lifecycle configuration")

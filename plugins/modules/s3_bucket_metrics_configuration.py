@@ -141,8 +141,8 @@ def delete_metrics_configuration(module, client):
         return True
 
     result = delete_bucket_metrics_configuration(client, bucket_name, mc_id)
-    # If result is None, configuration didn't exist (race condition)
-    return result is not None
+    # If result is False, configuration didn't exist (race condition - already deleted)
+    return result is not False
 
 
 def main():

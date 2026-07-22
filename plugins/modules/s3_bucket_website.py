@@ -167,6 +167,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 from ansible_collections.community.aws.plugins.module_utils.s3 import create_website_configuration
 from ansible_collections.community.aws.plugins.module_utils.s3 import delete_bucket_website
 from ansible_collections.community.aws.plugins.module_utils.s3 import get_bucket_website
+from ansible_collections.community.aws.plugins.module_utils.s3 import normalize_website_configuration
 from ansible_collections.community.aws.plugins.module_utils.s3 import put_bucket_website
 
 
@@ -193,7 +194,10 @@ def create_or_update_bucket_website(module, client):
         try:
             # Compare against what the new configuration would be
             new_configuration = create_website_configuration(suffix, error_key, redirect_all_requests)
-            if website_config != new_configuration:
+            # Normalize both to snake_case for comparison, and strip ResponseMetadata
+            current_normalized = normalize_website_configuration(website_config)
+            new_normalized = normalize_website_configuration(new_configuration)
+            if current_normalized != new_normalized:
                 needs_update = True
         except (KeyError, ValueError):
             # If config is malformed, update it
@@ -229,8 +233,9 @@ def delete_bucket_website_configuration(module, client):
     if module.check_mode:
         return True
 
-    delete_bucket_website(client, bucket_name)
-    return True
+    result = delete_bucket_website(client, bucket_name)
+    # If result is False, configuration didn't exist (race condition - already deleted)
+    return result is not False
 
 
 def main():
