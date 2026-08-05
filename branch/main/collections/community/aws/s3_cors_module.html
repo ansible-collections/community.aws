@@ -267,10 +267,53 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 <div class="ansibleOptionAnchor" id="parameter-rules"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-rules"><strong>rules</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rules" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Cors rules to put on the S3 bucket.</p>
+<td><div class="ansible-option-cell"><p>CORS rules to apply to the S3 bucket.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rules/allowed_headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-rules-allowed-headers"><strong>allowed_headers</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rules/allowed_headers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Headers that are specified in the <code class="docutils literal notranslate"><span class="pre">Access-Control-Request-Headers</span></code> header.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rules/allowed_methods"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-rules-allowed-methods"><strong>allowed_methods</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rules/allowed_methods" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>HTTP methods that are allowed from the origin specified in <em>allowed_origins</em>.</p>
+<p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;GET&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PUT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;POST&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DELETE&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rules/allowed_origins"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-rules-allowed-origins"><strong>allowed_origins</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rules/allowed_origins" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>One or more origins you want customers to be able to access the bucket from.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rules/expose_headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-rules-expose-headers"><strong>expose_headers</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rules/expose_headers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>One or more headers in the response that you want customers to be able to access from their applications.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rules/max_age_seconds"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-rules-max-age-seconds"><strong>max_age_seconds</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rules/max_age_seconds" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Time in seconds that the browser should cache the preflight response for the specified resource.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-secret-key"><span id="ansible-collections-community-aws-s3-cors-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-s3-cors-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
@@ -284,7 +327,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 <p>The <em>aws_secret_access_key</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-session-token"><span id="ansible-collections-community-aws-s3-cors-module-parameter-aws-session-token"></span><strong>session_token</strong></p>
 <a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token</span></p>
@@ -296,7 +339,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 <p>The <em>session_token</em> and <em>profile</em> options are mutually exclusive.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -308,7 +351,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -359,6 +402,26 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.s3_cors</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mys3bucket</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+
+<span class="c1"># Create CORS rules with multiple origins and methods</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.s3_cors</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mys3bucket</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">allowed_origins</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://www.example.com</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://www.example.org</span>
+<span class="w">        </span><span class="nt">allowed_methods</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GET</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PUT</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POST</span>
+<span class="w">        </span><span class="nt">allowed_headers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="w">        </span><span class="nt">max_age_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">allowed_origins</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="w">        </span><span class="nt">allowed_methods</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GET</span>
 </pre></div>
 </div>
 </section>
@@ -385,8 +448,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 <div class="ansibleOptionAnchor" id="return-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-return-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#return-name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>name of bucket</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<td><div class="ansible-option-cell"><p>Name of the S3 bucket.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-s3-cors-module-parameter-state"><span class="std std-ref"><span class="pre">state=present</span></span></a></code></p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;bucket-name&quot;</span></code></p>
 </div></td>
 </tr>
@@ -394,8 +457,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-co
 <div class="ansibleOptionAnchor" id="return-rules"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-cors-module-return-rules"><strong>rules</strong></p>
 <a class="ansibleOptionLink" href="#return-rules" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>list of current rules</p>
-<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> always</p>
+<td><div class="ansible-option-cell"><p>CORS rules applied to the bucket.</p>
+<p class="ansible-option-line"><strong class="ansible-option-returned-bold">Returned:</strong> when <code class="ansible-option-value docutils literal notranslate"><a class="reference internal" href="#ansible-collections-community-aws-s3-cors-module-parameter-state"><span class="std std-ref"><span class="pre">state=present</span></span></a></code></p>
 <p class="ansible-option-line ansible-option-sample"><strong class="ansible-option-sample-bold">Sample:</strong> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;allowed_headers&quot;:</span> <span class="pre">[&quot;Authorization&quot;],</span> <span class="pre">&quot;allowed_methods&quot;:</span> <span class="pre">[&quot;GET&quot;],</span> <span class="pre">&quot;allowed_origins&quot;:</span> <span class="pre">[&quot;*&quot;],</span> <span class="pre">&quot;max_age_seconds&quot;:</span> <span class="pre">30000}]</span></code></p>
 </div></td>
 </tr>
