@@ -400,8 +400,7 @@
 
 - name: obtain facts for existing service in the cluster
   ecs_service_info:
-    cluster: "{{ ecs_cluster_name }}"
-    service: "{{ ecs_service_name }}"
+    service: "{{ ecs_service_name }}2"
     details: true
     events: false
   register: ecs_service_info
@@ -423,7 +422,7 @@
 - name: assert that non-existent service is missing
   assert:
     that:
-      - "ecs_service_info.services_not_running[0].reason == 'MISSING'"
+      - "ecs_service_info.services|length == 0"
 
 - name: obtain specific ECS service facts
   ecs_service_info:
@@ -436,6 +435,19 @@
   assert:
     that:
       - "'networkConfiguration' in ecs_service_info.services[0]"
+
+- name: obtain facts for all clusters
+  ecs_service_info:
+    details: true
+    events: false
+  register: ecs_service_info
+
+- name: assert that service info is available
+  assert:
+    that:
+      - "ecs_service_info.services|length == 3"
+      - "ecs_service_info.services_not_running|length == 0"
+      - "ecs_cluster_name in ecs_service_info.services[0].clusterArn"
 
 - name: attempt to get facts from missing task definition
   ecs_taskdefinition_info:
