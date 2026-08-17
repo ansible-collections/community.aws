@@ -491,7 +491,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 <span class="w">    </span><span class="nt">maximum_message_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
 <span class="w">    </span><span class="nt">delivery_delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
 <span class="w">    </span><span class="nt">receive_message_wait_time</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">json_dict</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">json_dict</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">redrive_policy</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">maxReceiveCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
 <span class="w">      </span><span class="nt">deadLetterTargetArn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:sqs:eu-west-1:123456789012:my-dead-queue</span>
@@ -525,7 +525,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example queue allowing s3 bucket notifications</span>
 <span class="w">  </span><span class="nt">sqs_queue</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;S3Notifications&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"S3Notifications"</span>
 <span class="w">    </span><span class="nt">default_visibility_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120</span>
 <span class="w">    </span><span class="nt">message_retention_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">86400</span>
 <span class="w">    </span><span class="nt">maximum_message_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
@@ -541,10 +541,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 <span class="w">            </span><span class="nt">Service</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3.amazonaws.com</span>
 <span class="w">          </span><span class="nt">Action</span><span class="p">:</span>
 <span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SQS:SendMessage</span>
-<span class="w">          </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:sqs:*:*:S3Notifications&quot;</span>
+<span class="w">          </span><span class="nt">Resource</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:sqs:*:*:S3Notifications"</span>
 <span class="w">          </span><span class="nt">Condition</span><span class="p">:</span>
 <span class="w">            </span><span class="nt">ArnLike</span><span class="p">:</span>
-<span class="w">              </span><span class="nt">aws:SourceArn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:s3:*:*:SomeBucket&quot;</span>
+<span class="w">              </span><span class="nt">aws:SourceArn</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:s3:*:*:SomeBucket"</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete SQS queue</span>
 <span class="w">  </span><span class="nt">community.aws.sqs_queue</span><span class="p">:</span>

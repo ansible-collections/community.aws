@@ -406,18 +406,18 @@ see <a class="reference internal" href="#ansible-collections-community-aws-codep
 <span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Source</span>
 <span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ThirdParty</span>
 <span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GitHub</span>
-<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">'1'</span>
 <span class="w">            </span><span class="nt">outputArtifacts</span><span class="p">:</span>
 <span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-source</span><span class="w"> </span><span class="p p-Indicator">}</span>
 <span class="w">            </span><span class="nt">configuration</span><span class="p">:</span>
 <span class="w">              </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mediapeers</span>
 <span class="w">              </span><span class="nt">Repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_gh_repo</span>
-<span class="w">              </span><span class="nt">PollForSourceChanges</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span>
+<span class="w">              </span><span class="nt">PollForSourceChanges</span><span class="p">:</span><span class="w"> </span><span class="s">'true'</span>
 <span class="w">              </span><span class="nt">Branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">master</span>
 <span class="w">              </span><span class="c1"># Generate token like this:</span>
 <span class="w">              </span><span class="c1"># https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-rotate-personal-token-CLI.html</span>
 <span class="w">              </span><span class="c1"># GH Link: https://github.com/settings/tokens</span>
-<span class="w">              </span><span class="nt">OAuthToken</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;abc123def456&#39;</span>
+<span class="w">              </span><span class="nt">OAuthToken</span><span class="p">:</span><span class="w"> </span><span class="s">'abc123def456'</span>
 <span class="w">            </span><span class="nt">runOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build</span>
 <span class="w">        </span><span class="nt">actions</span><span class="p">:</span>
@@ -427,7 +427,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-codep
 <span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build</span>
 <span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
 <span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuild</span>
-<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">'1'</span>
 <span class="w">            </span><span class="nt">inputArtifacts</span><span class="p">:</span>
 <span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-source</span><span class="w"> </span><span class="p p-Indicator">}</span>
 <span class="w">            </span><span class="nt">outputArtifacts</span><span class="p">:</span>
@@ -444,7 +444,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-codep
 <span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy</span>
 <span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
 <span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS</span>
-<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">'1'</span>
 <span class="w">            </span><span class="nt">inputArtifacts</span><span class="p">:</span>
 <span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">vod-api-app-build</span><span class="w"> </span><span class="p p-Indicator">}</span>
 <span class="w">            </span><span class="nt">configuration</span><span class="p">:</span>

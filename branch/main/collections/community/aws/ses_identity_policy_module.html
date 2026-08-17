@@ -351,21 +351,21 @@ the verified email or domain.</p>
 <span class="w">  </span><span class="nt">community.aws.ses_identity_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example.com</span>
 <span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExamplePolicy</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;template&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json.j2&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">'template'</span><span class="o">,</span> <span class="s1">'policy.json.j2'</span><span class="o">)</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">add sending authorization policy to email identity</span>
 <span class="w">  </span><span class="nt">community.aws.ses_identity_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example@example.com</span>
 <span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExamplePolicy</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;template&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json.j2&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">'template'</span><span class="o">,</span> <span class="s1">'policy.json.j2'</span><span class="o">)</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">add sending authorization policy to identity using ARN</span>
 <span class="w">  </span><span class="nt">community.aws.ses_identity_policy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ses:us-east-1:12345678:identity/example.com&quot;</span>
+<span class="w">    </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:ses:us-east-1:12345678:identity/example.com"</span>
 <span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExamplePolicy</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;template&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json.j2&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">'template'</span><span class="o">,</span> <span class="s1">'policy.json.j2'</span><span class="o">)</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove sending authorization policy</span>

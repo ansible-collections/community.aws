@@ -1389,7 +1389,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">simple-app</span>
 <span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpd:2.4&quot;</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">"httpd:2.4"</span>
 <span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
 <span class="w">        </span><span class="nt">mountPoints</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/local/apache2/htdocs</span>
@@ -1406,14 +1406,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
 <span class="w">        </span><span class="nt">command</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
-<span class="w">            </span><span class="no">/bin/sh -c &quot;while true; do echo &#39;&lt;html&gt;&lt;head&gt;&lt;title&gt;Amazon ECS Sample App&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;div&gt;&lt;h1&gt;Amazon ECS Sample App&lt;/h1&gt;</span>
+<span class="w">            </span><span class="no">/bin/sh -c "while true; do echo '&lt;html&gt;&lt;head&gt;&lt;title&gt;Amazon ECS Sample App&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;div&gt;&lt;h1&gt;Amazon ECS Sample App&lt;/h1&gt;</span>
 <span class="w">            </span><span class="no">&lt;h2&gt;Congratulations!&lt;/h2&gt;</span>
-<span class="w">            </span><span class="no">&lt;p&gt;Your application is now running on a container in Amazon ECS.&lt;/p&gt;&#39; &gt; top; /bin/date &gt; date ; echo &#39;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&#39; &gt; bottom;</span>
-<span class="w">            </span><span class="no">cat top date bottom &gt; /usr/local/apache2/htdocs/index.html ; sleep 1; done&quot;</span>
+<span class="w">            </span><span class="no">&lt;p&gt;Your application is now running on a container in Amazon ECS.&lt;/p&gt;' &gt; top; /bin/date &gt; date ; echo '&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;' &gt; bottom;</span>
+<span class="w">            </span><span class="no">cat top date bottom &gt; /usr/local/apache2/htdocs/index.html ; sleep 1; done"</span>
 <span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="w">        </span><span class="nt">entryPoint</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"-c"</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
 <span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
@@ -1431,7 +1431,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">    </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">"nginx"</span>
 <span class="w">        </span><span class="nt">portMappings</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
 <span class="w">            </span><span class="nt">hostPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
@@ -1445,7 +1445,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">    </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">"nginx"</span>
 <span class="w">        </span><span class="nt">portMappings</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
 <span class="w">            </span><span class="nt">hostPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
@@ -1461,15 +1461,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">    </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">"nginx"</span>
 <span class="w">        </span><span class="nt">portMappings</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
 <span class="w">            </span><span class="nt">hostPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
 <span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512</span>
 <span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
 <span class="w">        </span><span class="nt">dependsOn</span><span class="p">:</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;simple-app&quot;</span>
-<span class="w">            </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;start&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="s">"simple-app"</span>
+<span class="w">            </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="s">"start"</span>
 
 <span class="c1"># Create Task Definition with Environment Variables and Secrets</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create task definition</span>
@@ -1478,17 +1478,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">    </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">"nginx"</span>
 <span class="w">        </span><span class="nt">environment</span><span class="p">:</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PORT&quot;</span>
-<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8080&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"PORT"</span>
+<span class="w">            </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">"8080"</span>
 <span class="w">        </span><span class="nt">secrets</span><span class="p">:</span>
 <span class="w">          </span><span class="c1"># For variables stored in Secrets Manager</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NGINX_HOST&quot;</span>
-<span class="w">            </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:secretsmanager:us-west-2:123456789012:secret:nginx/NGINX_HOST&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"NGINX_HOST"</span>
+<span class="w">            </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:secretsmanager:us-west-2:123456789012:secret:nginx/NGINX_HOST"</span>
 <span class="w">          </span><span class="c1"># For variables stored in Parameter Store</span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;API_KEY&quot;</span>
-<span class="w">            </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ssm:us-west-2:123456789012:parameter/nginx/API_KEY&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"API_KEY"</span>
+<span class="w">            </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:ssm:us-west-2:123456789012:parameter/nginx/API_KEY"</span>
 <span class="w">    </span><span class="nt">launch_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span>
 <span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512</span>
 <span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1GB</span>
@@ -1502,7 +1502,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <span class="w">    </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">        </span><span class="nt">essential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">"nginx"</span>
 <span class="w">        </span><span class="nt">portMappings</span><span class="p">:</span>
 <span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
 <span class="w">            </span><span class="nt">hostPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>

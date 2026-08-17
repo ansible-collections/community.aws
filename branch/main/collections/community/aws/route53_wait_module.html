@@ -339,7 +339,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wait for the changes of the above route53 invocation to propagate</span>
 <span class="w">  </span><span class="nt">community.aws.route53_wait</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">module_result</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">module_result</span> <span class="cp">}}</span><span class="s">"</span>
 
 <span class="c1">#########################################################################</span>
 <span class="c1"># Example when using a loop over amazon.aws.route53:</span>
@@ -348,10 +348,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <span class="w">  </span><span class="nt">amazon.aws.route53</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo.com</span>
-<span class="w">    </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item.record</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">item.record</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A</span>
 <span class="w">    </span><span class="nt">ttl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
-<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item.value</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">item.value</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">  </span><span class="nt">loop</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new.foo.com</span>
 <span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.1.1.1</span>
@@ -367,7 +367,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wait for the changes of the above three route53 invocations to propagate</span>
 <span class="w">  </span><span class="nt">community.aws.route53_wait</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">results</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">module_results</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">results</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">module_results</span> <span class="cp">}}</span><span class="s">"</span>
 </pre></div>
 </div>
 <section id="authors">

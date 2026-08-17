@@ -333,16 +333,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <span class="w">  </span><span class="nt">community.aws.ec2_customer_gateway_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-southeast-2</span>
 <span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
-<span class="w">      </span><span class="s">&quot;tag:Name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-customer-gateway</span>
-<span class="w">      </span><span class="s">&quot;tag:AltName&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-customer-gateway-alt</span>
+<span class="w">      </span><span class="s">"tag:Name"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-customer-gateway</span>
+<span class="w">      </span><span class="s">"tag:AltName"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-customer-gateway-alt</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cust_gw_info</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a specific customer gateway by specifying customer gateway ID</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_customer_gateway_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ap-southeast-2</span>
 <span class="w">    </span><span class="nt">customer_gateway_ids</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;cgw-48841a09&#39;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;cgw-fec021ce&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'cgw-48841a09'</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'cgw-fec021ce'</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cust_gw_info</span>
 </pre></div>
 </div>

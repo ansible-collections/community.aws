@@ -324,7 +324,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-s
 <span class="w">  </span><span class="nt">community.aws.iam_server_certificate_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production-cert</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server_cert</span>
-<span class="w">  </span><span class="nt">failed_when</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">server_cert.results</span> <span class="o">|</span> <span class="nf">length</span> <span class="o">==</span> <span class="m">0</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">failed_when</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">server_cert.results</span> <span class="o">|</span> <span class="nf">length</span> <span class="o">==</span> <span class="m">0</span> <span class="cp">}}</span><span class="s">"</span>
 </pre></div>
 </div>
 </section>

@@ -454,7 +454,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ses-i
 <span class="c1"># instead of emailing the identity owner</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure complaints-topic exists</span>
 <span class="w">  </span><span class="nt">community.aws.sns_topic</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;complaints-topic&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"complaints-topic"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">purge_subscriptions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic_info</span>
@@ -464,10 +464,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ses-i
 <span class="w">    </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example@example.com</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">complaint_notifications</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">topic_info.sns_arn</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">topic_info.sns_arn</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">      </span><span class="nt">include_headers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">bounce_notifications</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">topic_info.sns_arn</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">topic_info.sns_arn</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">      </span><span class="nt">include_headers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">    </span><span class="nt">feedback_forwarding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
@@ -475,7 +475,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ses-i
 <span class="c1"># Being forwarded to the identity owner email</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ensure delivery-notifications-topic exists</span>
 <span class="w">  </span><span class="nt">community.aws.sns_topic</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;delivery-notifications-topic&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"delivery-notifications-topic"</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">purge_subscriptions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic_info</span>
@@ -485,7 +485,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ses-i
 <span class="w">    </span><span class="nt">identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example@example.com</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">delivery_notifications</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">topic_info.sns_arn</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">topic_info.sns_arn</span> <span class="cp">}}</span><span class="s">"</span>
 </pre></div>
 </div>
 </section>

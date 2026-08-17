@@ -467,24 +467,24 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an AWS Network Firewall</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleFirewall&#39;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">'ExampleFirewall'</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExamplePolicy&#39;</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">'ExamplePolicy'</span>
 <span class="w">    </span><span class="nt">subnets</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;subnet-123456789abcdef01&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'subnet-123456789abcdef01'</span>
 
-<span class="c1"># Create an AWS Network Firewall with various options, don&#39;t wait for creation</span>
+<span class="c1"># Create an AWS Network Firewall with various options, don't wait for creation</span>
 <span class="c1"># to finish.</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleFirewall&#39;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">'ExampleFirewall'</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">delete_protection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;An</span><span class="nv"> </span><span class="s">example</span><span class="nv"> </span><span class="s">Description&quot;</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExamplePolicy&#39;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"An</span><span class="nv"> </span><span class="s">example</span><span class="nv"> </span><span class="s">Description"</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">'ExamplePolicy'</span>
 <span class="w">    </span><span class="nt">policy_change_protection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">subnets</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;subnet-123456789abcdef01&#39;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;subnet-abcdef0123456789a&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'subnet-123456789abcdef01'</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'subnet-abcdef0123456789a'</span>
 <span class="w">    </span><span class="nt">subnet_change_protection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">ExampleTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example Value</span>
@@ -495,7 +495,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <span class="c1"># Delete an AWS Network Firewall</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleFirewall&#39;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">'ExampleFirewall'</span>
 </pre></div>
 </div>
 </section>

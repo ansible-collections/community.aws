@@ -342,9 +342,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sts-s
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use the session token obtained above to tag an instance in account 123456789012</span>
 <span class="w">  </span><span class="nt">amazon.aws.ec2_tag</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">access_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">session_credentials.sts_creds.access_key</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">session_credentials.sts_creds.secret_key</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">session_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">session_credentials.sts_creds.session_token</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">access_key</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">session_credentials.sts_creds.access_key</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">session_credentials.sts_creds.secret_key</span> <span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">session_token</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">session_credentials.sts_creds.session_token</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-xyzxyz01</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
