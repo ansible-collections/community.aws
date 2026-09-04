@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - ecs_service - Add support for the availabilityZoneRebalancing API field in create_service and update_service. (https://github.com/ansible-collections/community.aws/pull/2483).
