@@ -646,6 +646,10 @@ plugin_routing:
       redirect: amazon.aws.ec2_transit_gateway_info
     ec2_transit_gateway:
       redirect: amazon.aws.ec2_transit_gateway
+    inspector_target:
+      deprecation:
+        removal_version: 12.0.0
+        warning_text: Amazon has retired the `Amazon Insperctor Classic` service.
     waf_condition:
       tombstone:
         removal_version: 12.0.0
