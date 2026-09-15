@@ -1,2 +1,2 @@
 deprecated_features:
-- inspector_target - The module has been deprecated as Amazon has retired the ``Amazon Inspector Classic`` service on May 20, 2026 (Complete End of Life). After this date, all classic resources and APIs shut down permanently. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2484).
+- inspector_target - The module has been deprecated as Amazon has retired the ``Amazon Inspector Classic`` service on May 20, 2026 (Complete End of Life), revoking access to its console, APIs, and associated resources. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2484).
