@@ -42,6 +42,7 @@ action_groups:
     - aws_glue_connection
     - aws_glue_crawler
     - aws_glue_job
+    - aws_inspector_target
     - aws_msk_cluster
     - aws_msk_config
     - aws_region_info
