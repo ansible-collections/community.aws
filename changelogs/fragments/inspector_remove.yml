@@ -1,0 +1,4 @@
+---
+breaking_changes:
+- inspector_target - This module has been removed following the retirement of AWS Instector Classic. (https://github.com/ansible-collections/community.aws/pull/2486).
+
