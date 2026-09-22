@@ -4,6 +4,27 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v11.1.0
+=======
+
+Release Summary
+---------------
+
+This minor release of the ``community.aws`` collection includes new features and bugfixes. Notable changes include a new ``wait_complete`` parameter for the ``ecs_task`` module, a fix for tag handling on ``msk_cluster`` creation, improved result validation in ``route53_wait``, a fix for ``wafv2_web_acl`` idempotency with rate-based statements, and support for float types in ``autoscaling_policy`` step scaling bounds.
+
+Minor Changes
+-------------
+
+- ecs_task - Add ``wait_complete`` parameter to wait for tasks to stop and return container exit codes after ``run`` or ``start`` operations (https://github.com/ansible-collections/community.aws/pull/2409).
+- msk_cluster - Fix tags on cluster creation (https://github.com/ansible-collections/community.aws/pull/2324).
+- route53_wait - make ``skipped`` and ``invocation`` keys optional in result validation to support modern Ansible loop structures (https://github.com/ansible-collections/community.aws/pull/2447).
+
+Bugfixes
+--------
+
+- autoscaling_policy - allow float type for ``step_adjustments`` ``lower_bound`` and ``upper_bound`` parameters (https://github.com/ansible-collections/community.aws/issues/2355)
+- wafv2_web_acl - Fixed idempotency issue where rules with rate_based_statement would always show as changed when evaluation_window_sec was not explicitly specified due to AWS returning the default value of 300 (https://github.com/ansible-collections/community.aws/pull/2427).
+
 v11.0.0
 =======
 

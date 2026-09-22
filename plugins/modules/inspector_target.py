@@ -16,6 +16,13 @@ description:
     The usage did not change.
 author:
   - "Dennis Conrad (@dennisconrad)"
+
+deprecated:
+  removed_in: 12.0.0
+  why: Amazon has retired the "Amazon Inspector Classic" service.
+  alternative: "None"
+  removed_from_collection: "community.aws"
+
 options:
   name:
     description:

@@ -1,9 +1,0 @@
-trivial:
-  - integration tests - add setup_ec2_instance_env and setup_ec2_vpc infrastructure roles from amazon.aws for comprehensive VPC setup/cleanup with ENI handling (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - fix elb_target Lambda state polling and ENI cleanup timing to prevent test failures (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - fix glue_job to use supported Glue versions (4.0, 5.0) instead of deprecated versions (0.9, 2.0) (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - migrate all VPC and subnet CIDR definitions from task files into defaults files for consistency (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - randomise VPC and subnet CIDR allocations across 24 integration tests using pattern ``10.{{ 256 | random(seed=resource_prefix) }}.Y.0/Z`` to prevent collisions when running tests in parallel (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - distribute third octets from 252 down in decrements of 4 (252, 248, 244, ..., 160) mirroring amazon.aws pattern from opposite end of range (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - reduce VPC size from /16 to /22 for more appropriate test environment resource usage (https://github.com/ansible-collections/community.aws/pull/2457).
-  - integration tests - update ansible_test_splitter to match amazon.aws version with fix for correctly ignoring infrastructure roles in test target detection (https://github.com/ansible-collections/community.aws/pull/2457).
