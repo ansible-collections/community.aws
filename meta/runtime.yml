@@ -42,7 +42,6 @@ action_groups:
     - aws_glue_connection
     - aws_glue_crawler
     - aws_glue_job
-    - aws_inspector_target
     - aws_msk_cluster
     - aws_msk_config
     - aws_region_info
@@ -327,11 +326,6 @@ plugin_routing:
         removal_date: "2027-01-01"
         warning_text: the community.aws.aws_glue_job alias has been deprecated. Please update your tasks to use community.aws.glue_job.
       redirect: community.aws.glue_job
-    aws_inspector_target:
-      deprecation:
-        removal_date: "2027-01-01"
-        warning_text: the community.aws.aws_inspector_target alias has been deprecated. Please update your tasks to use community.aws.inspector_target.
-      redirect: community.aws.inspector_target
     aws_kms:
       deprecation:
         removal_date: "2027-01-01"
