@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.autoscaling_policy module – Create or delete AWS scaling policies for Autoscaling groups &mdash; Ansible collections  documentation</title>
@@ -557,9 +557,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">US-XXX</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;scaledown-policy&quot;</span>
-<span class="w">    </span><span class="nt">adjustment_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ChangeInCapacity&quot;</span>
-<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;application-asg&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"scaledown-policy"</span>
+<span class="w">    </span><span class="nt">adjustment_type</span><span class="p">:</span><span class="w"> </span><span class="s">"ChangeInCapacity"</span>
+<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">"application-asg"</span>
 <span class="w">    </span><span class="nt">scaling_adjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-1</span>
 <span class="w">    </span><span class="nt">min_adjustment_step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="w">    </span><span class="nt">cooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
@@ -571,7 +571,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">US-XXX</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;step-scale-up-policy&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"step-scale-up-policy"</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StepScaling</span>
 <span class="w">    </span><span class="nt">metric_aggregation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Maximum</span>
 <span class="w">    </span><span class="nt">step_adjustments</span><span class="p">:</span>
@@ -579,35 +579,35 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">        </span><span class="nt">scaling_adjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">lower_bound</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
 <span class="w">        </span><span class="nt">scaling_adjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
-<span class="w">    </span><span class="nt">adjustment_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;PercentChangeInCapacity&quot;</span>
-<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;application-asg&quot;</span>
+<span class="w">    </span><span class="nt">adjustment_type</span><span class="p">:</span><span class="w"> </span><span class="s">"PercentChangeInCapacity"</span>
+<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">"application-asg"</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create TargetTracking predefined policy</span>
 <span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;predefined-policy-1&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"predefined-policy-1"</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
 <span class="w">    </span><span class="nt">target_tracking_config</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">predefined_metric_spec</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">predefined_metric_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASGAverageCPUUtilization</span>
 <span class="w">      </span><span class="nt">target_value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">98.0</span>
-<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;asg-test-1&quot;</span>
+<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">"asg-test-1"</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create TargetTracking predefined policy with resource_label</span>
 <span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;predefined-policy-1&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"predefined-policy-1"</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
 <span class="w">    </span><span class="nt">target_tracking_config</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">predefined_metric_spec</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">predefined_metric_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ALBRequestCountPerTarget</span>
 <span class="w">        </span><span class="nt">resource_label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app/my-alb/778d41231d141a0f/targetgroup/my-alb-target-group/942f017f100becff</span>
 <span class="w">      </span><span class="nt">target_value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">98.0</span>
-<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;asg-test-1&quot;</span>
+<span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">"asg-test-1"</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create TargetTrackingScaling custom policy</span>
 <span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;custom-policy-1&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"custom-policy-1"</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
 <span class="w">    </span><span class="nt">target_tracking_config</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">customized_metric_spec</span><span class="p">:</span>
@@ -615,7 +615,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">        </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">namespace_1</span>
 <span class="w">        </span><span class="nt">statistic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Minimum</span>
 <span class="w">        </span><span class="nt">unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gigabits</span>
-<span class="w">        </span><span class="nt">dimensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[{</span><span class="s">&#39;Name&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;dimension1&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;Value&#39;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;value1&#39;</span><span class="p p-Indicator">}]</span>
+<span class="w">        </span><span class="nt">dimensions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[{</span><span class="s">'Name'</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">'dimension1'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'Value'</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">'value1'</span><span class="p p-Indicator">}]</span>
 <span class="w">      </span><span class="nt">disable_scalein</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">      </span><span class="nt">target_value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">98.0</span>
 <span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asg-test-1</span>

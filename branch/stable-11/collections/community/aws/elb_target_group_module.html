@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.elb_target_group module – Manage a target group for an Application or Network load balancer &mdash; Ansible collections  documentation</title>
@@ -655,7 +655,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-01234567</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a target group with protocol_version &#39;GRPC&#39;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a target group with protocol_version 'GRPC'</span>
 <span class="w">  </span><span class="nt">community.aws.elb_target_group</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span>
 <span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
@@ -693,7 +693,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-01234567</span>
 <span class="w">    </span><span class="nt">health_check_protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
 <span class="w">    </span><span class="nt">health_check_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
-<span class="w">    </span><span class="nt">successful_response_codes</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200,250-260&quot;</span>
+<span class="w">    </span><span class="nt">successful_response_codes</span><span class="p">:</span><span class="w"> </span><span class="s">"200,250-260"</span>
 <span class="w">    </span><span class="nt">targets</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-01234567</span>
 <span class="w">        </span><span class="nt">Port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
@@ -711,7 +711,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-01234567</span>
 <span class="w">    </span><span class="nt">health_check_protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
 <span class="w">    </span><span class="nt">health_check_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
-<span class="w">    </span><span class="nt">successful_response_codes</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200,250-260&quot;</span>
+<span class="w">    </span><span class="nt">successful_response_codes</span><span class="p">:</span><span class="w"> </span><span class="s">"200,250-260"</span>
 <span class="w">    </span><span class="nt">target_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ip</span>
 <span class="w">    </span><span class="nt">targets</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.0.10</span>
@@ -739,12 +739,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">second, allow invoke of the lambda</span>
 <span class="w">  </span><span class="nt">community.aws.lambda_policy</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">state</span> <span class="o">|</span> <span class="nf">default</span><span class="o">(</span><span class="s1">&#39;present&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">state</span> <span class="o">|</span> <span class="nf">default</span><span class="o">(</span><span class="s1">'present'</span><span class="o">)</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">function_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-lambda-function</span>
 <span class="w">    </span><span class="nt">statement_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">someID</span>
 <span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda:InvokeFunction</span>
 <span class="w">    </span><span class="nt">principal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elasticloadbalancing.amazonaws.com</span>
-<span class="w">    </span><span class="nt">source_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">out.target_group_arn</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">source_arn</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">out.target_group_arn</span> <span class="cp">}}</span><span class="s">"</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">third, add target</span>
 <span class="w">  </span><span class="nt">community.aws.elb_target_group</span><span class="p">:</span>

@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.api_gateway_domain module – Manage AWS API Gateway custom domains &mdash; Ansible collections  documentation</title>
@@ -377,7 +377,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup endpoint for a custom domain for your API Gateway HTTP API</span>
 <span class="w">  </span><span class="nt">community.aws.api_gateway_domain</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapi.foobar.com</span>
-<span class="w">    </span><span class="nt">certificate_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx&#39;</span>
+<span class="w">    </span><span class="nt">certificate_arn</span><span class="p">:</span><span class="w"> </span><span class="s">'arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx'</span>
 <span class="w">    </span><span class="nt">security_policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_1_2</span>
 <span class="w">    </span><span class="nt">endpoint_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EDGE</span>
 <span class="w">    </span><span class="nt">domain_mappings</span><span class="p">:</span>
@@ -389,11 +389,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a DNS record for your custom domain on route 53 (using route53 module)</span>
 <span class="w">  </span><span class="nt">community.aws.route53</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapi.foobar.com</span>
-<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">api_gw_domain_result.response.domain.distribution_domain_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">api_gw_domain_result.response.domain.distribution_domain_name</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A</span>
 <span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foobar.com</span>
-<span class="w">    </span><span class="nt">alias_hosted_zone_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">api_gw_domain_result.response.domain.distribution_hosted_zone_id</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">alias_hosted_zone_id</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">api_gw_domain_result.response.domain.distribution_hosted_zone_id</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
 </pre></div>
 </div>

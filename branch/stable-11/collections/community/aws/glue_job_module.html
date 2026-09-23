@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.glue_job module – Manage an AWS Glue job &mdash; Ansible collections  documentation</title>
@@ -473,10 +473,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-glue-
 
 <span class="c1"># Create an AWS Glue job</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.glue_job</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">command_script_location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3://s3bucket/script.py&quot;</span>
+<span class="w">    </span><span class="nt">command_script_location</span><span class="p">:</span><span class="w"> </span><span class="s">"s3://s3bucket/script.py"</span>
 <span class="w">    </span><span class="nt">default_arguments</span><span class="p">:</span>
-<span class="w">      </span><span class="s">&quot;--extra-py-files&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucket/script-package.zip</span>
-<span class="w">      </span><span class="s">&quot;--TempDir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;s3://s3bucket/temp/&quot;</span>
+<span class="w">      </span><span class="s">"--extra-py-files"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucket/script-package.zip</span>
+<span class="w">      </span><span class="s">"--TempDir"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"s3://s3bucket/temp/"</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-job</span>
 <span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-iam-role</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>

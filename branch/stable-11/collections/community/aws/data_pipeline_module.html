@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.data_pipeline module – Create and manage AWS Datapipelines &mdash; Ansible collections  documentation</title>
@@ -474,9 +474,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-data-
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.data_pipeline</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-dp</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-west-2</span>
-<span class="w">    </span><span class="nt">objects</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">pipelineObjects</span><span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">pipelineParameters</span><span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span><span class="nv">pipelineValues</span><span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">objects</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span><span class="nv">pipelineObjects</span><span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span><span class="nv">pipelineParameters</span><span class="cp">}}</span><span class="s">"</span>
+<span class="w">    </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span><span class="nv">pipelineValues</span><span class="cp">}}</span><span class="s">"</span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">key1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">val1</span>
 <span class="w">      </span><span class="nt">key2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">val2</span>
@@ -486,30 +486,30 @@ see <a class="reference internal" href="#ansible-collections-community-aws-data-
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.data_pipeline</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-dp</span>
 <span class="w">  </span><span class="nt">objects</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DefaultSchedule&quot;</span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Every</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">day&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">"DefaultSchedule"</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"Every</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">day"</span>
 <span class="w">      </span><span class="nt">fields</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;period&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;1</span><span class="nv"> </span><span class="s">days&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;type&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;Schedule&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;startAt&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;FIRST_ACTIVATION_DATE_TIME&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Default&quot;</span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Default&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"period"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"1</span><span class="nv"> </span><span class="s">days"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"type"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"Schedule"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"startAt"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"FIRST_ACTIVATION_DATE_TIME"</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">"Default"</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"Default"</span>
 <span class="w">      </span><span class="nt">fields</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;resourceRole&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;my_resource_role&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;role&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;DataPipelineDefaultRole&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;pipelineLogUri&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;s3://my_s3_log.txt&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;scheduleType&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;cron&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;schedule&quot;</span>
-<span class="w">          </span><span class="s">&quot;refValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;DefaultSchedule&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;key&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;failureAndRerunMode&quot;</span>
-<span class="w">          </span><span class="s">&quot;stringValue&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;CASCADE&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"resourceRole"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"my_resource_role"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"role"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"DataPipelineDefaultRole"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"pipelineLogUri"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"s3://my_s3_log.txt"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"scheduleType"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"cron"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"schedule"</span>
+<span class="w">          </span><span class="s">"refValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"DefaultSchedule"</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"key"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"failureAndRerunMode"</span>
+<span class="w">          </span><span class="s">"stringValue"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"CASCADE"</span>
 <span class="w">  </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active</span>
 
 <span class="c1"># Activate pipeline</span>

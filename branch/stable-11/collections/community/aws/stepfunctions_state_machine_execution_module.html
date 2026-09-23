@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.stepfunctions_state_machine_execution module – Start or stop execution of an AWS Step Functions state machine &mdash; Ansible collections  documentation</title>
@@ -370,15 +370,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Start an execution of a state machine</span>
 <span class="w">  </span><span class="nt">community.aws.stepfunctions_state_machine_execution</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">an_execution_name</span>
-<span class="w">    </span><span class="nt">execution_input</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{</span><span class="nv"> </span><span class="s">&quot;IsHelloWorldExample&quot;:</span><span class="nv"> </span><span class="s">true</span><span class="nv"> </span><span class="s">}&#39;</span>
-<span class="w">    </span><span class="nt">state_machine_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:states:us-west-2:123456789012:stateMachine:HelloWorldStateMachine&quot;</span>
+<span class="w">    </span><span class="nt">execution_input</span><span class="p">:</span><span class="w"> </span><span class="s">'{</span><span class="nv"> </span><span class="s">"IsHelloWorldExample":</span><span class="nv"> </span><span class="s">true</span><span class="nv"> </span><span class="s">}'</span>
+<span class="w">    </span><span class="nt">state_machine_arn</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:states:us-west-2:123456789012:stateMachine:HelloWorldStateMachine"</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stop an execution of a state machine</span>
 <span class="w">  </span><span class="nt">community.aws.stepfunctions_state_machine_execution</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span>
-<span class="w">    </span><span class="nt">execution_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8&quot;</span>
-<span class="w">    </span><span class="nt">cause</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cause</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">task</span><span class="nv"> </span><span class="s">failure&quot;</span>
-<span class="w">    </span><span class="nt">error</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;error</span><span class="nv"> </span><span class="s">code</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">failure&quot;</span>
+<span class="w">    </span><span class="nt">execution_arn</span><span class="p">:</span><span class="w"> </span><span class="s">"arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8"</span>
+<span class="w">    </span><span class="nt">cause</span><span class="p">:</span><span class="w"> </span><span class="s">"cause</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">task</span><span class="nv"> </span><span class="s">failure"</span>
+<span class="w">    </span><span class="nt">error</span><span class="p">:</span><span class="w"> </span><span class="s">"error</span><span class="nv"> </span><span class="s">code</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">failure"</span>
 </pre></div>
 </div>
 </section>

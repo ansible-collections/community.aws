@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.lightsail module – Manage instances in AWS Lightsail &mdash; Ansible collections  documentation</title>
@@ -456,13 +456,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <span class="w">    </span><span class="nt">blueprint_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu_16_04</span>
 <span class="w">    </span><span class="nt">bundle_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nano_1_0</span>
 <span class="w">    </span><span class="nt">key_pair_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id_rsa</span>
-<span class="w">    </span><span class="nt">user_data</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">&#39;hello</span><span class="nv"> </span><span class="s">world&#39;</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">/home/ubuntu/test.txt&quot;</span>
+<span class="w">    </span><span class="nt">user_data</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">'hello</span><span class="nv"> </span><span class="s">world'</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">/home/ubuntu/test.txt"</span>
 <span class="w">    </span><span class="nt">public_ports</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">from_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
 <span class="w">        </span><span class="nt">to_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
-<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tcp&quot;</span>
-<span class="w">        </span><span class="nt">cidrs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;0.0.0.0/0&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">        </span><span class="nt">ipv6_cidrs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;::/0&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="s">"tcp"</span>
+<span class="w">        </span><span class="nt">cidrs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"0.0.0.0/0"</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">ipv6_cidrs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"::/0"</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_instance</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete an instance</span>

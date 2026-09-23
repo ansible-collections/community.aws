@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.s3_lifecycle module – Manage S3 bucket lifecycle rules in AWS &mdash; Ansible collections  documentation</title>
@@ -552,8 +552,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure a lifecycle rule to transition all items with a prefix of /logs/ to glacier on 31 Dec 2020 and then delete on 31 Dec 2030.</span>
 <span class="w">  </span><span class="nt">community.aws.s3_lifecycle</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mybucket</span>
-<span class="w">    </span><span class="nt">transition_date</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2020-12-30T00:00:00.000Z&quot;</span>
-<span class="w">    </span><span class="nt">expiration_date</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2030-12-30T00:00:00.000Z&quot;</span>
+<span class="w">    </span><span class="nt">transition_date</span><span class="p">:</span><span class="w"> </span><span class="s">"2020-12-30T00:00:00.000Z"</span>
+<span class="w">    </span><span class="nt">expiration_date</span><span class="p">:</span><span class="w"> </span><span class="s">"2030-12-30T00:00:00.000Z"</span>
 <span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs/</span>
 <span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>

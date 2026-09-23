@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.ecs_ecr module – Manage Elastic Container Registry repositories &mdash; Ansible collections  documentation</title>
@@ -473,12 +473,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <span class="w">  </span><span class="nt">community.aws.ecs_ecr</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">needs-policy-object</span>
 <span class="w">    </span><span class="nt">policy</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2008-10-17&#39;</span>
+<span class="w">      </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">'2008-10-17'</span>
 <span class="w">      </span><span class="nt">Statement</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read-only</span>
 <span class="w">          </span><span class="nt">Effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span>
 <span class="w">          </span><span class="nt">Principal</span><span class="p">:</span>
-<span class="w">            </span><span class="nt">AWS</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;</span><span class="cp">{{</span> <span class="nv">read_only_arn</span> <span class="cp">}}</span><span class="s">&#39;</span>
+<span class="w">            </span><span class="nt">AWS</span><span class="p">:</span><span class="w"> </span><span class="s">'</span><span class="cp">{{</span> <span class="nv">read_only_arn</span> <span class="cp">}}</span><span class="s">'</span>
 <span class="w">          </span><span class="nt">Action</span><span class="p">:</span>
 <span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecr:GetDownloadUrlForLayer</span>
 <span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecr:BatchGetImage</span>
@@ -487,7 +487,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-policy as string</span>
 <span class="w">  </span><span class="nt">community.aws.ecs_ecr</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">needs-policy-string</span>
-<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;template&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json.j2&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">policy</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">'template'</span><span class="o">,</span> <span class="s1">'policy.json.j2'</span><span class="o">)</span> <span class="cp">}}</span><span class="s">"</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete-policy</span>
 <span class="w">  </span><span class="nt">community.aws.ecs_ecr</span><span class="p">:</span>

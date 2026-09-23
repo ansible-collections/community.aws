@@ -4,7 +4,7 @@
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta content="2.24.0" name="antsibull-docs" />
+<meta content="2.27.0" name="antsibull-docs" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>community.aws.iam_saml_federation module – Maintain IAM SAML federation configuration. &mdash; Ansible collections  documentation</title>
@@ -342,13 +342,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-s
 <span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example1</span>
 <span class="w">      </span><span class="c1"># the &gt; below opens an indented block, so no escaping/quoting is needed when in the indentation level under this key</span>
 <span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
-<span class="w">          </span><span class="no">&lt;?xml version=&quot;1.0&quot;?&gt;...</span>
+<span class="w">          </span><span class="no">&lt;?xml version="1.0"?&gt;...</span>
 <span class="w">          </span><span class="no">&lt;md:EntityDescriptor</span>
 <span class="c1"># Creates a new iam saml identity provider if not present</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saml provider</span>
 <span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example2</span>
-<span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="s">"</span><span class="cp">{{</span> <span class="nv">item</span> <span class="cp">}}</span><span class="s">"</span>
 <span class="w">  </span><span class="nt">with_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/idp/metdata.xml</span>
 <span class="c1"># Removes iam saml identity provider</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove saml provider</span>
