@@ -1,1 +1,0 @@
-plugins/modules/inspector_target.py pylint:collection-deprecated-version # Remove after stable-12 branch is cut.
