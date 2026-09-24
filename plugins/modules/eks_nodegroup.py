@@ -67,6 +67,8 @@ options:
       - CUSTOM
       - BOTTLEROCKET_ARM_64
       - BOTTLEROCKET_x86_64
+      - AL2023_x86_64_STANDARD
+      - AL2023_ARM_64_STANDARD
   remote_access:
     description:
       - The remote access (SSH) configuration to use with your node group.
@@ -679,6 +681,8 @@ def main():
                 "CUSTOM",
                 "BOTTLEROCKET_ARM_64",
                 "BOTTLEROCKET_x86_64",
+                "AL2023_x86_64_STANDARD",
+                "AL2023_ARM_64_STANDARD",
             ]
         ),
         remote_access=dict(
