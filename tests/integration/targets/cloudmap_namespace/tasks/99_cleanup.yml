@@ -1,0 +1,29 @@
+---
+- name: Delete public namespace (cleanup)
+  community.aws.cloudmap_namespace:
+    state: absent
+    name: "{{ cloudmap_namespace_name }}"
+    namespace_type: public
+  ignore_errors: true
+
+- name: Delete private namespace (cleanup)
+  community.aws.cloudmap_namespace:
+    state: absent
+    name: "{{ cloudmap_private_namespace_name }}"
+    namespace_type: private
+  ignore_errors: true
+
+- name: Wait for namespace deletions to complete
+  pause:
+    seconds: 30
+
+- name: Delete VPC (cleanup)
+  amazon.aws.ec2_vpc_net:
+    name: "{{ resource_prefix }}-cloudmap-vpc"
+    cidr_block: "10.0.0.0/16"
+    state: absent
+  ignore_errors: true
+  retries: 5
+  delay: 10
+  until: vpc_cleanup is not failed
+  register: vpc_cleanup
