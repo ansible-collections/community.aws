@@ -133,7 +133,6 @@ action_groups:
     - iam_saml_federation
     - iam_server_certificate
     - iam_server_certificate_info
-    - inspector_target
     - kinesis_stream
     - lightsail
     - lightsail_snapshot
