@@ -1,0 +1,2 @@
+minor_changes:
+  - api_gateway_domain - Add additional TLS1.2 and TLS1.3 security policies (https://github.com/ansible-collections/community.aws/issues/2431).
