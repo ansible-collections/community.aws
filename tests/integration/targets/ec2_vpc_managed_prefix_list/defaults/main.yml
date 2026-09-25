@@ -1,0 +1,2 @@
+---
+prefix_list_name: "{{ resource_prefix }}-managed-prefix-list"

@@ -1,0 +1,256 @@
+---
+- name: ec2_vpc_managed_prefix_list integration tests
+  collections:
+    - community.aws
+  module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+
+    # ============================================================
+    - debug: msg="Running ec2_vpc_managed_prefix_list tests"
+
+    # ============================================================
+    # CREATE (check mode)
+    # ============================================================
+
+    - name: Create prefix list (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        address_family: IPv4
+        max_entries: 10
+      register: result
+      check_mode: true
+
+    - name: Verify check mode reported a change
+      assert:
+        that:
+          - result is changed
+
+    - name: Verify prefix list was not actually created
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: absent
+        name: "{{ prefix_list_name }}"
+      register: absent_check
+
+    - assert:
+        that:
+          - absent_check is not changed
+
+    # ============================================================
+    # CREATE
+    # ============================================================
+
+    - name: Create prefix list
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        address_family: IPv4
+        max_entries: 10
+      register: result
+
+    - name: Verify prefix list was created
+      assert:
+        that:
+          - result is changed
+          - result.prefix_list_id is defined
+          - result.prefix_list_id is match("pl-")
+          - result.prefix_list.prefix_list_name == prefix_list_name
+          - result.prefix_list.address_family == "IPv4"
+          - result.prefix_list.max_entries == 10
+          - result.prefix_list.entries == []
+          - result.prefix_list.tags == {}
+
+    - name: Store prefix list ID
+      set_fact:
+        prefix_list_id: "{{ result.prefix_list_id }}"
+
+    # ============================================================
+    # CREATE (idempotency)
+    # ============================================================
+
+    - name: Create prefix list again (check mode idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        address_family: IPv4
+        max_entries: 10
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is not changed
+
+    - name: Create prefix list again (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        address_family: IPv4
+        max_entries: 10
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list_id == prefix_list_id
+
+    # ============================================================
+    # UPDATE max_entries (check mode)
+    # ============================================================
+
+    - name: Update max_entries (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        max_entries: 20
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Verify max_entries was not changed in check mode
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        max_entries: 10
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+
+    # ============================================================
+    # UPDATE max_entries
+    # ============================================================
+
+    - name: Update max_entries
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        max_entries: 20
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.max_entries == 20
+
+    - name: Update max_entries again (idempotency check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        max_entries: 20
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is not changed
+
+    - name: Update max_entries again (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        name: "{{ prefix_list_name }}"
+        max_entries: 20
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+
+    # ============================================================
+    # Entries tests
+    # ============================================================
+
+    - include_tasks: entries.yml
+
+    # ============================================================
+    # Tags tests
+    # ============================================================
+
+    - include_tasks: tags.yml
+
+    # ============================================================
+    # Info module tests
+    # ============================================================
+
+    - include_tasks: info.yml
+
+    # ============================================================
+    # DELETE (check mode)
+    # ============================================================
+
+    - name: Delete prefix list (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: absent
+        prefix_list_id: "{{ prefix_list_id }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Verify prefix list still exists after check mode delete
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        prefix_list_id: "{{ prefix_list_id }}"
+        max_entries: 20
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+
+    # ============================================================
+    # DELETE
+    # ============================================================
+
+    - name: Delete prefix list
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: absent
+        prefix_list_id: "{{ prefix_list_id }}"
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Delete prefix list again (check mode idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: absent
+        name: "{{ prefix_list_name }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is not changed
+
+    - name: Delete prefix list again (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: absent
+        name: "{{ prefix_list_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+
+  always:
+
+    # ============================================================
+    - debug: msg="Cleaning up test resources"
+
+    - name: Delete prefix list (cleanup)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: absent
+        name: "{{ prefix_list_name }}"
+      ignore_errors: true
