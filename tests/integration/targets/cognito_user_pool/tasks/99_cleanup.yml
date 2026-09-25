@@ -1,0 +1,37 @@
+---
+# Ensure deletion protection is off before deleting
+- name: Disable deletion protection on main pool
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_id }}'
+    deletion_protection: INACTIVE
+  ignore_errors: true
+  when: cognito_pool_id is defined
+
+- name: Disable deletion protection on params pool
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    deletion_protection: INACTIVE
+  ignore_errors: true
+  when: cognito_pool_params_id is defined
+
+- name: Delete main user pool
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_pool_id }}'
+  ignore_errors: true
+  when: cognito_pool_id is defined
+
+- name: Delete params user pool
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  ignore_errors: true
+  when: cognito_pool_params_id is defined
+
+- name: Delete params user pool by name (fallback)
+  cognito_user_pool:
+    state: absent
+    name: '{{ cognito_pool_name }}-params'
+  ignore_errors: true

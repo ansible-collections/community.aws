@@ -1,0 +1,19 @@
+---
+- name: 'cognito_user_pool_domain integration tests'
+  collections:
+    - amazon.aws
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+
+  block:
+    - include_tasks: 01_prerequisites.yml
+
+    - include_tasks: 10_domain.yml
+      when: cognito_user_pool_id is defined
+
+  always:
+    - include_tasks: 99_cleanup.yml

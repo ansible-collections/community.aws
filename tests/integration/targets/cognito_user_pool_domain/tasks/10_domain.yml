@@ -1,0 +1,122 @@
+---
+# ==========================================
+# Create domain — check_mode
+# ==========================================
+- name: Create user pool domain — check_mode
+  cognito_user_pool_domain:
+    state: present
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  check_mode: true
+  register: create_check
+
+- name: Verify create check_mode
+  assert:
+    that:
+      - create_check is changed
+
+# ==========================================
+# Create domain
+# ==========================================
+- name: Create user pool domain
+  cognito_user_pool_domain:
+    state: present
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: create_result
+
+- name: Verify domain was created
+  assert:
+    that:
+      - create_result is changed
+      - create_result.user_pool_domain.domain == cognito_domain_prefix
+      - create_result.user_pool_domain.user_pool_id == cognito_user_pool_id
+
+# ==========================================
+# Create domain — idempotency
+# ==========================================
+- name: Create user pool domain — idempotency
+  cognito_user_pool_domain:
+    state: present
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: create_idem
+
+- name: Verify idempotency
+  assert:
+    that:
+      - create_idem is not changed
+
+# ==========================================
+# Info lookup
+# ==========================================
+- name: Look up domain info
+  cognito_user_pool_domain_info:
+    domain: '{{ cognito_domain_prefix }}'
+  register: domain_info
+
+- name: Verify domain info
+  assert:
+    that:
+      - domain_info.user_pool_domain.domain == cognito_domain_prefix
+      - domain_info.user_pool_domain.user_pool_id == cognito_user_pool_id
+
+# ==========================================
+# Delete domain — check_mode
+# ==========================================
+- name: Delete user pool domain — check_mode
+  cognito_user_pool_domain:
+    state: absent
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  check_mode: true
+  register: delete_check
+
+- name: Verify delete check_mode
+  assert:
+    that:
+      - delete_check is changed
+
+# ==========================================
+# Delete domain
+# ==========================================
+- name: Delete user pool domain
+  cognito_user_pool_domain:
+    state: absent
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: delete_result
+
+- name: Verify domain was deleted
+  assert:
+    that:
+      - delete_result is changed
+
+# ==========================================
+# Delete domain — idempotency
+# ==========================================
+- name: Delete user pool domain — idempotency
+  cognito_user_pool_domain:
+    state: absent
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: delete_idem
+
+- name: Verify delete idempotency
+  assert:
+    that:
+      - delete_idem is not changed
+
+# ==========================================
+# Info lookup — not found
+# ==========================================
+- name: Look up deleted domain info — should fail
+  cognito_user_pool_domain_info:
+    domain: '{{ cognito_domain_prefix }}'
+  register: domain_info_gone
+  ignore_errors: true
+
+- name: Verify info fails for deleted domain
+  assert:
+    that:
+      - domain_info_gone is failed

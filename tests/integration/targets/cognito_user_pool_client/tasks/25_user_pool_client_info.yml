@@ -1,0 +1,103 @@
+---
+# ============================================================
+# cognito_user_pool_client_info tests
+# ============================================================
+
+# --- Setup: Create a client to query ---
+- name: Create client for info tests
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}-info'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    generate_secret: false
+    callback_urls:
+      - https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+  register: info_setup
+
+- name: Save info test client_id
+  set_fact:
+    info_test_client_id: '{{ info_setup.client.client_id }}'
+
+# --- Lookup by client_id ---
+- name: Get client info by client_id
+  cognito_user_pool_client_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ info_test_client_id }}'
+  register: info_by_id
+
+- name: Verify info by client_id
+  assert:
+    that:
+      - info_by_id is not changed
+      - info_by_id.client.client_id == info_test_client_id
+      - info_by_id.client.client_name == cognito_client_name + '-info'
+      - info_by_id.client.user_pool_id == cognito_user_pool_id
+      - "'openid' in info_by_id.client.allowed_o_auth_scopes"
+
+# --- Lookup by name ---
+- name: Get client info by name
+  cognito_user_pool_client_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    name: '{{ cognito_client_name }}-info'
+  register: info_by_name
+
+- name: Verify info by name
+  assert:
+    that:
+      - info_by_name is not changed
+      - info_by_name.client.client_id == info_test_client_id
+      - info_by_name.client.client_name == cognito_client_name + '-info'
+
+# --- List all clients ---
+- name: List all clients in pool
+  cognito_user_pool_client_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: all_clients
+
+- name: Verify client list
+  assert:
+    that:
+      - all_clients is not changed
+      - all_clients.clients is defined
+      - all_clients.clients | length >= 1
+      - info_test_client_id in (all_clients.clients | map(attribute='client_id') | list)
+
+# --- Lookup nonexistent client_id ---
+- name: Get info for nonexistent client_id — should fail
+  cognito_user_pool_client_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: 'nonexistent123456'
+  register: info_nonexistent
+  ignore_errors: true
+
+- name: Verify nonexistent client_id fails
+  assert:
+    that:
+      - info_nonexistent is failed
+
+# --- Lookup nonexistent name ---
+- name: Get info for nonexistent name — should fail
+  cognito_user_pool_client_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    name: 'nonexistent-client-name-xyz'
+  register: info_nonexistent_name
+  ignore_errors: true
+
+- name: Verify nonexistent name fails
+  assert:
+    that:
+      - info_nonexistent_name is failed
+
+# --- Cleanup ---
+- name: Delete info test client
+  cognito_user_pool_client:
+    state: absent
+    client_id: '{{ info_test_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'

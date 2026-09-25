@@ -1,0 +1,16 @@
+---
+- name: Create Cognito user pool
+  cognito_user_pool:
+    state: present
+    name: '{{ cognito_user_pool_name }}'
+  register: create_pool_result
+
+- name: Save user pool ID
+  set_fact:
+    cognito_user_pool_id: '{{ create_pool_result.user_pool.id }}'
+
+- name: Verify user pool was created
+  assert:
+    that:
+      - cognito_user_pool_id is defined
+      - cognito_user_pool_id | length > 0
