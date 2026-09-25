@@ -1,0 +1,3 @@
+---
+cache_name: "{{ resource_prefix }}-serverless"
+valkey_cache_name: "{{ resource_prefix }}-valkey"
