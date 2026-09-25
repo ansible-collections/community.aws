@@ -144,6 +144,8 @@ files:
     authors: tedder
   $modules/ec2_ami_copy.py:
     authors: amir343 defunctio
+  $modules/ec2_ami_fast_launch_info.py:
+    authors: ewaldbervoets
   $modules/ec2_asg.py:
     authors: garethr
     labels: ec2_asg
