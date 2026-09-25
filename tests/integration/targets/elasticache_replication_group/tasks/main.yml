@@ -1,0 +1,304 @@
+---
+
+- name: Integration testing for the elasticache_replication_group module
+  module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  collections:
+    - amazon.aws
+  block:
+
+    # == Dependency setup ==
+
+    - name: Create VPC for ElastiCache replication group tests
+      ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        cidr_block: "{{ vpc_cidr }}"
+        state: present
+      register: test_vpc
+
+    - name: Create subnet A in test VPC
+      ec2_vpc_subnet:
+        vpc_id: "{{ test_vpc.vpc.id }}"
+        cidr: "{{ subnet_a_cidr }}"
+        state: present
+      register: test_subnet_a
+
+    - name: Create subnet B in test VPC
+      ec2_vpc_subnet:
+        vpc_id: "{{ test_vpc.vpc.id }}"
+        cidr: "{{ subnet_b_cidr }}"
+        state: present
+      register: test_subnet_b
+
+    - name: Create ElastiCache subnet group
+      elasticache_subnet_group:
+        name: "{{ elasticache_subnet_group_name }}"
+        description: Subnet group for replication group integration tests
+        subnets:
+          - "{{ test_subnet_a.subnet.id }}"
+          - "{{ test_subnet_b.subnet.id }}"
+        state: present
+
+    # == Redis replication group tests ==
+
+    - name: Create a Redis replication group (check mode)
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_id }}"
+        description: Redis replication group for integration testing
+        engine: redis
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        state: present
+      register: result
+      check_mode: true
+
+    - name: Assert check mode reports changed
+      assert:
+        that:
+          - result is changed
+
+    - name: Create a Redis replication group
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_id }}"
+        description: Redis replication group for integration testing
+        engine: redis
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        state: present
+        wait: true
+      register: result
+
+    - name: Assert Redis replication group was created
+      assert:
+        that:
+          - result is changed
+          - result.replication_group.replication_group_id == elasticache_rg_id
+          - result.replication_group.status == "available"
+
+    - name: Create the same Redis replication group again (idempotency)
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_id }}"
+        description: Redis replication group for integration testing
+        engine: redis
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        state: present
+        wait: true
+      register: result
+
+    - name: Assert idempotency
+      assert:
+        that:
+          - result is not changed
+
+    # == Valkey replication group tests ==
+
+    - name: Create a Valkey replication group (check mode)
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        description: Valkey replication group for integration testing
+        engine: valkey
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        transit_encryption_enabled: false
+        state: present
+      register: result
+      check_mode: true
+
+    - name: Assert check mode reports changed for Valkey
+      assert:
+        that:
+          - result is changed
+
+    - name: Create a Valkey replication group
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        description: Valkey replication group for integration testing
+        engine: valkey
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        transit_encryption_enabled: false
+        tags:
+          Environment: testing
+          Engine: valkey
+        state: present
+        wait: true
+      register: result
+
+    - name: Assert Valkey replication group was created
+      assert:
+        that:
+          - result is changed
+          - result.replication_group.replication_group_id == elasticache_rg_valkey_id
+          - result.replication_group.status == "available"
+
+    - name: Create the same Valkey replication group again (idempotency)
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        description: Valkey replication group for integration testing
+        engine: valkey
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        transit_encryption_enabled: false
+        tags:
+          Environment: testing
+          Engine: valkey
+        state: present
+        wait: true
+      register: result
+
+    - name: Assert Valkey idempotency
+      assert:
+        that:
+          - result is not changed
+
+    - name: Update Valkey replication group tags
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        description: Valkey replication group for integration testing
+        engine: valkey
+        node_type: cache.t3.micro
+        num_cache_clusters: 1
+        cache_subnet_group_name: "{{ elasticache_subnet_group_name }}"
+        transit_encryption_enabled: false
+        tags:
+          Environment: production
+          Engine: valkey
+          CostCenter: "12345"
+        state: present
+        wait: true
+      register: result
+
+    - name: Assert tags were updated
+      assert:
+        that:
+          - result is changed
+
+    - name: Delete Valkey replication group (check mode)
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        state: absent
+      register: result
+      check_mode: true
+
+    - name: Assert check mode reports changed for delete
+      assert:
+        that:
+          - result is changed
+
+    - name: Delete Valkey replication group
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        state: absent
+        wait: true
+      register: result
+
+    - name: Assert Valkey replication group was deleted
+      assert:
+        that:
+          - result is changed
+
+    - name: Delete already-deleted Valkey replication group (idempotency)
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        state: absent
+      register: result
+
+    - name: Assert delete is idempotent
+      assert:
+        that:
+          - result is not changed
+
+  always:
+
+    # == Cleanup ==
+
+    - name: Delete Redis replication group
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_id }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+
+    - name: Delete Valkey replication group
+      community.aws.elasticache_replication_group:
+        replication_group_id: "{{ elasticache_rg_valkey_id }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+
+    - name: Delete ElastiCache subnet group
+      elasticache_subnet_group:
+        name: "{{ elasticache_subnet_group_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: Look up test VPC for cleanup
+      amazon.aws.ec2_vpc_net_info:
+        filters:
+          "tag:Name": "{{ vpc_name }}"
+          cidr: "{{ vpc_cidr }}"
+      register: cleanup_vpc_info
+      ignore_errors: true
+
+    - name: Wait for ElastiCache ENIs to be released from test subnets
+      amazon.aws.ec2_eni_info:
+        filters:
+          subnet-id:
+            - "{{ test_subnet_a.subnet.id }}"
+            - "{{ test_subnet_b.subnet.id }}"
+      register: remaining_enis
+      until: remaining_enis.network_interfaces | length == 0
+      retries: 40
+      delay: 15
+      when:
+        - test_subnet_a is defined
+        - test_subnet_a.subnet is defined
+        - test_subnet_b is defined
+        - test_subnet_b.subnet is defined
+      ignore_errors: true
+
+    - name: Delete subnet A
+      ec2_vpc_subnet:
+        vpc_id: "{{ cleanup_vpc_info.vpcs[0].vpc_id }}"
+        cidr: "{{ subnet_a_cidr }}"
+        state: absent
+      when: (cleanup_vpc_info.vpcs | default([])) | length > 0
+      register: removed
+      until: removed is not failed
+      retries: 30
+      delay: 15
+      ignore_errors: true
+
+    - name: Delete subnet B
+      ec2_vpc_subnet:
+        vpc_id: "{{ cleanup_vpc_info.vpcs[0].vpc_id }}"
+        cidr: "{{ subnet_b_cidr }}"
+        state: absent
+      when: (cleanup_vpc_info.vpcs | default([])) | length > 0
+      register: removed
+      until: removed is not failed
+      retries: 30
+      delay: 15
+      ignore_errors: true
+
+    - name: Delete test VPC
+      ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        cidr_block: "{{ vpc_cidr }}"
+        state: absent
+      register: removed
+      until: removed is not failed
+      retries: 10
+      delay: 10
+      ignore_errors: true
