@@ -1,0 +1,3 @@
+---
+# Defaults for ses_configuration_set integration tests
+resource_prefix: "{{ 'ansible-test-' ~ ( 99999999 | random | to_uuid ) }}"
