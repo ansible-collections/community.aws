@@ -1,0 +1,1314 @@
+---
+# Integration tests for dynamodb_query lookup plugin
+- name: Setup connection args for lookup plugin
+  ansible.builtin.set_fact:
+    # As a lookup plugin we don't have access to module_defaults
+    connection_args:
+      region: "{{ aws_region }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+  no_log: true
+
+- name: DynamoDB Query lookup plugin integration tests
+  module_defaults:
+    group/aws:
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+
+    # ========================================
+    # SETUP PHASE: Create all tables and populate with test data
+    # ========================================
+    # This section creates all DynamoDB tables and populates them with test data.
+    # Strategy: Create all tables first (parallel), wait once, then load all data.
+
+    # ========================================
+    # Step 1: Create all tables (no waiting)
+    # ========================================
+
+    - name: Create main DynamoDB table for testing
+      community.aws.dynamodb_table:
+        state: present
+        name: "{{ table_name }}"
+        hash_key_name: platform_name
+        hash_key_type: STRING
+        range_key_name: environment_name
+        range_key_type: STRING
+        read_capacity: 1
+        write_capacity: 1
+      register: create_table
+
+    - name: Create table with Global Secondary Index
+      community.aws.dynamodb_table:
+        state: present
+        name: "{{ table_name_gsi }}"
+        hash_key_name: platform_name
+        hash_key_type: STRING
+        range_key_name: environment_name
+        range_key_type: STRING
+        indexes:
+          - name: status-index
+            type: global_all
+            hash_key_name: status
+            range_key_name: version
+        read_capacity: 1
+        write_capacity: 1
+      register: create_gsi_table
+
+    - name: Create table with Local Secondary Index
+      community.aws.dynamodb_table:
+        state: present
+        name: "{{ resource_prefix }}-lsi-test"
+        hash_key_name: user_id
+        hash_key_type: STRING
+        range_key_name: timestamp
+        range_key_type: NUMBER
+        indexes:
+          - name: status-lsi
+            type: all
+            hash_key_name: user_id
+            hash_key_type: STRING
+            range_key_name: status
+            range_key_type: STRING
+        billing_mode: PAY_PER_REQUEST
+        region: "{{ aws_region }}"
+      register: lsi_table_result
+
+    - name: Create empty table for scan test
+      community.aws.dynamodb_table:
+        state: present
+        name: "{{ resource_prefix }}-empty-scan"
+        hash_key_name: test_key
+        hash_key_type: STRING
+        billing_mode: PAY_PER_REQUEST
+        region: "{{ aws_region }}"
+      register: empty_table_result
+
+    # ========================================
+    # Step 2: Wait for tables to be active
+    # ========================================
+    # We only need to check the last created table - if it's ACTIVE,
+    # all previously created tables are also ACTIVE
+
+    - name: Wait for last table (empty-scan) to be active
+      community.aws.dynamodb_table_info:
+        name: "{{ resource_prefix }}-empty-scan"
+      register: empty_table_info
+      until: empty_table_info.table.table_status == "ACTIVE"
+      retries: 30
+      delay: 10
+
+    # ========================================
+    # Step 3: Load all test data (tables are ready)
+    # ========================================
+
+    - name: Put base test items into main table
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{"platform_name": {"S": "{{ item.platform_name }}"},
+                 "environment_name": {"S": "{{ item.environment_name }}"},
+                 "stack_name": {"S": "{{ item.stack_name }}"},
+                 "status": {"S": "{{ item.status }}"},
+                 "version": {"S": "{{ item.version }}"},
+                 "deployed_at": {"S": "{{ item.deployed_at }}"}}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop: "{{ test_items }}"
+      loop_control:
+        label: "{{ item.platform_name }}/{{ item.environment_name }}/{{ item.stack_name }}"
+      changed_when: true
+
+    - name: Put items into GSI table
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name_gsi }}
+        --item '{"platform_name": {"S": "{{ item.platform_name }}"},
+                 "environment_name": {"S": "{{ item.environment_name }}"},
+                 "stack_name": {"S": "{{ item.stack_name }}"},
+                 "status": {"S": "{{ item.status }}"},
+                 "version": {"S": "{{ item.version }}"}}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop: "{{ test_items }}"
+      loop_control:
+        label: "{{ item.platform_name }}/{{ item.environment_name }}"
+      changed_when: true
+
+    - name: Put items into LSI table
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ resource_prefix }}-lsi-test
+        --item '{
+          "user_id": {"S": "user-123"},
+          "timestamp": {"N": "{{ item.timestamp }}"},
+          "status": {"S": "{{ item.status }}"},
+          "message": {"S": "{{ item.message }}"}
+        }'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop:
+        - { timestamp: "1000", status: "pending", message: "First message" }
+        - { timestamp: "2000", status: "active", message: "Second message" }
+        - { timestamp: "3000", status: "active", message: "Third message" }
+        - { timestamp: "4000", status: "completed", message: "Fourth message" }
+      loop_control:
+        label: "{{ item.message }}"
+      changed_when: true
+
+    - name: Create items with different statuses for filter test (Tests 15-18)
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{"platform_name": {"S": "filter-test"},
+                 "environment_name": {"S": "env-{{ item }}"},
+                 "stack_name": {"S": "stack-{{ item }}"},
+                 "status": {"S": "{{ 'active' if item % 2 == 0 else 'inactive' }}"},
+                 "version": {"S": "1.0.0"}}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop: [1, 2, 3, 4, 5, 6]
+      changed_when: true
+
+    - name: Create items with numeric sort keys for operator testing (Tests 19-23)
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{"platform_name": {"S": "operator-test"},
+                 "environment_name": {"S": "env-{{ "%03d" | format(item) }}"},
+                 "priority": {"N": "{{ item }}"},
+                 "status": {"S": "active"}}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop: [1, 2, 3, 4, 5]
+      changed_when: true
+
+    # ========================================
+    # Setup complete - Wait for all data to be available
+    # ========================================
+    - name: Wait for all setup data to be available (eventual consistency)
+      ansible.builtin.pause:
+        seconds: 10
+
+    # ========================================
+    # TEST PHASE: All integration tests
+    # ========================================
+
+    # ========================================
+    # Test 1: Basic query with partition key only
+    # ========================================
+    - name: Query by partition key only
+      ansible.builtin.set_fact:
+        query_result: "{{ lookup('community.aws.dynamodb_query',
+                                  table_name=table_name,
+                                  partition_key='platform_name',
+                                  partition_value='test-platform',
+                                  **connection_args) }}"
+
+    - name: Debug query result
+      ansible.builtin.debug:
+        var: query_result
+
+    - name: Verify partition key query returned all items
+      ansible.builtin.assert:
+        that:
+          - query_result is defined
+          - query_result | length == 4  # All 4 unique items
+          - query_result[0].platform_name == 'test-platform'
+        fail_msg: "Partition key query failed. Got {{ query_result | length }} items, expected 4"
+        success_msg: "✓ Test 1 passed: Basic partition key query ({{ query_result | length }} items)"
+
+    # ========================================
+    # Test 2: Query with partition and sort key (EQ)
+    # ========================================
+    - name: Query by partition and sort key
+      ansible.builtin.set_fact:
+        query_pk_sk: "{{ lookup('community.aws.dynamodb_query',
+                                 table_name=table_name,
+                                 partition_key='platform_name',
+                                 partition_value='test-platform',
+                                 sort_key='environment_name',
+                                 sort_value='dev',
+                                 **connection_args) }}"
+
+    - name: Debug partition + sort key query result
+      ansible.builtin.debug:
+        var: query_pk_sk
+
+    - name: Verify partition + sort key query
+      ansible.builtin.assert:
+        that:
+          - query_pk_sk is defined
+          - query_pk_sk is mapping  # Single item returned as dict
+          - query_pk_sk.environment_name == 'dev'
+          - query_pk_sk.stack_name == 'web-server'
+        fail_msg: "Partition + sort key query failed"
+        success_msg: "✓ Test 2 passed: Query with partition and sort key"
+
+    # ========================================
+    # Test 3: Query with BEGINS_WITH operator
+    # ========================================
+    - name: Query with BEGINS_WITH operator
+      ansible.builtin.set_fact:
+        query_begins_with: "{{ lookup('community.aws.dynamodb_query',
+                                       table_name=table_name,
+                                       partition_key='platform_name',
+                                       partition_value='test-platform',
+                                       sort_key='environment_name',
+                                       sort_value='prod',
+                                       sort_operator='BEGINS_WITH',
+                                       **connection_args) }}"
+
+    - name: Verify BEGINS_WITH query
+      ansible.builtin.assert:
+        that:
+          - query_begins_with is defined
+          - query_begins_with is mapping  # Single item returned as dict
+          - query_begins_with.environment_name == 'prod'
+        fail_msg: "BEGINS_WITH query failed"
+        success_msg: "✓ Test 3 passed: BEGINS_WITH operator"
+
+    # ========================================
+    # Test 4: Query with GE operator
+    # ========================================
+    - name: Query with GE operator
+      ansible.builtin.set_fact:
+        query_ge: "{{ lookup('community.aws.dynamodb_query',
+                              table_name=table_name,
+                              partition_key='platform_name',
+                              partition_value='test-platform',
+                              sort_key='environment_name',
+                              sort_value='prod',
+                              sort_operator='GE',
+                              **connection_args) }}"
+
+    - name: Verify GE query (should get 'prod' and 'staging')
+      ansible.builtin.assert:
+        that:
+          - query_ge is defined
+          - query_ge | length >= 1
+        fail_msg: "GE operator query failed"
+        success_msg: "✓ Test 4 passed: GE operator"
+
+    # ========================================
+    # Test 5: Query with projection expression (string)
+    # ========================================
+    - name: Query with projection expression as string
+      ansible.builtin.set_fact:
+        query_projection_str: "{{ lookup('community.aws.dynamodb_query',
+                                          table_name=table_name,
+                                          partition_key='platform_name',
+                                          partition_value='test-platform',
+                                          projection_expression='platform_name,environment_name,stack_name',
+                                          **connection_args) }}"
+
+    - name: Verify projection expression (string)
+      ansible.builtin.assert:
+        that:
+          - query_projection_str is defined
+          - query_projection_str | length == 4
+          - "'stack_name' in query_projection_str[0]"
+          - "'status' not in query_projection_str[0]"
+        fail_msg: "Projection expression (string) failed"
+        success_msg: "✓ Test 5 passed: Projection expression as string"
+
+    # ========================================
+    # Test 6: Query with projection expression (list)
+    # ========================================
+    - name: Query with projection expression as list
+      ansible.builtin.set_fact:
+        query_projection_list: "{{ lookup('community.aws.dynamodb_query',
+                                           table_name=table_name,
+                                           partition_key='platform_name',
+                                           partition_value='test-platform',
+                                           projection_expression=['platform_name', 'environment_name', 'version'],
+                                           **connection_args) }}"
+
+    - name: Verify projection expression (list)
+      ansible.builtin.assert:
+        that:
+          - query_projection_list is defined
+          - query_projection_list | length == 4
+          - "'version' in query_projection_list[0]"
+          - "'deployed_at' not in query_projection_list[0]"
+        fail_msg: "Projection expression (list) failed"
+        success_msg: "✓ Test 6 passed: Projection expression as list"
+
+    # ========================================
+    # Test 7: Query with limit
+    # ========================================
+    - name: Query with limit
+      ansible.builtin.set_fact:
+        query_limit: "{{ lookup('community.aws.dynamodb_query',
+                                 table_name=table_name,
+                                 partition_key='platform_name',
+                                 partition_value='test-platform',
+                                 limit=2,
+                                 **connection_args) }}"
+
+    - name: Verify limit works
+      ansible.builtin.assert:
+        that:
+          - query_limit is defined
+          - query_limit | length == 2
+        fail_msg: "Limit parameter failed"
+        success_msg: "✓ Test 7 passed: Query with limit"
+
+    # ========================================
+    # Test 8: Query with descending sort order
+    # ========================================
+    - name: Query with descending order
+      ansible.builtin.set_fact:
+        query_desc: "{{ lookup('community.aws.dynamodb_query',
+                                table_name=table_name,
+                                partition_key='platform_name',
+                                partition_value='test-platform',
+                                scan_index_forward=false,
+                                **connection_args) }}"
+
+    - name: Verify descending order
+      ansible.builtin.assert:
+        that:
+          - query_desc is defined
+          - query_desc | length == 4
+          # In descending order, 'staging' should come before 'dev'
+          - query_desc[0].environment_name > query_desc[-1].environment_name
+        fail_msg: "Descending order failed"
+        success_msg: "✓ Test 8 passed: Descending sort order"
+
+    # ========================================
+    # Test 9: Scan operation
+    # ========================================
+    - name: Perform scan operation with filter
+      ansible.builtin.set_fact:
+        scan_result: "{{ lookup('community.aws.dynamodb_query',
+                                 table_name=table_name,
+                                 operation='scan',
+                                 filter_expression='platform_name = :platform',
+                                 expression_attribute_values={':platform': 'test-platform'},
+                                 limit=10,
+                                 **connection_args) }}"
+
+    - name: Verify scan operation
+      ansible.builtin.assert:
+        that:
+          - scan_result is defined
+          - scan_result | length == 4  # 4 base items with platform_name='test-platform'
+        fail_msg: "Scan operation failed"
+        success_msg: "✓ Test 9 passed: Scan operation with filter"
+
+    # ========================================
+    # Test 10: Query non-existent item
+    # ========================================
+    - name: Query non-existent item
+      ansible.builtin.set_fact:
+        query_empty: "{{ lookup('community.aws.dynamodb_query',
+                                 table_name=table_name,
+                                 partition_key='platform_name',
+                                 partition_value='non-existent-platform',
+                                 **connection_args) }}"
+
+    - name: Verify empty result
+      ansible.builtin.assert:
+        that:
+          - query_empty is defined
+          - query_empty | length == 0
+        fail_msg: "Empty query result check failed"
+        success_msg: "✓ Test 10 passed: Query returns empty list for non-existent items"
+
+    # ========================================
+    # Test 11: Error handling - non-existent table
+    # ========================================
+    - name: Query non-existent table (should fail)
+      ansible.builtin.set_fact:
+        query_bad_table: "{{ lookup('community.aws.dynamodb_query',
+                                     table_name='non-existent-table-12345',
+                                     partition_key='id',
+                                     partition_value='test',
+                                     **connection_args) }}"
+      register: bad_table_result
+      ignore_errors: true
+
+    - name: Verify error handling for non-existent table
+      ansible.builtin.assert:
+        that:
+          - bad_table_result is failed
+          - "'not found' in bad_table_result.msg | lower"
+        fail_msg: "Error handling for non-existent table failed"
+        success_msg: "✓ Test 11 passed: Proper error for non-existent table"
+
+    # ========================================
+    # Test 12: Query using Global Secondary Index
+    # ========================================
+    # Note: GSI table and data created in Setup phase
+    - name: Query using GSI
+      ansible.builtin.set_fact:
+        query_gsi: "{{ lookup('community.aws.dynamodb_query',
+                               table_name=table_name_gsi,
+                               index_name='status-index',
+                               partition_key='status',
+                               partition_value='active',
+                               **connection_args) }}"
+
+    - name: Verify GSI query
+      ansible.builtin.assert:
+        that:
+          - query_gsi is defined
+          - query_gsi | length == 3
+          - query_gsi | selectattr('status', 'equalto', 'active') | list | length == 3
+        fail_msg: "GSI query failed"
+        success_msg: "✓ Test 12 passed: Query using Global Secondary Index"
+
+    # ========================================
+    # Test 13: Data type handling
+    # ========================================
+    - name: Create item with various data types
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{
+          "platform_name": {"S": "type-test"},
+          "environment_name": {"S": "test"},
+          "string_value": {"S": "test string"},
+          "number_value": {"N": "42"},
+          "float_value": {"N": "3.14"},
+          "bool_value": {"BOOL": true},
+          "list_value": {"L": [{"S": "item1"}, {"S": "item2"}]},
+          "map_value": {"M": {"key1": {"S": "value1"}, "key2": {"S": "value2"}}}
+        }'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      changed_when: true
+
+    - name: Query item with various types
+      ansible.builtin.set_fact:
+        query_types: "{{ lookup('community.aws.dynamodb_query',
+                                 table_name=table_name,
+                                 partition_key='platform_name',
+                                 partition_value='type-test',
+                                 **connection_args) }}"
+
+    - name: Verify data type handling
+      ansible.builtin.assert:
+        that:
+          - query_types is defined
+          - query_types is mapping  # Single item returned as dict
+          - query_types.string_value == 'test string'
+          - query_types.number_value == 42
+          - query_types.float_value == 3.14
+          - query_types.bool_value == true
+          - query_types.list_value | length == 2
+          - query_types.map_value.key1 == 'value1'
+        fail_msg: "Data type handling failed"
+        success_msg: "✓ Test 14 passed: Various data types handled correctly"
+
+    # ========================================
+    # Test 15: Filter expression with query
+    # ========================================
+    # This test verifies that filter_expression works to filter results
+    # after the query operation. Note: filter_expression is applied AFTER
+    # the query, so it doesn't reduce RCU consumption.
+    # Note: Test data created in Setup phase
+
+    - name: Query with filter expression (attribute_exists function)
+      ansible.builtin.set_fact:
+        query_filtered: "{{ lookup('community.aws.dynamodb_query',
+                                    table_name=table_name,
+                                    partition_key='platform_name',
+                                    partition_value='filter-test',
+                                    filter_expression='attribute_exists(version)',
+                                    **connection_args) }}"
+
+    - name: Verify filter expression works with query
+      ansible.builtin.assert:
+        that:
+          - query_filtered is defined
+          - query_filtered is iterable
+          - query_filtered | length == 6  # All 6 items have version attribute
+        fail_msg: "Filter expression test failed"
+        success_msg: "✓ Test 15 passed: Filter expression with query ({{ query_filtered | length }} items)"
+
+    # ========================================
+    # Test 16: Filter expression with scan
+    # ========================================
+
+    - name: Scan with filter expression
+      ansible.builtin.set_fact:
+        scan_filtered: "{{ lookup('community.aws.dynamodb_query',
+                                   table_name=table_name,
+                                   operation='scan',
+                                   filter_expression='attribute_exists(stack_name)',
+                                   limit=20,
+                                   **connection_args) }}"
+
+    - name: Verify scan with filter works
+      ansible.builtin.assert:
+        that:
+          - scan_filtered is defined
+          - scan_filtered is iterable
+          - scan_filtered | length > 0  # Should return items with stack_name
+        fail_msg: "Scan with filter expression failed"
+        success_msg: "✓ Test 16 passed: Scan with filter expression ({{ scan_filtered | length }} items)"
+
+    # ========================================
+    # Test 17: Filter expression with reserved keyword using placeholders
+    # ========================================
+    # This test verifies that filter expressions with reserved keywords
+    # work correctly when using expression_attribute_names.
+    # 'status' is a DynamoDB reserved keyword.
+
+    - name: Query with reserved keyword 'status' using placeholder
+      ansible.builtin.set_fact:
+        query_reserved_keyword: "{{ lookup('community.aws.dynamodb_query',
+                                            table_name=table_name,
+                                            partition_key='platform_name',
+                                            partition_value='filter-test',
+                                            filter_expression='#s = :status_val',
+                                            expression_attribute_names={'#s': 'status'},
+                                            expression_attribute_values={':status_val': 'active'},
+                                            **connection_args) }}"
+
+    - name: Verify reserved keyword works with placeholders
+      ansible.builtin.assert:
+        that:
+          - query_reserved_keyword is defined
+          - query_reserved_keyword is iterable
+          - query_reserved_keyword | length == 3  # 3 items with status='active' (items 2, 4, 6)
+          - query_reserved_keyword | selectattr('status', 'equalto', 'active') | list | length == 3
+        fail_msg: "Reserved keyword with placeholders failed"
+        success_msg: "✓ Test 17 passed: Reserved keyword with placeholders ({{ query_reserved_keyword | length }} items)"
+
+    # ========================================
+    # Test 18: Complex filter with multiple placeholders
+    # ========================================
+    # This test verifies complex filter expressions with multiple
+    # placeholders for both names and values.
+
+    - name: Query with complex filter (multiple conditions)
+      ansible.builtin.set_fact:
+        query_complex_filter: "{{ lookup('community.aws.dynamodb_query',
+                                          table_name=table_name,
+                                          partition_key='platform_name',
+                                          partition_value='filter-test',
+                                          filter_expression='#s = :inactive AND attribute_exists(#v)',
+                                          expression_attribute_names={'#s': 'status', '#v': 'version'},
+                                          expression_attribute_values={':inactive': 'inactive'},
+                                          **connection_args) }}"
+
+    - name: Verify complex filter works
+      ansible.builtin.assert:
+        that:
+          - query_complex_filter is defined
+          - query_complex_filter is iterable
+          - query_complex_filter | length == 3  # 3 items with status='inactive' (items 1, 3, 5)
+          - query_complex_filter | selectattr('status', 'equalto', 'inactive') | list | length == 3
+        fail_msg: "Complex filter with multiple placeholders failed"
+        success_msg: "✓ Test 18 passed: Complex filter with multiple placeholders ({{ query_complex_filter | length }} items)"
+
+    # ========================================
+    # Test 19: Sort operators - LE, LT, GT
+    # ========================================
+    # This test verifies less than, less than or equal, and greater than operators
+    # Note: Test data created in Setup phase
+
+    - name: Query with LT (less than) operator
+      ansible.builtin.set_fact:
+        query_lt: "{{ lookup('community.aws.dynamodb_query',
+                              table_name=table_name,
+                              partition_key='platform_name',
+                              partition_value='operator-test',
+                              sort_key='environment_name',
+                              sort_value='env-003',
+                              sort_operator='LT',
+                              **connection_args) }}"
+
+    - name: Verify LT operator
+      ansible.builtin.assert:
+        that:
+          - query_lt is defined
+          - query_lt is iterable
+          - query_lt | length == 2  # env-001, env-002 (< env-003)
+        fail_msg: "LT operator failed"
+        success_msg: "✓ Test 19a passed: LT operator ({{ query_lt | length }} items)"
+
+    - name: Query with LE (less than or equal) operator
+      ansible.builtin.set_fact:
+        query_le: "{{ lookup('community.aws.dynamodb_query',
+                              table_name=table_name,
+                              partition_key='platform_name',
+                              partition_value='operator-test',
+                              sort_key='environment_name',
+                              sort_value='env-003',
+                              sort_operator='LE',
+                              **connection_args) }}"
+
+    - name: Verify LE operator
+      ansible.builtin.assert:
+        that:
+          - query_le is defined
+          - query_le is iterable
+          - query_le | length == 3  # env-001, env-002, env-003 (<= env-003)
+        fail_msg: "LE operator failed"
+        success_msg: "✓ Test 19b passed: LE operator ({{ query_le | length }} items)"
+
+    - name: Query with GT (greater than) operator
+      ansible.builtin.set_fact:
+        query_gt: "{{ lookup('community.aws.dynamodb_query',
+                              table_name=table_name,
+                              partition_key='platform_name',
+                              partition_value='operator-test',
+                              sort_key='environment_name',
+                              sort_value='env-003',
+                              sort_operator='GT',
+                              **connection_args) }}"
+
+    - name: Verify GT operator
+      ansible.builtin.assert:
+        that:
+          - query_gt is defined
+          - query_gt is iterable
+          - query_gt | length == 2  # env-004, env-005 (> env-003)
+        fail_msg: "GT operator failed"
+        success_msg: "✓ Test 19c passed: GT operator ({{ query_gt | length }} items)"
+
+    # ========================================
+    # Test 20: BETWEEN operator
+    # ========================================
+
+    - name: Query with BETWEEN operator
+      ansible.builtin.set_fact:
+        query_between: "{{ lookup('community.aws.dynamodb_query',
+                                   table_name=table_name,
+                                   partition_key='platform_name',
+                                   partition_value='operator-test',
+                                   sort_key='environment_name',
+                                   sort_value='env-002,env-004',
+                                   sort_operator='BETWEEN',
+                                   **connection_args) }}"
+
+    - name: Verify BETWEEN operator
+      ansible.builtin.assert:
+        that:
+          - query_between is defined
+          - query_between is iterable
+          - query_between | length == 3  # env-002, env-003, env-004 (between inclusive)
+        fail_msg: "BETWEEN operator failed"
+        success_msg: "✓ Test 20 passed: BETWEEN operator ({{ query_between | length }} items)"
+
+    # ========================================
+    # Test 21: BETWEEN operator with invalid format (negative test)
+    # ========================================
+
+    - name: Try BETWEEN with single value (expected to fail)
+      ansible.builtin.set_fact:
+        query_between_invalid: "{{ lookup('community.aws.dynamodb_query',
+                                           table_name=table_name,
+                                           partition_key='platform_name',
+                                           partition_value='operator-test',
+                                           sort_key='environment_name',
+                                           sort_value='env-002',
+                                           sort_operator='BETWEEN',
+                                           **connection_args) }}"
+      register: between_invalid_result
+      ignore_errors: true
+
+    - name: Verify BETWEEN validation
+      ansible.builtin.assert:
+        that:
+          - between_invalid_result is failed
+          - "'two values' in (between_invalid_result.msg | lower) or 'comma' in (between_invalid_result.msg | lower)"
+        fail_msg: "Expected error for invalid BETWEEN format"
+        success_msg: "✓ Test 21 passed: BETWEEN validation (properly rejects single value)"
+
+    # ========================================
+    # Test 22: Filter expression with numeric comparisons
+    # ========================================
+
+    - name: Query with numeric filter expression
+      ansible.builtin.set_fact:
+        query_numeric_filter: "{{ lookup('community.aws.dynamodb_query',
+                                          table_name=table_name,
+                                          partition_key='platform_name',
+                                          partition_value='operator-test',
+                                          filter_expression='#p > :min_priority',
+                                          expression_attribute_names={'#p': 'priority'},
+                                          expression_attribute_values={':min_priority': 3},
+                                          **connection_args) }}"
+
+    - name: Verify numeric filter
+      ansible.builtin.assert:
+        that:
+          - query_numeric_filter is defined
+          - query_numeric_filter is iterable
+          - query_numeric_filter | length == 2  # priority 4 and 5 (> 3)
+        fail_msg: "Numeric filter expression failed"
+        success_msg: "✓ Test 22 passed: Numeric filter expression ({{ query_numeric_filter | length }} items)"
+
+    # ========================================
+    # Test 23: Filter BETWEEN with numeric values
+    # ========================================
+    # This test verifies BETWEEN operator in filter expressions with numbers
+
+    - name: Query with BETWEEN in filter expression (numeric range)
+      ansible.builtin.set_fact:
+        query_between_filter: "{{ lookup('community.aws.dynamodb_query',
+                                          table_name=table_name,
+                                          partition_key='platform_name',
+                                          partition_value='operator-test',
+                                          filter_expression='#p BETWEEN :min AND :max',
+                                          expression_attribute_names={'#p': 'priority'},
+                                          expression_attribute_values={':min': 2, ':max': 4},
+                                          **connection_args) }}"
+
+    - name: Verify BETWEEN filter with numbers
+      ansible.builtin.assert:
+        that:
+          - query_between_filter is defined
+          - query_between_filter is iterable
+          - query_between_filter | length == 3  # priority 2, 3, 4 (between inclusive)
+        fail_msg: "BETWEEN filter with numbers failed"
+        success_msg: "✓ Test 23 passed: BETWEEN filter with numeric range ({{ query_between_filter | length }} items)"
+
+    # ========================================
+    # Test 24: Pagination with filter_expression
+    # ========================================
+    # This test demonstrates important DynamoDB behavior:
+    # Filter is applied AFTER query, so pagination may need multiple pages
+    # to get desired number of filtered results.
+
+    - name: Create items for pagination + filter test
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{"platform_name": {"S": "page-filter-test"},
+                 "environment_name": {"S": "env-{{ "%03d" | format(item) }}"},
+                 "status": {"S": "{{ "active" if item % 3 == 0 else "inactive" }}"},
+                 "priority": {"N": "{{ item }}"}}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop: "{{ range(1, 16) | list }}"
+      changed_when: true
+
+    - name: Query with pagination AND filter (important behavior test)
+      ansible.builtin.set_fact:
+        query_page_filter: "{{ lookup('community.aws.dynamodb_query',
+                                       table_name=table_name,
+                                       partition_key='platform_name',
+                                       partition_value='page-filter-test',
+                                       filter_expression='#s = :active',
+                                       expression_attribute_names={'#s': 'status'},
+                                       expression_attribute_values={':active': 'active'},
+                                       _page_size=4,
+                                       **connection_args) }}"
+
+    - name: Verify pagination with filter retrieves all matching items
+      ansible.builtin.assert:
+        that:
+          - query_page_filter is defined
+          - query_page_filter is iterable
+          - query_page_filter | length == 5  # Items 3, 6, 9, 12, 15 have status='active'
+        fail_msg: "Pagination with filter failed. Got {{ query_page_filter | length }} items, expected 5"
+        success_msg: "✓ Test 24 passed: Pagination + filter ({{ query_page_filter | length }} items across multiple pages)"
+
+    # ========================================
+    # Test 25: GSI + filter + projection (combined features)
+    # ========================================
+    # This test verifies that GSI, filter_expression, and projection_expression
+    # all work together correctly - a common production pattern.
+
+    - name: Query GSI with filter and projection
+      ansible.builtin.set_fact:
+        query_gsi_combined: "{{ lookup('community.aws.dynamodb_query',
+                                        table_name=table_name_gsi,
+                                        partition_key='status',
+                                        partition_value='active',
+                                        index_name='status-index',
+                                        filter_expression='attribute_exists(stack_name)',
+                                        projection_expression='platform_name, #s, stack_name',
+                                        expression_attribute_names={'#s': 'status'},
+                                        **connection_args) }}"
+
+    - name: Verify GSI + filter + projection combination
+      ansible.builtin.assert:
+        that:
+          - query_gsi_combined is defined
+          - query_gsi_combined is iterable
+          - query_gsi_combined | length > 0
+          - "'platform_name' in query_gsi_combined[0]"
+          - "'status' in query_gsi_combined[0]"
+          - "'stack_name' in query_gsi_combined[0]"
+          - "'environment_name' not in query_gsi_combined[0]"  # Not in projection
+          - "'version' not in query_gsi_combined[0]"  # Not in projection
+        fail_msg: "GSI + filter + projection combination failed"
+        success_msg: "✓ Test 25 passed: GSI + filter + projection ({{ query_gsi_combined | length }} items)"
+
+    # ========================================
+    # Test 26: Projection with nested attributes
+    # ========================================
+    # This test verifies projection of nested attributes using dot notation
+
+    - name: Create item with nested structure
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{
+          "platform_name": {"S": "nested-test"},
+          "environment_name": {"S": "prod"},
+          "user_profile": {
+            "M": {
+              "name": {"S": "John Doe"},
+              "email": {"S": "john@example.com"},
+              "settings": {
+                "M": {
+                  "theme": {"S": "dark"},
+                  "notifications": {"BOOL": true}
+                }
+              }
+            }
+          },
+          "metadata": {
+            "M": {
+              "created_by": {"S": "admin"},
+              "version": {"N": "1"}
+            }
+          }
+        }'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      changed_when: true
+
+    - name: Query with nested attribute projection
+      ansible.builtin.set_fact:
+        query_nested_projection: "{{ lookup('community.aws.dynamodb_query',
+                                             table_name=table_name,
+                                             partition_key='platform_name',
+                                             partition_value='nested-test',
+                                             projection_expression='platform_name, user_profile.email, user_profile.settings.theme, metadata.version',
+                                             **connection_args) }}"
+
+    - name: Verify nested projection works
+      ansible.builtin.assert:
+        that:
+          - query_nested_projection is defined
+          - query_nested_projection is mapping
+          - query_nested_projection.platform_name == 'nested-test'
+          - query_nested_projection.user_profile.email == 'john@example.com'
+          - query_nested_projection.user_profile.settings.theme == 'dark'
+          - query_nested_projection.metadata.version == 1
+          - "'name' not in query_nested_projection.user_profile"  # Not in projection
+        fail_msg: "Nested attribute projection failed"
+        success_msg: "✓ Test 26 passed: Nested attribute projection"
+
+    # ========================================
+    # Test 27: Scan on empty table
+    # ========================================
+    # This test verifies that scan operation handles empty tables gracefully
+    # Note: Empty table created in Setup phase
+
+    - name: Scan empty table
+      ansible.builtin.set_fact:
+        scan_empty: "{{ lookup('community.aws.dynamodb_query',
+                                table_name=resource_prefix ~ '-empty-scan',
+                                operation='scan',
+                                **connection_args) }}"
+
+    - name: Verify empty scan returns empty list
+      ansible.builtin.assert:
+        that:
+          - scan_empty is defined
+          - scan_empty is iterable
+          - scan_empty | length == 0
+        fail_msg: "Empty scan should return empty list"
+        success_msg: "✓ Test 27 passed: Scan on empty table returns []"
+
+    # ========================================
+    # Test 28: Null type in data
+    # ========================================
+    # This test verifies that NULL type is properly serialized and deserialized
+
+    - name: Create item with NULL values
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{
+          "platform_name": {"S": "null-test"},
+          "environment_name": {"S": "prod"},
+          "optional_field": {"NULL": true},
+          "description": {"S": "Item with null value"},
+          "deleted_at": {"NULL": true}
+        }'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      changed_when: true
+
+    - name: Query item with NULL values
+      ansible.builtin.set_fact:
+        query_null: "{{ lookup('community.aws.dynamodb_query',
+                                table_name=table_name,
+                                partition_key='platform_name',
+                                partition_value='null-test',
+                                **connection_args) }}"
+
+    - name: Verify NULL type handling
+      ansible.builtin.assert:
+        that:
+          - query_null is defined
+          - query_null is mapping
+          - query_null.optional_field is none
+          - query_null.deleted_at is none
+          - query_null.description == 'Item with null value'
+        fail_msg: "NULL type handling failed"
+        success_msg: "✓ Test 28 passed: NULL type properly deserialized"
+
+    # ========================================
+    # Test 29: Binary type in data
+    # ========================================
+    # This test verifies that Binary type is properly handled
+
+    - name: Create item with Binary data
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{
+          "platform_name": {"S": "binary-test"},
+          "environment_name": {"S": "prod"},
+          "file_hash": {"B": "SGVsbG8gV29ybGQh"},
+          "description": {"S": "Item with binary data"}
+        }'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      changed_when: true
+
+    - name: Query item with Binary data
+      ansible.builtin.set_fact:
+        query_binary: "{{ lookup('community.aws.dynamodb_query',
+                                  table_name=table_name,
+                                  partition_key='platform_name',
+                                  partition_value='binary-test',
+                                  **connection_args) }}"
+
+    - name: Verify Binary type handling
+      ansible.builtin.assert:
+        that:
+          - query_binary is defined
+          - query_binary is mapping
+          - query_binary.file_hash is defined
+          - query_binary.description == 'Item with binary data'
+        fail_msg: "Binary type handling failed"
+        success_msg: "✓ Test 29 passed: Binary type properly handled"
+
+    # ========================================
+    # Test 30: Local Secondary Index (LSI)
+    # ========================================
+    # LSI uses the same partition key but different sort key
+    # Note: LSI table and data created in Setup phase
+
+    - name: Query using LSI
+      ansible.builtin.set_fact:
+        query_lsi: "{{ lookup('community.aws.dynamodb_query',
+                               table_name=resource_prefix ~ '-lsi-test',
+                               partition_key='user_id',
+                               partition_value='user-123',
+                               sort_key='status',
+                               sort_value='active',
+                               sort_operator='EQ',
+                               index_name='status-lsi',
+                               **connection_args) }}"
+
+    - name: Verify LSI query
+      ansible.builtin.assert:
+        that:
+          - query_lsi is defined
+          - query_lsi is iterable
+          - query_lsi | length == 2  # Two items with status='active'
+          - query_lsi | selectattr('status', 'equalto', 'active') | list | length == 2
+        fail_msg: "LSI query failed"
+        success_msg: "✓ Test 30 passed: Local Secondary Index query ({{ query_lsi | length }} items)"
+
+    # ========================================
+    # Test 31: Filter expressions with size() and contains()
+    # ========================================
+
+    - name: Create items for size/contains filter test
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{{ item.json }}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop:
+        - json: >-
+            {"platform_name": {"S": "filter-func-test"}, "environment_name": {"S": "env-1"},
+            "tags": {"L": [{"S": "prod"}, {"S": "critical"}]}, "description": {"S": "Production server"}}
+          description: "Production server"
+        - json: >-
+            {"platform_name": {"S": "filter-func-test"}, "environment_name": {"S": "env-2"},
+            "tags": {"L": [{"S": "dev"}]}, "description": {"S": "Development environment"}}
+          description: "Development environment"
+        - json: >-
+            {"platform_name": {"S": "filter-func-test"}, "environment_name": {"S": "env-3"},
+            "tags": {"L": [{"S": "prod"}, {"S": "web"}, {"S": "critical"}]},
+            "description": {"S": "Production web server"}}
+          description: "Production web server"
+        - json: >-
+            {"platform_name": {"S": "filter-func-test"}, "environment_name": {"S": "env-4"},
+            "tags": {"L": []}, "description": {"S": "Test server"}}
+          description: "Test server"
+      loop_control:
+        label: "{{ item.description }}"
+      changed_when: true
+
+    - name: Query with size() filter
+      ansible.builtin.set_fact:
+        query_size_filter: "{{ lookup('community.aws.dynamodb_query',
+                                       table_name=table_name,
+                                       partition_key='platform_name',
+                                       partition_value='filter-func-test',
+                                       filter_expression='size(tags) > :min_tags',
+                                       expression_attribute_values={':min_tags': 1},
+                                       **connection_args) }}"
+
+    - name: Verify size() filter
+      ansible.builtin.assert:
+        that:
+          - query_size_filter is defined
+          - query_size_filter is iterable
+          - query_size_filter | length == 2  # Items with 2+ tags
+        fail_msg: "size() filter failed"
+        success_msg: "✓ Test 31a passed: size() filter ({{ query_size_filter | length }} items)"
+
+    - name: Query with contains() filter
+      ansible.builtin.set_fact:
+        query_contains_filter: "{{ lookup('community.aws.dynamodb_query',
+                                           table_name=table_name,
+                                           partition_key='platform_name',
+                                           partition_value='filter-func-test',
+                                           filter_expression='contains(description, :keyword)',
+                                           expression_attribute_values={':keyword': 'Production'},
+                                           **connection_args) }}"
+
+    - name: Verify contains() filter
+      ansible.builtin.assert:
+        that:
+          - query_contains_filter is defined
+          - query_contains_filter is iterable
+          - query_contains_filter | length == 2  # Two items with 'Production' in description
+        fail_msg: "contains() filter failed"
+        success_msg: "✓ Test 31b passed: contains() filter ({{ query_contains_filter | length }} items)"
+
+    # ========================================
+    # Test 32: Automatic pagination handling
+    # ========================================
+    # This test verifies that the lookup plugin automatically handles pagination
+    # when DynamoDB returns LastEvaluatedKey (indicating more results exist).
+    #
+    # How it works:
+    # 1. Create 15 items with the same partition key
+    # 2. Use _page_size=3 to force DynamoDB to return max 3 items per request
+    # 3. The plugin should automatically make 5 requests (15 items / 3 per page)
+    # 4. All 15 items should be returned in the final result
+    #
+    # Note: _page_size is an internal testing parameter that sets DynamoDB's
+    # Limit parameter to force pagination with small datasets.
+
+    - name: Create multiple items to test pagination
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{"platform_name": {"S": "pagination-test"},
+                 "environment_name": {"S": "env-{{ "%03d" | format(item) }}"},
+                 "stack_name": {"S": "stack-{{ item }}"},
+                 "status": {"S": "active"},
+                 "version": {"S": "1.0.0"},
+                 "deployed_at": {"S": "2024-01-01T00:00:00Z"},
+                 "large_data": {"S": "{{ "x" * 1000 }}"}}'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      loop: "{{ range(1, 16) | list }}"  # Create 15 items
+      changed_when: true
+
+    - name: Query with forced pagination (_page_size=3)
+      ansible.builtin.set_fact:
+        query_pagination: "{{ lookup('community.aws.dynamodb_query',
+                                      table_name=table_name,
+                                      partition_key='platform_name',
+                                      partition_value='pagination-test',
+                                      _page_size=3,
+                                      **connection_args) }}"
+
+    - name: Verify pagination retrieved all items across multiple requests
+      ansible.builtin.assert:
+        that:
+          - query_pagination is defined
+          - query_pagination is iterable
+          - query_pagination | length == 15  # All 15 items despite 3 per page
+        fail_msg: "Pagination test failed. Got {{ query_pagination | length }} items, expected 15"
+        success_msg: "✓ Test 32 passed: Automatic pagination (15 items via 5 pages of 3)"
+
+    # ========================================
+    # Test 33: Pagination with limit parameter
+    # ========================================
+    # This test verifies that limit works correctly WITH pagination.
+    # The plugin should:
+    # 1. Make multiple paginated requests (_page_size=3)
+    # 2. Stop when limit=7 is reached
+
+    - name: Query with pagination AND limit
+      ansible.builtin.set_fact:
+        query_pagination_limit: "{{ lookup('community.aws.dynamodb_query',
+                                            table_name=table_name,
+                                            partition_key='platform_name',
+                                            partition_value='pagination-test',
+                                            limit=7,
+                                            _page_size=3,
+                                            **connection_args) }}"
+
+    - name: Verify limit stops pagination at correct count
+      ansible.builtin.assert:
+        that:
+          - query_pagination_limit is defined
+          - query_pagination_limit is iterable
+          - query_pagination_limit | length == 7  # Exactly 7 items (3 pages: 3+3+1)
+        fail_msg: "Pagination with limit failed. Got {{ query_pagination_limit | length }} items, expected 7"
+        success_msg: "✓ Test 33 passed: Pagination with limit (7 items via 3 pages)"
+
+    # ========================================
+    # Test 34: DynamoDB Set types (SS, NS, BS)
+    # ========================================
+    # This test verifies that DynamoDB Set types are properly handled:
+    # - SS (String Set): set of unique strings
+    # - NS (Number Set): set of unique numbers
+    # - BS (Binary Set): set of unique binary values
+
+    - name: Create item with Set types
+      ansible.builtin.command: >
+        aws dynamodb put-item
+        --table-name {{ table_name }}
+        --item '{
+          "platform_name": {"S": "set-types-test"},
+          "environment_name": {"S": "prod"},
+          "tags": {"SS": ["production", "critical", "web"]},
+          "ports": {"NS": ["80", "443", "8080"]},
+          "allowed_ips_hash": {"BS": ["aGFzaDEK", "aGFzaDIK", "aGFzaDMK"]},
+          "description": {"S": "Item with Set types"}
+        }'
+        --region {{ aws_region }}
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      changed_when: true
+
+    - name: Query item with Set types
+      ansible.builtin.set_fact:
+        query_sets: "{{ lookup('community.aws.dynamodb_query',
+                                table_name=table_name,
+                                partition_key='platform_name',
+                                partition_value='set-types-test',
+                                **connection_args) }}"
+
+    - name: Verify Set types handling
+      ansible.builtin.assert:
+        that:
+          - query_sets is defined
+          - query_sets is mapping
+          # String Set (SS)
+          - query_sets.tags is defined
+          - query_sets.tags is iterable
+          - query_sets.tags | length == 3
+          - "'production' in query_sets.tags"
+          - "'critical' in query_sets.tags"
+          - "'web' in query_sets.tags"
+          # Number Set (NS)
+          - query_sets.ports is defined
+          - query_sets.ports is iterable
+          - query_sets.ports | length == 3
+          - 80 in query_sets.ports
+          - 443 in query_sets.ports
+          - 8080 in query_sets.ports
+          # Binary Set (BS)
+          - query_sets.allowed_ips_hash is defined
+          - query_sets.allowed_ips_hash is iterable
+          - query_sets.allowed_ips_hash | length == 3
+          - query_sets.description == 'Item with Set types'
+        fail_msg: "Set types handling failed"
+        success_msg: "✓ Test 34 passed: DynamoDB Set types (SS, NS, BS)"
+
+    # ========================================
+    # Summary
+    # ========================================
+    - name: All tests passed
+      ansible.builtin.debug:
+        msg: "✓ All 34 integration tests passed successfully!"
+
+  # ========================================
+  # Cleanup
+  # ========================================
+  # This block runs even if tests fail, ensuring all test tables are deleted
+  always:
+    - name: Delete main test table
+      community.aws.dynamodb_table:
+        state: absent
+        name: "{{ table_name }}"
+      register: delete_table_result
+      failed_when: false  # Never fail on cleanup
+
+    - name: Delete GSI test table
+      community.aws.dynamodb_table:
+        state: absent
+        name: "{{ table_name_gsi }}"
+      register: delete_gsi_table_result
+      failed_when: false  # Never fail on cleanup
+
+    - name: Delete empty scan test table
+      community.aws.dynamodb_table:
+        state: absent
+        name: "{{ resource_prefix }}-empty-scan"
+      register: delete_empty_scan_table_result
+      failed_when: false  # Never fail on cleanup
+
+    - name: Delete LSI test table
+      community.aws.dynamodb_table:
+        state: absent
+        name: "{{ resource_prefix }}-lsi-test"
+      register: delete_lsi_table_result
+      failed_when: false  # Never fail on cleanup
