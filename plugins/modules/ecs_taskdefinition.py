@@ -648,6 +648,27 @@ options:
                 type: str
                 required: false
                 choices: ['LINUX', 'WINDOWS_SERVER_2019_FULL', 'WINDOWS_SERVER_2019_CORE', 'WINDOWS_SERVER_2022_FULL', 'WINDOWS_SERVER_2022_CORE']
+    tags:
+        version_added: 12.0.0
+        description:
+          - A dictionary of tags to apply to the task definition.
+          - When registering a new task definition, tags are applied at registration time.
+          - When an existing task definition is found (no new revision needed), tags are updated in place
+            without creating a new revision.
+          - If I(tags) is not set, tags will not be modified.
+        required: false
+        type: dict
+    purge_tags:
+        version_added: 12.0.0
+        description:
+          - If I(purge_tags=true) and I(tags) is set, existing tags not in I(tags) will be removed from
+            the task definition.
+          - Has no effect when registering a new task definition revision (tags at registration fully
+            replace any prior state).
+          - If I(tags) is not set, tags will not be modified, even if I(purge_tags=true).
+        required: false
+        type: bool
+        default: false
 extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
@@ -789,6 +810,23 @@ EXAMPLES = r"""
           startPeriod: 15
           timeout: 15
     state: present
+
+- name: Create task definition with tags
+  community.aws.ecs_taskdefinition:
+    family: nginx
+    containers:
+      - name: nginx
+        essential: true
+        image: "nginx"
+        portMappings:
+          - containerPort: 8080
+            hostPort: 8080
+        cpu: 512
+        memory: 1024
+    state: present
+    tags:
+      Environment: production
+      Team: backend
 """
 
 RETURN = r"""
@@ -804,6 +842,9 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -836,6 +877,7 @@ class EcsTaskManager:
         memory,
         placement_constraints,
         runtime_platform,
+        tags=None,
     ):
         validated_containers = []
 
@@ -898,6 +940,8 @@ class EcsTaskManager:
             params["placementConstraints"] = placement_constraints
         if runtime_platform:
             params["runtimePlatform"] = runtime_platform
+        if tags:
+            params["tags"] = ansible_dict_to_boto3_tag_list(tags, tag_name_key_name="key", tag_value_key_name="value")
 
         try:
             response = self.ecs.register_task_definition(aws_retry=True, **params)
@@ -982,6 +1026,8 @@ def main():
                 ),
             ),
         ),
+        tags=dict(required=False, type="dict"),
+        purge_tags=dict(required=False, type="bool", default=False),
     )
 
     module = AnsibleAWSModule(
@@ -1185,6 +1231,35 @@ def main():
         if existing and not module.params.get("force_create"):
             # Awesome. Have an existing one. Nothing to do.
             results["taskdefinition"] = existing
+
+            # Reconcile tags on the existing task definition without creating a new revision.
+            if module.params.get("tags") is not None:
+                task_arn = existing["taskDefinitionArn"]
+                try:
+                    current_tags = boto3_tag_list_to_ansible_dict(
+                        task_mgr.ecs.list_tags_for_resource(aws_retry=True, resourceArn=task_arn)["tags"]
+                    )
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    module.fail_json_aws(e, msg="Failed to fetch tags for task definition")
+                add_tags, remove = compare_aws_tags(
+                    current_tags, module.params["tags"], purge_tags=module.params.get("purge_tags", False)
+                )
+                if add_tags or remove:
+                    if not module.check_mode:
+                        try:
+                            if remove:
+                                task_mgr.ecs.untag_resource(aws_retry=True, resourceArn=task_arn, tagKeys=remove)
+                            if add_tags:
+                                task_mgr.ecs.tag_resource(
+                                    aws_retry=True,
+                                    resourceArn=task_arn,
+                                    tags=ansible_dict_to_boto3_tag_list(
+                                        add_tags, tag_name_key_name="key", tag_value_key_name="value"
+                                    ),
+                                )
+                        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                            module.fail_json_aws(e, msg="Failed to update tags on task definition")
+                    results["changed"] = True
         else:
             if not module.check_mode:
                 # Doesn't exist. create it.
@@ -1201,6 +1276,7 @@ def main():
                     module.params["memory"],
                     module.params["placement_constraints"],
                     module.params["runtime_platform"],
+                    module.params.get("tags"),
                 )
             results["changed"] = True
 

@@ -76,6 +76,21 @@ options:
         required: false
         type: bool
         default: true
+    tags:
+        version_added: 12.0.0
+        description:
+          - A dictionary of tags to apply to the ECS cluster.
+          - If I(tags) is not set, tags will not be modified.
+        required: false
+        type: dict
+    purge_tags:
+        version_added: 12.0.0
+        description:
+          - If I(purge_tags=true) and I(tags) is set, existing tags not in I(tags) will be removed from the cluster.
+          - If I(tags) is not set, tags will not be modified, even if I(purge_tags=true).
+        required: false
+        type: bool
+        default: true
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -104,6 +119,14 @@ EXAMPLES = r"""
       - capacity_provider: FARGATE_SPOT
         weight: 100
     purge_capacity_providers: true
+
+- name: Cluster creation with tags
+  community.aws.ecs_cluster:
+    name: my-cluster
+    state: present
+    tags:
+      Environment: production
+      Team: backend
 
 - name: Cluster deletion
   community.aws.ecs_cluster:
@@ -161,6 +184,11 @@ status:
     returned: always
     type: str
     sample: ACTIVE
+tags:
+    description: The tags associated with the cluster.
+    returned: always
+    type: dict
+    version_added: 12.0.0
 """
 
 import time
@@ -172,6 +200,10 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -193,7 +225,7 @@ class EcsClusterManager:
         return None
 
     def describe_cluster(self, cluster_name):
-        response = self.ecs.describe_clusters(clusters=[cluster_name])
+        response = self.ecs.describe_clusters(clusters=[cluster_name], include=["TAGS"])
         if len(response["failures"]) > 0:
             c = self.find_in_array(response["failures"], cluster_name, "arn")
             if c and c["reason"] == "MISSING":
@@ -205,12 +237,14 @@ class EcsClusterManager:
                 return c
         raise Exception(f"Unknown problem describing cluster {cluster_name}.")
 
-    def create_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy):
+    def create_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy, tags=None):
         params = dict(clusterName=cluster_name)
         if capacity_providers:
             params["capacityProviders"] = snake_dict_to_camel_dict(capacity_providers)
         if capacity_provider_strategy:
             params["defaultCapacityProviderStrategy"] = snake_dict_to_camel_dict(capacity_provider_strategy)
+        if tags:
+            params["tags"] = ansible_dict_to_boto3_tag_list(tags, tag_name_key_name="key", tag_value_key_name="value")
         response = self.ecs.create_cluster(**params)
         return response["cluster"]
 
@@ -231,6 +265,21 @@ class EcsClusterManager:
         return self.ecs.delete_cluster(cluster=clusterName)
 
 
+def ensure_tags(ecs_client, resource_arn, current_tags, desired_tags, purge_tags, check_mode):
+    add_tags, remove = compare_aws_tags(current_tags, desired_tags, purge_tags=purge_tags)
+    if not (add_tags or remove):
+        return False
+    if not check_mode:
+        if remove:
+            ecs_client.untag_resource(resourceArn=resource_arn, tagKeys=remove)
+        if add_tags:
+            ecs_client.tag_resource(
+                resourceArn=resource_arn,
+                tags=ansible_dict_to_boto3_tag_list(add_tags, tag_name_key_name="key", tag_value_key_name="value"),
+            )
+    return True
+
+
 def main():
     argument_spec = dict(
         state=dict(required=True, choices=["present", "absent", "has_instances"]),
@@ -249,6 +298,8 @@ def main():
                 base=dict(type="int", default=0),
             ),
         ),
+        tags=dict(required=False, type="dict"),
+        purge_tags=dict(required=False, type="bool", default=True),
     )
     required_together = [["state", "name"]]
 
@@ -270,6 +321,9 @@ def main():
         purge_capacity_providers = module.params["purge_capacity_providers"]
         requested_cp = module.params["capacity_providers"]
         requested_cps = module.params["capacity_provider_strategy"]
+        tags = module.params["tags"]
+        purge_tags = module.params["purge_tags"]
+
         if existing and "status" in existing and existing["status"] == "ACTIVE":
             existing_cp = existing["capacityProviders"]
             existing_cps = existing["defaultCapacityProviderStrategy"]
@@ -306,6 +360,18 @@ def main():
                 results["changed"] = True
             else:
                 results["cluster"] = existing
+
+            # Reconcile tags on the existing cluster.
+            if tags is not None:
+                cluster_arn = existing["clusterArn"]
+                current_tags = boto3_tag_list_to_ansible_dict(existing.get("tags", []))
+                try:
+                    if ensure_tags(cluster_mgr.ecs, cluster_arn, current_tags, tags, purge_tags, module.check_mode):
+                        if not module.check_mode:
+                            results["cluster"] = cluster_mgr.describe_cluster(module.params["name"])
+                        results["changed"] = True
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    module.fail_json_aws(e, msg="Failed to update tags on cluster")
         else:
             if not module.check_mode:
                 # doesn't exist. create it.
@@ -313,8 +379,13 @@ def main():
                     cluster_name=module.params["name"],
                     capacity_providers=requested_cp,
                     capacity_provider_strategy=requested_cps,
+                    tags=tags,
                 )
             results["changed"] = True
+
+        # Convert tags in the cluster result from boto3 list to ansible dict.
+        if results.get("cluster") and results["cluster"].get("tags") is not None:
+            results["cluster"]["tags"] = boto3_tag_list_to_ansible_dict(results["cluster"]["tags"])
 
     # delete the cluster
     elif module.params["state"] == "absent":
@@ -324,6 +395,8 @@ def main():
             # it exists, so we should delete it and mark changed.
             # return info about the cluster deleted
             results["cluster"] = existing
+            if results["cluster"].get("tags") is not None:
+                results["cluster"]["tags"] = boto3_tag_list_to_ansible_dict(results["cluster"]["tags"])
             if "status" in existing and existing["status"] == "INACTIVE":
                 results["changed"] = False
             else:
