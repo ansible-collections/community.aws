@@ -1,4 +1,16 @@
 # cluster "{{ ecs_cluster_name }}" is used for ecs_service tests
+- name: get existing service info
+  ecs_service_info:
+    details: true
+    events: false
+  register: ecs_service_info
+
+- name: check that no services exist and the module does not error
+  assert:
+    that:
+      - ecs_service_info.services is defined
+      - ecs_service_info.services | length == 0
+
 - name: create an ECS cluster
   ecs_cluster:
     name: "{{ ecs_cluster_name }}"

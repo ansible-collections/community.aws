@@ -29,12 +29,13 @@ options:
         type: bool
     cluster:
         description:
-            - The cluster ARNS in which to list the services.
+            - The cluster ARNS in which to list the services. If not provided, all clusters are listed.
         required: false
-        type: str
+        type: list
+        elements: str
     service:
         description:
-            - One or more services to get details for
+            - One or more services to get details for. If not provided, all services are listed.
         required: false
         type: list
         elements: str
@@ -55,9 +56,15 @@ EXAMPLES = r"""
     details: true
   register: output
 
-# Basic listing example
+# Basic listing example for all services in all clusters
 - community.aws.ecs_service_info:
-    cluster: test-cluster
+    details: true
+  register: output
+# Basic listing example for the list of services in two specific clusters
+- community.aws.ecs_service_info:
+    cluster:
+      - test-cluster
+      - prod-cluster
   register: output
 """
 
@@ -161,6 +168,16 @@ class EcsServiceManager:
     def describe_services_with_backoff(self, **kwargs):
         return self.ecs.describe_services(**kwargs)
 
+    def list_clusters(self):
+        try:
+            paginator = self.ecs.get_paginator("list_clusters")
+            response = paginator.paginate().build_full_result()
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Couldn't list ECS clusters")
+        # Note that the clusters list can be emptu if there are no clusters (and thus no services)
+        clusters = list(response["clusterArns"])
+        return clusters
+
     def list_services(self, cluster):
         fn_args = dict()
         if cluster and cluster is not None:
@@ -203,6 +220,26 @@ class EcsServiceManager:
                         e["createdAt"] = str(e["createdAt"])
         return service
 
+    def get_cluster_services(self):
+        if self.module.params["cluster"]:
+            clusters = self.module.params["cluster"]
+        else:
+            clusters = self.list_clusters()
+
+        cluster_services = {}
+        for cluster in clusters:
+            service_arns = self.list_services(cluster)["services"]
+            if self.module.params["service"]:
+                service_names = [service.split("/")[-1] for service in service_arns]
+                services_found = []
+                for service in self.module.params["service"]:
+                    if service in service_names or service in service_arns:
+                        services_found.append(service)
+                cluster_services[cluster] = services_found
+            else:
+                cluster_services[cluster] = service_arns
+        return cluster_services
+
 
 def chunks(services, chunk_size):
     """Yield successive chunk_size-sized chunks from services.
@@ -215,7 +252,7 @@ def main():
     argument_spec = dict(
         details=dict(type="bool", default=False),
         events=dict(type="bool", default=True),
-        cluster=dict(),
+        cluster=dict(type="list", elements="str"),
         service=dict(type="list", elements="str", aliases=["name"]),
     )
 
@@ -224,18 +261,20 @@ def main():
     show_details = module.params.get("details")
 
     task_mgr = EcsServiceManager(module)
+    cluster_services = task_mgr.get_cluster_services()
+
     if show_details:
-        if module.params["service"]:
-            services = module.params["service"]
-        else:
-            services = task_mgr.list_services(module.params["cluster"])["services"]
         ecs_info = dict(services=[], services_not_running=[])
-        for chunk in chunks(services, 10):
-            running_services, services_not_running = task_mgr.describe_services(module.params["cluster"], chunk)
-            ecs_info["services"].extend(running_services)
-            ecs_info["services_not_running"].extend(services_not_running)
+        for cluster, services in cluster_services.items():
+            for chunk in chunks(services, 10):
+                running_services, services_not_running = task_mgr.describe_services(cluster, chunk)
+                ecs_info["services"].extend(running_services)
+                ecs_info["services_not_running"].extend(services_not_running)
     else:
-        ecs_info = task_mgr.list_services(module.params["cluster"])
+        service_arns = []
+        for service_list in cluster_services.values():
+            service_arns.extend(service_list)
+        ecs_info = dict(services=service_arns)
 
     module.exit_json(changed=False, **ecs_info)
 
