@@ -34,6 +34,13 @@ options:
       - "The prefix that should be prepended to the generated log files written to the target_bucket."
     default: ""
     type: str
+  acl:
+    description:
+      - "Setup target bucket ACLs to grant AWS special log delivery account to write server access logs."
+      - "Setting to False will remove the ACL for log delivery on the target bucket."
+    default: True
+    type: bool
+    version_added: 11.0.0
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -95,6 +102,9 @@ def verify_acls(connection, module, target_bucket):
         botocore.exceptions.BotoCoreError,
         botocore.exceptions.ClientError,
     ) as e:  # pylint: disable=duplicate-except
+        if not module.params.get("acl"):
+            module.warn(f"Unable to fetch Bucket ACLs ({e})")
+            return False
         module.fail_json_aws(e, msg="Failed to fetch target bucket ACL")
 
     required_grant = {
@@ -102,16 +112,27 @@ def verify_acls(connection, module, target_bucket):
         "Permission": "FULL_CONTROL",
     }
 
+    grant_present = False
     for grant in current_grants:
         if grant == required_grant:
-            return False
+            grant_present = True
+
+    if module.params.get("acl") == grant_present:
+        return False
 
     if module.check_mode:
         return True
 
     updated_acl = dict(current_acl)
-    updated_grants = list(current_grants)
-    updated_grants.append(required_grant)
+    updated_grants = []
+    if module.params.get("acl"):
+        updated_grants = list(current_grants)
+        updated_grants.append(required_grant)
+    else:
+        for grant in current_grants:
+            if grant != required_grant:
+                updated_grants.append(grant)
+
     updated_acl["Grants"] = updated_grants
     del updated_acl["ResponseMetadata"]
     try:
@@ -196,6 +217,7 @@ def main():
         target_bucket=dict(required=False, default=None),
         target_prefix=dict(required=False, default=""),
         state=dict(required=False, default="present", choices=["present", "absent"]),
+        acl=dict(type="bool", default=True),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
