@@ -137,12 +137,8 @@ def _compare_cert(cert_a, cert_b):
     # Trim out the whitespace before comparing the certs.  While this could mean
     # an invalid cert 'matches' a valid cert, that's better than some stray
     # whitespace breaking things
-    cert_a.replace("\r", "")
-    cert_a.replace("\n", "")
-    cert_a.replace(" ", "")
-    cert_b.replace("\r", "")
-    cert_b.replace("\n", "")
-    cert_b.replace(" ", "")
+    cert_a = cert_a.replace("\r", "").replace("\n", "").replace(" ", "")
+    cert_b = cert_b.replace("\r", "").replace("\n", "").replace(" ", "")
 
     return cert_a == cert_b
 
