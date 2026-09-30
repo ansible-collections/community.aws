@@ -1,0 +1,31 @@
+---
+- name: Delete user pool client (original name)
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined
+
+- name: Delete user pool client (renamed)
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name_updated }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined
+
+- name: Delete user pool client (additional params)
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name }}-params'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined
+
+- name: Delete Cognito user pool
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined

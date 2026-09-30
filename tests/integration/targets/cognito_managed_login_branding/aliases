@@ -1,0 +1,6 @@
+time=10m
+
+cloud/aws
+
+cognito_managed_login_branding
+cognito_managed_login_branding_info

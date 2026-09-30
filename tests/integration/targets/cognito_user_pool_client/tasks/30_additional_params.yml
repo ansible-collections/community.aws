@@ -1,0 +1,231 @@
+---
+# ============================================================
+# cognito_user_pool_client additional parameter tests
+# ============================================================
+
+# --- Create with additional parameters ---
+- name: Create client with additional parameters
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}-params'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    generate_secret: false
+    callback_urls:
+      - https://example.com/callback
+    logout_urls:
+      - https://example.com/logout
+    default_redirect_uri: https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+    explicit_auth_flows:
+      - ALLOW_USER_SRP_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+    access_token_validity: 1
+    id_token_validity: 1
+    refresh_token_validity: 30
+    token_validity_units:
+      access_token: hours
+      id_token: hours
+      refresh_token: days
+    read_attributes:
+      - email
+    write_attributes:
+      - email
+    enable_token_revocation: true
+    prevent_user_existence_errors: ENABLED
+    auth_session_validity: 5
+  register: params_create
+
+- name: Verify client was created with additional parameters
+  assert:
+    that:
+      - params_create is changed
+      - params_create.client.client_id is defined
+      - params_create.client.client_secret is not defined
+      - "'ALLOW_USER_SRP_AUTH' in params_create.client.explicit_auth_flows"
+      - "'ALLOW_REFRESH_TOKEN_AUTH' in params_create.client.explicit_auth_flows"
+      - params_create.client.access_token_validity == 1
+      - params_create.client.id_token_validity == 1
+      - params_create.client.refresh_token_validity == 30
+      - params_create.client.token_validity_units.access_token == 'hours'
+      - params_create.client.token_validity_units.id_token == 'hours'
+      - params_create.client.token_validity_units.refresh_token == 'days'
+      - "'email' in params_create.client.read_attributes"
+      - "'email' in params_create.client.write_attributes"
+      - params_create.client.logout_urls | length == 1
+      - params_create.client.enable_token_revocation == true
+      - params_create.client.prevent_user_existence_errors == 'ENABLED'
+      - params_create.client.auth_session_validity == 5
+
+- name: Save params client_id
+  set_fact:
+    params_client_id: '{{ params_create.client.client_id }}'
+
+# --- Create idempotency ---
+- name: Create client with additional parameters - idempotent
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}-params'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    callback_urls:
+      - https://example.com/callback
+    logout_urls:
+      - https://example.com/logout
+    default_redirect_uri: https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+    explicit_auth_flows:
+      - ALLOW_USER_SRP_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+    access_token_validity: 1
+    id_token_validity: 1
+    refresh_token_validity: 30
+    token_validity_units:
+      access_token: hours
+      id_token: hours
+      refresh_token: days
+    read_attributes:
+      - email
+    write_attributes:
+      - email
+    enable_token_revocation: true
+    prevent_user_existence_errors: ENABLED
+    auth_session_validity: 5
+  register: params_idempotent
+
+- name: Verify additional parameters create idempotency
+  assert:
+    that:
+      - params_idempotent is not changed
+
+# --- Update token validity ---
+- name: Update token validity
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    access_token_validity: 2
+    id_token_validity: 2
+    token_validity_units:
+      access_token: hours
+      id_token: hours
+      refresh_token: days
+  register: token_update
+
+- name: Verify token validity was updated and existing fields preserved
+  assert:
+    that:
+      - token_update is changed
+      - token_update.client.access_token_validity == 2
+      - token_update.client.id_token_validity == 2
+      - "'ALLOW_USER_SRP_AUTH' in token_update.client.explicit_auth_flows"
+      - "'ALLOW_REFRESH_TOKEN_AUTH' in token_update.client.explicit_auth_flows"
+      - "'email' in token_update.client.read_attributes"
+      - token_update.client.logout_urls | length == 1
+      - token_update.client.callback_urls | length == 1
+
+# --- Update token validity idempotency ---
+- name: Update token validity - idempotent
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    access_token_validity: 2
+    id_token_validity: 2
+    token_validity_units:
+      access_token: hours
+      id_token: hours
+      refresh_token: days
+  register: token_update_idempotent
+
+- name: Verify token validity update idempotency
+  assert:
+    that:
+      - token_update_idempotent is not changed
+
+# --- Partial token_validity_units merge ---
+# Change only refresh_token unit (days -> hours); access_token and id_token
+# units should be preserved from the existing client configuration.
+# Current state: access=2h, id=2h, refresh=30d → after: refresh=30h (valid).
+- name: Update only refresh_token unit - other units should be preserved
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    token_validity_units:
+      refresh_token: hours
+  register: partial_units_update
+
+- name: Verify partial token_validity_units merge preserved existing units
+  assert:
+    that:
+      - partial_units_update is changed
+      - partial_units_update.client.token_validity_units.access_token == 'hours'
+      - partial_units_update.client.token_validity_units.id_token == 'hours'
+      - partial_units_update.client.token_validity_units.refresh_token == 'hours'
+
+- name: Partial token_validity_units merge - idempotent
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    token_validity_units:
+      refresh_token: hours
+  register: partial_units_idempotent
+
+- name: Verify partial token_validity_units merge idempotency
+  assert:
+    that:
+      - partial_units_idempotent is not changed
+
+# --- Clear explicit auth flows ---
+- name: Clear explicit auth flows
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    explicit_auth_flows: []
+  register: clear_auth_flows
+
+- name: Verify explicit auth flows were cleared
+  assert:
+    that:
+      - clear_auth_flows is changed
+
+# --- Clear read and write attributes ---
+- name: Clear read and write attributes
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    read_attributes: []
+    write_attributes: []
+  register: clear_attributes
+
+- name: Verify attributes were cleared
+  assert:
+    that:
+      - clear_attributes is changed
+
+# --- Cleanup ---
+- name: Delete params test client
+  cognito_user_pool_client:
+    state: absent
+    client_id: '{{ params_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: params_delete
+
+- name: Verify params test client was deleted
+  assert:
+    that:
+      - params_delete is changed
