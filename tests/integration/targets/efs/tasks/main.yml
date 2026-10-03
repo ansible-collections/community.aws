@@ -224,6 +224,60 @@
           - efs_result.efs[0].mount_targets[1].security_groups[0] == vpc_default_sg_id
 
     # ============================================================
+    - name: Update EFS to use elastic throughput_mode
+      efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+            Name: "{{ efs_name }}-test-tag"
+            Purpose: file-storage
+        targets:
+            - subnet_id: "{{testing_subnet_a.subnet.id}}"
+            - subnet_id: "{{testing_subnet_b.subnet.id}}"
+        throughput_mode: 'elastic'
+      register: efs_result
+
+    - assert:
+        that:
+          - efs_result is changed
+
+    # ============================================================
+    - name: Efs same value for throughput_mode (elastic)
+      efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+            Name: "{{ efs_name }}-test-tag"
+            Purpose: file-storage
+        targets:
+            - subnet_id: "{{testing_subnet_a.subnet.id}}"
+            - subnet_id: "{{testing_subnet_b.subnet.id}}"
+        throughput_mode: 'elastic'
+      register: efs_result
+
+    - assert:
+        that:
+          - efs_result is not changed
+          - efs_result.efs["throughput_mode"]  == "elastic"
+
+    # ============================================================
+    - name: Check new facts with elastic mode
+      efs_info:
+        name: "{{ efs_name }}-test-efs"
+      register: efs_result
+
+    - set_fact:
+        efs_result_assertions:
+          - efs_result is not changed
+          - efs_result.efs[0].throughput_mode  == "elastic"
+          - (efs_result.efs | length) == 1
+          - efs_result.efs[0].creation_token == "{{ efs_name }}-test-efs"
+          - efs_result.efs[0].file_system_id == created_efs.efs.file_system_id
+
+    - assert:
+        that: efs_result_assertions
+
+    # ============================================================
     #   Not checking efs_result.efs["throughput_mode"] here as
     #   Efs with status "life_cycle_state": "updating" might return the previous values
     - name: Update Efs to use provisioned throughput_mode
