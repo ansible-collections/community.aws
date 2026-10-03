@@ -41,6 +41,16 @@ options:
             - The revision of the configuration to use.
             - This parameter is required when I(state=present).
         type: int
+    network_type:
+        description:
+            - The network type of the cluster, which is IPv4 or DUAL.
+            - The DUAL network type uses both IPv4 and IPv6 addresses for your cluster and its resources.
+        type: str
+        choices:
+            - IPv4
+            - DUAL
+        default: 'IPv4'
+        required: false
     nodes:
         description: The number of broker nodes in the cluster. Should be greater or equal to two.
         type: int
@@ -371,6 +381,9 @@ def prepare_create_options(module):
         "BrokerNodeGroupInfo": {
             "ClientSubnets": module.params["subnets"],
             "InstanceType": module.params["instance_type"],
+            "ConnectivityInfo": {
+                "NetworkType": module.params["network_type"]
+            }
         },
         "Tags": module.params["tags"],
     }
@@ -666,6 +679,7 @@ def main():
         version=dict(type="str"),
         configuration_arn=dict(type="str"),
         configuration_revision=dict(type="int"),
+        network_type=dict(type="str", choices=["IPV4", "DUAL"], default="IPV4", required=False),
         nodes=dict(type="int", default=3),
         instance_type=dict(
             choices=[
