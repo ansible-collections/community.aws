@@ -16,8 +16,8 @@ import os
 import pytest
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import get_aws_connection_info
 
 from ansible_collections.community.aws.plugins.modules import directconnect_link_aggregation_group as lag_module
 
