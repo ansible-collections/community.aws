@@ -305,17 +305,20 @@ class ElastiCacheManager:
     def modify(self):
         """Modify the cache cluster. Note it's only possible to modify a few select options."""
         nodes_to_remove = self._get_nodes_to_remove()
+        kwargs = dict(
+            CacheClusterId=self.name,
+            NumCacheNodes=self.num_nodes,
+            CacheNodeIdsToRemove=nodes_to_remove,
+            CacheParameterGroupName=self.cache_parameter_group,
+            ApplyImmediately=True,
+            EngineVersion=self.cache_engine_version,
+        )
+        if self.cache_security_groups:
+            kwargs["CacheSecurityGroupNames"] = self.cache_security_groups
+        if self.security_group_ids:
+            kwargs["SecurityGroupIds"] = self.security_group_ids
         try:
-            self.conn.modify_cache_cluster(
-                CacheClusterId=self.name,
-                NumCacheNodes=self.num_nodes,
-                CacheNodeIdsToRemove=nodes_to_remove,
-                CacheSecurityGroupNames=self.cache_security_groups,
-                CacheParameterGroupName=self.cache_parameter_group,
-                SecurityGroupIds=self.security_group_ids,
-                ApplyImmediately=True,
-                EngineVersion=self.cache_engine_version,
-            )
+            self.conn.modify_cache_cluster(**kwargs)
         except botocore.exceptions.ClientError as e:
             self.module.fail_json_aws(e, msg="Failed to modify cache cluster")
 
@@ -386,11 +389,12 @@ class ElastiCacheManager:
                 return True
 
         # Check cache security groups
-        cache_security_groups = []
-        for sg in self.data["CacheSecurityGroups"]:
-            cache_security_groups.append(sg["CacheSecurityGroupName"])
-        if set(cache_security_groups) != set(self.cache_security_groups):
-            return True
+        if self.cache_security_groups:
+            cache_security_groups = []
+            for sg in self.data.get("CacheSecurityGroups", []):
+                cache_security_groups.append(sg["CacheSecurityGroupName"])
+            if set(cache_security_groups) != set(self.cache_security_groups):
+                return True
 
         # check vpc security groups
         if self.security_group_ids:
