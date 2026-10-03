@@ -1,0 +1,2 @@
+major_changes:
+  - elasticache_replication_group - new module to create, modify, and delete ElastiCache replication groups with support for Redis and Valkey engines (https://github.com/ansible-collections/community.aws/issues/2446).
