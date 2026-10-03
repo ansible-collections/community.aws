@@ -1,0 +1,215 @@
+---
+# Test management of prefix list entries
+- vars:
+    first_entry:
+      cidr: 10.0.0.0/24
+      description: First subnet
+    second_entry:
+      cidr: 10.1.0.0/24
+      description: Second subnet
+    updated_first_entry:
+      cidr: 10.0.0.0/24
+      description: Updated description
+  module_defaults:
+    community.aws.ec2_vpc_managed_prefix_list:
+      name: "{{ prefix_list_name }}"
+      max_entries: 20
+  block:
+
+    # ============================================================
+    - debug: msg="Testing prefix list entry management"
+
+    # ============================================================
+    # Add first entry (check mode)
+    # ============================================================
+
+    - name: Add an entry (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ first_entry }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Verify no entry was added in check mode
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries: []
+        purge_entries: true
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.entries == []
+
+    # ============================================================
+    # Add first entry
+    # ============================================================
+
+    - name: Add an entry
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ first_entry }}"
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.entries | length == 1
+          - result.prefix_list.entries[0].cidr == "10.0.0.0/24"
+          - result.prefix_list.entries[0].description == "First subnet"
+
+    - name: Add entry again (check mode idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ first_entry }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is not changed
+
+    - name: Add entry again (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ first_entry }}"
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.entries | length == 1
+
+    # ============================================================
+    # Add second entry without purging first
+    # ============================================================
+
+    - name: Add second entry without purging first (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ second_entry }}"
+        purge_entries: false
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Add second entry without purging first
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ second_entry }}"
+        purge_entries: false
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.entries | length == 2
+
+    - name: Add second entry again (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ second_entry }}"
+        purge_entries: false
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.entries | length == 2
+
+    # ============================================================
+    # Update entry description
+    # ============================================================
+
+    - name: Update entry description (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ updated_first_entry }}"
+          - "{{ second_entry }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Update entry description
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ updated_first_entry }}"
+          - "{{ second_entry }}"
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.entries | selectattr('cidr', 'equalto', '10.0.0.0/24') | map(attribute='description') | first == "Updated description"
+
+    - name: Update entry description (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries:
+          - "{{ updated_first_entry }}"
+          - "{{ second_entry }}"
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+
+    # ============================================================
+    # Remove all entries with purge
+    # ============================================================
+
+    - name: Remove all entries (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries: []
+        purge_entries: true
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Remove all entries
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries: []
+        purge_entries: true
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.entries == []
+
+    - name: Remove all entries (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        entries: []
+        purge_entries: true
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.entries == []
