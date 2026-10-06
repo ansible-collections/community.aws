@@ -15,7 +15,7 @@
       lightsail:
         name: "{{ instance_name }}"
         zone: "{{ zone }}"
-        blueprint_id: amazon_linux_2
+        blueprint_id: amazon_linux_2023
         bundle_id: nano_2_0
         public_ports:
           - from_port: 50
@@ -38,7 +38,7 @@
       lightsail:
         name: "{{ instance_name }}"
         zone: "{{ zone }}"
-        blueprint_id: amazon_linux
+        blueprint_id: amazon_linux_2023
         bundle_id: nano_2_0
       register: result
 
@@ -50,7 +50,7 @@
       lightsail:
         name: "{{ instance_name }}"
         zone: "{{ zone }}"
-        blueprint_id: amazon_linux_2
+        blueprint_id: amazon_linux_2023
         bundle_id: nano_2_0
         public_ports:
           - from_port: 50
