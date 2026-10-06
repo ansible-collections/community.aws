@@ -1,0 +1,3 @@
+bugfixes:
+  - eks_nodegroup - Fixed check mode to correctly report changed status when validating tags, labels, and taints.
+    Also fixed label comparison to detect value changes (https://github.com/ansible-collections/community.aws/pull/2505).
