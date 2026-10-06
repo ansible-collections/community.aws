@@ -4,6 +4,30 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v11.2.0
+=======
+
+Release Summary
+---------------
+
+This minor release deprecates the ``inspector_target`` module following Amazon's retirement of the Inspector Classic service, and includes improvements to the ``s3_cors`` module with check_mode support and idempotency fixes.
+
+Minor Changes
+-------------
+
+- s3_cors - Added support for check_mode operation (https://github.com/ansible-collections/community.aws/pull/2471).
+
+Deprecated Features
+-------------------
+
+- inspector_target - The module has been deprecated as Amazon has retired the ``Amazon Inspector Classic`` service on May 20, 2026 (Complete End of Life), revoking access to its console, APIs, and associated resources. The module will be removed in version 12.0.0 (https://github.com/ansible-collections/community.aws/pull/2485).
+
+Bugfixes
+--------
+
+- s3_cors - Fixed CORS rule comparison logic by replacing IAM policy comparison with CORS-specific normalization to ensure accurate change detection (https://github.com/ansible-collections/community.aws/pull/2471).
+- s3_cors - Fixed idempotency issue in ``state=absent`` where the module always reported changes even when no CORS configuration existed (https://github.com/ansible-collections/community.aws/pull/2471).
+
 v11.1.0
 =======
 
