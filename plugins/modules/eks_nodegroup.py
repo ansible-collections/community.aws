@@ -372,15 +372,15 @@ def validate_tags(client, module, nodegroup):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg=f"Unable to list or compare tags for Nodegroup {module.params.get('name')}.")
     if tags_to_remove:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.untag_resource(aws_retry=True, ResourceArn=nodegroup["nodegroupArn"], tagKeys=tags_to_remove)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg=f"Unable to set tags for Nodegroup {module.params.get('name')}.")
     if tags_to_add:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.tag_resource(aws_retry=True, ResourceArn=nodegroup["nodegroupArn"], tags=tags_to_add)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -417,8 +417,8 @@ def validate_taints(client, module, nodegroup, param_taints):
     if taints_to_unset:
         params["taints"]["removeTaints"] = taints_to_unset
     if params["taints"]:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.update_nodegroup_config(**params)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -434,7 +434,7 @@ def compare_labels(nodegroup_labels, param_labels):
         if label not in param_labels:
             labels_to_unset.append(label)
     for key, value in param_labels.items():
-        if key not in nodegroup_labels.keys():
+        if key not in nodegroup_labels or nodegroup_labels[key] != value:
             labels_to_add_or_update[key] = value
 
     return labels_to_add_or_update, labels_to_unset
@@ -453,8 +453,8 @@ def validate_labels(client, module, nodegroup, param_labels):
     if labels_to_unset:
         params["labels"]["removeLabels"] = labels_to_unset
     if params["labels"]:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.update_nodegroup_config(**params)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
