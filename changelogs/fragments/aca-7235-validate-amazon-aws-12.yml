@@ -1,0 +1,2 @@
+trivial:
+  - Validate community.aws test suite against the upcoming amazon.aws 12.0.0 release (ACA-7235).
