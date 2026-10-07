@@ -50,7 +50,7 @@
 
     ## Start lambda notification target tests
     - name: register notification without invoke permissions
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -82,7 +82,7 @@
         seconds: 10
 
     - name: create s3 bucket notification - check_mode
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -101,7 +101,7 @@
           - result is changed
 
     - name: create s3 bucket notification
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -123,7 +123,7 @@
           - result.notification_configuration.lambda_function_configurations[0].lambda_function_arn == lambda_info.configuration.function_arn
 
     - name: create s3 bucket notification - idempotency
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -141,7 +141,7 @@
           - result is not changed
 
     - name: test mutually exclusive parameters
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -162,7 +162,7 @@
           - "result.msg == 'parameters are mutually exclusive: lambda_alias|lambda_version'"
 
     - name: test configuration change on suffix
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -180,7 +180,7 @@
           - result is changed
 
     - name: test configuration change on prefix
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -198,7 +198,7 @@
           - result is changed
 
     - name: test configuration change on new events added
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -218,7 +218,7 @@
           - result.notification_configuration.lambda_function_configurations[0].events | length == 3
 
     - name: test that event order does not result in change
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -237,7 +237,7 @@
           - result is not changed
 
     - name: test configuration change on events removed
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -256,7 +256,7 @@
 
     ## Test removal of event notification
     - name: test remove notification
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: absent
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -268,7 +268,7 @@
           - result is changed
 
     - name: test that events is already removed
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: absent
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
