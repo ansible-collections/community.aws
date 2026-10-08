@@ -554,6 +554,9 @@ def create_or_update_nodegroups(client, module):
                 if not module.check_mode:
                     try:
                         client.update_nodegroup_version(**update_params)
+                        # Wait for ACTIVE state before next update
+                        if wait:
+                            wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't update nodegroup.")
                 changed |= True
@@ -567,6 +570,9 @@ def create_or_update_nodegroups(client, module):
 
                 if not module.check_mode:
                     client.update_nodegroup_config(**update_params)
+                    # Wait for ACTIVE state before next update
+                    if wait:
+                        wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
 
                 changed |= True
 
@@ -580,7 +586,7 @@ def create_or_update_nodegroups(client, module):
         if "taints" in nodegroup:
             changed |= validate_taints(client, module, nodegroup, params["taints"])
 
-        if wait:
+        if wait and not module.check_mode:
             wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
 
         nodegroup = get_nodegroup(client, module, params["nodegroupName"], params["clusterName"])
