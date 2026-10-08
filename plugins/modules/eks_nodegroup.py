@@ -556,7 +556,9 @@ def create_or_update_nodegroups(client, module):
                         client.update_nodegroup_version(**update_params)
                         # Wait for ACTIVE state before next update
                         if wait:
-                            wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
+                            wait_until(
+                                client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"]
+                            )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't update nodegroup.")
                 changed |= True
