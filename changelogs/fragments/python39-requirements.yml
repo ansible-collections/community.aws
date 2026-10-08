@@ -1,0 +1,2 @@
+breaking_changes:
+  - collection - Minimum supported Python version is now 3.9 (https://github.com/ansible-collections/community.aws/pull/2491).
