@@ -1,0 +1,4 @@
+bugfixes:
+  - eks_nodegroup - Fixed check mode to correctly report changed status when validating tags, labels, and taints.
+  - eks_nodegroup - Removed unsupported ``create_instance_profile`` parameter from IAM role tasks
+    (https://github.com/ansible-collections/community.aws/pull/2505).
