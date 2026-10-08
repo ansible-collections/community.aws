@@ -548,14 +548,29 @@ def create_or_update_nodegroups(client, module):
         update_params["clusterName"] = params["clusterName"]
         update_params["nodegroupName"] = params["nodegroupName"]
 
+        # Check if subsequent updates to tags/labels/taints will be needed
+        tags_need_update = module.params.get("tags") is not None
+
+        labels_to_add_or_update, labels_to_unset = compare_labels(nodegroup.get("labels", {}), params.get("labels", {}))
+        labels_need_update = labels_to_add_or_update or labels_to_unset
+
+        taints_to_add_or_update, taints_to_unset = compare_taints(nodegroup.get("taints", []), params.get("taints", []))
+        taints_need_update = taints_to_add_or_update or taints_to_unset
+
+        # Wait after launch_template/scaling_config updates only if more updates follow
+        need_wait_for_sequential_updates = tags_need_update or labels_need_update or taints_need_update
+
         if "launchTemplate" in nodegroup:
             if compare_params_launch_template(module, params, nodegroup):
                 update_params["launchTemplate"] = params["launchTemplate"]
                 if not module.check_mode:
                     try:
                         client.update_nodegroup_version(**update_params)
-                        # Wait for ACTIVE state before next update
-                        wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
+                        # Wait for ACTIVE state only if more updates are coming
+                        if need_wait_for_sequential_updates:
+                            wait_until(
+                                client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"]
+                            )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't update nodegroup.")
                 changed |= True
@@ -569,8 +584,9 @@ def create_or_update_nodegroups(client, module):
 
                 if not module.check_mode:
                     client.update_nodegroup_config(**update_params)
-                    # Wait for ACTIVE state before next update
-                    wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
+                    # Wait for ACTIVE state only if more updates are coming
+                    if need_wait_for_sequential_updates:
+                        wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
 
                 changed |= True
 
