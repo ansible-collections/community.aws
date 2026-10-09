@@ -27,11 +27,11 @@ Use community.aws 4.x.y if you are using Ansible 2.9 or Ansible Core 2.10.
 
 This collection depends on the AWS SDK for Python (Boto3 and Botocore).  Due to the
 [AWS SDK Python Support Policy](https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/)
-this collection requires Python 3.8 or greater.
+this collection requires Python 3.9 or greater.
 
 Amazon has also announced the planned end of support for
-[Python less than 3.9](https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/).
-As such, support for Python less than 3.9 will be removed in a release after 2026-05-01.
+[Python versions below 3.10](https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/).
+As such, support for Python versions below 3.10 will be removed in a release after 2027-04-01.
 
 <!---
 ### End of Support by Python Versions:
