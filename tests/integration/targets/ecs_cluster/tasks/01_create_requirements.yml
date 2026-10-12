@@ -8,6 +8,13 @@
     wait: True
   register: iam_role_creation
 
+- name: create IAM instance profile for ECS service role
+  amazon.aws.iam_instance_profile:
+    name: "{{ ecs_service_role_name }}"
+    role: "{{ ecs_service_role_name }}"
+    state: present
+  register: iam_instance_profile_creation
+
 - name: ensure AmazonECSTaskExecutionRolePolicy exists
   iam_role:
     name: "{{ ecs_task_role_name }}"
