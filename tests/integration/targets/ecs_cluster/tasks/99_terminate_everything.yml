@@ -380,12 +380,10 @@
   iam_role:
     name: '{{ ecs_service_role_name }}'
     state: absent
-    delete_instance_profile: True
   ignore_errors: true
 
 - name: Delete IAM task execution role
   iam_role:
     name: '{{ ecs_task_role_name }}'
     state: absent
-    delete_instance_profile: True
   ignore_errors: true

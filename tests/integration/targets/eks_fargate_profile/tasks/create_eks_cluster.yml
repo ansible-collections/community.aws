@@ -5,7 +5,6 @@
     name: ansible-test-aws_eks_cluster_role
     assume_role_policy_document: '{{ lookup(''file'',''eks-trust-policy.json'') }}'
     state: present
-    create_instance_profile: 'no'
     managed_policies:
       - AmazonEKSServicePolicy
       - AmazonEKSClusterPolicy
