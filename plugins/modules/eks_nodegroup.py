@@ -372,15 +372,15 @@ def validate_tags(client, module, nodegroup):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg=f"Unable to list or compare tags for Nodegroup {module.params.get('name')}.")
     if tags_to_remove:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.untag_resource(aws_retry=True, ResourceArn=nodegroup["nodegroupArn"], tagKeys=tags_to_remove)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg=f"Unable to set tags for Nodegroup {module.params.get('name')}.")
     if tags_to_add:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.tag_resource(aws_retry=True, ResourceArn=nodegroup["nodegroupArn"], tags=tags_to_add)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -417,8 +417,8 @@ def validate_taints(client, module, nodegroup, param_taints):
     if taints_to_unset:
         params["taints"]["removeTaints"] = taints_to_unset
     if params["taints"]:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.update_nodegroup_config(**params)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -434,7 +434,7 @@ def compare_labels(nodegroup_labels, param_labels):
         if label not in param_labels:
             labels_to_unset.append(label)
     for key, value in param_labels.items():
-        if key not in nodegroup_labels.keys():
+        if key not in nodegroup_labels or nodegroup_labels[key] != value:
             labels_to_add_or_update[key] = value
 
     return labels_to_add_or_update, labels_to_unset
@@ -453,8 +453,8 @@ def validate_labels(client, module, nodegroup, param_labels):
     if labels_to_unset:
         params["labels"]["removeLabels"] = labels_to_unset
     if params["labels"]:
+        changed = True
         if not module.check_mode:
-            changed = True
             try:
                 client.update_nodegroup_config(**params)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -548,12 +548,29 @@ def create_or_update_nodegroups(client, module):
         update_params["clusterName"] = params["clusterName"]
         update_params["nodegroupName"] = params["nodegroupName"]
 
+        # Check if subsequent updates to tags/labels/taints will be needed
+        tags_need_update = module.params.get("tags") is not None
+
+        labels_to_add_or_update, labels_to_unset = compare_labels(nodegroup.get("labels", {}), params.get("labels", {}))
+        labels_need_update = labels_to_add_or_update or labels_to_unset
+
+        taints_to_add_or_update, taints_to_unset = compare_taints(nodegroup.get("taints", []), params.get("taints", []))
+        taints_need_update = taints_to_add_or_update or taints_to_unset
+
+        # Wait after launch_template/scaling_config updates only if more updates follow
+        need_wait_for_sequential_updates = tags_need_update or labels_need_update or taints_need_update
+
         if "launchTemplate" in nodegroup:
             if compare_params_launch_template(module, params, nodegroup):
                 update_params["launchTemplate"] = params["launchTemplate"]
                 if not module.check_mode:
                     try:
                         client.update_nodegroup_version(**update_params)
+                        # Wait for ACTIVE state only if more updates are coming
+                        if need_wait_for_sequential_updates:
+                            wait_until(
+                                client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"]
+                            )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't update nodegroup.")
                 changed |= True
@@ -567,6 +584,9 @@ def create_or_update_nodegroups(client, module):
 
                 if not module.check_mode:
                     client.update_nodegroup_config(**update_params)
+                    # Wait for ACTIVE state only if more updates are coming
+                    if need_wait_for_sequential_updates:
+                        wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
 
                 changed |= True
 
@@ -580,7 +600,7 @@ def create_or_update_nodegroups(client, module):
         if "taints" in nodegroup:
             changed |= validate_taints(client, module, nodegroup, params["taints"])
 
-        if wait:
+        if wait and not module.check_mode:
             wait_until(client, module, "nodegroup_active", params["nodegroupName"], params["clusterName"])
 
         nodegroup = get_nodegroup(client, module, params["nodegroupName"], params["clusterName"])
