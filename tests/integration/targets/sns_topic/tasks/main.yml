@@ -11,7 +11,6 @@
     iam_role:
       name: '{{ sns_topic_lambda_role }}'
       assume_role_policy_document: '{{ lookup("file", "lambda-trust-policy.json") }}'
-      create_instance_profile: false
       managed_policies:
       - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
       wait: True
