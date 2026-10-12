@@ -1,3 +1,0 @@
-bugfixes:
-  - integration tests - Remove unsupported ``create_instance_profile`` and ``delete_instance_profile`` parameters from iam_role tasks
-    (https://github.com/ansible-collections/community.aws/pull/2500).
