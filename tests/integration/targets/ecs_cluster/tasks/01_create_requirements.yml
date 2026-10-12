@@ -3,7 +3,6 @@
     name: "{{ ecs_service_role_name }}"
     assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
     state: present
-    create_instance_profile: yes
     managed_policy:
     - AmazonEC2ContainerServiceRole
     wait: True
@@ -15,7 +14,6 @@
     assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
     description: "Allows ECS containers to make calls to ECR"
     state: present
-    create_instance_profile: false
     managed_policy:
       - AmazonECSTaskExecutionRolePolicy
     wait: True

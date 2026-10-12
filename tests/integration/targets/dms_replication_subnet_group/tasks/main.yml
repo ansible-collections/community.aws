@@ -15,7 +15,6 @@
         name: "{{ dms_role_role_name }}"
         assume_role_policy_document: "{{ lookup('file','dmsAssumeRolePolicyDocument.json') }}"
         state: present
-        create_instance_profile: no
         managed_policy:
           - 'arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole'
       register: iam_role_output
@@ -166,7 +165,6 @@
         name: "{{ dms_role_role_name }}"
         assume_role_policy_document: "{{ lookup('file','dmsAssumeRolePolicyDocument.json') }}"
         state: absent
-        create_instance_profile: no
         managed_policy:
           - 'arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole'
       register: iam_role_output
