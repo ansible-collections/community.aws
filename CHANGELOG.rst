@@ -4,6 +4,43 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v12.0.0
+=======
+
+Release Summary
+---------------
+
+This major release includes significant breaking changes to align with AWS service retirements and modernize the collection's requirements. AWS WAF Classic modules (``waf_condition``, ``waf_info``, ``waf_rule``, ``waf_web_acl``) and their aliases have been removed following the retirement of AWS WAF Classic. The ``inspector_target`` module has been removed following the retirement of AWS Inspector Classic. Support for ansible-core versions below 2.18 has been dropped, and the collection now requires ansible-core >= 2.18.0 which supports Python >= 3.11. Support for ``botocore<1.38.0`` and ``boto3<1.38.0`` has been dropped. Most modules will continue to work with older versions of the AWS SDK. However, compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible. This release also includes bugfixes for the ``eks_nodegroup`` module's check mode handling and integration test improvements.
+
+Minor Changes
+-------------
+
+- CI test matrices updated against ansible-core 2.21 in addition to 2.18, 2.19, and 2.20 (https://github.com/ansible-collections/community.aws/pull/2493).
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Support for ansible-core < 2.18 has been dropped. The collection now requires ansible-core >= 2.18.0 and Python >= 3.11 (https://github.com/ansible-collections/community.aws/pull/2493).
+- The collection no longer supports ansible-core 2.17 (https://github.com/ansible-collections/community.aws/pull/2492).
+- aws_waf_condition - This module alias has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2418).
+- aws_waf_info - This module alias has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2418).
+- aws_waf_rule - This module alias has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2418).
+- aws_waf_web_acl - This module alias has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2418).
+- collection - Minimum supported Python version is now 3.9 (https://github.com/ansible-collections/community.aws/pull/2491).
+- community.aws collection - The ``community.aws`` collection has dropped support for ``botocore<1.38.0`` and ``boto3<1.38.0``. Most modules will continue to work with older versions of the AWS SDK. However, compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/2519).
+- inspector_target - This module has been removed following the retirement of AWS Inspector Classic. (https://github.com/ansible-collections/community.aws/pull/2487).
+- waf_condition - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+- waf_info - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+- waf_rule - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+- waf_web_acl - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
+
+Bugfixes
+--------
+
+- eks_nodegroup - Fixed check mode to correctly report changed status when validating tags, labels, and taints. Fixed label comparison to detect value changes. Fixed sequential update operations by waiting for nodegroup to return to ACTIVE state after updating scaling/launch template configuration before attempting to update labels, taints, or tags. Fixed wait handling in check mode to avoid unnecessary waits when no actual changes were made (https://github.com/ansible-collections/community.aws/pull/2505).
+- eks_nodegroup - Fixed integration tests by removing unsupported ``create_instance_profile`` parameter from IAM role tasks (https://github.com/ansible-collections/community.aws/pull/2505).
+- integration tests - Remove unsupported ``create_instance_profile`` and ``delete_instance_profile`` parameters from iam_role tasks (https://github.com/ansible-collections/community.aws/pull/2500).
+
 v11.2.0
 =======
 
