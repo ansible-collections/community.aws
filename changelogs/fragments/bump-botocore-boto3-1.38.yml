@@ -1,0 +1,3 @@
+breaking_changes:
+  - requirements - Update minimum required versions of ``botocore`` and ``boto3`` to support latest AWS services
+    (https://github.com/ansible-collections/community.aws/pull/2519).
