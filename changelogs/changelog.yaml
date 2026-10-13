@@ -4157,7 +4157,7 @@ releases:
     - aws_ssm_filetransfermanager.yml
     - update_ansible-lint.yml
     release_date: '2025-05-06'
-    10.0.0:
+  10.0.0:
     changes:
       breaking_changes:
       - Support for ``ansible-core<2.17`` has been dropped (https://github.com/ansible-collections/community.aws/pull/2303).
