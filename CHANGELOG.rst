@@ -10,7 +10,7 @@ v12.0.0
 Release Summary
 ---------------
 
-This major release includes significant breaking changes to align with AWS service retirements and modernize the collection's requirements. AWS WAF Classic modules (``waf_condition``, ``waf_info``, ``waf_rule``, ``waf_web_acl``) and their aliases have been removed following the retirement of AWS WAF Classic. The ``inspector_target`` module has been removed following the retirement of AWS Inspector Classic. Support for ansible-core versions below 2.18 has been dropped, and the collection now requires ansible-core >= 2.18.0 which supports Python >= 3.11. This release also includes bugfixes for the ``eks_nodegroup`` module's check mode handling and integration test improvements.
+This major release includes significant breaking changes to align with AWS service retirements and modernize the collection's requirements. AWS WAF Classic modules (``waf_condition``, ``waf_info``, ``waf_rule``, ``waf_web_acl``) and their aliases have been removed following the retirement of AWS WAF Classic. The ``inspector_target`` module has been removed following the retirement of AWS Inspector Classic. Support for ansible-core versions below 2.18 has been dropped, and the collection now requires ansible-core >= 2.18.0 which supports Python >= 3.11. Support for ``botocore<1.38.0`` and ``boto3<1.38.0`` has been dropped. Most modules will continue to work with older versions of the AWS SDK. However, compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible. This release also includes bugfixes for the ``eks_nodegroup`` module's check mode handling and integration test improvements.
 
 Minor Changes
 -------------
