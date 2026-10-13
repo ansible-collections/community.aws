@@ -27,6 +27,7 @@ Breaking Changes / Porting Guide
 - aws_waf_rule - This module alias has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2418).
 - aws_waf_web_acl - This module alias has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2418).
 - collection - Minimum supported Python version is now 3.9 (https://github.com/ansible-collections/community.aws/pull/2491).
+- community.aws collection - The ``community.aws`` collection has dropped support for ``botocore<1.38.0`` and ``boto3<1.38.0``. Most modules will continue to work with older versions of the AWS SDK. However, compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/2519).
 - inspector_target - This module has been removed following the retirement of AWS Inspector Classic. (https://github.com/ansible-collections/community.aws/pull/2487).
 - waf_condition - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
 - waf_info - This module has been removed following the retirement of AWS WAF Classic. Please migrate to AWS WAF (WAFv2) modules (https://github.com/ansible-collections/community.aws/pull/2413).
