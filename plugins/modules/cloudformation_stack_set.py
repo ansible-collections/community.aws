@@ -459,8 +459,8 @@ def await_stack_instance_completion(module, cfn, stack_set_name, max_wait):
         time.sleep(15)
 
     module.warn(
-        f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s['StackId'] for s in to_await)} to"
-        f" complete after {max_wait} seconds. Returning unfinished operation"
+        f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s.get('StackId', s['StackSetId'].split(':')[1]) for s in to_await)}"
+        f" to complete after {max_wait} seconds. Returning unfinished operation"
     )
 
 
