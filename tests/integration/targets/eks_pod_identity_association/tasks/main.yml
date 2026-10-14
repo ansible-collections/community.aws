@@ -1,0 +1,18 @@
+---
+- name: 'eks_pod_identity_association and eks_pod_identity_association_info integration tests'
+  collections:
+    - amazon.aws
+    - community.aws
+    - kubernetes.core
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: "{{ aws_region }}"
+  block:
+    - include_tasks: dependecies.yml
+    - include_tasks: k8s_depedencies.yml
+    - include_tasks: full_test.yml
+  always:
+    - include_tasks: cleanup.yml
