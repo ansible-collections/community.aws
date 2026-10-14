@@ -1,0 +1,13 @@
+---
+
+vpc_name: "{{ resource_prefix }}-elasticache-rg-vpc"
+vpc_seed: "{{ resource_prefix }}"
+vpc_octet: "{{ 256 | random(seed=vpc_seed) }}"
+vpc_cidr: "10.{{ vpc_octet }}.220.0/22"
+subnet_a_cidr: "10.{{ vpc_octet }}.220.0/24"
+subnet_b_cidr: "10.{{ vpc_octet }}.221.0/24"
+
+elasticache_rg_prefix: "{{ (resource_prefix | regex_replace('_', '-'))[:30] }}"
+elasticache_subnet_group_name: "{{ resource_prefix }}-rg-subnet-group"
+elasticache_rg_id: "{{ elasticache_rg_prefix }}-rg"
+elasticache_rg_valkey_id: "{{ elasticache_rg_prefix }}-valkey-rg"
