@@ -1,0 +1,242 @@
+---
+# Integration tests for tags/purge_tags support in ecs_cluster, ecs_taskdefinition, ecs_service
+
+# ============================================================
+# ecs_cluster tagging
+
+- name: add tags to existing cluster
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+    tags:
+      TagOne: value_one
+      TagTwo: value_two
+  register: ecs_cluster_tagged
+
+- name: assert cluster tags were applied
+  assert:
+    that:
+      - ecs_cluster_tagged.changed
+      - ecs_cluster_tagged.cluster.tags is defined
+      - ecs_cluster_tagged.cluster.tags.TagOne == 'value_one'
+      - ecs_cluster_tagged.cluster.tags.TagTwo == 'value_two'
+
+- name: apply same cluster tags again (idempotency check)
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+    tags:
+      TagOne: value_one
+      TagTwo: value_two
+  register: ecs_cluster_tagged_again
+
+- name: assert cluster tag re-apply did not change
+  assert:
+    that:
+      - not ecs_cluster_tagged_again.changed
+
+- name: add a third tag to cluster (purge_tags=false keeps existing tags)
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+    tags:
+      TagThree: value_three
+    purge_tags: false
+  register: ecs_cluster_tag_added
+
+- name: assert new tag added without removing existing tags
+  assert:
+    that:
+      - ecs_cluster_tag_added.changed
+      - ecs_cluster_tag_added.cluster.tags.TagThree == 'value_three'
+
+- name: replace cluster tags using purge_tags=true
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+    tags:
+      TagOne: value_one
+    purge_tags: true
+  register: ecs_cluster_tags_purged
+
+- name: assert only TagOne remains after purge
+  assert:
+    that:
+      - ecs_cluster_tags_purged.changed
+      - ecs_cluster_tags_purged.cluster.tags.TagOne == 'value_one'
+      - "'TagTwo' not in ecs_cluster_tags_purged.cluster.tags"
+      - "'TagThree' not in ecs_cluster_tags_purged.cluster.tags"
+
+- name: run cluster with no tags param (tags should be left untouched)
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+  register: ecs_cluster_no_tags_param
+
+- name: assert cluster unchanged when tags param is absent
+  assert:
+    that:
+      - not ecs_cluster_no_tags_param.changed
+
+# ============================================================
+# ecs_taskdefinition tagging
+
+- name: register task definition with tags
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-tagging"
+    state: present
+    tags:
+      TagOne: value_one
+      TagTwo: value_two
+  register: ecs_taskdef_tagging
+
+- name: assert task definition was registered with tags
+  assert:
+    that:
+      - ecs_taskdef_tagging.changed
+      - ecs_taskdef_tagging.taskdefinition.family == ecs_task_name ~ '-tagging'
+
+- name: register same task definition with same tags (idempotency check)
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-tagging"
+    state: present
+    tags:
+      TagOne: value_one
+      TagTwo: value_two
+  register: ecs_taskdef_tagging_again
+
+- name: assert no new revision and no change when tags match
+  assert:
+    that:
+      - not ecs_taskdef_tagging_again.changed
+      - ecs_taskdef_tagging_again.taskdefinition.revision == ecs_taskdef_tagging.taskdefinition.revision
+
+- name: update tags on existing task definition (no new revision)
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-tagging"
+    state: present
+    tags:
+      TagOne: updated_value
+      TagTwo: value_two
+  register: ecs_taskdef_tags_updated
+
+- name: assert tags updated in place without new revision
+  assert:
+    that:
+      - ecs_taskdef_tags_updated.changed
+      - ecs_taskdef_tags_updated.taskdefinition.revision == ecs_taskdef_tagging.taskdefinition.revision
+
+- name: purge task definition tags down to one
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-tagging"
+    state: present
+    tags:
+      TagOne: updated_value
+    purge_tags: true
+  register: ecs_taskdef_tags_purged
+
+- name: assert tag purge changed and revision unchanged
+  assert:
+    that:
+      - ecs_taskdef_tags_purged.changed
+      - ecs_taskdef_tags_purged.taskdefinition.revision == ecs_taskdef_tagging.taskdefinition.revision
+
+# ============================================================
+# ecs_service tagging
+
+- name: create service with tags for tagging tests
+  ecs_service:
+    name: "{{ ecs_service_name }}-tagging"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    scheduling_strategy: REPLICA
+    desired_count: 0
+    state: present
+    tags:
+      TagOne: value_one
+      TagTwo: value_two
+  register: ecs_service_tagging
+
+- name: assert service created with tags
+  assert:
+    that:
+      - ecs_service_tagging.changed
+
+- name: re-create service with same tags (idempotency check)
+  ecs_service:
+    name: "{{ ecs_service_name }}-tagging"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    scheduling_strategy: REPLICA
+    desired_count: 0
+    state: present
+    tags:
+      TagOne: value_one
+      TagTwo: value_two
+  register: ecs_service_tagging_again
+
+- name: assert service not changed when tags are identical
+  assert:
+    that:
+      - not ecs_service_tagging_again.changed
+
+- name: update a tag on existing service
+  ecs_service:
+    name: "{{ ecs_service_name }}-tagging"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    scheduling_strategy: REPLICA
+    desired_count: 0
+    state: present
+    tags:
+      TagOne: updated_value
+      TagTwo: value_two
+  register: ecs_service_tags_updated
+
+- name: assert service tag update changed
+  assert:
+    that:
+      - ecs_service_tags_updated.changed
+
+- name: purge service tags down to one
+  ecs_service:
+    name: "{{ ecs_service_name }}-tagging"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    scheduling_strategy: REPLICA
+    desired_count: 0
+    state: present
+    tags:
+      TagOne: updated_value
+    purge_tags: true
+  register: ecs_service_tags_purged
+
+- name: assert service tag purge changed
+  assert:
+    that:
+      - ecs_service_tags_purged.changed
+
+- name: delete tagging test service
+  ecs_service:
+    name: "{{ ecs_service_name }}-tagging"
+    cluster: "{{ ecs_cluster_name }}"
+    state: absent
+    force_deletion: true
+  register: ecs_service_tagging_deleted
+
+- name: assert tagging test service deleted
+  assert:
+    that:
+      - ecs_service_tagging_deleted.changed
+
+- name: deregister tagging test task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-tagging"
+    revision: "{{ ecs_taskdef_tagging.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true

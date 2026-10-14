@@ -245,6 +245,24 @@
     revision: "{{ ecs_task_definition_absent_with_arn.taskdefinition.revision }}"
     state: absent
   ignore_errors: true
+  when: ecs_task_definition_absent_with_arn is defined
+
+- name: remove tagging test ecs task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-tagging"
+    revision: "{{ ecs_taskdef_tagging.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+  when: ecs_taskdef_tagging is defined
+
+- name: remove tagging test ecs service (safety net if 25_ecs_tagging.yml was interrupted)
+  ecs_service:
+    name: "{{ ecs_service_name }}-tagging"
+    cluster: "{{ ecs_cluster_name }}"
+    state: absent
+    force_deletion: true
+  ignore_errors: true
 
 - name: remove wait_complete ok task definition
   ecs_taskdefinition:
