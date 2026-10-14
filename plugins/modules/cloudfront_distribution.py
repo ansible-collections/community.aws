@@ -2158,6 +2158,8 @@ class CloudFrontValidationManager(object):
                 "TLSv1.2_2018",
                 "TLSv1.2_2019",
                 "TLSv1.2_2021",
+                "TLSv1.2_2025",
+                "TLSv1.3_2025",
             ]
         )
         self.__valid_viewer_certificate_certificate_sources = set(
