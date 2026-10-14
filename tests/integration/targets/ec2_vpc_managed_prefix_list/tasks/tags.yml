@@ -1,0 +1,244 @@
+---
+# Test tag management for prefix lists
+- vars:
+    first_tags:
+      "Key with Spaces": Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      "New Key with Spaces": Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      "Key with Spaces": Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      "New Key with Spaces": Updated Value with spaces
+    final_tags:
+      "Key with Spaces": Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      "New Key with Spaces": Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+  module_defaults:
+    community.aws.ec2_vpc_managed_prefix_list:
+      name: "{{ prefix_list_name }}"
+      max_entries: 20
+  block:
+
+    # ============================================================
+    - debug: msg="Testing prefix list tag management"
+
+    # ============================================================
+    # Add tags (check mode)
+    # ============================================================
+
+    - name: Add tags (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ first_tags }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Verify no tags were added in check mode
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.tags == {}
+
+    # ============================================================
+    # Add tags
+    # ============================================================
+
+    - name: Add tags
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ first_tags }}"
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.tags == first_tags
+
+    - name: Add tags again (check mode idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ first_tags }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is not changed
+
+    - name: Add tags again (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ first_tags }}"
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.tags == first_tags
+
+    # ============================================================
+    # Modify tags with purge (replace tag set)
+    # ============================================================
+
+    - name: Modify tags with purge (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ second_tags }}"
+        purge_tags: true
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Modify tags with purge
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ second_tags }}"
+        purge_tags: true
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.tags == second_tags
+
+    - name: Modify tags with purge (idempotency check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ second_tags }}"
+        purge_tags: true
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is not changed
+
+    - name: Modify tags with purge (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ second_tags }}"
+        purge_tags: true
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.tags == second_tags
+
+    # ============================================================
+    # Modify tags without purge (merge tag set)
+    # ============================================================
+
+    - name: Modify tags without purge (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ third_tags }}"
+        purge_tags: false
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Modify tags without purge
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ third_tags }}"
+        purge_tags: false
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.tags == final_tags
+
+    - name: Modify tags without purge (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: "{{ third_tags }}"
+        purge_tags: false
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.tags == final_tags
+
+    # ============================================================
+    # No change when tags not specified
+    # ============================================================
+
+    - name: No tags change when tags parameter not set
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.tags == final_tags
+
+    # ============================================================
+    # Remove all tags
+    # ============================================================
+
+    - name: Remove all tags (check mode)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: {}
+        purge_tags: true
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result is changed
+
+    - name: Remove all tags
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: {}
+        purge_tags: true
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result.prefix_list.tags == {}
+
+    - name: Remove all tags (idempotency)
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        tags: {}
+        purge_tags: true
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result.prefix_list.tags == {}
