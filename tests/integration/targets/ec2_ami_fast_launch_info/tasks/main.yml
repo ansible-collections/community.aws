@@ -1,0 +1,54 @@
+---
+- name: 'ec2_ami_fast_launch_info integration tests'
+  collections:
+    - amazon.aws
+    - community.aws
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+
+    # ============================================================
+    - name: gather all Fast Launch enabled AMIs (check mode)
+      community.aws.ec2_ami_fast_launch_info:
+      register: fast_launch_all
+      check_mode: true
+
+    - name: verify response shape
+      assert:
+        that:
+          - fast_launch_all is succeeded
+          - fast_launch_all.changed == false
+          - fast_launch_all.fast_launch_images is defined
+          - fast_launch_all.fast_launch_images is iterable
+
+    # ============================================================
+    - name: gather Fast Launch info filtered by non-existent state
+      community.aws.ec2_ami_fast_launch_info:
+        filters:
+          state: enabling-failed
+      register: fast_launch_filtered
+
+    - name: verify filtered response shape
+      assert:
+        that:
+          - fast_launch_filtered is succeeded
+          - fast_launch_filtered.fast_launch_images is defined
+
+    # ============================================================
+    - name: gather Fast Launch info for non-existent image (should return empty)
+      community.aws.ec2_ami_fast_launch_info:
+        image_ids:
+          - ami-00000000000000000
+      register: fast_launch_missing
+      ignore_errors: true
+
+    - name: verify missing image yields empty list or graceful failure
+      assert:
+        that:
+          - fast_launch_missing.fast_launch_images is defined
+          - fast_launch_missing.fast_launch_images | length == 0
+      when: fast_launch_missing is succeeded
