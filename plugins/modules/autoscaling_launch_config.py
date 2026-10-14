@@ -110,7 +110,7 @@ options:
         type: int
         description:
           - The throughput to provision for a gp3 volume.
-          - Valid Range is a minimum value of 125 and a maximum value of 1000.
+          - Valid Range is a minimum value of 125 and a maximum value of 2000.
         version_added: 3.1.0
       encrypted:
         type: bool
