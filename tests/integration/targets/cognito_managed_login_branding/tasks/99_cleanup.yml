@@ -1,0 +1,35 @@
+---
+# Clean up in reverse creation order
+
+- name: Delete managed login branding
+  cognito_managed_login_branding:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    client_id: '{{ cognito_client_id }}'
+  ignore_errors: true
+  when:
+    - cognito_user_pool_id is defined
+    - cognito_client_id is defined
+
+- name: Delete user pool client
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined
+
+- name: Delete user pool domain
+  cognito_user_pool_domain:
+    state: absent
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined
+
+- name: Delete Cognito user pool
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined

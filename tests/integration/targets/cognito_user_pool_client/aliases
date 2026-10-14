@@ -1,0 +1,7 @@
+time=10m
+
+cloud/aws
+
+cognito_user_pool_client
+cognito_user_pool_client_info
+cognito_user_pool_info

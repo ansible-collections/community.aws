@@ -1,0 +1,111 @@
+---
+# ==========================================
+# Create user pool tests
+# ==========================================
+
+- name: Create user pool - check_mode
+  cognito_user_pool:
+    state: present
+    name: '{{ cognito_pool_name }}'
+  check_mode: true
+  register: create_check
+
+- name: Verify create check_mode
+  assert:
+    that:
+      - create_check is changed
+      - create_check.user_pool.name == cognito_pool_name
+
+# ------------------------------------------
+# Minimal create (name only)
+# ------------------------------------------
+- name: Create user pool - minimal
+  cognito_user_pool:
+    state: present
+    name: '{{ cognito_pool_name }}'
+  register: create_result
+
+- name: Verify pool was created
+  assert:
+    that:
+      - create_result is changed
+      - create_result.user_pool.id is defined
+      - create_result.user_pool.name == cognito_pool_name
+
+- name: Save pool ID
+  set_fact:
+    cognito_pool_id: '{{ create_result.user_pool.id }}'
+
+- name: Verify with cognito_user_pool_info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_id }}'
+  register: pool_info
+
+- name: Verify info matches
+  assert:
+    that:
+      - pool_info.user_pool.id == cognito_pool_id
+      - pool_info.user_pool.name == cognito_pool_name
+
+# ------------------------------------------
+# Idempotency - same create again
+# ------------------------------------------
+- name: Create user pool - idempotency
+  cognito_user_pool:
+    state: present
+    name: '{{ cognito_pool_name }}'
+  register: create_idem
+
+- name: Verify idempotency
+  assert:
+    that:
+      - create_idem is not changed
+      - create_idem.user_pool.id == cognito_pool_id
+
+# ------------------------------------------
+# Create with parameters
+# ------------------------------------------
+- name: Create user pool with parameters
+  cognito_user_pool:
+    state: present
+    name: '{{ cognito_pool_name }}-params'
+    deletion_protection: INACTIVE
+    auto_verified_attributes:
+      - email
+    policies:
+      password_policy:
+        minimum_length: 12
+        require_uppercase: true
+        require_lowercase: true
+        require_numbers: true
+        require_symbols: false
+    tags:
+      Environment: test
+      Project: ansible-integration
+  register: create_params
+
+- name: Save params pool ID
+  set_fact:
+    cognito_pool_params_id: '{{ create_params.user_pool.id }}'
+
+- name: Verify pool with parameters
+  assert:
+    that:
+      - create_params is changed
+      - create_params.user_pool.id is defined
+      - create_params.user_pool.auto_verified_attributes == ["email"]
+      - create_params.user_pool.user_pool_tags.Environment == "test"
+      - create_params.user_pool.user_pool_tags.Project == "ansible-integration"
+
+- name: Verify with cognito_user_pool_info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: params_info
+
+- name: Verify info matches params pool
+  assert:
+    that:
+      - params_info.user_pool.auto_verified_attributes == ["email"]
+      - params_info.user_pool.policies.password_policy.minimum_length == 12
+      - params_info.user_pool.policies.password_policy.require_uppercase == true
+      - params_info.user_pool.policies.password_policy.require_symbols == false

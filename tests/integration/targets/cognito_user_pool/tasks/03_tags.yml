@@ -1,0 +1,135 @@
+---
+# ==========================================
+# Tag management tests (using params pool)
+# ==========================================
+
+# ------------------------------------------
+# Add tags
+# ------------------------------------------
+- name: Set tags on pool
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    tags:
+      Environment: test
+      Project: ansible-integration
+      NewTag: added
+  register: tag_add
+
+- name: Verify tags added
+  assert:
+    that:
+      - tag_add is changed
+
+- name: Verify tags with info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: tag_info
+
+- name: Assert all tags present
+  assert:
+    that:
+      - tag_info.user_pool.user_pool_tags.Environment == "test"
+      - tag_info.user_pool.user_pool_tags.Project == "ansible-integration"
+      - tag_info.user_pool.user_pool_tags.NewTag == "added"
+
+# ------------------------------------------
+# Tags idempotency
+# ------------------------------------------
+- name: Set same tags again
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    tags:
+      Environment: test
+      Project: ansible-integration
+      NewTag: added
+  register: tag_idem
+
+- name: Verify tags idempotency
+  assert:
+    that:
+      - tag_idem is not changed
+
+# ------------------------------------------
+# Merge tags (purge_tags: false)
+# ------------------------------------------
+- name: Merge additional tag
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    tags:
+      Extra: merged
+    purge_tags: false
+  register: tag_merge
+
+- name: Verify tag merged
+  assert:
+    that:
+      - tag_merge is changed
+
+- name: Verify merged tags with info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: merge_info
+
+- name: Assert old and new tags present
+  assert:
+    that:
+      - merge_info.user_pool.user_pool_tags.Environment == "test"
+      - merge_info.user_pool.user_pool_tags.Extra == "merged"
+      - merge_info.user_pool.user_pool_tags.NewTag == "added"
+
+# ------------------------------------------
+# Purge tags (purge_tags: true, default)
+# ------------------------------------------
+- name: Purge to single tag
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    tags:
+      Environment: production
+  register: tag_purge
+
+- name: Verify tags purged
+  assert:
+    that:
+      - tag_purge is changed
+
+- name: Verify purged tags with info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: purge_info
+
+- name: Assert only Environment tag remains
+  assert:
+    that:
+      - purge_info.user_pool.user_pool_tags.Environment == "production"
+      - "'Project' not in purge_info.user_pool.user_pool_tags"
+      - "'NewTag' not in purge_info.user_pool.user_pool_tags"
+      - "'Extra' not in purge_info.user_pool.user_pool_tags"
+
+# ------------------------------------------
+# Remove all tags
+# ------------------------------------------
+- name: Remove all tags
+  cognito_user_pool:
+    state: present
+    user_pool_id: '{{ cognito_pool_params_id }}'
+    tags: {}
+  register: tag_remove_all
+
+- name: Verify all tags removed
+  assert:
+    that:
+      - tag_remove_all is changed
+
+- name: Verify no tags with info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_pool_params_id }}'
+  register: no_tags_info
+
+- name: Assert tags empty
+  assert:
+    that:
+      - no_tags_info.user_pool.user_pool_tags | default({}) | length == 0
