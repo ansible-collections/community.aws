@@ -1,0 +1,266 @@
+---
+# Integration tests for medialive_channel_placement_group module
+- name: Wrap MediaLive CPG tests with AWS credentials
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    set_fact:
+      ansible_python_interpreter: '{{ botocore_virtualenv_interpreter }}'
+
+  block:
+    # Setup test variables
+    - name: Set up test variables
+      ansible.builtin.set_fact:
+        cluster_name: "{{ resource_prefix }}-cluster"
+        network_name: "{{ resource_prefix }}-network"
+        instance_role_name: "{{ resource_prefix }}-role"
+        cpg_name: "{{ resource_prefix }}-cpg"
+        ip_pool_cidr: "10.21.21.0/24"
+        route_cidr: "0.0.0.0/0"
+        route_gateway: "10.21.21.1"
+        wait_timeout: 60
+
+    # Create a network first for the cluster to use
+    - name: Create a MediaLive Anywhere network for the cluster
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: present
+        ip_pools:
+          - cidr: "{{ ip_pool_cidr }}"
+        routes:
+          - cidr: "{{ route_cidr }}"
+            gateway: "{{ route_gateway }}"
+      register: network_result
+      retries: 3
+      delay: 5
+      until: network_result is not failed or 'TooManyRequestsException' not in (network_result.msg | default(''))
+
+    # Create a simple IAM role for MediaLive Anywhere nodes
+    - name: Create MediaLive Anywhere node IAM role
+      amazon.aws.iam_role:
+        name: '{{ instance_role_name }}'
+        assume_role_policy_document: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": [
+                    "medialive.amazonaws.com",
+                    "ssm.amazonaws.com"
+                  ]
+                },
+                "Action": [
+                  "sts:AssumeRole",
+                  "sts:TagSession"
+                ]
+              }
+            ]
+          }
+        state: present
+        create_instance_profile: false
+      register: iam_role
+
+    - name: Capture network_id and instance_role_arn
+      ansible.builtin.set_fact:
+        network_id: "{{ network_result.network.network_id }}"
+        instance_role_arn: "{{ iam_role.iam_role.arn }}"
+      when:
+        - network_result is defined
+        - network_result.changed is defined
+        - iam_role is defined
+        - iam_role.changed is defined
+
+    # Create a cluster first to host the channel placement group
+    - name: Create a MediaLive Anywhere cluster
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: present
+        cluster_type: "ON_PREMISES"
+        instance_role_arn: "{{ instance_role_arn }}"
+        network_settings:
+          default_route: "management"
+          interface_mappings:
+            - logical_interface_name: "management"
+              network_id: "{{ network_id }}"
+            - logical_interface_name: "input"
+              network_id: "{{ network_id }}"
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: cluster_result
+      retries: 3
+      delay: 5
+      until: cluster_result is not failed or 'TooManyRequestsException' not in (cluster_result.msg | default(''))
+      when: network_id is defined
+
+    - name: Capture cluster_id
+      ansible.builtin.set_fact:
+        cluster_id: '{{ cluster_result.cluster.cluster_id }}'
+
+    # Test creating a channel placement group in the cluster
+    - name: Create a MediaLive Anywhere channel placement group
+      community.aws.medialive_channel_placement_group:
+        cluster_id: '{{ cluster_id }}'
+        name: '{{ cpg_name }}'
+        state: present
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: create_result
+      retries: 3
+      delay: 5
+      until: create_result is not failed or 'TooManyRequestsException' not in (create_result.msg | default(''))
+      when: cluster_id is defined
+
+    - name: Assert channel placement group was created successfully
+      ansible.builtin.assert:
+        that:
+          - create_result is changed
+          - create_result.channel_placement_group.arn is defined
+          - create_result.channel_placement_group.arn != ''
+          - create_result.channel_placement_group.channels is defined
+          - create_result.channel_placement_group.channels == []
+          - create_result.channel_placement_group.cluster_id is defined
+          - create_result.channel_placement_group.cluster_id != ''
+          - create_result.channel_placement_group.channel_placement_group_id is defined
+          - create_result.channel_placement_group.channel_placement_group_id != ''
+          - create_result.channel_placement_group.name is defined
+          - create_result.channel_placement_group.name != ''
+          - create_result.channel_placement_group.nodes is defined
+          - create_result.channel_placement_group.nodes == []
+          - create_result.channel_placement_group.state is defined
+          - create_result.channel_placement_group.state == 'UNASSIGNED'
+        fail_msg: "Channel placement group creation failed or returned unexpected data"
+        success_msg: "Channel placement group created successfully with expected properties"
+      when:
+        - create_result is defined
+        - create_result.channel_placement_group is defined
+
+    - name: Capture cpg_id
+      ansible.builtin.set_fact:
+        cpg_id: '{{ create_result.channel_placement_group.channel_placement_group_id }}'
+
+    # Test idempotency
+    - name: Create the same channel placement group again (idempotency check)
+      community.aws.medialive_channel_placement_group:
+        cluster_id: '{{ cluster_id }}'
+        name: '{{ cpg_name }}'
+        state: present
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: idempotency_result
+      when: cluster_id is defined
+
+    - name: Assert idempotency
+      ansible.builtin.assert:
+        that:
+          - not idempotency_result.changed
+          - idempotency_result.channel_placement_group.channel_placement_group_id == cpg_id
+        fail_msg: "Idempotency check failed - module made changes when none were expected"
+        success_msg: "Idempotency check passed"
+      when:
+        - idempotency_result is defined
+        - idempotency_result.channel_placement_group is defined
+
+    # Test retrieval by ID
+    - name: Get channel placement group by ID
+      community.aws.medialive_channel_placement_group_info:
+        channel_placement_group_id: "{{ cpg_id }}"
+        cluster_id: "{{ cluster_id }}"
+      register: get_by_id_result
+      when:
+        - cpg_id is defined
+        - cluster_id is defined
+
+    - name: Assert channel placement group was retrieved by ID
+      ansible.builtin.assert:
+        that:
+          - not get_by_id_result.changed
+          - get_by_id_result.channel_placement_group.channel_placement_group_id == cpg_id
+          - get_by_id_result.channel_placement_group.name == cpg_name
+        fail_msg: "Failed to retrieve channel placement group by ID"
+        success_msg: "Successfully retrieved channel placement group by ID"
+      when:
+        - get_by_id_result is defined
+        - get_by_id_result.channel_placement_group is defined
+
+    # Test check mode
+    - name: Test check mode - attempt to delete channel placement group
+      community.aws.medialive_channel_placement_group:
+        channel_placement_group_id: "{{ cpg_id }}"
+        cluster_id: "{{ cluster_id }}"
+        state: absent
+      check_mode: true
+      register: check_mode_result
+      when: cpg_id is defined
+
+    - name: Assert check mode works correctly
+      ansible.builtin.assert:
+        that:
+          - check_mode_result is changed
+          - (check_mode_result.channel_placement_group | default({})) == {}
+        fail_msg: "Check mode did not work as expected"
+        success_msg: "Check mode correctly simulated deletion"
+      when: check_mode_result is defined
+
+
+    # Test channel placement group deletion
+    - name: Delete the channel placement group
+      community.aws.medialive_channel_placement_group:
+        channel_placement_group_id: "{{ cpg_id }}"
+        cluster_id: "{{ cluster_id }}"
+        state: absent
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: delete_result
+      retries: 3
+      delay: 5
+      until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
+      when: cpg_id is defined
+
+    - name: Assert channel placement group was deleted
+      ansible.builtin.assert:
+        that:
+          - delete_result is changed
+        fail_msg: "Channel placement group deletion failed"
+        success_msg: "Channel placement group deleted successfully"
+      when: delete_result is defined
+
+    # Test deletion idempotency
+    - name: Try to delete the channel placement group again (idempotency check)
+      community.aws.medialive_channel_placement_group:
+        id: "{{ cpg_id }}"
+        cluster_id: "{{ cluster_id }}"
+        state: absent
+      register: delete_idempotency_result
+      when: cpg_id is defined
+
+    - name: Assert delete idempotency
+      ansible.builtin.assert:
+        that:
+          - not delete_idempotency_result.changed
+        fail_msg: "Delete idempotency check failed"
+        success_msg: "Delete idempotency check passed"
+      when: delete_idempotency_result is defined
+
+  # Error handling and cleanup
+  rescue:
+    - name: Capture error
+      ansible.builtin.set_fact:
+        test_failed: true
+
+    - name: Clean up
+      ansible.builtin.include_tasks: cleanup.yml
+
+    - name: Fail with useful error message
+      ansible.builtin.fail:
+        msg: "MediaLive channel placement group integration tests failed. See previous errors for details."
+      when: test_failed | default(false)
+
+  always:
+    - name: Ensure all test resources are cleaned up
+      ansible.builtin.include_tasks: cleanup.yml
+

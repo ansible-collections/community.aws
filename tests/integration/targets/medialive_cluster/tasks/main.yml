@@ -1,0 +1,294 @@
+---
+# Integration tests for medialive_cluster module
+- name: Wrap MediaLive Cluster tests with AWS credentials
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    set_fact:
+      ansible_python_interpreter: '{{ botocore_virtualenv_interpreter }}'
+
+  block:
+    # Setup test variables
+    - name: Set up test variables
+      set_fact:
+        cluster_name: "{{ resource_prefix }}-cluster"
+        network_name: "{{ resource_prefix }}-network"
+        ip_pool_cidr: "10.21.21.0/24"
+        route_cidr: "0.0.0.0/0"
+        route_gateway: "10.21.21.1"
+        wait_timeout: 30
+
+    # Create the required IAM role for MediaLive Anywhere nodes
+    - name: Create MediaLive Anywhere node IAM role
+      amazon.aws.iam_role:
+        name: ansible-test-MLANodeRole
+        assume_role_policy_document: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "medialive.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }
+        state: present
+        create_instance_profile: false
+        managed_policies:
+          - arn:aws:iam::aws:policy/AWSElementalMediaLiveFullAccess
+        tags:
+          Environment: Test
+          Purpose: Integration Testing
+      register: iam_role
+        
+    - name: Set IAM role ARN
+      set_fact:
+        instance_role_arn: "{{ iam_role.iam_role.arn }}"
+
+    # Create a network first for the cluster to use
+    - name: Create a MediaLive Anywhere network for the cluster
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: present
+        ip_pools:
+          - cidr: "{{ ip_pool_cidr }}"
+        routes:
+          - cidr: "{{ route_cidr }}"
+            gateway: "{{ route_gateway }}"
+      register: network_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: network_result is not failed or 'TooManyRequestsException' not in (network_result.msg | default(''))
+
+    - name: Store network ID
+      set_fact:
+        network_id: "{{ network_result.network.network_id }}"
+      when: network_result is defined and network_result.changed is defined
+
+    # Test cluster creation
+    - name: Create a MediaLive Anywhere cluster
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: present
+        cluster_type: "ON_PREMISES"
+        instance_role_arn: "{{ instance_role_arn }}"
+        network_settings:
+          default_route: "management"
+          interface_mappings:
+            - logical_interface_name: "management"
+              network_id: "{{ network_id }}"
+            - logical_interface_name: "input"
+              network_id: "{{ network_id }}"
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: create_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: create_result is not failed or 'TooManyRequestsException' not in (create_result.msg | default(''))
+      when: network_id is defined
+
+    - name: Assert cluster was created successfully
+      assert:
+        that:
+          - create_result is changed
+          - create_result.cluster is defined
+          - create_result.cluster.name == cluster_name
+          - create_result.cluster.state in ['ACTIVE', 'IDLE', 'IN_USE']
+          - create_result.cluster.cluster_type == "ON_PREMISES"
+          - create_result.cluster.instance_role_arn == instance_role_arn
+          - create_result.cluster.network_settings.default_route == "management"
+          - create_result.cluster.network_settings.interface_mappings | length == 2
+          - create_result.cluster.cluster_id is defined
+          - create_result.cluster.arn is defined
+        fail_msg: "Cluster creation failed or returned unexpected data"
+        success_msg: "Cluster created successfully with expected properties"
+      when: create_result is defined and create_result.cluster is defined
+
+    # Store cluster ID for later use
+    - name: Store cluster ID
+      set_fact:
+        cluster_id: "{{ create_result.cluster.cluster_id }}"
+      when: create_result is defined and create_result.cluster is defined
+
+    # Test idempotency
+    - name: Create the same cluster again (idempotency check)
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: present
+        cluster_type: "ON_PREMISES"
+        instance_role_arn: "{{ instance_role_arn }}"
+        network_settings:
+          default_route: "management"
+          interface_mappings:
+            - logical_interface_name: "management"
+              network_id: "{{ network_id }}"
+            - logical_interface_name: "input"
+              network_id: "{{ network_id }}"
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: idempotency_result
+      when: cluster_id is defined
+
+    - name: Assert idempotency
+      assert:
+        that:
+          - not idempotency_result.changed
+          - idempotency_result.cluster is defined
+          - idempotency_result.cluster.cluster_id == cluster_id
+        fail_msg: "Idempotency check failed - module made changes when none were expected"
+        success_msg: "Idempotency check passed"
+      when: idempotency_result is defined and idempotency_result.cluster is defined
+
+    - name: Get cluster by ID
+      community.aws.medialive_cluster_info:
+        id: "{{ cluster_id }}"
+      register: get_by_id_result
+      when: cluster_id is defined
+
+    - name: Assert cluster was retrieved by ID
+      assert:
+        that:
+          - not get_by_id_result.changed
+          - get_by_id_result.cluster is defined
+          - get_by_id_result.cluster.cluster_id == cluster_id
+          - get_by_id_result.cluster.name == cluster_name
+        fail_msg: "Failed to retrieve cluster by ID"
+        success_msg: "Successfully retrieved cluster by ID"
+      when: get_by_id_result is defined and get_by_id_result.cluster is defined
+
+    - name: Get cluster by name
+      community.aws.medialive_cluster_info:
+        name: "{{ cluster_name }}"
+      register: get_by_name_result
+      when: cluster_name is defined
+
+    - name: Assert cluster was retrieved by name
+      assert:
+        that:
+          - not get_by_name_result.changed
+          - get_by_name_result.cluster is defined
+          - get_by_name_result.cluster.cluster_id == cluster_id
+          - get_by_name_result.cluster.name == cluster_name
+        fail_msg: "Failed to retrieve cluster by name"
+        success_msg: "Successfully retrieved cluster by name"
+      when: get_by_name_result is defined and get_by_name_result.cluster is defined
+
+    # Test check mode
+    - name: Test check mode - attempt to delete cluster
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+      check_mode: true
+      register: check_mode_result
+      when: cluster_id is defined
+
+    - name: Assert check mode works correctly
+      assert:
+        that:
+          - check_mode_result is changed
+          - (check_mode_result.cluster | default({})) == {}
+        fail_msg: "Check mode did not work as expected"
+        success_msg: "Check mode correctly simulated deletion"
+      when: check_mode_result is defined
+
+    # Test cluster deletion
+    - name: Delete the cluster
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: delete_result
+      retries: 3  # Add retries for API throttling resilience
+      delay: 5
+      until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
+      when: cluster_id is defined
+
+    - name: Assert cluster was deleted
+      assert:
+        that:
+          - delete_result is changed
+        fail_msg: "Cluster deletion failed"
+        success_msg: "Cluster deleted successfully"
+      when: delete_result is defined
+
+    # Test deletion idempotency
+    - name: Try to delete the cluster again (idempotency check)
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+      register: delete_idempotency_result
+      when: cluster_id is defined
+
+    - name: Assert delete idempotency
+      assert:
+        that:
+          - not delete_idempotency_result.changed
+        fail_msg: "Delete idempotency check failed"
+        success_msg: "Delete idempotency check passed"
+      when: delete_idempotency_result is defined
+
+    # Clean up the network
+    - name: Delete the network
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+      when: network_id is defined
+      ignore_errors: true
+
+  # Error handling and cleanup
+  rescue:
+    - name: Capture error
+      set_fact:
+        test_failed: true
+
+    - name: Cleanup - ensure cluster is deleted
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+      when: cluster_id is defined
+
+    - name: Cleanup - ensure network is deleted
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+      ignore_errors: true
+      when: network_id is defined
+
+    - name: Fail with useful error message
+      fail:
+        msg: "MediaLive Cluster integration tests failed. See previous errors for details."
+      when: test_failed | default(false)
+
+  always:
+    - name: Ensure all test resources are cleaned up (cluster)
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+      when: cluster_id is defined
+
+    - name: Ensure all test resources are cleaned up (network)
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: absent
+      ignore_errors: true
+      when: network_id is defined
+
+    - name: Ensure all test resources are cleaned up (role)
+      amazon.aws.iam_role:
+        name: "{{ iam_role.iam_role.role_name }}"
+        state: absent
+        wait: true
+      ignore_errors: true
+      when: instance_role_arn is defined
+
