@@ -242,11 +242,6 @@ try:
 except ImportError:
     HAS_DATEUTIL = False
 
-try:
-    import botocore
-except ImportError:
-    pass  # Handled by AnsibleAWSModule
-
 from ansible.module_utils._text import to_text
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
@@ -512,42 +507,34 @@ def main():
 
     result = {}
     mode = module.params["mode"]
-
-    try:
-        s3 = module.client("s3")
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to connect to AWS")
+    s3 = module.client("s3")
 
     if mode == "push":
+        result["filelist_initial"] = gather_files(
+            module.params["file_root"], exclude=module.params["exclude"], include=module.params["include"]
+        )
+        result["filelist_typed"] = determine_mimetypes(result["filelist_initial"], module.params.get("mime_map"))
+        result["filelist_s3"] = calculate_s3_path(result["filelist_typed"], module.params["key_prefix"])
         try:
-            result["filelist_initial"] = gather_files(
-                module.params["file_root"], exclude=module.params["exclude"], include=module.params["include"]
-            )
-            result["filelist_typed"] = determine_mimetypes(result["filelist_initial"], module.params.get("mime_map"))
-            result["filelist_s3"] = calculate_s3_path(result["filelist_typed"], module.params["key_prefix"])
-            try:
-                result["filelist_local_etag"] = calculate_local_etag(result["filelist_s3"])
-            except ValueError as e:
-                if module.params["file_change_strategy"] == "checksum":
-                    module.fail_json_aws(
-                        e,
-                        "Unable to calculate checksum.  If running in FIPS mode, you may need to use another file_change_strategy",
-                    )
-                result["filelist_local_etag"] = result["filelist_s3"].copy()
-            result["filelist_actionable"] = filter_list(
-                s3, module.params["bucket"], result["filelist_local_etag"], module.params["file_change_strategy"]
-            )
-            result["uploads"] = upload_files(s3, module.params["bucket"], result["filelist_actionable"], module.params)
+            result["filelist_local_etag"] = calculate_local_etag(result["filelist_s3"])
+        except ValueError as e:
+            if module.params["file_change_strategy"] == "checksum":
+                module.fail_json_aws(
+                    e,
+                    "Unable to calculate checksum.  If running in FIPS mode, you may need to use another file_change_strategy",
+                )
+            result["filelist_local_etag"] = result["filelist_s3"].copy()
+        result["filelist_actionable"] = filter_list(
+            s3, module.params["bucket"], result["filelist_local_etag"], module.params["file_change_strategy"]
+        )
+        result["uploads"] = upload_files(s3, module.params["bucket"], result["filelist_actionable"], module.params)
 
-            if module.params["delete"]:
-                result["removed"] = remove_files(s3, result["filelist_local_etag"], module.params)
+        if module.params["delete"]:
+            result["removed"] = remove_files(s3, result["filelist_local_etag"], module.params)
 
-            # mark changed if we actually upload something.
-            if result.get("uploads") or result.get("removed"):
-                result["changed"] = True
-            # result.update(filelist=actionable_filelist)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Failed to push file")
+        # mark changed if we actually upload something.
+        if result.get("uploads") or result.get("removed"):
+            result["changed"] = True
 
     module.exit_json(**result)
 

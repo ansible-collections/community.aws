@@ -76,8 +76,24 @@
           - queue_creation is successful
 
     ## Start tests
+    # Test initial state with info module
+    - name: get bucket notification info (empty)
+      community.aws.s3_bucket_notification_info:
+        name: "{{ bucket_name }}"
+      register: info_result
+
+    - name: assert no notifications configured
+      assert:
+        that:
+          - info_result is successful
+          - info_result is not changed
+          - info_result.notification_configuration.lambda_function_configurations | default([]) | length == 0
+          - info_result.notification_configuration.queue_configurations | default([]) | length == 0
+          - info_result.notification_configuration.topic_configurations | default([]) | length == 0
+
+    # Create notification: check_mode → change → check_mode idempotency → idempotency
     - name: create bucket notification - check_mode
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -89,13 +105,13 @@
       register: result
       check_mode: true
 
-    - name: create bucket notification - check_mode
+    - name: assert create bucket notification - check_mode
       assert:
         that:
           - result is changed
 
     - name: create bucket notification
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -106,7 +122,7 @@
         suffix: .jpg
       register: result
 
-    - name: create bucket notification
+    - name: assert create bucket notification
       assert:
         that:
           - result is successful
@@ -115,8 +131,43 @@
           - result.notification_configuration.topic_configurations[0].id == event_name
           - result.notification_configuration.topic_configurations[0].topic_arn == topic_creation.sns_arn
 
+    - name: get bucket notification info (with configuration)
+      community.aws.s3_bucket_notification_info:
+        name: "{{ bucket_name }}"
+      register: info_result
+
+    - name: assert notification is returned in snake_case
+      assert:
+        that:
+          - info_result is successful
+          - info_result is not changed
+          - info_result.notification_configuration.topic_configurations | length == 1
+          - info_result.notification_configuration.topic_configurations[0].id == event_name
+          - info_result.notification_configuration.topic_configurations[0].topic_arn == topic_creation.sns_arn
+          # Verify snake_case format
+          - "'topic_arn' in info_result.notification_configuration.topic_configurations[0]"
+          - "'TopicArn' not in info_result.notification_configuration.topic_configurations[0]"
+
+    - name: create bucket notification - idempotency - check_mode
+      community.aws.s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+        prefix: images/
+        suffix: .jpg
+      register: result
+      check_mode: true
+
+    - name: assert create bucket notification - idempotency - check_mode
+      assert:
+        that:
+          - result is not changed
+
     - name: create bucket notification - idempotency
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -127,13 +178,13 @@
         suffix: .jpg
       register: result
 
-    - name: create bucket notification - idempotency
+    - name: assert create bucket notification - idempotency
       assert:
         that:
           - result is not changed
 
     - name: test mutually exclusive parameters
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -153,7 +204,7 @@
           - "result.msg == 'parameters are mutually exclusive: queue_arn|topic_arn|lambda_function_arn'"
 
     - name: test configuration change on suffix
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -172,7 +223,7 @@
           - result.notification_configuration.topic_configurations[0].filter.key.filter_rules[1].value == '.gif'
 
     - name: test configuration change on prefix
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -191,7 +242,7 @@
           - result.notification_configuration.topic_configurations[0].filter.key.filter_rules[0].value == 'photos/'
 
     - name: test configuration change on new events added
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -211,7 +262,7 @@
           - result.notification_configuration.topic_configurations[0].events | length == 3
 
     - name: test configuration change on events removed
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -230,7 +281,7 @@
 
     ## Test change of event notification target
     - name: test changing from sns to sqs target - check_mode
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -242,13 +293,13 @@
       register: result
       check_mode: yes
 
-    - name: test changing from sns to sqs target - check_mode
+    - name: assert changing from sns to sqs target - check_mode
       assert:
         that:
           - result is changed
 
     - name: test changing from sns to sqs target
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -259,15 +310,33 @@
         suffix: .gif
       register: result
 
-    - name: test changing from sns to sqs target
+    - name: assert changing from sns to sqs target
       assert:
         that:
           - result is changed
           - result.notification_configuration.queue_configurations | length == 1
           - result.notification_configuration.queue_configurations[0].queue_arn == queue_creation.queue_arn
 
+    - name: test changing from sns to sqs target - idempotency - check_mode
+      community.aws.s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        queue_arn: "{{ queue_creation.queue_arn }}"
+        events:
+          - s3:ObjectCreated:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+      check_mode: true
+
+    - name: assert changing from sns to sqs target - idempotency - check_mode
+      assert:
+        that:
+          - result is not changed
+
     - name: test changing from sns to sqs target - idempotency
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
@@ -278,46 +347,70 @@
         suffix: .gif
       register: result
 
-    - name: test changing from sns to sqs target - idempotency
+    - name: assert changing from sns to sqs target - idempotency
       assert:
         that:
           - result is not changed
 
     ## Test removal of event notification
     - name: remove notification - check_mode
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: absent
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
       register: result
       check_mode: yes
 
-    - name: remove notification - check_mode
+    - name: assert remove notification - check_mode
       assert:
         that:
           - result is changed
 
     - name: remove notification
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: absent
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
       register: result
 
-    - name: remove notification
+    - name: assert remove notification
       assert:
         that:
           - result is changed
           - result.notification_configuration.queue_configurations | length < 1
 
+    - name: get bucket notification info (after removal)
+      community.aws.s3_bucket_notification_info:
+        name: "{{ bucket_name }}"
+      register: info_result
+
+    - name: assert notifications removed
+      assert:
+        that:
+          - info_result is successful
+          - info_result.notification_configuration.queue_configurations | default([]) | length == 0
+
+    - name: remove notification - idempotency - check_mode
+      community.aws.s3_bucket_notification:
+        state: absent
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+      register: result
+      check_mode: true
+
+    - name: assert remove notification - idempotency - check_mode
+      assert:
+        that:
+          - result is not changed
+
     - name: remove notification - idempotency
-      s3_bucket_notification:
+      community.aws.s3_bucket_notification:
         state: absent
         event_name: "{{ event_name }}"
         bucket_name: "{{ bucket_name }}"
       register: result
 
-    - name: remove notification - idempotency
+    - name: assert remove notification - idempotency
       assert:
         that:
           - result is not changed

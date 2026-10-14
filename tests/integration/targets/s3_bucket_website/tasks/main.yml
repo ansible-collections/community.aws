@@ -1,0 +1,565 @@
+---
+# Integration tests for s3_bucket_website
+#
+# Notes:
+# - s3_bucket_website manages website hosting configuration for S3 buckets
+# - Tests cover state=present (create/update) and state=absent (remove)
+# - Check mode and idempotency are tested for all operations
+#
+- module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  collections:
+    - amazon.aws
+  block:
+
+  # ============================================================
+  # Setup - Create test bucket
+  # ============================================================
+
+  - name: Create simple s3_bucket for website testing
+    amazon.aws.s3_bucket:
+      state: present
+      name: '{{ test_bucket }}'
+    register: output
+
+  - name: Assert bucket was created properly
+    assert:
+      that:
+        - output is changed
+        - output.name == test_bucket
+
+  # ============================================================
+  # Test Create website configuration (state = present)
+  # ============================================================
+
+  - name: Create website configuration (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Create website configuration
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+    register: result
+
+  - name: Assert website configuration was created
+    assert:
+      that:
+        - result is changed
+        - result.index_document.suffix == 'index.html'
+
+  - name: Get website configuration with s3_bucket_website_info
+    community.aws.s3_bucket_website_info:
+      name: '{{ test_bucket }}'
+    register: website_info
+
+  - name: Assert website info matches configured state
+    assert:
+      that:
+        - website_info.website_configuration.index_document.suffix == 'index.html'
+        - website_info.website_configuration.error_document is not defined or website_info.website_configuration.error_document.key is not defined
+
+  - name: Create website configuration idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Create website configuration idempotency
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Update website configuration
+  # ============================================================
+
+  - name: Update website configuration - add error document (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+      error_key: error.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update website configuration - add error document
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+      error_key: error.html
+    register: result
+
+  - name: Assert website configuration was updated
+    assert:
+      that:
+        - result is changed
+        - result.index_document.suffix == 'index.html'
+        - result.error_document.key == 'error.html'
+
+  - name: Get website configuration after adding error document
+    community.aws.s3_bucket_website_info:
+      name: '{{ test_bucket }}'
+    register: website_info
+
+  - name: Assert website info shows error document
+    assert:
+      that:
+        - website_info.website_configuration.index_document.suffix == 'index.html'
+        - website_info.website_configuration.error_document.key == 'error.html'
+
+  - name: Update website configuration idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+      error_key: error.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update website configuration idempotency
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: index.html
+      error_key: error.html
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Change suffix
+  # ============================================================
+
+  - name: Change suffix value (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+      error_key: error.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Change suffix value
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+      error_key: error.html
+    register: result
+
+  - name: Assert suffix was changed
+    assert:
+      that:
+        - result is changed
+        - result.index_document.suffix == 'home.html'
+
+  - name: Change suffix value idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+      error_key: error.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Change suffix value idempotency
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+      error_key: error.html
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Remove error_key
+  # ============================================================
+
+  - name: Remove error document (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Remove error document
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+    register: result
+
+  - name: Assert error document was removed
+    assert:
+      that:
+        - result is changed
+        - result.error_document is not defined or result.error_document.key is not defined
+
+  - name: Remove error document idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Remove error document idempotency
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      suffix: home.html
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Redirect all requests
+  # ============================================================
+
+  - name: Configure redirect all requests (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: example.com
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Configure redirect all requests
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: example.com
+    register: result
+
+  - name: Assert redirect configuration was created
+    assert:
+      that:
+        - result is changed
+        - result.redirect_all_requests_to.host_name == 'example.com'
+
+  - name: Get website configuration after redirect setup
+    community.aws.s3_bucket_website_info:
+      name: '{{ test_bucket }}'
+    register: website_info
+
+  - name: Assert website info shows redirect
+    assert:
+      that:
+        - website_info.website_configuration.redirect_all_requests_to.host_name == 'example.com'
+        - website_info.website_configuration.index_document is not defined or website_info.website_configuration.index_document.suffix is not defined
+
+  - name: Configure redirect all requests idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: example.com
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Configure redirect all requests idempotency
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: example.com
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Redirect with protocol
+  # ============================================================
+
+  - name: Configure redirect with protocol (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: https://example.org
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Configure redirect with protocol
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: https://example.org
+    register: result
+
+  - name: Assert redirect with protocol was configured
+    assert:
+      that:
+        - result is changed
+        - result.redirect_all_requests_to.host_name == 'example.org'
+        - result.redirect_all_requests_to.protocol == 'https'
+
+  - name: Configure redirect with protocol idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: https://example.org
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Configure redirect with protocol idempotency
+    community.aws.s3_bucket_website:
+      state: present
+      name: '{{ test_bucket }}'
+      redirect_all_requests: https://example.org
+    register: result
+
+  - name: Assert idempotency - no change
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Test state=present - Routing rules
+  # TODO: Add support for routing_rules parameter to s3_bucket_website module
+  # ============================================================
+
+  # - name: Configure website with routing rules (check_mode)
+  #   community.aws.s3_bucket_website:
+  #     state: present
+  #     name: '{{ test_bucket }}'
+  #     suffix: index.html
+  #     error_key: error.html
+  #     routing_rules:
+  #       - condition:
+  #           key_prefix_equals: docs/
+  #         redirect:
+  #           replace_key_prefix_with: documents/
+  #   register: result
+  #   check_mode: true
+
+  # - name: Assert check_mode shows changed
+  #   assert:
+  #     that:
+  #       - result is changed
+
+  # - name: Configure website with routing rules
+  #   community.aws.s3_bucket_website:
+  #     state: present
+  #     name: '{{ test_bucket }}'
+  #     suffix: index.html
+  #     error_key: error.html
+  #     routing_rules:
+  #       - condition:
+  #           key_prefix_equals: docs/
+  #         redirect:
+  #           replace_key_prefix_with: documents/
+  #   register: result
+
+  # - name: Assert routing rules were configured
+  #   assert:
+  #     that:
+  #       - result is changed
+  #       - result.routing_rules is defined
+  #       - result.routing_rules | length == 1
+
+  # - name: Configure website with routing rules idempotency (check_mode)
+  #   community.aws.s3_bucket_website:
+  #     state: present
+  #     name: '{{ test_bucket }}'
+  #     suffix: index.html
+  #     error_key: error.html
+  #     routing_rules:
+  #       - condition:
+  #           key_prefix_equals: docs/
+  #         redirect:
+  #           replace_key_prefix_with: documents/
+  #   register: result
+  #   check_mode: true
+
+  # - name: Assert check_mode shows no change
+  #   assert:
+  #     that:
+  #       - result is not changed
+
+  # - name: Configure website with routing rules idempotency
+  #   community.aws.s3_bucket_website:
+  #     state: present
+  #     name: '{{ test_bucket }}'
+  #     suffix: index.html
+  #     error_key: error.html
+  #     routing_rules:
+  #       - condition:
+  #           key_prefix_equals: docs/
+  #         redirect:
+  #           replace_key_prefix_with: documents/
+  #   register: result
+
+  # - name: Assert idempotency - no change
+  #   assert:
+  #     that:
+  #       - result is not changed
+
+  # ============================================================
+  # Test state=absent - Remove website configuration
+  # ============================================================
+
+  - name: Remove website configuration (check_mode)
+    community.aws.s3_bucket_website:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Remove website configuration
+    community.aws.s3_bucket_website:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+
+  - name: Assert website configuration was removed
+    assert:
+      that:
+        - result is changed
+
+  - name: Get website configuration after deletion
+    community.aws.s3_bucket_website_info:
+      name: '{{ test_bucket }}'
+    register: website_info
+
+  - name: Assert website info shows no configuration
+    assert:
+      that:
+        - website_info.website_configuration is not defined or website_info.website_configuration == {} or website_info.website_configuration.index_document is not defined
+
+  - name: Remove website configuration idempotency (check_mode)
+    community.aws.s3_bucket_website:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+    check_mode: true
+
+  - name: Assert check_mode shows no change
+    assert:
+      that:
+        - result is not changed
+
+  - name: Remove website configuration idempotency
+    community.aws.s3_bucket_website:
+      state: absent
+      name: '{{ test_bucket }}'
+    register: result
+
+  - name: Assert idempotency - no change (bucket has no website configuration)
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
+  # Cleanup
+  # ============================================================
+
+  always:
+    - name: Remove website configuration
+      community.aws.s3_bucket_website:
+        name: '{{ test_bucket }}'
+        state: absent
+      ignore_errors: true
+
+    - name: Delete test bucket
+      amazon.aws.s3_bucket:
+        name: '{{ test_bucket }}'
+        state: absent
+        force: true
+      ignore_errors: true

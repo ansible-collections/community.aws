@@ -49,7 +49,7 @@
         chdir: "{{ output_dir }}/s3_sync"
 
     - name: Sync files with remote bucket
-      s3_sync:
+      community.aws.s3_sync:
         bucket: "{{ test_bucket }}"
         file_root: "{{ output_dir }}/s3_sync"
       register: output
@@ -71,7 +71,7 @@
           - not output.requester_pays
 
     - name: Sync files with remote bucket using glacier storage class
-      s3_sync:
+      community.aws.s3_sync:
         bucket: "{{ test_bucket_2 }}"
         file_root: "{{ output_dir }}/s3_sync"
         storage_class: "GLACIER"
@@ -84,7 +84,7 @@
     # ============================================================
 
     - name: Sync files already present
-      s3_sync:
+      community.aws.s3_sync:
         bucket: "{{ test_bucket }}"
         file_root: "{{ output_dir }}/s3_sync"
       register: output
@@ -94,7 +94,7 @@
 
     # ============================================================
     - name: Sync files with etag calculation
-      s3_sync:
+      community.aws.s3_sync:
         bucket: "{{ test_bucket }}"
         file_root: "{{ output_dir }}/s3_sync"
         file_change_strategy: checksum
@@ -117,7 +117,7 @@
           - not output.requester_pays
 
     - name: Sync individual file with remote bucket
-      s3_sync:
+      community.aws.s3_sync:
         bucket: "{{ test_bucket_3 }}"
         file_root: "{{ output_dir }}/s3_sync/test1.txt"
       register: output
@@ -129,7 +129,7 @@
     # DOCUMENTATION EXAMPLES
     # ============================================================
     - name: all the options
-      s3_sync:
+      community.aws.s3_sync:
         bucket: "{{ test_bucket }}"
         file_root: "{{ output_dir }}/s3_sync"
         mime_map:
