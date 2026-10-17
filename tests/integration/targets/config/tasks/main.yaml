@@ -26,7 +26,6 @@
         name: '{{ config_role_name }}'
         assume_role_policy_document: "{{ lookup('file','config-trust-policy.json') }}"
         state: present
-        create_instance_profile: no
         managed_policy:
         - arn:aws:iam::aws:policy/service-role/AWS_ConfigRole
       register: config_iam_role
