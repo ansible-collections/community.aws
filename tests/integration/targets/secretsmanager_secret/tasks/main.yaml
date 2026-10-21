@@ -14,3 +14,6 @@
   #- include_tasks: 'rotation.yml'
   # Multi-Region CI not supported (yet)
   #- include_tasks: 'replication.yml'
+  # Replica lifecycle management tests - disabled (CI doesn't support multi-region)
+  # Run manually before releases with appropriate AWS credentials
+  #- include_tasks: 'replication_lifecycle.yml'
