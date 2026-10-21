@@ -74,14 +74,14 @@ options:
       - The secret must already exist.
     type: str
     choices: ['promote_replica', 'remove_regions']
-    version_added: 12.0.1
+    version_added: 12.1.0
   target_region:
     description:
       - The AWS region containing the replica to promote.
       - Required when I(replication_action=promote_replica).
       - After promotion, the secret in this region is no longer synchronized with the primary.
     type: str
-    version_added: 12.0.1
+    version_added: 12.1.0
   remove_replica_regions:
     description:
       - List of AWS regions from which to remove replication.
@@ -90,7 +90,7 @@ options:
       - Regions without replicas are silently ignored (idempotent).
     type: list
     elements: str
-    version_added: 12.0.1
+    version_added: 12.1.0
   kms_key_id:
     description:
     - Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be
@@ -133,7 +133,7 @@ options:
     type: int
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
-  - Replica lifecycle management (I(replication_action)) was added in release 12.0.1.
+  - Replica lifecycle management (I(replication_action)) was added in release 12.1.0.
   - The I(replication_action) and I(replica) parameters are mutually exclusive and cannot be used in the same task.
 extends_documentation_fragment:
   - amazon.aws.region.modules
