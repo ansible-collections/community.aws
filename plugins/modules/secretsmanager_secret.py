@@ -643,10 +643,13 @@ def is_primary_secret(current_secret):
 def prepare_result_dict(secret_dict):
     """Prepare secret result dictionary with tags conversion and cleanup.
 
-    Args:
-        secret_dict: secret dictionary (already in snake_case)
+    Modifies the input dictionary in place by adding tags_dict and removing
+    response_metadata.
 
-    Returns: processed secret dictionary
+    Args:
+        secret_dict: secret dictionary (already in snake_case), modified in place
+
+    Returns: the same secret dictionary (modified)
     """
     if secret_dict.get("tags") is not None:
         secret_dict["tags_dict"] = boto3_tag_list_to_ansible_dict(secret_dict["tags"])
