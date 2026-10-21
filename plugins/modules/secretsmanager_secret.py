@@ -685,7 +685,9 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         regions_to_remove = module.params.get("remove_replica_regions")
 
         # Idempotency check: filter to only regions that have replicas
-        current_replica_regions = {r["Region"] for r in current_secret.get("ReplicationStatus", [])}
+        current_replica_regions = {
+            r.get("Region") for r in current_secret.get("ReplicationStatus", []) if r.get("Region")
+        }
         regions_needing_removal = [r for r in regions_to_remove if r in current_replica_regions]
 
         if not regions_needing_removal:
