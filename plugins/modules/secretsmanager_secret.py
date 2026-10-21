@@ -772,6 +772,13 @@ def main():
                 "Replication actions can only be performed on existing secrets."
             )
 
+        # Replication actions must be performed from the primary region
+        if not is_primary_secret(current_secret):
+            module.fail_json(
+                msg=f"Replication actions must be performed from the primary region. "
+                f"This secret is a replica with primary in region {current_secret.get('PrimaryRegion')}."
+            )
+
         action_result = handle_replication_action(module, secrets_mgr, current_secret)
         result = prepare_result_dict(action_result["result"])
         exit_args = {"changed": action_result["changed"], "secret": result}
