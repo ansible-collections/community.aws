@@ -10,8 +10,6 @@ __metaclass__ = type
 
 from unittest.mock import patch
 
-import pytest
-
 from ansible_collections.community.aws.plugins.modules import secretsmanager_secret
 
 
