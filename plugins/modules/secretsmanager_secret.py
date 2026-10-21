@@ -675,11 +675,11 @@ def handle_replication_action(module, secrets_mgr, current_secret):
 
         # Idempotency check: verify replica exists in target region
         if not is_replica_in_region(current_secret, target_region):
-            module.exit_json(
-                changed=False,
-                msg=f"No replica exists in region {target_region}",
-                secret=camel_dict_to_snake_dict(current_secret),
-            )
+            return {
+                "changed": False,
+                "result": camel_dict_to_snake_dict(current_secret),
+                "msg": f"No replica exists in region {target_region}",
+            }
 
         # Promote the replica
         secrets_mgr.promote_replica(secret_name, target_region)
@@ -694,11 +694,11 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         regions_needing_removal = [r for r in regions_to_remove if r in current_replica_regions]
 
         if not regions_needing_removal:
-            module.exit_json(
-                changed=False,
-                msg="No replicas exist in the specified regions",
-                secret=camel_dict_to_snake_dict(current_secret),
-            )
+            return {
+                "changed": False,
+                "result": camel_dict_to_snake_dict(current_secret),
+                "msg": "No replicas exist in the specified regions",
+            }
 
         # Remove replication from specified regions
         secrets_mgr.remove_replication(secret_name, regions_needing_removal)
@@ -774,7 +774,10 @@ def main():
 
         action_result = handle_replication_action(module, secrets_mgr, current_secret)
         result = prepare_result_dict(action_result["result"])
-        module.exit_json(changed=action_result["changed"], secret=result)
+        exit_args = {"changed": action_result["changed"], "secret": result}
+        if "msg" in action_result:
+            exit_args["msg"] = action_result["msg"]
+        module.exit_json(**exit_args)
 
     if state == "absent":
         if current_secret:
