@@ -621,10 +621,7 @@ def is_replica_in_region(current_secret, region):
 
     Returns: bool - True if replica exists in region
     """
-    return any(
-        replica.get("Region") == region
-        for replica in current_secret.get("ReplicationStatus", [])
-    )
+    return any(replica.get("Region") == region for replica in current_secret.get("ReplicationStatus", []))
 
 
 def is_primary_secret(current_secret):

@@ -2,12 +2,15 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __metaclass__ = type
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from ansible_collections.community.aws.plugins.modules import secretsmanager_secret
 
@@ -57,9 +60,7 @@ class TestHelperFunctions:
         }
         assert secretsmanager_secret.is_primary_secret(current_secret) is False
 
-    @patch(
-        "ansible_collections.community.aws.plugins.modules.secretsmanager_secret.boto3_tag_list_to_ansible_dict"
-    )
+    @patch("ansible_collections.community.aws.plugins.modules.secretsmanager_secret.boto3_tag_list_to_ansible_dict")
     def test_prepare_result_dict_with_tags(self, mock_tag_converter):
         """prepare_result_dict processes tags and removes metadata"""
         mock_tag_converter.return_value = {"env": "test", "team": "example"}
