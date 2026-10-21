@@ -439,7 +439,7 @@ class SecretsManagerInterface(object):
         try:
             response = self.client.remove_regions_from_replication(SecretId=name, RemoveReplicaRegions=regions)
         except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e, msg="Failed to replicate secret")
+            self.module.fail_json_aws(e, msg="Failed to remove regions from replication")
         return response
 
     def promote_replica(self, name, region):
