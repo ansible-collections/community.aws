@@ -4640,3 +4640,15 @@ releases:
     - 20261008-eks-nodegroup-fixes.yml
     - integration-test-iam-role-params.yml
     release_date: '2026-11-03'
+  11.2.2:
+    changes:
+      bugfixes:
+      - Fix ``COMMUNITY_AWS_COLLECTION_VERSION`` in ``plugins/module_utils/common.py``,
+        which was not updated during the 11.2.1 release and still reported the collection
+        version as ``11.2.0`` in the AWS API user-agent string.
+      release_summary: This patch release fixes the ``COMMUNITY_AWS_COLLECTION_VERSION``
+        constant that was not updated during the 11.2.1 release.
+    fragments:
+    - 11.2.2.yml
+    - 20261103-fix-collection-version-constant.yml
+    release_date: '2026-11-04'

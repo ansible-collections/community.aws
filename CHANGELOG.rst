@@ -41,6 +41,19 @@ Bugfixes
 - eks_nodegroup - Fixed integration tests by removing unsupported ``create_instance_profile`` parameter from IAM role tasks (https://github.com/ansible-collections/community.aws/pull/2505).
 - integration tests - Remove unsupported ``create_instance_profile`` and ``delete_instance_profile`` parameters from iam_role tasks (https://github.com/ansible-collections/community.aws/pull/2500).
 
+v11.2.2
+=======
+
+Release Summary
+---------------
+
+This patch release fixes the ``COMMUNITY_AWS_COLLECTION_VERSION`` constant that was not updated during the 11.2.1 release.
+
+Bugfixes
+--------
+
+- Fix ``COMMUNITY_AWS_COLLECTION_VERSION`` in ``plugins/module_utils/common.py``, which was not updated during the 11.2.1 release and still reported the collection version as ``11.2.0`` in the AWS API user-agent string.
+
 v11.2.1
 =======
 
