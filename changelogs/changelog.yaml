@@ -4564,4 +4564,4 @@ releases:
     - 11.2.1.yml
     - 20261008-eks-nodegroup-fixes.yml
     - integration-test-iam-role-params.yml
-    release_date: '2026-11-02'
+    release_date: '2026-11-03'
