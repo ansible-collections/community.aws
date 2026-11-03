@@ -4,6 +4,19 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v11.2.2
+=======
+
+Release Summary
+---------------
+
+This patch release fixes the ``COMMUNITY_AWS_COLLECTION_VERSION`` constant that was not updated during the 11.2.1 release.
+
+Bugfixes
+--------
+
+- Fix ``COMMUNITY_AWS_COLLECTION_VERSION`` in ``plugins/module_utils/common.py``, which was not updated during the 11.2.1 release and still reported the collection version as ``11.2.0`` in the AWS API user-agent string.
+
 v11.2.1
 =======
 
