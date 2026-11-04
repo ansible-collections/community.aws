@@ -41,6 +41,21 @@ Bugfixes
 - eks_nodegroup - Fixed integration tests by removing unsupported ``create_instance_profile`` parameter from IAM role tasks (https://github.com/ansible-collections/community.aws/pull/2505).
 - integration tests - Remove unsupported ``create_instance_profile`` and ``delete_instance_profile`` parameters from iam_role tasks (https://github.com/ansible-collections/community.aws/pull/2500).
 
+v11.2.1
+=======
+
+Release Summary
+---------------
+
+This patch release includes bugfixes for the ``eks_nodegroup`` module.
+
+Bugfixes
+--------
+
+- eks_nodegroup - Fixed check mode to correctly report changed status when validating tags, labels, and taints. Fixed label comparison to detect value changes. Fixed sequential update operations by waiting for nodegroup to return to ACTIVE state after updating scaling/launch template configuration before attempting to update labels, taints, or tags. Fixed wait handling in check mode to avoid unnecessary waits when no actual changes were made (https://github.com/ansible-collections/community.aws/pull/2505).
+- eks_nodegroup - Fixed integration tests by removing unsupported ``create_instance_profile`` parameter from IAM role tasks (https://github.com/ansible-collections/community.aws/pull/2505).
+- integration tests - Remove unsupported ``create_instance_profile`` and ``delete_instance_profile`` parameters from iam_role tasks (https://github.com/ansible-collections/community.aws/pull/2500).
+
 v11.2.0
 =======
 
