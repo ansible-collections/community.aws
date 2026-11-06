@@ -65,6 +65,32 @@ options:
             destination region to be used (alias/aws/secretsmanager is assumed if not specified)
         type: str
         required: false
+  replication_action:
+    description:
+      - Manage the lifecycle of secret replicas.
+      - Mutually exclusive with O(replica) parameter.
+      - V(promote_replica) stops replication to the replica in I(target_region), converting it to an independent secret.
+      - V(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
+      - The secret must already exist.
+    type: str
+    choices: ['promote_replica', 'remove_regions']
+    version_added: 12.1.0
+  target_region:
+    description:
+      - The AWS region containing the replica to promote.
+      - Required when O(replication_action=promote_replica).
+      - After promotion, the secret in this region is no longer synchronized with the primary.
+    type: str
+    version_added: 12.1.0
+  remove_replica_regions:
+    description:
+      - List of AWS regions from which to remove replication.
+      - Required when O(replication_action=remove_regions).
+      - Only regions that currently have replicas will be affected.
+      - Regions without replicas are silently ignored (idempotent).
+    type: list
+    elements: str
+    version_added: 12.1.0
   kms_key_id:
     description:
     - Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be
@@ -107,6 +133,8 @@ options:
     type: int
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
+  - Replica lifecycle management (O(replication_action)) was added in release 12.1.0.
+  - The O(replication_action) and O(replica) parameters are mutually exclusive and cannot be used in the same task.
 extends_documentation_fragment:
   - amazon.aws.region.modules
   - amazon.aws.common.modules
@@ -144,6 +172,24 @@ EXAMPLES = r"""
     secret_type: 'string'
     secret: "{{ lookup('community.general.random_string', length=16, special=false) }}"
     overwrite: false
+
+- name: Stop replication to a replica secret
+  community.aws.secretsmanager_secret:
+    name: 'my-replicated-secret'
+    replication_action: promote_replica
+    target_region: 'us-west-2'
+  # The replica in us-west-2 becomes an independent secret
+  # Idempotent: returns changed=false if us-west-2 has no replica
+
+- name: Remove replication from multiple regions
+  community.aws.secretsmanager_secret:
+    name: 'my-replicated-secret'
+    replication_action: remove_regions
+    remove_replica_regions:
+      - 'us-east-2'
+      - 'eu-west-1'
+  # Removes replicas from specified regions
+  # Idempotent: only removes regions that currently have replicas
 """
 
 RETURN = r"""
@@ -187,6 +233,19 @@ secret:
       returned: always
       type: dict
       sample: { "dc1ed59b-6d8e-4450-8b41-536dfe4600a9": [ "AWSCURRENT" ] }
+    replication_status:
+      description:
+        - Replication status for each replica region.
+        - Not present if the secret has no replicas.
+        - After promoting a replica with O(replication_action=promote_replica), the promoted
+          region no longer appears in this list (it is now an independent secret).
+      returned: when secret has replicas
+      type: list
+      elements: dict
+      sample:
+        - region: "us-east-2"
+          status: "InSync"
+          kms_key_id: "alias/aws/secretsmanager"
     tags:
       description:
         - A list of dictionaries representing the tags associated with the secret in the standard boto3 format.
@@ -380,7 +439,30 @@ class SecretsManagerInterface(object):
         try:
             response = self.client.remove_regions_from_replication(SecretId=name, RemoveReplicaRegions=regions)
         except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e, msg="Failed to replicate secret")
+            self.module.fail_json_aws(e, msg="Failed to remove regions from replication")
+        return response
+
+    def promote_replica(self, name, region):
+        """Promote a replica to standalone secret in specified region.
+
+        The stop_replication_to_replica API must be called from the target replica
+        region's client, not from the primary region.
+
+        Args:
+            name: secret name
+            region: target region where replica will be promoted
+
+        Returns: API response dict
+        """
+        if self.module.check_mode:
+            self.module.exit_json(changed=True)
+        try:
+            # Create a client for the target region
+            target_client = self.module.client("secretsmanager", region=region)
+            # Call the API from the target region (no Region parameter)
+            response = target_client.stop_replication_to_replica(SecretId=name)
+        except (BotoCoreError, ClientError) as e:
+            self.module.fail_json_aws(e, msg=f"Failed to promote replica in region {region} to standalone")
         return response
 
     def replicate_secret(self, name, regions):
@@ -530,6 +612,99 @@ def compare_regions(desired_secret, current_secret):
     return regions_to_set_replication, regions_to_remove_replication
 
 
+def is_replica_in_region(current_secret, region):
+    """Check if a replica exists in the specified region.
+
+    Args:
+        current_secret: secret dict from AWS API
+        region: AWS region to check
+
+    Returns: bool - True if replica exists in region
+    """
+    return any(replica.get("Region") == region for replica in current_secret.get("ReplicationStatus", []))
+
+
+def is_primary_secret(current_secret):
+    """Check if the secret is a primary (not a replica).
+
+    A secret is a replica if it has a PrimaryRegion field.
+
+    Args:
+        current_secret: secret dict from AWS API
+
+    Returns: bool - True if secret is primary (not a replica)
+    """
+    return "PrimaryRegion" not in current_secret
+
+
+def prepare_result_dict(secret_dict):
+    """Prepare secret result dictionary with tags conversion and cleanup.
+
+    Modifies the input dictionary in place by adding tags_dict and removing
+    response_metadata.
+
+    Args:
+        secret_dict: secret dictionary (already in snake_case), modified in place
+
+    Returns: the same secret dictionary (modified)
+    """
+    if secret_dict.get("tags") is not None:
+        secret_dict["tags_dict"] = boto3_tag_list_to_ansible_dict(secret_dict["tags"])
+    secret_dict.pop("response_metadata", None)
+    return secret_dict
+
+
+def handle_replication_action(module, secrets_mgr, current_secret):
+    """Handle replica lifecycle operations (promote or remove).
+
+    Args:
+        module: AnsibleAWSModule instance
+        secrets_mgr: SecretsManagerInterface instance
+        current_secret: current secret state from AWS
+
+    Returns: dict with 'changed' and 'result' keys
+    """
+    action = module.params.get("replication_action")
+    secret_name = module.params.get("name")
+
+    if action == "promote_replica":
+        target_region = module.params.get("target_region")
+
+        # Idempotency check: verify replica exists in target region
+        if not is_replica_in_region(current_secret, target_region):
+            return {
+                "changed": False,
+                "result": camel_dict_to_snake_dict(current_secret),
+                "msg": f"No replica exists in region {target_region}",
+            }
+
+        # Promote the replica
+        secrets_mgr.promote_replica(secret_name, target_region)
+
+    elif action == "remove_regions":
+        regions_to_remove = module.params.get("remove_replica_regions")
+
+        # Idempotency check: filter to only regions that have replicas
+        current_replica_regions = {
+            r.get("Region") for r in current_secret.get("ReplicationStatus", []) if r.get("Region")
+        }
+        regions_needing_removal = [r for r in regions_to_remove if r in current_replica_regions]
+
+        if not regions_needing_removal:
+            return {
+                "changed": False,
+                "result": camel_dict_to_snake_dict(current_secret),
+                "msg": "No replicas exist in the specified regions",
+            }
+
+        # Remove replication from specified regions
+        secrets_mgr.remove_replication(secret_name, regions_needing_removal)
+
+    # Fetch updated secret info and return result
+    updated_secret = secrets_mgr.get_secret(secret_name)
+    return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
+
+
 def main():
     replica_args = dict(
         region=dict(type="str", required=True),
@@ -553,13 +728,21 @@ def main():
             "rotation_lambda": dict(),
             "rotation_interval": dict(type="int", default=30),
             "recovery_window": dict(type="int", default=30),
+            "replication_action": dict(type="str", choices=["promote_replica", "remove_regions"]),
+            "target_region": dict(type="str"),
+            "remove_replica_regions": dict(type="list", elements="str"),
         },
-        mutually_exclusive=[["secret", "json_secret"]],
+        mutually_exclusive=[["secret", "json_secret"], ["replica", "replication_action"]],
+        required_if=[
+            ("replication_action", "promote_replica", ["target_region"]),
+            ("replication_action", "remove_regions", ["remove_replica_regions"]),
+        ],
         supports_check_mode=True,
     )
 
     changed = False
     state = module.params.get("state")
+    replication_action = module.params.get("replication_action")
     secrets_mgr = SecretsManagerInterface(module)
     recovery_window = module.params.get("recovery_window")
     secret = Secret(
@@ -577,6 +760,28 @@ def main():
     purge_tags = module.params.get("purge_tags")
 
     current_secret = secrets_mgr.get_secret(secret.name)
+
+    # Handle replica lifecycle operations
+    if replication_action:
+        if current_secret is None:
+            module.fail_json(
+                msg=f"Secret '{secret.name}' does not exist. "
+                "Replication actions can only be performed on existing secrets."
+            )
+
+        # Replication actions must be performed from the primary region
+        if not is_primary_secret(current_secret):
+            module.fail_json(
+                msg=f"Replication actions must be performed from the primary region. "
+                f"This secret is a replica with primary in region {current_secret.get('PrimaryRegion')}."
+            )
+
+        action_result = handle_replication_action(module, secrets_mgr, current_secret)
+        result = prepare_result_dict(action_result["result"])
+        exit_args = {"changed": action_result["changed"], "secret": result}
+        if "msg" in action_result:
+            exit_args["msg"] = action_result["msg"]
+        module.exit_json(**exit_args)
 
     if state == "absent":
         if current_secret:
@@ -643,10 +848,7 @@ def main():
                 secrets_mgr.remove_replication(secret.name, regions_to_remove_replication)
                 changed = True
 
-        result = camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name))
-        if result.get("tags", None) is not None:
-            result["tags_dict"] = boto3_tag_list_to_ansible_dict(result.get("tags", []))
-        result.pop("response_metadata")
+        result = prepare_result_dict(camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name)))
 
     module.exit_json(changed=changed, secret=result)
 
