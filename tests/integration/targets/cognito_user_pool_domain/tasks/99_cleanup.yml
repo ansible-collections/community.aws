@@ -1,0 +1,15 @@
+---
+- name: Delete user pool domain
+  cognito_user_pool_domain:
+    state: absent
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined
+
+- name: Delete Cognito user pool
+  cognito_user_pool:
+    state: absent
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  ignore_errors: true
+  when: cognito_user_pool_id is defined

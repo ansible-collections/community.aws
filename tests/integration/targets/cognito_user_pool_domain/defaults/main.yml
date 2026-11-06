@@ -1,0 +1,4 @@
+---
+cognito_user_pool_name: '{{ resource_prefix }}-domain-pool'
+# Domain prefix must be lowercase alphanumeric + hyphens only
+cognito_domain_prefix: '{{ resource_prefix | lower | regex_replace("[^a-z0-9-]", "-") }}'
