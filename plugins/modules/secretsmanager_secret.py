@@ -85,7 +85,7 @@ options:
   remove_replica_regions:
     description:
       - List of AWS regions from which to remove replication.
-      - Required when I(replication_action=remove_regions).
+      - Required when O(replication_action=remove_regions).
       - Only regions that currently have replicas will be affected.
       - Regions without replicas are silently ignored (idempotent).
     type: list
