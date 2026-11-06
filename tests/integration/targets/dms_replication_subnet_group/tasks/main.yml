@@ -20,6 +20,14 @@
       register: iam_role_output
       ignore_errors: yes
 
+    - name: create IAM instance profile for DMS VPC role
+      amazon.aws.iam_instance_profile:
+        name: "{{ dms_role_role_name }}"
+        role: "{{ dms_role_role_name }}"
+        state: present
+      register: iam_instance_profile_creation
+      ignore_errors: yes
+
     - name: Create VPC for use in testing
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
@@ -159,6 +167,12 @@
           Name: Ansible ec2_instance Testing VPC
         tenancy: default
         state: absent
+
+    - name: delete IAM instance profile for DMS VPC role
+      amazon.aws.iam_instance_profile:
+        name: "{{ dms_role_role_name }}"
+        state: absent
+      ignore_errors: yes
 
     - name: delete dms-vpc role
       iam_role:
