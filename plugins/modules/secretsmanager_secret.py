@@ -70,7 +70,7 @@ options:
       - Manage the lifecycle of secret replicas.
       - Mutually exclusive with O(replica) parameter.
       - V(promote_replica) stops replication to the replica in I(target_region), converting it to an independent secret.
-      - C(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
+      - V(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
       - The secret must already exist.
     type: str
     choices: ['promote_replica', 'remove_regions']
