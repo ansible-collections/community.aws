@@ -237,7 +237,7 @@ secret:
       description:
         - Replication status for each replica region.
         - Not present if the secret has no replicas.
-        - After promoting a replica with I(replication_action=promote_replica), the promoted
+        - After promoting a replica with O(replication_action=promote_replica), the promoted
           region no longer appears in this list (it is now an independent secret).
       returned: when secret has replicas
       type: list
