@@ -68,7 +68,7 @@ options:
   replication_action:
     description:
       - Manage the lifecycle of secret replicas.
-      - Mutually exclusive with I(replica) parameter.
+      - Mutually exclusive with O(replica) parameter.
       - C(promote_replica) stops replication to the replica in I(target_region), converting it to an independent secret.
       - C(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
       - The secret must already exist.
