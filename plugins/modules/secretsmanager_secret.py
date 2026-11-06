@@ -68,9 +68,9 @@ options:
   replication_action:
     description:
       - Manage the lifecycle of secret replicas.
-      - Mutually exclusive with I(replica) parameter.
-      - C(promote_replica) stops replication to the replica in I(target_region), converting it to an independent secret.
-      - C(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
+      - Mutually exclusive with O(replica) parameter.
+      - V(promote_replica) stops replication to the replica in I(target_region), converting it to an independent secret.
+      - V(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
       - The secret must already exist.
     type: str
     choices: ['promote_replica', 'remove_regions']
@@ -78,14 +78,14 @@ options:
   target_region:
     description:
       - The AWS region containing the replica to promote.
-      - Required when I(replication_action=promote_replica).
+      - Required when O(replication_action=promote_replica).
       - After promotion, the secret in this region is no longer synchronized with the primary.
     type: str
     version_added: 12.1.0
   remove_replica_regions:
     description:
       - List of AWS regions from which to remove replication.
-      - Required when I(replication_action=remove_regions).
+      - Required when O(replication_action=remove_regions).
       - Only regions that currently have replicas will be affected.
       - Regions without replicas are silently ignored (idempotent).
     type: list
@@ -133,8 +133,8 @@ options:
     type: int
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
-  - Replica lifecycle management (I(replication_action)) was added in release 12.1.0.
-  - The I(replication_action) and I(replica) parameters are mutually exclusive and cannot be used in the same task.
+  - Replica lifecycle management (O(replication_action)) was added in release 12.1.0.
+  - The O(replication_action) and O(replica) parameters are mutually exclusive and cannot be used in the same task.
 extends_documentation_fragment:
   - amazon.aws.region.modules
   - amazon.aws.common.modules
@@ -237,15 +237,15 @@ secret:
       description:
         - Replication status for each replica region.
         - Not present if the secret has no replicas.
-        - After promoting a replica with I(replication_action=promote_replica), the promoted
+        - After promoting a replica with O(replication_action=promote_replica), the promoted
           region no longer appears in this list (it is now an independent secret).
       returned: when secret has replicas
       type: list
       elements: dict
       sample:
-        - region: us-east-2
-          status: InSync
-          kms_key_id: alias/aws/secretsmanager
+        - region: "us-east-2"
+          status: "InSync"
+          kms_key_id: "alias/aws/secretsmanager"
     tags:
       description:
         - A list of dictionaries representing the tags associated with the secret in the standard boto3 format.
