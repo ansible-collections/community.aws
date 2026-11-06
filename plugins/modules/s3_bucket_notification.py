@@ -156,15 +156,12 @@ notification_configuration:
       type: list
 """
 
-try:
-    from botocore.exceptions import BotoCoreError
-    from botocore.exceptions import ClientError
-except ImportError:
-    pass  # will be protected by AnsibleAWSModule
-
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.s3 import AnsibleS3Error
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.s3 import build_notification_configuration
+from ansible_collections.community.aws.plugins.module_utils.s3 import get_bucket_notification_configuration
+from ansible_collections.community.aws.plugins.module_utils.s3 import put_bucket_notification_configuration
 
 
 class AmazonBucket:
@@ -181,10 +178,7 @@ class AmazonBucket:
                 QueueConfigurations=[], TopicConfigurations=[], LambdaFunctionConfigurations=[]
             )
 
-            try:
-                config_lookup = self.client.get_bucket_notification_configuration(Bucket=self.bucket_name)
-            except (ClientError, BotoCoreError) as e:
-                self.module.fail_json(msg=f"{e}")
+            config_lookup = get_bucket_notification_configuration(self.client, self.bucket_name)
 
             # Handle different event targets
             if config_lookup.get("QueueConfigurations"):
@@ -240,18 +234,17 @@ class AmazonBucket:
         return configs
 
     def _upload_bucket_config(self, configs):
-        api_params = dict(Bucket=self.bucket_name, NotificationConfiguration=dict())
+        notification_config = dict()
 
         # Iterate through available configs
         for target_configs in configs:
             if len(configs[target_configs]) > 0:
-                api_params["NotificationConfiguration"][target_configs] = configs[target_configs]
+                notification_config[target_configs] = configs[target_configs]
 
         if not self.check_mode:
-            try:
-                self.client.put_bucket_notification_configuration(**api_params)
-            except (ClientError, BotoCoreError) as e:
-                self.module.fail_json(msg=f"{e}")
+            put_bucket_notification_configuration(self.client, self.bucket_name, notification_config)
+            # Invalidate cache so next call to full_config() retrieves updated configuration
+            self._full_config_cache = None
 
 
 class Config:
@@ -352,39 +345,55 @@ def setup_module_object():
     )
 
 
-def main():
-    module = setup_module_object()
-
-    client = module.client("s3")
+def create_or_update_bucket_notification(module, client):
+    """Create or update bucket notification configuration."""
     bucket = AmazonBucket(module, client)
     current = bucket.current_config(module.params["event_name"])
     desired = Config.from_params(**module.params)
 
-    notification_configs = dict(QueueConfigurations=[], TopicConfigurations=[], LambdaFunctionConfigurations=[])
+    # Check if already in desired state
+    if current == desired:
+        return False, build_notification_configuration(bucket.full_config())
 
-    for target_configs in bucket.full_config():
-        for cfg in bucket.full_config()[target_configs]:
-            notification_configs[target_configs].append(camel_dict_to_snake_dict(cfg.raw))
+    if module.check_mode:
+        return True, build_notification_configuration(bucket.full_config())
 
-    state = module.params["state"]
-    updated_configuration = dict()
-    changed = False
+    bucket.apply_config(desired)
+    return True, build_notification_configuration(bucket.full_config())
 
-    if state == "present":
-        if current != desired:
-            updated_configuration = bucket.apply_config(desired)
-            changed = True
-    elif state == "absent":
-        if current:
-            updated_configuration = bucket.delete_config(desired)
-            changed = True
 
-    for target_configs in updated_configuration:
-        notification_configs[target_configs] = []
-        for cfg in updated_configuration.get(target_configs, list()):
-            notification_configs[target_configs].append(camel_dict_to_snake_dict(cfg))
+def delete_bucket_notification(module, client):
+    """Delete bucket notification configuration."""
+    bucket = AmazonBucket(module, client)
+    current = bucket.current_config(module.params["event_name"])
+    desired = Config.from_params(**module.params)
 
-    module.exit_json(changed=changed, notification_configuration=camel_dict_to_snake_dict(notification_configs))
+    # Check if already absent
+    if not current:
+        return False, build_notification_configuration(bucket.full_config())
+
+    if module.check_mode:
+        return True, build_notification_configuration(bucket.full_config())
+
+    bucket.delete_config(desired)
+    return True, build_notification_configuration(bucket.full_config())
+
+
+def main():
+    module = setup_module_object()
+
+    try:
+        client = module.client("s3")
+        state = module.params["state"]
+
+        if state == "present":
+            changed, notification_configuration = create_or_update_bucket_notification(module, client)
+        else:  # absent
+            changed, notification_configuration = delete_bucket_notification(module, client)
+
+        module.exit_json(changed=changed, notification_configuration=notification_configuration)
+    except AnsibleS3Error as e:
+        module.fail_json_aws_error(e)
 
 
 if __name__ == "__main__":
