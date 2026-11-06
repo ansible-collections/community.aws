@@ -446,16 +446,12 @@ class SecretsManagerInterface(object):
         return response
 
     def tag_secret(self, secret_name, tags):
-        if self.module.check_mode:
-            self.module.exit_json(changed=True)
         try:
             self.client.tag_resource(SecretId=secret_name, Tags=tags)
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Failed to add tag(s) to secret")
 
     def untag_secret(self, secret_name, tag_keys):
-        if self.module.check_mode:
-            self.module.exit_json(changed=True)
         try:
             self.client.untag_resource(SecretId=secret_name, TagKeys=tag_keys)
         except (BotoCoreError, ClientError) as e:
@@ -631,11 +627,13 @@ def main():
                 current_tags = boto3_tag_list_to_ansible_dict(current_secret.get("Tags", []))
                 tags_to_add, tags_to_remove = compare_aws_tags(current_tags, secret.tags, purge_tags)
                 if tags_to_add:
-                    secrets_mgr.tag_secret(secret.name, ansible_dict_to_boto3_tag_list(tags_to_add))
                     changed = True
+                    if not module.check_mode:
+                        secrets_mgr.tag_secret(secret.name, ansible_dict_to_boto3_tag_list(tags_to_add))
                 if tags_to_remove:
-                    secrets_mgr.untag_secret(secret.name, tags_to_remove)
                     changed = True
+                    if not module.check_mode:
+                        secrets_mgr.untag_secret(secret.name, tags_to_remove)
 
             regions_to_set_replication, regions_to_remove_replication = compare_regions(secret, current_secret)
             if regions_to_set_replication:
