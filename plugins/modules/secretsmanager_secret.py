@@ -133,7 +133,7 @@ options:
     type: int
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
-  - Replica lifecycle management (I(replication_action)) was added in release 12.1.0.
+  - Replica lifecycle management (O(replication_action)) was added in release 12.1.0.
   - The O(replication_action) and O(replica) parameters are mutually exclusive and cannot be used in the same task.
 extends_documentation_fragment:
   - amazon.aws.region.modules
