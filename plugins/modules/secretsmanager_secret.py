@@ -243,9 +243,9 @@ secret:
       type: list
       elements: dict
       sample:
-        - region: us-east-2
-          status: InSync
-          kms_key_id: alias/aws/secretsmanager
+        - region: "us-east-2"
+          status: "InSync"
+          kms_key_id: "alias/aws/secretsmanager"
     tags:
       description:
         - A list of dictionaries representing the tags associated with the secret in the standard boto3 format.
