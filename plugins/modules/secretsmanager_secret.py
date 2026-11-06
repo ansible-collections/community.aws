@@ -78,7 +78,7 @@ options:
   target_region:
     description:
       - The AWS region containing the replica to promote.
-      - Required when I(replication_action=promote_replica).
+      - Required when O(replication_action=promote_replica).
       - After promotion, the secret in this region is no longer synchronized with the primary.
     type: str
     version_added: 12.1.0
