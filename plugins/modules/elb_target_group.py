@@ -63,6 +63,16 @@ options:
       - The number of consecutive health checks successes required before considering an unhealthy target healthy.
     required: false
     type: int
+  ip_address_type:
+    description:
+      - The IP address type of the target group.
+      - The I(ip_address_type) parameter is immutable and cannot be changed when updating an elb_target_group.
+      - If not specified, AWS uses C(ipv4).
+      - Not used when I(target_type=lambda).
+    required: false
+    choices: ['ipv4', 'ipv6']
+    type: str
+    version_added: 13.0.0
   modify_targets:
     description:
       - Whether or not to alter existing targets in the group to match what is passed with the module
@@ -233,6 +243,16 @@ EXAMPLES = r"""
     protocol_version: GRPC
     state: present
 
+- name: Create a target group for IPv6 targets
+  community.aws.elb_target_group:
+    name: mytargetgroup
+    protocol: http
+    port: 80
+    vpc_id: vpc-01234567
+    target_type: ip
+    ip_address_type: ipv6
+    state: present
+
 - name: Modify the target group with a custom health check
   community.aws.elb_target_group:
     name: mytargetgroup
@@ -365,6 +385,12 @@ healthy_threshold_count:
     returned: when state present
     type: int
     sample: 5
+ip_address_type:
+    description: The IP address type of the target group.
+    returned: when state present
+    type: str
+    version_added: 13.0.0
+    sample: ipv4
 load_balancer_arns:
     description: The Amazon Resource Names (ARN) of the load balancers that route traffic to this target group.
     returned: when state present
@@ -609,6 +635,8 @@ def create_or_update_target_group(connection, module):
         params["Protocol"] = module.params.get("protocol").upper()
         if module.params.get("protocol_version") is not None:
             params["ProtocolVersion"] = module.params.get("protocol_version")
+        if module.params.get("ip_address_type") is not None:
+            params["IpAddressType"] = module.params.get("ip_address_type")
         params["Port"] = module.params.get("port")
         params["VpcId"] = module.params.get("vpc_id")
     tags = module.params.get("tags")
@@ -664,6 +692,8 @@ def create_or_update_target_group(connection, module):
 
     if target_group:
         diffs = [param for param in ("Port", "Protocol", "VpcId") if target_group.get(param) != params.get(param)]
+        if "IpAddressType" in params and target_group.get("IpAddressType", "ipv4") != params["IpAddressType"]:
+            diffs.append("IpAddressType")
         if diffs:
             module.fail_json(msg=f"Cannot modify {', '.join(diffs)} parameter(s) for a target group")
         # Target group exists so check health check parameters match what has been passed
@@ -998,6 +1028,7 @@ def main():
         health_check_interval=dict(type="int"),
         health_check_timeout=dict(type="int"),
         healthy_threshold_count=dict(type="int"),
+        ip_address_type=dict(type="str", choices=["ipv4", "ipv6"]),
         modify_targets=dict(default=True, type="bool"),
         name=dict(required=True),
         port=dict(type="int"),
