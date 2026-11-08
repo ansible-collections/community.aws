@@ -295,6 +295,15 @@ options:
         type: dict
         required: false
         version_added: 4.1.0
+    purge_tags:
+        description:
+          - If I(purge_tags=true) and I(tags) is set, existing tags not in I(tags) will be removed from the service.
+          - If I(tags) is not set, tags will not be modified, even if I(purge_tags=true).
+          - This option only takes effect when updating an existing service; tags are fully controlled at creation time.
+        type: bool
+        required: false
+        default: false
+        version_added: 12.0.0
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -690,6 +699,7 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.transformation import map_complex_type
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
@@ -778,9 +788,6 @@ class EcsServiceManager:
             return False
 
         if (expected["propagate_tags"] or "NONE") != existing["propagateTags"]:
-            return False
-
-        if boto3_tag_list_to_ansible_dict(existing.get("tags", [])) != (expected["tags"] or {}):
             return False
 
         if (expected["enable_execute_command"] or False) != existing.get("enableExecuteCommand", False):
@@ -1020,6 +1027,7 @@ def main():
         ),
         propagate_tags=dict(required=False, choices=["TASK_DEFINITION", "SERVICE"]),
         tags=dict(required=False, type="dict"),
+        purge_tags=dict(required=False, type="bool", default=False),
         enable_execute_command=dict(required=False, type="bool"),
     )
 
@@ -1138,12 +1146,6 @@ def main():
                             msg="It is not currently supported to enable propagation tags of an existing service"
                         )
 
-                    if (
-                        module.params["tags"]
-                        and boto3_tag_list_to_ansible_dict(existing["tags"]) != module.params["tags"]
-                    ):
-                        module.fail_json(msg="It is not currently supported to change tags of an existing service")
-
                     updatedLoadBalancers = loadBalancers if existing["deploymentController"]["type"] == "ECS" else []
 
                     if task_definition is None and module.params["force_new_deployment"]:
@@ -1204,6 +1206,27 @@ def main():
                 results["service"] = response
 
             results["changed"] = True
+
+        # Reconcile tags on existing services (update or matching with tag drift).
+        # For newly created services, tags were already applied via create_service.
+        if module.params.get("tags") is not None and not module.check_mode and (update or matching) and existing:
+            service_arn = existing.get("serviceArn")
+            current_tags = boto3_tag_list_to_ansible_dict(existing.get("tags", []))
+            add_tags, remove = compare_aws_tags(
+                current_tags, module.params["tags"], purge_tags=module.params.get("purge_tags", False)
+            )
+            if add_tags or remove:
+                try:
+                    if remove:
+                        service_mgr.ecs.untag_resource(resourceArn=service_arn, tagKeys=remove)
+                    if add_tags:
+                        service_mgr.ecs.tag_resource(
+                            resourceArn=service_arn,
+                            tags=ansible_dict_to_boto3_tag_list(add_tags, "key", "value"),
+                        )
+                except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+                    module.fail_json_aws(e, msg="Couldn't update service tags")
+                results["changed"] = True
 
     elif module.params["state"] == "absent":
         if not existing:

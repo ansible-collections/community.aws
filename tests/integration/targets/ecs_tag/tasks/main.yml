@@ -278,7 +278,7 @@
           - ecs_service_creation_tags.service.tags.Name == "foo"
           - ecs_service_creation_tags.service.tags["Last Name"] == "bar"
 
-    - name: create the same ecs_service with tags
+    - name: update tags on existing ecs_service
       ecs_service:
         name: "{{ resource_prefix }}-tags"
         cluster: "{{ resource_prefix }}"
@@ -287,14 +287,12 @@
         state: present
         tags:
           test: test
-      ignore_errors: yes
       register: ecs_service_creation_again
 
-    - name: check that creation again with tags failed
+    - name: check that updating tags on existing service succeeds
       assert:
         that:
-          - ecs_service_creation_again is failed
-          - '"msg" in ecs_service_creation_again'
+          - ecs_service_creation_again is changed
 
   always:
     - name: scale down ecs service
