@@ -6,11 +6,12 @@
 
 DOCUMENTATION = r"""
 ---
-module: s3_lifecycle
+module: s3_bucket_lifecycle
 version_added: 1.0.0
 short_description: Manage S3 bucket lifecycle rules in AWS
 description:
   - Manage S3 bucket lifecycle rules in AWS.
+  - Since release 11.1.0 the preferred name is C(community.aws.s3_bucket_lifecycle), C(community.aws.s3_lifecycle) remains as an alias.
 author:
   - "Rob White (@wimnat)"
 notes:
@@ -243,17 +244,12 @@ try:
 except ImportError:
     HAS_DATEUTIL = False
 
-try:
-    import botocore
-except ImportError:
-    pass  # handled by AnsibleAwsModule
-
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_message
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import normalize_boto3_result
-from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.s3 import AnsibleS3Error
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.s3 import delete_bucket_lifecycle
+from ansible_collections.community.aws.plugins.module_utils.s3 import get_bucket_lifecycle_configuration
+from ansible_collections.community.aws.plugins.module_utils.s3 import put_bucket_lifecycle_configuration
 
 
 def parse_date(date):
@@ -271,17 +267,8 @@ def parse_date(date):
 
 def fetch_rules(client, module, name):
     # Get the bucket's current lifecycle rules
-    try:
-        current_lifecycle = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)
-        current_lifecycle_rules = normalize_boto3_result(current_lifecycle["Rules"])
-    except is_boto3_error_code("NoSuchLifecycleConfiguration"):
-        current_lifecycle_rules = []
-    except (
-        botocore.exceptions.ClientError,
-        botocore.exceptions.BotoCoreError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e)
-    return current_lifecycle_rules
+    current_lifecycle = get_bucket_lifecycle_configuration(client, name)
+    return current_lifecycle.get("Rules", [])
 
 
 # Helper function to deeply compare filters
@@ -519,58 +506,69 @@ def merge_transitions(updated_rule, updating_rule):
 def create_lifecycle_rule(client, module):
     name = module.params.get("name")
     wait = module.params.get("wait")
-    changed = False
 
     old_lifecycle_rules = fetch_rules(client, module, name)
     new_rule = build_rule(client, module)
     (changed, lifecycle_configuration) = compare_and_update_configuration(client, module, old_lifecycle_rules, new_rule)
-    if changed:
-        # Write lifecycle to bucket
-        try:
-            client.put_bucket_lifecycle_configuration(
-                aws_retry=True, Bucket=name, LifecycleConfiguration=lifecycle_configuration
-            )
-        except is_boto3_error_message("At least one action needs to be specified in a rule"):
-            # Amazon interpreted this as not changing anything
-            changed = False
-        except (
-            botocore.exceptions.ClientError,
-            botocore.exceptions.BotoCoreError,
-        ) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(
-                e, lifecycle_configuration=lifecycle_configuration, name=name, old_lifecycle_rules=old_lifecycle_rules
-            )
 
-        _changed = changed
-        _retries = 10
-        _not_changed_cnt = 6
-        while wait and _changed and _retries and _not_changed_cnt:
-            # We've seen examples where get_bucket_lifecycle_configuration returns
-            # the updated rules, then the old rules, then the updated rules again and
-            # again couple of times.
-            # Thus try to read the rule few times in a row to check if it has changed.
-            time.sleep(5)
-            _retries -= 1
-            new_rules = fetch_rules(client, module, name)
-            (_changed, lifecycle_configuration) = compare_and_update_configuration(client, module, new_rules, new_rule)
-            if not _changed:
-                _not_changed_cnt -= 1
-                _changed = True
-            else:
-                _not_changed_cnt = 6
-    else:
+    if not changed:
+        new_rules = fetch_rules(client, module, name)
+        return {
+            "changed": False,
+            "new_rule": new_rule,
+            "rules": new_rules,
+            "old_rules": old_lifecycle_rules,
+            "_retries": 0,
+            "_config": lifecycle_configuration,
+        }
+
+    if module.check_mode:
+        return {
+            "changed": True,
+            "new_rule": new_rule,
+            "rules": old_lifecycle_rules,
+            "old_rules": old_lifecycle_rules,
+            "_retries": 0,
+            "_config": lifecycle_configuration,
+        }
+
+    # Write lifecycle to bucket
+    result = put_bucket_lifecycle_configuration(client, name, lifecycle_configuration)
+    if result is None:
+        # Amazon interpreted this as not changing anything
+        changed = False
+
+    _changed = changed
+    _retries = 10
+    _not_changed_cnt = 6
+    while wait and _changed and _retries and _not_changed_cnt:
+        # We've seen examples where get_bucket_lifecycle_configuration returns
+        # the updated rules, then the old rules, then the updated rules again and
+        # again couple of times.
+        # Thus try to read the rule few times in a row to check if it has changed.
+        time.sleep(5)
+        _retries -= 1
+        new_rules = fetch_rules(client, module, name)
+        (_changed, lifecycle_configuration) = compare_and_update_configuration(client, module, new_rules, new_rule)
+        if not _changed:
+            _not_changed_cnt -= 1
+            _changed = True
+        else:
+            _not_changed_cnt = 6
+
+    if not wait:
         _retries = 0
 
     new_rules = fetch_rules(client, module, name)
 
-    module.exit_json(
-        changed=changed,
-        new_rule=new_rule,
-        rules=new_rules,
-        old_rules=old_lifecycle_rules,
-        _retries=_retries,
-        _config=lifecycle_configuration,
-    )
+    return {
+        "changed": changed,
+        "new_rule": new_rule,
+        "rules": new_rules,
+        "old_rules": old_lifecycle_rules,
+        "_retries": _retries,
+        "_config": lifecycle_configuration,
+    }
 
 
 def destroy_lifecycle_rule(client, module):
@@ -578,7 +576,6 @@ def destroy_lifecycle_rule(client, module):
     prefix = module.params.get("prefix")
     rule_id = module.params.get("rule_id")
     wait = module.params.get("wait")
-    changed = False
 
     if prefix is None:
         prefix = ""
@@ -586,42 +583,42 @@ def destroy_lifecycle_rule(client, module):
     current_lifecycle_rules = fetch_rules(client, module, name)
     changed, lifecycle_obj = compare_and_remove_rule(current_lifecycle_rules, rule_id, prefix)
 
-    if changed:
-        # Write lifecycle to bucket or, if there no rules left, delete lifecycle configuration
-        try:
-            if lifecycle_obj["Rules"]:
-                client.put_bucket_lifecycle_configuration(
-                    aws_retry=True, Bucket=name, LifecycleConfiguration=lifecycle_obj
-                )
-            elif current_lifecycle_rules:
-                changed = True
-                client.delete_bucket_lifecycle(aws_retry=True, Bucket=name)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e)
+    if not changed:
+        new_rules = fetch_rules(client, module, name)
+        return {"changed": False, "rules": new_rules, "_retries": 0}
 
-        _changed = changed
-        _retries = 10
-        _not_changed_cnt = 6
-        while wait and _changed and _retries and _not_changed_cnt:
-            # We've seen examples where get_bucket_lifecycle_configuration returns
-            # the updated rules, then the old rules, then the updated rules again and
-            # again couple of times.
-            # Thus try to read the rule few times in a row to check if it has changed.
-            time.sleep(5)
-            _retries -= 1
-            new_rules = fetch_rules(client, module, name)
-            (_changed, lifecycle_configuration) = compare_and_remove_rule(new_rules, rule_id, prefix)
-            if not _changed:
-                _not_changed_cnt -= 1
-                _changed = True
-            else:
-                _not_changed_cnt = 6
-    else:
+    if module.check_mode:
+        return {"changed": True, "rules": current_lifecycle_rules, "_retries": 0}
+
+    # Write lifecycle to bucket or, if there no rules left, delete lifecycle configuration
+    if lifecycle_obj["Rules"]:
+        put_bucket_lifecycle_configuration(client, name, lifecycle_obj)
+    elif current_lifecycle_rules:
+        delete_bucket_lifecycle(client, name)
+
+    _changed = changed
+    _retries = 10
+    _not_changed_cnt = 6
+    while wait and _changed and _retries and _not_changed_cnt:
+        # We've seen examples where get_bucket_lifecycle_configuration returns
+        # the updated rules, then the old rules, then the updated rules again and
+        # again couple of times.
+        # Thus try to read the rule few times in a row to check if it has changed.
+        time.sleep(5)
+        _retries -= 1
+        new_rules = fetch_rules(client, module, name)
+        (_changed, _lifecycle_configuration) = compare_and_remove_rule(new_rules, rule_id, prefix)
+        if not _changed:
+            _not_changed_cnt -= 1
+            _changed = True
+        else:
+            _not_changed_cnt = 6
+
+    if not wait:
         _retries = 0
 
     new_rules = fetch_rules(client, module, name)
-
-    module.exit_json(changed=changed, rules=new_rules, old_rules=current_lifecycle_rules, _retries=_retries)
+    return {"changed": changed, "rules": new_rules, "old_rules": current_lifecycle_rules, "_retries": _retries}
 
 
 def main():
@@ -653,6 +650,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        supports_check_mode=True,
         mutually_exclusive=[
             ["expiration_days", "expiration_date", "expire_object_delete_marker"],
             ["expiration_days", "transition_date"],
@@ -667,7 +665,7 @@ def main():
         },
     )
 
-    client = module.client("s3", retry_decorator=AWSRetry.jittered_backoff())
+    client = module.client("s3")
 
     expiration_date = module.params.get("expiration_date")
     transition_date = module.params.get("transition_date")
@@ -710,10 +708,15 @@ def main():
                 "  The time must be midnight and a timezone of GMT must be included"
             )
 
-    if state == "present":
-        create_lifecycle_rule(client, module)
-    elif state == "absent":
-        destroy_lifecycle_rule(client, module)
+    try:
+        if state == "present":
+            result = create_lifecycle_rule(client, module)
+        elif state == "absent":
+            result = destroy_lifecycle_rule(client, module)
+
+        module.exit_json(**result)
+    except AnsibleS3Error as e:
+        module.fail_json_aws_error(e)
 
 
 if __name__ == "__main__":
