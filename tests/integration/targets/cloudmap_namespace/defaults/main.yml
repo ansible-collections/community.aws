@@ -1,0 +1,4 @@
+---
+cloudmap_namespace_name: "{{ resource_prefix }}.cloudmaptest.com"
+cloudmap_private_namespace_name: "{{ resource_prefix }}-private.cloudmaptest.com"
+cloudmap_description: "Created by Ansible integration tests"
