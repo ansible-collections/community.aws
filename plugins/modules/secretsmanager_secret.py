@@ -624,17 +624,38 @@ def is_replica_in_region(current_secret, region):
     return any(replica.get("Region") == region for replica in current_secret.get("ReplicationStatus", []))
 
 
+def get_region_from_arn(arn):
+    """Extract AWS region from an ARN.
+
+    Args:
+        arn: AWS ARN string (e.g., arn:aws:secretsmanager:us-west-2:123456789012:secret:my-secret)
+
+    Returns: str - AWS region (e.g., 'us-west-2'), or None if ARN is invalid
+    """
+    try:
+        return arn.split(":")[3]
+    except (AttributeError, IndexError):
+        return None
+
+
 def is_primary_secret(current_secret):
     """Check if the secret is a primary (not a replica).
 
-    A secret is a replica if it has a PrimaryRegion field.
+    A secret is a replica if it has a PrimaryRegion field that differs from
+    the secret's own region. AWS returns PrimaryRegion for both primary and
+    replica secrets - for primaries it matches the secret's region, for replicas
+    it points to a different region.
 
     Args:
-        current_secret: secret dict from AWS API
+        current_secret: secret dict from AWS API (must contain 'ARN')
 
     Returns: bool - True if secret is primary (not a replica)
     """
-    return "PrimaryRegion" not in current_secret
+    primary_region = current_secret.get("PrimaryRegion")
+    if not primary_region:
+        return True
+
+    return get_region_from_arn(current_secret.get("ARN")) == primary_region
 
 
 def prepare_result_dict(secret_dict):
