@@ -764,6 +764,22 @@ def main():
     changed = False
     state = module.params.get("state")
     replication_action = module.params.get("replication_action")
+    target_region = module.params.get("target_region")
+    remove_replica_regions = module.params.get("remove_replica_regions")
+
+    # Validate parameter combinations
+    if state == "absent" and replication_action:
+        module.fail_json(
+            msg="state=absent and replication_action are mutually exclusive. "
+            "Use replication_action to manage replicas, or state=absent to delete the secret."
+        )
+
+    if target_region and replication_action != "promote_replica":
+        module.fail_json(msg="target_region can only be used with replication_action=promote_replica")
+
+    if remove_replica_regions and replication_action != "remove_regions":
+        module.fail_json(msg="remove_replica_regions can only be used with replication_action=remove_regions")
+
     secrets_mgr = SecretsManagerInterface(module)
     recovery_window = module.params.get("recovery_window")
     secret = Secret(
