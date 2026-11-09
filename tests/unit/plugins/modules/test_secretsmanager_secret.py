@@ -41,20 +41,41 @@ class TestHelperFunctions:
         current_secret = {}
         assert secretsmanager_secret.is_replica_in_region(current_secret, "us-east-2") is False
 
-    def test_is_primary_secret_true(self):
-        """Secret is a primary (no PrimaryRegion field)"""
+    def test_get_region_from_arn_valid(self):
+        """Extract region from valid ARN"""
+        arn = "arn:aws:secretsmanager:us-west-2:123456789012:secret:my-secret-EXAMPLE"
+        assert secretsmanager_secret.get_region_from_arn(arn) == "us-west-2"
+
+    def test_get_region_from_arn_invalid(self):
+        """Handle invalid ARN"""
+        assert secretsmanager_secret.get_region_from_arn("invalid-arn") is None
+        assert secretsmanager_secret.get_region_from_arn(None) is None
+        assert secretsmanager_secret.get_region_from_arn("") is None
+
+    def test_is_primary_secret_no_primary_region_field(self):
+        """Secret is a primary (no PrimaryRegion field - older format)"""
         current_secret = {
             "ARN": "arn:aws:secretsmanager:us-east-1:000000000000:secret:test-example-EXAMPLE",
             "Name": "test-example",
         }
         assert secretsmanager_secret.is_primary_secret(current_secret) is True
 
-    def test_is_primary_secret_false(self):
-        """Secret is a replica (has PrimaryRegion field)"""
+    def test_is_primary_secret_with_matching_primary_region(self):
+        """Secret is a primary with PrimaryRegion field matching its own region"""
         current_secret = {
             "ARN": "arn:aws:secretsmanager:us-west-2:000000000000:secret:test-example-EXAMPLE",
             "Name": "test-example",
-            "PrimaryRegion": "us-east-1",
+            "PrimaryRegion": "us-west-2",
+            "ReplicationStatus": [{"Region": "eu-west-3", "Status": "InSync"}],
+        }
+        assert secretsmanager_secret.is_primary_secret(current_secret) is True
+
+    def test_is_primary_secret_false_replica(self):
+        """Secret is a replica (PrimaryRegion differs from secret's region)"""
+        current_secret = {
+            "ARN": "arn:aws:secretsmanager:eu-west-3:000000000000:secret:test-example-EXAMPLE",
+            "Name": "test-example",
+            "PrimaryRegion": "us-west-2",
         }
         assert secretsmanager_secret.is_primary_secret(current_secret) is False
 
