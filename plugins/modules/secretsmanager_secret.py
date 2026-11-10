@@ -617,6 +617,7 @@ def main():
             result = "secret does not exist"
     if state == "present":
         tags_updated = False
+        expected_tags = {}
         if current_secret is None:
             result = secrets_mgr.create_secret(secret)
             if secret.resource_policy and result.get("ARN"):
@@ -658,6 +659,15 @@ def main():
                         secrets_mgr.untag_secret(secret.name, tags_to_remove)
                         tags_updated = True
 
+                # Calculate final expected tag state after add/remove operations
+                if tags_updated:
+                    expected_tags = current_tags.copy()
+                    expected_tags.update(tags_to_add)
+                    for tag_key in tags_to_remove:
+                        expected_tags.pop(tag_key, None)
+                    # Normalize through boto conversion to match format of fetched tags
+                    expected_tags = boto3_tag_list_to_ansible_dict(ansible_dict_to_boto3_tag_list(expected_tags))
+
             regions_to_set_replication, regions_to_remove_replication = compare_regions(secret, current_secret)
             if regions_to_set_replication:
                 secrets_mgr.replicate_secret(secret.name, regions_to_set_replication)
@@ -668,7 +678,6 @@ def main():
 
         # Wait for tag updates to propagate before fetching the secret
         if tags_updated:
-            expected_tags = boto3_tag_list_to_ansible_dict(ansible_dict_to_boto3_tag_list(secret.tags))
             updated_secret = wait_for_secret_update(
                 secrets_mgr,
                 secret.name,
