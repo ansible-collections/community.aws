@@ -543,7 +543,7 @@ def wait_for_secret_update(secrets_mgr, secret_name, check_fn, max_attempts=30, 
 
     Returns: final secret dict when condition is met, or None if max_attempts exceeded
     """
-    for _ in range(max_attempts):
+    for i in range(max_attempts):
         secret = secrets_mgr.get_secret(secret_name)
         if check_fn(secret):
             return secret
