@@ -272,6 +272,7 @@ secret:
 """
 
 import json
+import time
 from traceback import format_exc
 
 try:
@@ -675,6 +676,26 @@ def prepare_result_dict(secret_dict):
     return secret_dict
 
 
+def wait_for_replication_update(secrets_mgr, secret_name, check_fn, max_attempts=30, delay=2):
+    """Poll until replication status update is reflected.
+
+    Args:
+        secrets_mgr: SecretsManagerInterface instance
+        secret_name: name of secret to check
+        check_fn: function taking secret dict, returns True when condition met
+        max_attempts: maximum number of polling attempts (default: 30)
+        delay: seconds between polls (default: 2)
+
+    Returns: final secret dict when condition is met, or None if max_attempts exceeded
+    """
+    for _ in range(max_attempts):
+        secret = secrets_mgr.get_secret(secret_name)
+        if check_fn(secret):
+            return secret
+        time.sleep(delay)
+    return None
+
+
 def handle_replication_action(module, secrets_mgr, current_secret):
     """Handle replica lifecycle operations (promote or remove).
 
@@ -702,6 +723,15 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         # Promote the replica
         secrets_mgr.promote_replica(secret_name, target_region)
 
+        # Wait for AWS to propagate the change
+        updated_secret = wait_for_replication_update(
+            secrets_mgr, secret_name, lambda s: not is_replica_in_region(s, target_region)
+        )
+        if not updated_secret:
+            module.fail_json(msg=f"Timeout waiting for replica promotion in {target_region} to propagate")
+
+        return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
+
     elif action == "remove_regions":
         regions_to_remove = module.params.get("remove_replica_regions")
 
@@ -721,9 +751,14 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         # Remove replication from specified regions
         secrets_mgr.remove_replication(secret_name, regions_needing_removal)
 
-    # Fetch updated secret info and return result
-    updated_secret = secrets_mgr.get_secret(secret_name)
-    return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
+        # Wait for AWS to propagate the change
+        updated_secret = wait_for_replication_update(
+            secrets_mgr, secret_name, lambda s: all(not is_replica_in_region(s, r) for r in regions_needing_removal)
+        )
+        if not updated_secret:
+            module.fail_json(msg=f"Timeout waiting for region removal to propagate")
+
+        return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
 
 
 def main():
