@@ -616,6 +616,7 @@ def main():
         else:
             result = "secret does not exist"
     if state == "present":
+        tags_updated = False
         if current_secret is None:
             result = secrets_mgr.create_secret(secret)
             if secret.resource_policy and result.get("ARN"):
@@ -643,8 +644,6 @@ def main():
                 else:
                     result = secrets_mgr.put_resource_policy(secret)
                 changed = True
-
-            tags_updated = False
             if module.params.get("tags") is not None:
                 current_tags = boto3_tag_list_to_ansible_dict(current_secret.get("Tags", []))
                 tags_to_add, tags_to_remove = compare_aws_tags(current_tags, secret.tags, purge_tags)
