@@ -213,6 +213,7 @@ secret:
 """
 
 import json
+import time
 from traceback import format_exc
 
 try:
@@ -530,6 +531,26 @@ def compare_regions(desired_secret, current_secret):
     return regions_to_set_replication, regions_to_remove_replication
 
 
+def wait_for_secret_update(secrets_mgr, secret_name, check_fn, max_attempts=30, delay=2):
+    """Poll until secret status update is reflected.
+
+    Args:
+        secrets_mgr: SecretsManagerInterface instance
+        secret_name: name of secret to check
+        check_fn: function taking secret dict, returns True when condition met
+        max_attempts: maximum number of polling attempts (default: 30)
+        delay: seconds between polls (default: 2)
+
+    Returns: final secret dict when condition is met, or None if max_attempts exceeded
+    """
+    for i in range(max_attempts):
+        secret = secrets_mgr.get_secret(secret_name)
+        if check_fn(secret):
+            return secret
+        time.sleep(delay)
+    return None
+
+
 def main():
     replica_args = dict(
         region=dict(type="str", required=True),
@@ -595,6 +616,8 @@ def main():
         else:
             result = "secret does not exist"
     if state == "present":
+        tags_updated = False
+        expected_tags = {}
         if current_secret is None:
             result = secrets_mgr.create_secret(secret)
             if secret.resource_policy and result.get("ARN"):
@@ -622,7 +645,6 @@ def main():
                 else:
                     result = secrets_mgr.put_resource_policy(secret)
                 changed = True
-
             if module.params.get("tags") is not None:
                 current_tags = boto3_tag_list_to_ansible_dict(current_secret.get("Tags", []))
                 tags_to_add, tags_to_remove = compare_aws_tags(current_tags, secret.tags, purge_tags)
@@ -630,10 +652,21 @@ def main():
                     changed = True
                     if not module.check_mode:
                         secrets_mgr.tag_secret(secret.name, ansible_dict_to_boto3_tag_list(tags_to_add))
+                        tags_updated = True
                 if tags_to_remove:
                     changed = True
                     if not module.check_mode:
                         secrets_mgr.untag_secret(secret.name, tags_to_remove)
+                        tags_updated = True
+
+                # Calculate final expected tag state after add/remove operations
+                if tags_updated:
+                    expected_tags = current_tags.copy()
+                    expected_tags.update(tags_to_add)
+                    for tag_key in tags_to_remove:
+                        expected_tags.pop(tag_key, None)
+                    # Normalize through boto conversion to match format of fetched tags
+                    expected_tags = boto3_tag_list_to_ansible_dict(ansible_dict_to_boto3_tag_list(expected_tags))
 
             regions_to_set_replication, regions_to_remove_replication = compare_regions(secret, current_secret)
             if regions_to_set_replication:
@@ -643,7 +676,19 @@ def main():
                 secrets_mgr.remove_replication(secret.name, regions_to_remove_replication)
                 changed = True
 
-        result = camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name))
+        # Wait for tag updates to propagate before fetching the secret
+        if tags_updated:
+            updated_secret = wait_for_secret_update(
+                secrets_mgr,
+                secret.name,
+                lambda s: boto3_tag_list_to_ansible_dict(s.get("Tags", [])) == expected_tags,
+            )
+            if not updated_secret:
+                module.fail_json(msg="Timeout waiting for tag updates to propagate")
+            result = camel_dict_to_snake_dict(updated_secret)
+        else:
+            result = camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name))
+
         if result.get("tags", None) is not None:
             result["tags_dict"] = boto3_tag_list_to_ansible_dict(result.get("tags", []))
         result.pop("response_metadata")
