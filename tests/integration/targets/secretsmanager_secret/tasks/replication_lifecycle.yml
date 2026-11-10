@@ -1,0 +1,94 @@
+---
+- block:
+  # ============================================================
+  # Replica lifecycle management testing
+  # ============================================================
+  - name: add secret with replicas
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: present
+      secret: "{{ super_secret_string }}"
+      replica:
+        - region: 'us-west-2'
+        - region: 'eu-west-1'
+    register: result
+
+  - name: assert secret created with replicas
+    assert:
+      that:
+        - result.changed
+        - result.secret.replication_status | length == 2
+
+  # ============================================================
+  # remove_regions tests
+  # ============================================================
+  - name: remove replication from one region
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      replication_action: remove_regions
+      remove_replica_regions:
+        - 'eu-west-1'
+    register: result
+
+  - name: assert region was removed
+    assert:
+      that:
+        - result.changed
+        - result.secret.replication_status | length == 1
+
+  - name: remove same region again (idempotency)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      replication_action: remove_regions
+      remove_replica_regions:
+        - 'eu-west-1'
+    register: result
+
+  - name: assert no change on second removal
+    assert:
+      that:
+        - not result.changed
+
+  # ============================================================
+  # promote_replica tests
+  # ============================================================
+  - name: promote replica to standalone
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      replication_action: promote_replica
+      target_region: 'us-west-2'
+    register: result
+
+  - name: assert replica was promoted
+    assert:
+      that:
+        - result.changed
+        - '"replication_status" not in result.secret or result.secret.replication_status | length == 0'
+
+  - name: promote same region again (idempotency)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      replication_action: promote_replica
+      target_region: 'us-west-2'
+    register: result
+
+  - name: assert no change on second promotion
+    assert:
+      that:
+        - not result.changed
+
+  always:
+  - name: remove primary secret
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 0
+    ignore_errors: true
+
+  - name: remove promoted replica (now independent)
+    secretsmanager_secret:
+      name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 0
+      region: 'us-west-2'
+    ignore_errors: true
