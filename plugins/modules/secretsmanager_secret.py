@@ -688,7 +688,7 @@ def wait_for_replication_update(secrets_mgr, secret_name, check_fn, max_attempts
 
     Returns: final secret dict when condition is met, or None if max_attempts exceeded
     """
-    for _ in range(max_attempts):
+    for i in range(max_attempts):
         secret = secrets_mgr.get_secret(secret_name)
         if check_fn(secret):
             return secret
@@ -756,7 +756,7 @@ def handle_replication_action(module, secrets_mgr, current_secret):
             secrets_mgr, secret_name, lambda s: all(not is_replica_in_region(s, r) for r in regions_needing_removal)
         )
         if not updated_secret:
-            module.fail_json(msg=f"Timeout waiting for region removal to propagate")
+            module.fail_json(msg="Timeout waiting for region removal to propagate")
 
         return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
 
