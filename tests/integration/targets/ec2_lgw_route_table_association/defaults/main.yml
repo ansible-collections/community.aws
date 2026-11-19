@@ -1,0 +1,4 @@
+---
+vpc_name: "vpc-{{ resource_prefix }}"
+vpc_cidr: 10.{{ 256 | random(seed=resource_prefix) }}.0.0/16
+lgw_route_table_id: "lgw-rtb-xxxxxxxx"  # replace with your Local Gateway Route Table ID
