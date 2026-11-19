@@ -11,6 +11,9 @@ version_added: 1.0.0
 short_description: Manage IAM server certificates for use on ELBs and CloudFront
 description:
   - Allows for the management of IAM server certificates.
+  - If a certificate already exists matching the name, but the certificate or chain is different,
+    the certificate will be deleted and recreated.  This will result in the same
+    I(ServerCertificateName) and I(Arn), but the I(ServerCertificateId) may be different.
 options:
   name:
     description:
@@ -137,34 +140,30 @@ def _compare_cert(cert_a, cert_b):
     # Trim out the whitespace before comparing the certs.  While this could mean
     # an invalid cert 'matches' a valid cert, that's better than some stray
     # whitespace breaking things
-    cert_a.replace("\r", "")
-    cert_a.replace("\n", "")
-    cert_a.replace(" ", "")
-    cert_b.replace("\r", "")
-    cert_b.replace("\n", "")
-    cert_b.replace(" ", "")
+    cert_a = cert_a.replace("\r", "").replace("\n", "").replace(" ", "")
+    cert_b = cert_b.replace("\r", "").replace("\n", "").replace(" ", "")
 
     return cert_a == cert_b
 
 
 def update_server_certificate(current_cert):
-    changed = False
+    need_update = False
     cert = module.params.get("cert")
     cert_chain = module.params.get("cert_chain")
 
     if not _compare_cert(cert, current_cert.get("certificate_body", None)):
-        module.fail_json(msg="Modifying the certificate body is not supported by AWS")
+        need_update = True
     if not _compare_cert(cert_chain, current_cert.get("certificate_chain", None)):
-        module.fail_json(msg="Modifying the chaining certificate is not supported by AWS")
-    # We can't compare keys.
+        need_update = True
 
     if module.check_mode:
-        return changed
+        return need_update
 
-    # For now we can't make any changes.  Updates to tagging would go here and
-    # update 'changed'
+    if need_update:
+        return delete_server_certificate(current_cert) and \
+            create_server_certificate()
 
-    return changed
+    return False
 
 
 def create_server_certificate():
