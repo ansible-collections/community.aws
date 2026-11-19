@@ -58,7 +58,7 @@ def calculate_multipart_etag(source_path, chunk_size=DEFAULT_CHUNK_SIZE):
     else:  # > 1
         digests = b"".join(m.digest() for m in md5s)
 
-        new_md5 = hashlib.md5(digests)
+        new_md5 = hashlib.md5(digests, usedforsecurity=False)
         new_etag = f'"{new_md5.hexdigest()}-{len(md5s)}"'
 
     return new_etag
