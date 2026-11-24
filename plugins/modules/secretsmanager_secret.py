@@ -810,10 +810,10 @@ def main():
             "Use replication_action to manage replicas, or state=absent to delete the secret."
         )
 
-    if target_region and replication_action != "promote_replica":
+    if target_region is not None and replication_action != "promote_replica":
         module.fail_json(msg="target_region can only be used with replication_action=promote_replica")
 
-    if remove_replica_regions and replication_action != "remove_regions":
+    if remove_replica_regions is not None and replication_action != "remove_regions":
         module.fail_json(msg="remove_replica_regions can only be used with replication_action=remove_regions")
 
     secrets_mgr = SecretsManagerInterface(module)
