@@ -242,6 +242,7 @@ secret:
       returned: when secret has replicas
       type: list
       elements: dict
+      version_added: 12.1.0
       sample:
         - region: "us-east-2"
           status: "InSync"
