@@ -30,8 +30,8 @@ options:
   overwrite:
     description:
     - Whether to overwrite an existing secret with the same name.
-    - If set to C(True), an existing secret with the same I(name) will be overwritten.
-    - If set to C(False), a secret with the given I(name) will only be created if none exists.
+    - If set to V(true), an existing secret with the same O(name) will be overwritten.
+    - If set to V(false), a secret with the given O(name) will only be created if none exists.
     type: bool
     default: True
     version_added: 5.3.0
@@ -69,8 +69,8 @@ options:
     description:
       - Manage the lifecycle of secret replicas.
       - Mutually exclusive with O(replica) parameter.
-      - V(promote_replica) stops replication to the replica in I(target_region), converting it to an independent secret.
-      - V(remove_regions) removes replication from the regions specified in I(remove_replica_regions).
+      - V(promote_replica) stops replication to the replica in O(target_region), converting it to an independent secret.
+      - V(remove_regions) removes replication from the regions specified in O(remove_replica_regions).
       - The secret must already exist.
     type: str
     choices: ['promote_replica', 'remove_regions']
@@ -101,7 +101,7 @@ options:
   kms_key_id:
     description:
     - Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be
-      used to encrypt the I(secret) values in the versions stored in this secret.
+      used to encrypt the O(secret) values in the versions stored in this secret.
     type: str
   secret_type:
     description:
@@ -112,14 +112,14 @@ options:
   secret:
     description:
     - Specifies string or binary data that you want to encrypt and store in the new version of the secret.
-    - Mutually exclusive with the I(json_secret) option.
+    - Mutually exclusive with the O(json_secret) option.
     default: ""
     type: str
   json_secret:
     description:
     - Specifies JSON-formatted data that you want to encrypt and store in the new version of the
       secret.
-    - Mutually exclusive with the I(secret) option.
+    - Mutually exclusive with the O(secret) option.
     type: json
     version_added: 4.1.0
   resource_policy:
@@ -139,7 +139,7 @@ options:
     default: 30
     type: int
 notes:
-  - Support for I(purge_tags) was added in release 4.0.0.
+  - Support for O(purge_tags) was added in release 4.0.0.
   - Replica lifecycle management (O(replication_action)) was added in release 12.1.0.
   - The O(replication_action) and O(replica) parameters are mutually exclusive and cannot be used in the same task.
 extends_documentation_fragment:
