@@ -8,9 +8,33 @@ from __future__ import print_function
 
 __metaclass__ = type
 
+from unittest.mock import MagicMock
 from unittest.mock import patch
 
+import pytest
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.community.aws.plugins.modules import secretsmanager_secret
+
+
+class AnsibleFailJson(Exception):
+    """Raised by the mocked module.fail_json to halt execution like the real one does"""
+
+
+def make_module(params):
+    module = MagicMock()
+    module.params = params
+    module.fail_json.side_effect = AnsibleFailJson
+    return module
+
+
+PROMOTE_PARAMS = {"replication_action": "promote_replica", "name": "test-example", "target_region": "us-west-2"}
+REMOVE_PARAMS = {
+    "replication_action": "remove_regions",
+    "name": "test-example",
+    "remove_replica_regions": ["us-west-2"],
+}
 
 
 class TestHelperFunctions:
@@ -115,3 +139,96 @@ class TestHelperFunctions:
         assert "response_metadata" not in result
         assert result["arn"] == secret_dict["arn"]
         assert result["name"] == secret_dict["name"]
+
+
+class TestHandleReplicationAction:
+    """Test handle_replication_action with a mocked secrets_mgr"""
+
+    @pytest.mark.parametrize(
+        ("params", "current_secret", "updated_secret", "mocked_method", "mocked_args"),
+        [
+            pytest.param(
+                PROMOTE_PARAMS,
+                {"Name": "test-example", "ReplicationStatus": [{"Region": "us-west-2", "Status": "InSync"}]},
+                {"Name": "test-example", "ReplicationStatus": []},
+                "promote_replica",
+                ("test-example", "us-west-2"),
+                id="promote_replica",
+            ),
+            pytest.param(
+                REMOVE_PARAMS,
+                {
+                    "Name": "test-example",
+                    "ReplicationStatus": [
+                        {"Region": "us-west-2", "Status": "InSync"},
+                        {"Region": "eu-west-1", "Status": "InSync"},
+                    ],
+                },
+                {"Name": "test-example", "ReplicationStatus": [{"Region": "eu-west-1", "Status": "InSync"}]},
+                "remove_replication",
+                ("test-example", ["us-west-2"]),
+                id="remove_regions",
+            ),
+        ],
+    )
+    def test_action_not_idempotent(self, params, current_secret, updated_secret, mocked_method, mocked_args):
+        """A replica change is needed: the AWS call is made and the updated secret is returned"""
+        module = make_module(params)
+        secrets_mgr = MagicMock()
+        secrets_mgr.get_secret.return_value = updated_secret
+
+        result = secretsmanager_secret.handle_replication_action(module, secrets_mgr, current_secret)
+
+        getattr(secrets_mgr, mocked_method).assert_called_once_with(*mocked_args)
+        assert result["changed"] is True
+        assert result["result"] == camel_dict_to_snake_dict(updated_secret)
+        module.fail_json.assert_not_called()
+
+    @pytest.mark.parametrize(
+        ("params", "current_secret", "mocked_method", "expected_msg"),
+        [
+            pytest.param(
+                PROMOTE_PARAMS,
+                {"Name": "test-example", "ReplicationStatus": []},
+                "promote_replica",
+                "No replica exists",
+                id="promote_replica",
+            ),
+            pytest.param(
+                REMOVE_PARAMS,
+                {"Name": "test-example", "ReplicationStatus": [{"Region": "eu-west-1", "Status": "InSync"}]},
+                "remove_replication",
+                "No replicas exist",
+                id="remove_regions",
+            ),
+        ],
+    )
+    def test_action_idempotent(self, params, current_secret, mocked_method, expected_msg):
+        """No matching replica change is needed: the AWS call is skipped"""
+        module = make_module(params)
+        secrets_mgr = MagicMock()
+
+        result = secretsmanager_secret.handle_replication_action(module, secrets_mgr, current_secret)
+
+        getattr(secrets_mgr, mocked_method).assert_not_called()
+        assert result["changed"] is False
+        assert expected_msg in result["msg"]
+
+    @patch("ansible_collections.community.aws.plugins.modules.secretsmanager_secret.time.sleep")
+    def test_action_timeout(self, mock_sleep):
+        """Replication never propagates: module.fail_json is called with a timeout message.
+
+        The wait/timeout mechanism in wait_for_replication_update() is shared by both
+        replication_action branches, so exercising it once here is sufficient; the
+        per-branch idempotency checks are covered separately above.
+        """
+        current_secret = {"Name": "test-example", "ReplicationStatus": [{"Region": "us-west-2", "Status": "InSync"}]}
+        module = make_module(PROMOTE_PARAMS)
+        secrets_mgr = MagicMock()
+        secrets_mgr.get_secret.return_value = current_secret  # state never changes
+
+        with pytest.raises(AnsibleFailJson):
+            secretsmanager_secret.handle_replication_action(module, secrets_mgr, current_secret)
+
+        module.fail_json.assert_called_once()
+        assert "Timeout" in module.fail_json.call_args.kwargs["msg"]
