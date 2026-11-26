@@ -29,11 +29,17 @@ def make_module(params):
     return module
 
 
-PROMOTE_PARAMS = {"replication_action": "promote_replica", "name": "test-example", "target_region": "us-west-2"}
+PROMOTE_PARAMS = {
+    "replication_action": "promote_replica",
+    "name": "test-example",
+    "target_region": "us-west-2",
+    "wait_timeout": 60,
+}
 REMOVE_PARAMS = {
     "replication_action": "remove_regions",
     "name": "test-example",
     "remove_replica_regions": ["us-west-2"],
+    "wait_timeout": 60,
 }
 
 
@@ -214,13 +220,14 @@ class TestHandleReplicationAction:
         assert result["changed"] is False
         assert expected_msg in result["msg"]
 
-    @patch("ansible_collections.community.aws.plugins.modules.secretsmanager_secret.time.sleep")
-    def test_action_timeout(self, mock_sleep):
+    @patch("ansible_collections.community.aws.plugins.modules.secretsmanager_secret.time.time", side_effect=[0, 100])
+    def test_action_timeout(self, mock_time):
         """Replication never propagates: module.fail_json is called with a timeout message.
 
-        The wait/timeout mechanism in wait_for_replication_update() is shared by both
-        replication_action branches, so exercising it once here is sufficient; the
-        per-branch idempotency checks are covered separately above.
+        The deadline is faked to have already passed by the first check, so the test
+        doesn't actually sleep. The wait/timeout mechanism in wait_for_replication_update()
+        is shared by both replication_action branches, so exercising it once here is
+        sufficient; the per-branch idempotency checks are covered separately above.
         """
         current_secret = {"Name": "test-example", "ReplicationStatus": [{"Region": "us-west-2", "Status": "InSync"}]}
         module = make_module(PROMOTE_PARAMS)

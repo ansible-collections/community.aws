@@ -91,6 +91,13 @@ options:
     type: list
     elements: str
     version_added: 12.1.0
+  wait_timeout:
+    description:
+      - How long to wait, in seconds, for a O(replication_action) change to propagate before failing.
+      - Only used when O(replication_action) is set.
+    type: int
+    default: 60
+    version_added: 12.1.0
   kms_key_id:
     description:
     - Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be
@@ -680,24 +687,26 @@ def prepare_result_dict(secret_dict):
     return secret_dict
 
 
-def wait_for_replication_update(secrets_mgr, secret_name, check_fn, max_attempts=30, delay=2):
+def wait_for_replication_update(secrets_mgr, secret_name, check_fn, timeout, delay=2):
     """Poll until replication status update is reflected.
 
     Args:
         secrets_mgr: SecretsManagerInterface instance
         secret_name: name of secret to check
         check_fn: function taking secret dict, returns True when condition met
-        max_attempts: maximum number of polling attempts (default: 30)
+        timeout: maximum number of seconds to wait
         delay: seconds between polls (default: 2)
 
-    Returns: final secret dict when condition is met, or None if max_attempts exceeded
+    Returns: final secret dict when condition is met, or None if timeout exceeded
     """
-    for i in range(max_attempts):
+    deadline = time.time() + timeout
+    while True:
         secret = secrets_mgr.get_secret(secret_name)
         if check_fn(secret):
             return secret
+        if time.time() >= deadline:
+            return None
         time.sleep(delay)
-    return None
 
 
 def handle_replication_action(module, secrets_mgr, current_secret):
@@ -712,6 +721,7 @@ def handle_replication_action(module, secrets_mgr, current_secret):
     """
     action = module.params.get("replication_action")
     secret_name = module.params.get("name")
+    wait_timeout = module.params.get("wait_timeout")
 
     if action == "promote_replica":
         target_region = module.params.get("target_region")
@@ -729,10 +739,12 @@ def handle_replication_action(module, secrets_mgr, current_secret):
 
         # Wait for AWS to propagate the change
         updated_secret = wait_for_replication_update(
-            secrets_mgr, secret_name, lambda s: not is_replica_in_region(s, target_region)
+            secrets_mgr, secret_name, lambda s: not is_replica_in_region(s, target_region), wait_timeout
         )
         if not updated_secret:
-            module.fail_json(msg=f"Timeout waiting for replica promotion in {target_region} to propagate")
+            module.fail_json(
+                msg=f"Timeout waiting for replica promotion in {target_region} to propagate after {wait_timeout} seconds"
+            )
 
         return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
 
@@ -757,10 +769,13 @@ def handle_replication_action(module, secrets_mgr, current_secret):
 
         # Wait for AWS to propagate the change
         updated_secret = wait_for_replication_update(
-            secrets_mgr, secret_name, lambda s: all(not is_replica_in_region(s, r) for r in regions_needing_removal)
+            secrets_mgr,
+            secret_name,
+            lambda s: all(not is_replica_in_region(s, r) for r in regions_needing_removal),
+            wait_timeout,
         )
         if not updated_secret:
-            module.fail_json(msg="Timeout waiting for region removal to propagate")
+            module.fail_json(msg=f"Timeout waiting for region removal to propagate after {wait_timeout} seconds")
 
         return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
 
@@ -791,6 +806,7 @@ def main():
             "replication_action": dict(type="str", choices=["promote_replica", "remove_regions"]),
             "target_region": dict(type="str"),
             "remove_replica_regions": dict(type="list", elements="str"),
+            "wait_timeout": dict(type="int", default=60),
         },
         mutually_exclusive=[["secret", "json_secret"], ["replica", "replication_action"]],
         required_if=[
