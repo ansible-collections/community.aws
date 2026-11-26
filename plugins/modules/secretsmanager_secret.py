@@ -457,7 +457,7 @@ class SecretsManagerInterface(object):
         Returns: API response dict
         """
         if self.module.check_mode:
-            self.module.exit_json(changed=True)
+            self.module.exit_json(changed=True, msg=f"Would stop replica in region '{region}' to ensure secret idempotency if not in check mode.")
         try:
             # Create a client for the target region
             target_client = self.module.client("secretsmanager", region=region)
