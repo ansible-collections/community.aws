@@ -2,6 +2,9 @@
 boto3
 botocore
 
+# Needed for EKS related tests
+kubernetes
+
 # netaddr is needed for ansible.utils.ipv6
 netaddr
 virtualenv
