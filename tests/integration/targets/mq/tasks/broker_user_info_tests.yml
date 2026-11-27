@@ -25,13 +25,15 @@
   mq_user_info:
     broker_id: "{{ broker_id }}"
   register: result
+- debug:
+    msg: "{{ result }}"
 - name: test2 - verify
   assert:
     fail_msg: test2 failed
     that:
-      - result.users['info_user1']
-      - result.users['info_user2']
-      - result.users['info_user3']
+      - result.users['info_user1'] is defined
+      - result.users['info_user2'] is defined
+      - result.users['info_user3'] is defined
   when: not ansible_check_mode
 - name: test3 - list only user currently being active until next broker reboot
   mq_user_info:
@@ -43,10 +45,10 @@
     fail_msg: test3 failed
     that:
       - not ('info_user1' in result.users)
-      - result.users['info_user2']
+      - result.users['info_user2'] is defined
       - not ('info_user3' in result.users)
       - not ('info_user4' in result.users)
-      - result.users['info_user5']
+      - result.users['info_user5'] is defined
   when: not ansible_check_mode
 - name: test4 - list only user that will be active after next broker reboot
   mq_user_info:
@@ -57,9 +59,9 @@
   assert:
     fail_msg: test4 failed
     that:
-      - result.users['info_user1']
+      - result.users['info_user1'] is defined
       - not ('info_user2' in result.users)
-      - result.users['info_user3']
-      - result.users['info_user4']
+      - result.users['info_user3'] is defined
+      - result.users['info_user4'] is defined
       - not ('info_user5' in result.users)
   when: not ansible_check_mode
