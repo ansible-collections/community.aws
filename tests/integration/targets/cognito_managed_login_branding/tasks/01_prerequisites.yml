@@ -1,0 +1,48 @@
+---
+# Managed login branding requires ESSENTIALS tier (not LITE)
+- name: Create Cognito user pool with ESSENTIALS tier
+  cognito_user_pool:
+    state: present
+    name: '{{ cognito_user_pool_name }}'
+    user_pool_tier: ESSENTIALS
+  register: create_pool_result
+
+- name: Save user pool ID
+  set_fact:
+    cognito_user_pool_id: '{{ create_pool_result.user_pool.id }}'
+
+- name: Verify user pool was created
+  assert:
+    that:
+      - cognito_user_pool_id is defined
+      - cognito_user_pool_id | length > 0
+
+# Managed login branding requires a domain with managed-login-version 2
+- name: Create user pool domain with managed login v2
+  cognito_user_pool_domain:
+    state: present
+    domain: '{{ cognito_domain_prefix }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    managed_login_version: 2
+
+# Create app client for branding
+- name: Create user pool client for branding
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    generate_secret: false
+    callback_urls:
+      - https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+  register: create_client_result
+
+- name: Save client_id
+  set_fact:
+    cognito_client_id: '{{ create_client_result.client.client_id }}'

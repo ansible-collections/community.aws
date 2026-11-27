@@ -1,0 +1,6 @@
+time=5m
+
+cloud/aws
+
+cognito_user_pool_domain
+cognito_user_pool_domain_info

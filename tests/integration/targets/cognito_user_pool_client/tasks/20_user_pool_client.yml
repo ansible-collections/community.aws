@@ -1,0 +1,296 @@
+---
+# ============================================================
+# cognito_user_pool_client tests
+# ============================================================
+
+# --- Create - check_mode ---
+- name: Create user pool client - check_mode
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    generate_secret: true
+    callback_urls:
+      - https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+  check_mode: true
+  register: create_check
+
+- name: Verify check_mode create reports changed
+  assert:
+    that:
+      - create_check is changed
+      - create_check.client.client_name == cognito_client_name
+
+- name: Verify client was NOT actually created
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: verify_not_created
+
+- name: Confirm no client existed
+  assert:
+    that:
+      - verify_not_created is not changed
+
+# --- Create ---
+- name: Create user pool client
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    generate_secret: true
+    callback_urls:
+      - https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+  register: create_result
+
+- name: Verify client was created
+  assert:
+    that:
+      - create_result is changed
+      - create_result.client.client_id is defined
+      - create_result.client.client_name == cognito_client_name
+      - create_result.client.user_pool_id == cognito_user_pool_id
+      - create_result.client.client_secret is defined
+
+- name: Save client_id for later tests
+  set_fact:
+    cognito_client_id: '{{ create_result.client.client_id }}'
+
+# --- Create idempotency ---
+- name: Create user pool client - idempotent
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    callback_urls:
+      - https://example.com/callback
+    allowed_oauth_flows:
+      - code
+    allowed_oauth_scopes:
+      - openid
+    allowed_oauth_flows_user_pool_client: true
+    supported_identity_providers:
+      - COGNITO
+  register: create_idempotent
+
+- name: Verify create idempotency
+  assert:
+    that:
+      - create_idempotent is not changed
+      - create_idempotent.client.client_id == cognito_client_id
+
+# --- Update - check_mode ---
+- name: Update client - check_mode
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    callback_urls:
+      - https://example.com/callback
+      - https://staging.example.com/callback
+      - https://check-mode.example.com/callback
+  check_mode: true
+  register: update_check
+
+- name: Verify check_mode update reports changed
+  assert:
+    that:
+      - update_check is changed
+
+- name: Verify client was NOT actually updated
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    callback_urls:
+      - https://example.com/callback
+  register: verify_not_updated
+
+- name: Confirm client was unchanged (single original URL)
+  assert:
+    that:
+      - verify_not_updated is not changed
+
+# --- Update - add callback URL ---
+- name: Update client - add second callback URL
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    callback_urls:
+      - https://example.com/callback
+      - https://staging.example.com/callback
+  register: update_result
+
+- name: Verify client was updated
+  assert:
+    that:
+      - update_result is changed
+      - update_result.client.callback_urls | length == 2
+
+# --- Update idempotency ---
+- name: Update client - idempotent
+  cognito_user_pool_client:
+    state: present
+    name: '{{ cognito_client_name }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    callback_urls:
+      - https://example.com/callback
+      - https://staging.example.com/callback
+  register: update_idempotent
+
+- name: Verify update idempotency
+  assert:
+    that:
+      - update_idempotent is not changed
+
+# --- Partial update preserves unspecified fields ---
+- name: Update only client name
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ cognito_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    name: '{{ cognito_client_name_updated }}'
+  register: rename_result
+
+- name: Verify rename changed and existing fields preserved
+  assert:
+    that:
+      - rename_result is changed
+      - rename_result.client.client_name == cognito_client_name_updated
+      - rename_result.client.callback_urls | length == 2
+      - "'code' in rename_result.client.allowed_o_auth_flows"
+      - rename_result.client.allowed_o_auth_flows_user_pool_client == true
+      - "'COGNITO' in rename_result.client.supported_identity_providers"
+
+- name: Re-run rename - idempotent
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ cognito_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    name: '{{ cognito_client_name_updated }}'
+  register: rename_idempotent
+
+- name: Verify rename idempotency
+  assert:
+    that:
+      - rename_idempotent is not changed
+
+# --- Update by client_id - add OAuth scope ---
+- name: Update by client_id - add email scope
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ cognito_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    allowed_oauth_scopes:
+      - openid
+      - email
+  register: scope_update
+
+- name: Verify scope update and existing fields preserved
+  assert:
+    that:
+      - scope_update is changed
+      - "'email' in scope_update.client.allowed_o_auth_scopes"
+      - "'openid' in scope_update.client.allowed_o_auth_scopes"
+      - scope_update.client.callback_urls | length == 2
+      - "'code' in scope_update.client.allowed_o_auth_flows"
+      - scope_update.client.allowed_o_auth_flows_user_pool_client == true
+      - "'COGNITO' in scope_update.client.supported_identity_providers"
+
+# --- Delete - check_mode ---
+- name: Delete client - check_mode
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name_updated }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  check_mode: true
+  register: delete_check
+
+- name: Verify check_mode delete reports changed
+  assert:
+    that:
+      - delete_check is changed
+
+- name: Verify client was NOT actually deleted
+  cognito_user_pool_client:
+    state: present
+    client_id: '{{ cognito_client_id }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    name: '{{ cognito_client_name_updated }}'
+  register: verify_not_deleted
+
+- name: Confirm client still exists
+  assert:
+    that:
+      - verify_not_deleted is not changed
+
+# --- Delete by name ---
+- name: Delete client by name
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name_updated }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: delete_result
+
+- name: Verify delete
+  assert:
+    that:
+      - delete_result is changed
+
+# --- Delete idempotency ---
+- name: Delete client again - idempotent
+  cognito_user_pool_client:
+    state: absent
+    name: '{{ cognito_client_name_updated }}'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: delete_idempotent
+
+- name: Verify delete idempotency
+  assert:
+    that:
+      - delete_idempotent is not changed
+
+# --- Delete non-existent ---
+- name: Delete non-existent client by client_id
+  cognito_user_pool_client:
+    state: absent
+    client_id: 'nonexistent123456'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: delete_nonexistent
+
+- name: Verify deleting non-existent is not changed
+  assert:
+    that:
+      - delete_nonexistent is not changed
+
+# --- Fail on nonexistent client_id with state=present ---
+- name: Update nonexistent client_id - should fail
+  cognito_user_pool_client:
+    state: present
+    client_id: 'nonexistent123456'
+    user_pool_id: '{{ cognito_user_pool_id }}'
+    name: 'should-not-create'
+  register: update_nonexistent
+  ignore_errors: true
+
+- name: Verify nonexistent client_id fails
+  assert:
+    that:
+      - update_nonexistent is failed
+      - "'not found' in update_nonexistent.msg"

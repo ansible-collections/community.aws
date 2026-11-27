@@ -1,0 +1,4 @@
+---
+cognito_user_pool_name: '{{ resource_prefix }}-pool'
+cognito_client_name: '{{ resource_prefix }}-client'
+cognito_client_name_updated: '{{ resource_prefix }}-client-renamed'

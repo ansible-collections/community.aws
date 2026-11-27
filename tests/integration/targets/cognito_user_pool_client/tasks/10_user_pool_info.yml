@@ -1,0 +1,29 @@
+---
+# ============================================================
+# cognito_user_pool_info tests
+# ============================================================
+
+- name: Get user pool info
+  cognito_user_pool_info:
+    user_pool_id: '{{ cognito_user_pool_id }}'
+  register: pool_info
+
+- name: Verify user pool info
+  assert:
+    that:
+      - pool_info is not changed
+      - pool_info.user_pool.id == cognito_user_pool_id
+      - pool_info.user_pool.name == cognito_user_pool_name
+      - pool_info.user_pool.arn is defined
+      - pool_info.user_pool.creation_date is defined
+
+- name: Get info for non-existent user pool - should fail
+  cognito_user_pool_info:
+    user_pool_id: '{{ aws_region }}_NONEXISTENT'
+  register: pool_info_missing
+  ignore_errors: true
+
+- name: Verify non-existent pool lookup fails
+  assert:
+    that:
+      - pool_info_missing is failed
