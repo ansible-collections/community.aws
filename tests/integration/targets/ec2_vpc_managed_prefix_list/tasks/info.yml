@@ -1,0 +1,175 @@
+---
+# Integration tests for ec2_vpc_managed_prefix_list_info
+- module_defaults:
+    community.aws.ec2_vpc_managed_prefix_list_info:
+      region: "{{ aws_region }}"
+  block:
+
+    # ============================================================
+    - debug: msg="Testing ec2_vpc_managed_prefix_list_info"
+
+    # ============================================================
+    # List all prefix lists
+    # ============================================================
+
+    - name: Gather info about all prefix lists
+      community.aws.ec2_vpc_managed_prefix_list_info:
+      register: result
+
+    - name: Verify our prefix list is in results
+      vars:
+        our_pls: "{{ result.prefix_lists | selectattr('prefix_list_id', 'equalto', prefix_list_id) | list }}"
+      assert:
+        that:
+          - result.prefix_lists is defined
+          - our_pls | length == 1
+          - our_pls[0].prefix_list_name == prefix_list_name
+          - our_pls[0].address_family == "IPv4"
+          - our_pls[0].max_entries == 20
+          - our_pls[0].state is defined
+          - our_pls[0].version is defined
+          - our_pls[0].tags is defined
+          - our_pls[0].entries is defined
+
+    # ============================================================
+    # Lookup by ID
+    # ============================================================
+
+    - name: Gather info about a specific prefix list by ID
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        prefix_list_ids:
+          - "{{ prefix_list_id }}"
+      register: result
+
+    - assert:
+        that:
+          - result.prefix_lists | length == 1
+          - result.prefix_lists[0].prefix_list_id == prefix_list_id
+          - result.prefix_lists[0].prefix_list_name == prefix_list_name
+
+    # ============================================================
+    # Lookup by name filter
+    # ============================================================
+
+    - name: Gather info filtered by prefix list name
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        filters:
+          prefix-list-name: "{{ prefix_list_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.prefix_lists | length == 1
+          - result.prefix_lists[0].prefix_list_id == prefix_list_id
+          - result.prefix_lists[0].prefix_list_name == prefix_list_name
+
+    # ============================================================
+    # Lookup by tag filter
+    # ============================================================
+
+    - name: Add a tag for filter testing
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        prefix_list_id: "{{ prefix_list_id }}"
+        max_entries: 20
+        tags:
+          InfoTestTag: "{{ resource_prefix }}"
+      register: tag_result
+
+    - name: Gather info filtered by tag
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        filters:
+          "tag:InfoTestTag": "{{ resource_prefix }}"
+      register: result
+
+    - assert:
+        that:
+          - result.prefix_lists | length == 1
+          - result.prefix_lists[0].prefix_list_id == prefix_list_id
+          - result.prefix_lists[0].tags.InfoTestTag == resource_prefix
+
+    - name: Clean up test tag
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        prefix_list_id: "{{ prefix_list_id }}"
+        max_entries: 20
+        tags: {}
+        purge_tags: true
+
+    # ============================================================
+    # Entries are included by default
+    # ============================================================
+
+    - name: Add entries to the prefix list for info testing
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        prefix_list_id: "{{ prefix_list_id }}"
+        max_entries: 20
+        entries:
+          - cidr: 192.168.0.0/24
+            description: Info test entry
+
+    - name: Gather info with entries (default)
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        prefix_list_ids:
+          - "{{ prefix_list_id }}"
+      register: result
+
+    - assert:
+        that:
+          - result.prefix_lists[0].entries | length == 1
+          - result.prefix_lists[0].entries[0].cidr == "192.168.0.0/24"
+          - result.prefix_lists[0].entries[0].description == "Info test entry"
+
+    # ============================================================
+    # Entries excluded when include_entries=false
+    # ============================================================
+
+    - name: Gather info without entries
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        prefix_list_ids:
+          - "{{ prefix_list_id }}"
+        include_entries: false
+      register: result
+
+    - assert:
+        that:
+          - "'entries' not in result.prefix_lists[0]"
+
+    - name: Clean up entries after info tests
+      community.aws.ec2_vpc_managed_prefix_list:
+        state: present
+        prefix_list_id: "{{ prefix_list_id }}"
+        max_entries: 20
+        entries: []
+        purge_entries: true
+
+    # ============================================================
+    # Non-existent ID returns empty list
+    # ============================================================
+
+    - name: Gather info for a non-existent prefix list name (filter)
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        filters:
+          prefix-list-name: "definitely-does-not-exist-{{ resource_prefix }}"
+      register: result
+
+    - assert:
+        that:
+          - result.prefix_lists == []
+
+    # ============================================================
+    # check_mode works (read-only)
+    # ============================================================
+
+    - name: Gather info in check mode
+      community.aws.ec2_vpc_managed_prefix_list_info:
+        prefix_list_ids:
+          - "{{ prefix_list_id }}"
+      register: result
+      check_mode: true
+
+    - assert:
+        that:
+          - result.prefix_lists | length == 1
+          - result.prefix_lists[0].prefix_list_id == prefix_list_id
