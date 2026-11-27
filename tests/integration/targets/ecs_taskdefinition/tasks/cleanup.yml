@@ -1,0 +1,9 @@
+---
+- name: Clean up task definitions
+  community.aws.ecs_taskdefinition:
+    family: "{{ item }}"
+    state: absent
+  ignore_errors: true
+  loop:
+    - "{{ ecs_task_family_name }}-ephemeral"
+    - "{{ ecs_task_family_name }}-no-ephemeral"
