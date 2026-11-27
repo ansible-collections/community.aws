@@ -1,0 +1,6 @@
+---
+minor_changes:
+- s3_bucket_cors - The s3_cors module has been renamed to s3_bucket_cors for consistency with other S3 bucket configuration modules. The usage of the module has not changed and the s3_cors alias will continue to work (https://github.com/ansible-collections/community.aws/pull/2472).
+- s3_bucket_lifecycle - The s3_lifecycle module has been renamed to s3_bucket_lifecycle for consistency with other S3 bucket configuration modules. The usage of the module has not changed and the s3_lifecycle alias will continue to work (https://github.com/ansible-collections/community.aws/pull/2472).
+- s3_bucket_metrics_configuration - The s3_metrics_configuration module has been renamed to s3_bucket_metrics_configuration for consistency with other S3 bucket configuration modules. The usage of the module has not changed and the s3_metrics_configuration alias will continue to work (https://github.com/ansible-collections/community.aws/pull/2472).
+- s3_bucket_website - The s3_website module has been renamed to s3_bucket_website for consistency with other S3 bucket configuration modules. The usage of the module has not changed and the s3_website alias will continue to work (https://github.com/ansible-collections/community.aws/pull/2472).

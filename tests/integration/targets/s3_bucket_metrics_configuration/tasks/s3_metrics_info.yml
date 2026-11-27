@@ -1,0 +1,10 @@
+---
+# Utility tasks to list bucket metrics configurations
+- name: List s3 bucket metrics configurations
+  community.aws.s3_bucket_metrics_configuration_info:
+    name: "{{ test_bucket }}"
+  register: metrics_info_result
+
+- name: Set metrics_info fact
+  set_fact:
+    metrics_info: "{{ metrics_info_result.metrics_configurations }}"
