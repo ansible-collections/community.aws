@@ -295,6 +295,19 @@ options:
         type: dict
         required: false
         version_added: 4.1.0
+    availability_zone_rebalancing:
+        description:
+          - Indicates whether to use Availability Zone rebalancing for the service.
+          - When set to C(ENABLED), Amazon ECS continuously monitors the distribution of tasks across
+            Availability Zones and automatically rebalances when it detects an imbalance.
+          - When set to C(DISABLED), Availability Zone rebalancing is turned off.
+          - Note that for new services created via the API, this defaults to C(ENABLED) if not specified.
+            Set to C(DISABLED) explicitly if you do not want this behavior.
+          - See U(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-rebalancing.html) for more details.
+        required: false
+        choices: ["ENABLED", "DISABLED"]
+        type: str
+        version_added: 11.2.0
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -383,6 +396,15 @@ EXAMPLES = r"""
       Firstname: jane
       lastName: doe
     propagate_tags: SERVICE
+
+# With availability_zone_rebalancing disabled
+- community.aws.ecs_service:
+    state: present
+    name: my-service
+    cluster: my-cluster
+    task_definition: 'my-task:1'
+    desired_count: 6
+    availability_zone_rebalancing: DISABLED
 """
 
 RETURN = r"""
@@ -466,6 +488,11 @@ service:
             description: The ARN of a task definition to use for tasks in the service.
             returned: always
             type: str
+        availabilityZoneRebalancing:
+            description: Whether Availability Zone rebalancing is enabled for the service.
+            returned: when available
+            type: str
+            version_added: 11.2.0
         deployments:
             description: list of service deployments
             returned: always
@@ -786,6 +813,11 @@ class EcsServiceManager:
         if (expected["enable_execute_command"] or False) != existing.get("enableExecuteCommand", False):
             return False
 
+        # Check availability_zone_rebalancing if specified
+        if expected.get("availability_zone_rebalancing"):
+            if expected["availability_zone_rebalancing"] != existing.get("availabilityZoneRebalancing"):
+                return False
+
         # expected is params. DAEMON scheduling strategy returns desired count equal to
         # number of instances running; don't check desired count if scheduling strat is daemon
         if expected["scheduling_strategy"] != "DAEMON":
@@ -817,6 +849,7 @@ class EcsServiceManager:
         tags,
         propagate_tags,
         enable_execute_command,
+        availability_zone_rebalancing,
     ):
         params = dict(
             cluster=cluster_name,
@@ -866,6 +899,8 @@ class EcsServiceManager:
             params["schedulingStrategy"] = scheduling_strategy
         if enable_execute_command:
             params["enableExecuteCommand"] = enable_execute_command
+        if availability_zone_rebalancing:
+            params["availabilityZoneRebalancing"] = availability_zone_rebalancing
 
         response = self.ecs.create_service(**params)
         return self.jsonize(response["service"])
@@ -887,6 +922,7 @@ class EcsServiceManager:
         purge_placement_constraints,
         purge_placement_strategy,
         enable_execute_command,
+        availability_zone_rebalancing,
     ):
         params = dict(
             cluster=cluster_name,
@@ -927,6 +963,9 @@ class EcsServiceManager:
 
         if load_balancers:
             params["loadBalancers"] = load_balancers
+
+        if availability_zone_rebalancing:
+            params["availabilityZoneRebalancing"] = availability_zone_rebalancing
 
         response = self.ecs.update_service(**params)
 
@@ -1021,6 +1060,7 @@ def main():
         propagate_tags=dict(required=False, choices=["TASK_DEFINITION", "SERVICE"]),
         tags=dict(required=False, type="dict"),
         enable_execute_command=dict(required=False, type="bool"),
+        availability_zone_rebalancing=dict(required=False, choices=["ENABLED", "DISABLED"], type="str"),
     )
 
     module = AnsibleAWSModule(
@@ -1167,6 +1207,7 @@ def main():
                             module.params["purge_placement_constraints"],
                             module.params["purge_placement_strategy"],
                             module.params["enable_execute_command"],
+                            module.params["availability_zone_rebalancing"],
                         )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
@@ -1195,6 +1236,7 @@ def main():
                             module.params["tags"],
                             module.params["propagate_tags"],
                             module.params["enable_execute_command"],
+                            module.params["availability_zone_rebalancing"],
                         )
                     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
