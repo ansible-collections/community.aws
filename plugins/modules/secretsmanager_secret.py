@@ -93,8 +93,7 @@ options:
     version_added: 12.1.0
   wait_timeout:
     description:
-      - How long to wait, in seconds, for a O(replication_action) change to propagate before failing.
-      - Only used when O(replication_action) is set.
+      - How long to wait, in seconds, for a O(replication_action) change or a tag update to propagate before failing.
     type: int
     default: 60
     version_added: 12.1.0
@@ -687,8 +686,8 @@ def prepare_result_dict(secret_dict):
     return secret_dict
 
 
-def wait_for_replication_update(secrets_mgr, secret_name, check_fn, timeout, delay=2):
-    """Poll until replication status update is reflected.
+def wait_for_secret_condition(secrets_mgr, secret_name, check_fn, timeout, delay=2):
+    """Poll until a secret's state matches an expected condition (e.g. after a replication or tag change).
 
     Args:
         secrets_mgr: SecretsManagerInterface instance
@@ -738,7 +737,7 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         secrets_mgr.promote_replica(secret_name, target_region)
 
         # Wait for AWS to propagate the change
-        updated_secret = wait_for_replication_update(
+        updated_secret = wait_for_secret_condition(
             secrets_mgr, secret_name, lambda s: not is_replica_in_region(s, target_region), wait_timeout
         )
         if not updated_secret:
@@ -768,7 +767,7 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         secrets_mgr.remove_replication(secret_name, regions_needing_removal)
 
         # Wait for AWS to propagate the change
-        updated_secret = wait_for_replication_update(
+        updated_secret = wait_for_secret_condition(
             secrets_mgr,
             secret_name,
             lambda s: all(not is_replica_in_region(s, r) for r in regions_needing_removal),
@@ -778,26 +777,6 @@ def handle_replication_action(module, secrets_mgr, current_secret):
             module.fail_json(msg=f"Timeout waiting for region removal to propagate after {wait_timeout} seconds")
 
         return {"changed": True, "result": camel_dict_to_snake_dict(updated_secret)}
-
-
-def wait_for_secret_update(secrets_mgr, secret_name, check_fn, max_attempts=30, delay=2):
-    """Poll until secret status update is reflected.
-
-    Args:
-        secrets_mgr: SecretsManagerInterface instance
-        secret_name: name of secret to check
-        check_fn: function taking secret dict, returns True when condition met
-        max_attempts: maximum number of polling attempts (default: 30)
-        delay: seconds between polls (default: 2)
-
-    Returns: final secret dict when condition is met, or None if max_attempts exceeded
-    """
-    for i in range(max_attempts):
-        secret = secrets_mgr.get_secret(secret_name)
-        if check_fn(secret):
-            return secret
-        time.sleep(delay)
-    return None
 
 
 def main():
@@ -841,6 +820,7 @@ def main():
     replication_action = module.params.get("replication_action")
     target_region = module.params.get("target_region")
     remove_replica_regions = module.params.get("remove_replica_regions")
+    wait_timeout = module.params.get("wait_timeout")
 
     # Validate parameter combinations
     if state == "absent" and replication_action:
@@ -974,21 +954,18 @@ def main():
 
         # Wait for tag updates to propagate before fetching the secret
         if tags_updated:
-            updated_secret = wait_for_secret_update(
+            updated_secret = wait_for_secret_condition(
                 secrets_mgr,
                 secret.name,
                 lambda s: boto3_tag_list_to_ansible_dict(s.get("Tags", [])) == expected_tags,
+                wait_timeout,
             )
             if not updated_secret:
-                module.fail_json(msg="Timeout waiting for tag updates to propagate")
-            result = camel_dict_to_snake_dict(updated_secret)
+                module.fail_json(msg=f"Timeout waiting for tag updates to propagate after {wait_timeout} seconds")
         else:
-            result = camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name))
+            updated_secret = secrets_mgr.get_secret(secret.name)
 
-        if result.get("tags", None) is not None:
-            result["tags_dict"] = boto3_tag_list_to_ansible_dict(result.get("tags", []))
-        result.pop("response_metadata")
-        result = prepare_result_dict(camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name)))
+        result = prepare_result_dict(camel_dict_to_snake_dict(updated_secret))
 
     module.exit_json(changed=changed, secret=result)
 
