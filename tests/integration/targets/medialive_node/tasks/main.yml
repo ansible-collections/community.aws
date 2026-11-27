@@ -1,0 +1,366 @@
+---
+# Integration tests for medialive_node module
+- name: Wrap MediaLive node tests with AWS credentials
+  module_defaults:
+    group/aws:
+      access_key: '{{ aws_access_key }}'
+      secret_key: '{{ aws_secret_key }}'
+      session_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    set_fact:
+      ansible_python_interpreter: '{{ botocore_virtualenv_interpreter }}'
+
+  block:
+    # Setup test variables
+    - name: Set up test variables
+      ansible.builtin.set_fact:
+        cluster_name: "{{ resource_prefix }}-cluster"
+        network_name: "{{ resource_prefix }}-network"
+        node_name: "{{ resource_prefix }}-node"
+        instance_role_name: "{{ resource_prefix }}-role"
+        instance_role_policy_name: "{{ resource_prefix }}-policy"
+        ip_pool_cidr: "10.21.21.0/24"
+        route_cidr: "0.0.0.0/0"
+        route_gateway: "10.21.21.1"
+        wait_timeout: 30
+
+    # Look up Account ID to use in ARN construction
+    - name: Look up Account ID
+      amazon.aws.aws_caller_info:
+      register: caller_info
+
+    # Create a policy for the required IAM role for MediaLive Anywhere nodes
+    - name: Create MediaLive Anywhere node IAM role policy
+      amazon.aws.iam_managed_policy:
+        name: '{{ instance_role_policy_name }}'
+        state: present
+        policy: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "medialive:SubmitAnywhereStateChange",
+                  "medialive:PollAnywhere"
+                ],
+                "Resource": "arn:aws:medialive:*:{{ caller_info.account }}:cluster:*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": "iam:PassRole",
+                "Resource": "arn:aws:iam::{{ caller_info.account }}:role/MediaLiveAccessRole",
+                "Condition": {
+                  "StringEquals": {
+                    "iam:PassedToService": [
+                      "medialive.amazonaws.com"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+      register: instance_role_policy
+
+    # Create the required IAM role for MediaLive Anywhere nodes
+    - name: Create MediaLive Anywhere node IAM role
+      amazon.aws.iam_role:
+        name: '{{ instance_role_name }}'
+        assume_role_policy_document: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": [
+                    "medialive.amazonaws.com",
+                    "ssm.amazonaws.com"
+                  ]
+                },
+                "Action": [
+                  "sts:AssumeRole",
+                  "sts:TagSession"
+                ]
+              }
+            ]
+          }
+        state: present
+        create_instance_profile: false
+        managed_policies:
+          - arn:aws:iam::aws:policy/AWSElementalMediaLiveFullAccess
+          - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+          - arn:aws:iam::aws:policy/CloudWatchFullAccessV2
+          - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+          - '{{ instance_role_policy.policy.arn }}'
+        tags:
+          Environment: Test
+          Purpose: Integration Testing
+      register: iam_role
+
+    - name: Create an IAM Instance Profile
+      amazon.aws.iam_instance_profile:
+        name: '{{ instance_role_name }}'
+        role: '{{ instance_role_name }}'
+        state: present
+      register: instance_profile
+
+    # Create a network first for the cluster to use
+    - name: Create a MediaLive Anywhere network for the cluster
+      community.aws.medialive_network:
+        name: "{{ network_name }}"
+        state: present
+        ip_pools:
+          - cidr: "{{ ip_pool_cidr }}"
+        routes:
+          - cidr: "{{ route_cidr }}"
+            gateway: "{{ route_gateway }}"
+      register: network_result
+      retries: 3
+      delay: 5
+      until: network_result is not failed or 'TooManyRequestsException' not in (network_result.msg | default(''))
+
+    - name: Capture network_id, instance_role_arn and instance_profile_arn
+      ansible.builtin.set_fact:
+        network_id: "{{ network_result.network.network_id }}"
+        instance_role_arn: "{{ iam_role.iam_role.arn }}"
+        instance_profile_arn: "{{ instance_profile.iam_instance_profile.arn }}"
+      when:
+        - network_result is defined and network_result.changed is defined
+        - iam_role is defined and iam_role.changed is defined
+        - instance_profile is defined and instance_profile.changed is defined
+
+    # Create a cluster first to host the node
+    - name: Create a MediaLive Anywhere cluster
+      community.aws.medialive_cluster:
+        name: "{{ cluster_name }}"
+        state: present
+        cluster_type: "ON_PREMISES"
+        instance_role_arn: "{{ instance_role_arn }}"
+        network_settings:
+          default_route: "logical-0"
+          interface_mappings:
+            - logical_interface_name: "logical-0"
+              network_id: "{{ network_id }}"
+        wait: true
+        wait_timeout: "{{ wait_timeout }}"
+      register: cluster_result
+      retries: 3
+      delay: 5
+      until: cluster_result is not failed or 'TooManyRequestsException' not in (cluster_result.msg | default(''))
+      when: network_id is defined
+
+    - name: Capture cluster_id
+      ansible.builtin.set_fact:
+        cluster_id: '{{ cluster_result.cluster.cluster_id }}'
+
+    # Test creating a node in the cluster
+    - name: Create a MediaLive Anywhere node
+      community.aws.medialive_node:
+        cluster_id: '{{ cluster_id }}'
+        name: '{{ node_name }}'
+        state: present
+        node_interface_mappings:
+          - logical_interface_name: logical-0
+            physical_interface_name: eth0
+            network_interface_mode: NAT
+        role: ACTIVE
+      register: create_result
+      retries: 3
+      delay: 5
+      until: create_result is not failed or 'TooManyRequestsException' not in (create_result.msg | default(''))
+      when: cluster_id is defined
+
+    - name: Assert node was created successfully
+      ansible.builtin.assert:
+        that:
+          - create_result is changed
+          - create_result.node is defined
+          - create_result.node.name == node_name
+          - create_result.node.state == "REGISTERING"
+          - create_result.node.connection_state == "DISCONNECTED"
+          - create_result.node.role == "ACTIVE"
+          - create_result.node.channel_placement_groups == []
+          - create_result.node.instance_arn == ""
+          - create_result.node.node_interface_mappings | length == 1
+          - create_result.node.node_interface_mappings[0].logical_interface_name == "logical-0"
+          - create_result.node.node_interface_mappings[0].physical_interface_name == "eth0"
+          - create_result.node.node_interface_mappings[0].network_interface_mode == "NAT"
+          - create_result.node.cluster_id is defined
+          - create_result.node.arn is defined
+        fail_msg: "Node creation failed or returned unexpected data"
+        success_msg: "Node created successfully with expected properties"
+      when: create_result is defined and create_result.node is defined
+
+    - name: Capture node_id
+      ansible.builtin.set_fact:
+        node_id: '{{ create_result.node.node_id }}'
+
+    # Test idempotency
+    - name: Create the same node again (idempotency check)
+      community.aws.medialive_node:
+        cluster_id: '{{ cluster_id }}'
+        name: '{{ node_name }}'
+        state: present
+        node_interface_mappings:
+          - logical_interface_name: logical-0
+            physical_interface_name: eth0
+            network_interface_mode: NAT
+        role: ACTIVE
+      register: idempotency_result
+      when: node_id is defined
+
+    - name: Assert idempotency
+      ansible.builtin.assert:
+        that:
+          - not idempotency_result.changed
+          - idempotency_result.node is defined
+          - idempotency_result.node.node_id == node_id
+        fail_msg: "Idempotency check failed - module made changes when none were expected"
+        success_msg: "Idempotency check passed"
+      when: idempotency_result is defined and idempotency_result.node is defined
+
+    # Test retrieval by ID
+    - name: Get node by ID
+      community.aws.medialive_node_info:
+        id: "{{ node_id }}"
+        cluster_id: "{{ cluster_id }}"
+      register: get_by_id_result
+      when:
+        - node_id is defined
+        - cluster_id is defined
+
+    - name: Assert node was retrieved by ID
+      ansible.builtin.assert:
+        that:
+          - not get_by_id_result.changed
+          - get_by_id_result.node is defined
+          - get_by_id_result.node.node_id == node_id
+          - get_by_id_result.node.name == node_name
+        fail_msg: "Failed to retrieve node by ID"
+        success_msg: "Successfully retrieved node by ID"
+      when:
+        - get_by_id_result is defined
+        - get_by_id_result.node is defined
+
+    # Test retrieval by name
+    - name: Get node by name
+      community.aws.medialive_node_info:
+        name: "{{ node_name }}"
+        cluster_id: "{{ cluster_id }}"
+      register: get_by_name_result
+      when:
+        - node_name is defined
+        - cluster_id is defined
+
+    - name: Assert node was retrieved by name
+      ansible.builtin.assert:
+        that:
+          - not get_by_name_result.changed
+          - get_by_name_result.node is defined
+          - get_by_name_result.node.node_id == node_id
+          - get_by_name_result.node.name == node_name
+        fail_msg: "Failed to retrieve node by name"
+        success_msg: "Successfully retrieved node by name"
+      when:
+        - get_by_name_result is defined
+        - get_by_name_result.node is defined
+
+    # Test node registration script creation
+    - name: Create a node registration script
+      community.aws.medialive_node_registration:
+        node_id: "{{ node_id }}"
+        cluster_id: "{{ cluster_id }}"
+        role: ACTIVE
+      register: node_registration_result
+      when:
+        - node_id is defined
+        - cluster_id is defined
+
+    - name: Assert registration script was created
+      ansible.builtin.assert:
+        that:
+          - node_registration_result is changed
+          - node_registration_result.node is defined
+          - (node_registration_result.node | default({})) != {}
+          - node_registration_result.node.node_registration_script is defined
+          - node_registration_result.node.node_registration_script != ''
+        fail_msg: "Node registration script creation did not work as expected"
+        success_msg: "Node registration script was successfully created"
+      when: node_registration_result is defined
+
+    # Test check mode
+    - name: Test check mode - attempt to delete node
+      community.aws.medialive_node:
+        name: "{{ node_name }}"
+        cluster_id: "{{ cluster_id }}"
+        state: absent
+      check_mode: true
+      register: check_mode_result
+      when: node_id is defined
+
+    - name: Assert check mode works correctly
+      ansible.builtin.assert:
+        that:
+          - check_mode_result is changed
+          - (check_mode_result.node | default({})) == {}
+        fail_msg: "Check mode did not work as expected"
+        success_msg: "Check mode correctly simulated deletion"
+      when: check_mode_result is defined
+
+
+    # Test node deletion
+    - name: Delete the node
+      community.aws.medialive_node:
+        name: "{{ node_name }}"
+        cluster_id: "{{ cluster_id }}"
+        state: absent
+      register: delete_result
+      retries: 3
+      delay: 5
+      until: delete_result is not failed or 'TooManyRequestsException' not in (delete_result.msg | default(''))
+      when: node_id is defined
+
+    - name: Assert node was deleted
+      ansible.builtin.assert:
+        that:
+          - delete_result is changed
+        fail_msg: "Node deletion failed"
+        success_msg: "Node deleted successfully"
+      when: delete_result is defined
+
+    # Test deletion idempotency
+    - name: Try to delete the node again (idempotency check)
+      community.aws.medialive_node:
+        name: "{{ node_name }}"
+        cluster_id: "{{ cluster_id }}"
+        state: absent
+      register: delete_idempotency_result
+      when: node_id is defined
+
+    - name: Assert delete idempotency
+      ansible.builtin.assert:
+        that:
+          - not delete_idempotency_result.changed
+        fail_msg: "Delete idempotency check failed"
+        success_msg: "Delete idempotency check passed"
+      when: delete_idempotency_result is defined
+
+  # Error handling and cleanup
+  rescue:
+    - name: Capture error
+      ansible.builtin.set_fact:
+        test_failed: true
+
+    - name: Clean up
+      ansible.builtin.include_tasks: cleanup.yml
+
+    - name: Fail with useful error message
+      ansible.builtin.fail:
+        msg: "MediaLive node integration tests failed. See previous errors for details."
+      when: test_failed | default(false)
+
+  always:
+    - name: Ensure all test resources are cleaned up
+      ansible.builtin.include_tasks: cleanup.yml
+
