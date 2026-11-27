@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - msk_cluster - Control NetworkType IPv4 or DUAL - Issue #2451
