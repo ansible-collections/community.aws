@@ -1,0 +1,6 @@
+cloud/aws
+
+unstable
+
+# ElastiCache replication groups can take 10+ minutes to provision
+# https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ErrorMessages.html#ErrorMessages.INSUFFICIENT_CACHE_CLUSTER_CAPACITY
