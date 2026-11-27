@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - sqs_queue - fix removing an existing redrive policy with ``redrive_policy={}``, which failed because the module sent ``{}`` to the SQS API instead of an empty string (https://github.com/ansible-collections/community.aws/issues/2321).

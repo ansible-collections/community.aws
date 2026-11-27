@@ -161,6 +161,29 @@
         assert:
           that:
             - create_result.changed
+
+      - name: Test drop redrive_policy
+        sqs_queue:
+          name: "{{ create_result.name }}"
+          redrive_policy: {}
+        register: drop_result
+
+      - name: Assert redrive_policy was removed
+        assert:
+          that:
+            - drop_result.changed
+            - drop_result.redrive_policy is none
+
+      - name: Test drop redrive_policy (idempotency)
+        sqs_queue:
+          name: "{{ create_result.name }}"
+          redrive_policy: {}
+        register: drop_result
+
+      - name: Assert drop redrive_policy is idempotent
+        assert:
+          that:
+            - not drop_result.changed
     always:
       - name: Cleaning up queue
         sqs_queue:

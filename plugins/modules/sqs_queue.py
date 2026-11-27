@@ -85,6 +85,7 @@ options:
   redrive_policy:
     description:
       - JSON dict with the redrive_policy (see example).
+      - Set to an empty dict (V({})) to remove an existing redrive policy.
     type: dict
   kms_master_key_id:
     description:
@@ -402,10 +403,12 @@ def update_sqs_queue(module, client, queue_url):
             changed = True
     if module.params.get("redrive_policy") is not None:
         policy = module.params.get("redrive_policy")
-        current_value = existing_attributes.get("RedrivePolicy", "{}")
+        current_value = existing_attributes.get("RedrivePolicy") or "{}"
         current_policy = json.loads(current_value)
         if compare_policies(current_policy, policy):
-            attributes_to_set["RedrivePolicy"] = json.dumps(policy)
+            # SQS rejects "{}" because maxReceiveCount is mandatory, an empty
+            # string is what removes the redrive policy.
+            attributes_to_set["RedrivePolicy"] = json.dumps(policy) if policy else ""
             changed = True
 
     for attribute, value in existing_attributes.items():
