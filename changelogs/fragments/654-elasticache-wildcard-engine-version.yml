@@ -1,0 +1,2 @@
+bugfixes:
+  - elasticache - compare a wildcard ``cache_engine_version`` such as ``6.x`` with the version reported by AWS as a prefix, so that the module no longer reports a change on every run (https://github.com/ansible-collections/community.aws/issues/654, https://github.com/ansible-collections/community.aws/pull/2542).

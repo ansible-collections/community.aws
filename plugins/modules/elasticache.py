@@ -142,6 +142,16 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
+def _engine_version_matches(requested, current):
+    """Compare a requested engine version with the one AWS reports.
+
+    AWS accepts wildcard versions such as 6.x and reports the full version (6.0.5) back.
+    """
+    if requested.endswith(".x"):
+        return current.startswith(requested[:-1])
+    return requested == current
+
+
 class ElastiCacheManager:
     """Handles elasticache creation and destruction"""
 
@@ -380,10 +390,12 @@ class ElastiCacheManager:
     def _requires_modification(self):
         """Check if cluster requires (nondestructive) modification"""
         # Check modifiable data attributes
-        modifiable_data = {"NumCacheNodes": self.num_nodes, "EngineVersion": self.cache_engine_version}
-        for key, value in modifiable_data.items():
-            if value is not None and value and self.data[key] != value:
-                return True
+        if self.num_nodes and self.data["NumCacheNodes"] != self.num_nodes:
+            return True
+        if self.cache_engine_version and not _engine_version_matches(
+            self.cache_engine_version, self.data["EngineVersion"]
+        ):
+            return True
 
         # Check cache security groups
         cache_security_groups = []
