@@ -93,8 +93,7 @@ options:
     version_added: 12.1.0
   wait_timeout:
     description:
-      - How long to wait, in seconds, for a O(replication_action) change to propagate before failing.
-      - Only used when O(replication_action) is set.
+      - How long to wait, in seconds, for a O(replication_action) change or a tag update to propagate before failing.
     type: int
     default: 60
     version_added: 12.1.0
@@ -687,8 +686,8 @@ def prepare_result_dict(secret_dict):
     return secret_dict
 
 
-def wait_for_replication_update(secrets_mgr, secret_name, check_fn, timeout, delay=2):
-    """Poll until replication status update is reflected.
+def wait_for_secret_condition(secrets_mgr, secret_name, check_fn, timeout, delay=2):
+    """Poll until a secret's state matches an expected condition (e.g. after a replication or tag change).
 
     Args:
         secrets_mgr: SecretsManagerInterface instance
@@ -738,7 +737,7 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         secrets_mgr.promote_replica(secret_name, target_region)
 
         # Wait for AWS to propagate the change
-        updated_secret = wait_for_replication_update(
+        updated_secret = wait_for_secret_condition(
             secrets_mgr, secret_name, lambda s: not is_replica_in_region(s, target_region), wait_timeout
         )
         if not updated_secret:
@@ -768,7 +767,7 @@ def handle_replication_action(module, secrets_mgr, current_secret):
         secrets_mgr.remove_replication(secret_name, regions_needing_removal)
 
         # Wait for AWS to propagate the change
-        updated_secret = wait_for_replication_update(
+        updated_secret = wait_for_secret_condition(
             secrets_mgr,
             secret_name,
             lambda s: all(not is_replica_in_region(s, r) for r in regions_needing_removal),
@@ -821,6 +820,7 @@ def main():
     replication_action = module.params.get("replication_action")
     target_region = module.params.get("target_region")
     remove_replica_regions = module.params.get("remove_replica_regions")
+    wait_timeout = module.params.get("wait_timeout")
 
     # Validate parameter combinations
     if state == "absent" and replication_action:
@@ -892,6 +892,8 @@ def main():
         else:
             result = "secret does not exist"
     if state == "present":
+        tags_updated = False
+        expected_tags = {}
         if current_secret is None:
             result = secrets_mgr.create_secret(secret)
             if secret.resource_policy and result.get("ARN"):
@@ -919,7 +921,6 @@ def main():
                 else:
                     result = secrets_mgr.put_resource_policy(secret)
                 changed = True
-
             if module.params.get("tags") is not None:
                 current_tags = boto3_tag_list_to_ansible_dict(current_secret.get("Tags", []))
                 tags_to_add, tags_to_remove = compare_aws_tags(current_tags, secret.tags, purge_tags)
@@ -927,10 +928,21 @@ def main():
                     changed = True
                     if not module.check_mode:
                         secrets_mgr.tag_secret(secret.name, ansible_dict_to_boto3_tag_list(tags_to_add))
+                        tags_updated = True
                 if tags_to_remove:
                     changed = True
                     if not module.check_mode:
                         secrets_mgr.untag_secret(secret.name, tags_to_remove)
+                        tags_updated = True
+
+                # Calculate final expected tag state after add/remove operations
+                if tags_updated:
+                    expected_tags = current_tags.copy()
+                    expected_tags.update(tags_to_add)
+                    for tag_key in tags_to_remove:
+                        expected_tags.pop(tag_key, None)
+                    # Normalize through boto conversion to match format of fetched tags
+                    expected_tags = boto3_tag_list_to_ansible_dict(ansible_dict_to_boto3_tag_list(expected_tags))
 
             regions_to_set_replication, regions_to_remove_replication = compare_regions(secret, current_secret)
             if regions_to_set_replication:
@@ -940,7 +952,20 @@ def main():
                 secrets_mgr.remove_replication(secret.name, regions_to_remove_replication)
                 changed = True
 
-        result = prepare_result_dict(camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name)))
+        # Wait for tag updates to propagate before fetching the secret
+        if tags_updated:
+            updated_secret = wait_for_secret_condition(
+                secrets_mgr,
+                secret.name,
+                lambda s: boto3_tag_list_to_ansible_dict(s.get("Tags", [])) == expected_tags,
+                wait_timeout,
+            )
+            if not updated_secret:
+                module.fail_json(msg=f"Timeout waiting for tag updates to propagate after {wait_timeout} seconds")
+        else:
+            updated_secret = secrets_mgr.get_secret(secret.name)
+
+        result = prepare_result_dict(camel_dict_to_snake_dict(updated_secret))
 
     module.exit_json(changed=changed, secret=result)
 

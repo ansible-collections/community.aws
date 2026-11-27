@@ -225,7 +225,7 @@ class TestHandleReplicationAction:
         """Replication never propagates: module.fail_json is called with a timeout message.
 
         The deadline is faked to have already passed by the first check, so the test
-        doesn't actually sleep. The wait/timeout mechanism in wait_for_replication_update()
+        doesn't actually sleep. The wait/timeout mechanism in wait_for_secret_condition()
         is shared by both replication_action branches, so exercising it once here is
         sufficient; the per-branch idempotency checks are covered separately above.
         """
